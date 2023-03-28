@@ -539,7 +539,7 @@
                         <div class="tab-pane {% if active == "tabs-findings" %}active show{% endif %}" 
                             id="tabs-findings">
                             {% if active == "tabs-findings" %}
-                            <div class="row fade" id="finding-card">
+                            <div class="row visually-hidden" id="finding-card">
                                 <div class="card">
                                     <div class="card-header bg-secondary-lt">
                                         <div>
@@ -736,12 +736,161 @@
                         </div>
                         {% endif %}
 
-
+                        <div class="tab-pane {% if active == "tabs-hosts" %}active show{% endif %}" id="tabs-hosts">
+                            {% if active == "tabs-hosts" %}
+                                <div class="row row-cards">
+                                    <div class="col-lg">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="card-title">URL Visualization</div>
+                                                <div class="radio ratio-16x9" >
+                                                    <div id="map-world" style="height: 275px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col">
+                                        <div class="card">
+                                            <div class="card-body container-xl">
+                                                <div class="card-title">Identified and Scanned Hosts</div>
+                                                <div class="row">
+                                                    <div class="col mt-2">
+                                                        <div class="table-responsive-xl">
+                                                            <table id="table-hosts" class="table card-table text-nowrap datatable" 
+                                                                style="width: 100%">
+                                                                <thead>
+                                                                    <th>
+                                                                        <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select">
+                                                                    </th>
+                                                                    <!-- URL State -->
+                                                                    <th >
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-keyframe-align-center" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                            <path d="M12 20v2"></path>
+                                                                            <path d="M12.816 16.58c-.207 .267 -.504 .42 -.816 .42c-.312 0 -.61 -.153 -.816 -.42l-2.908 -3.748a1.39 1.39 0 0 1 0 -1.664l2.908 -3.748c.207 -.267 .504 -.42 .816 -.42c.312 0 .61 .153 .816 .42l2.908 3.748a1.39 1.39 0 0 1 0 1.664l-2.908 3.748z"></path>
+                                                                            <path d="M12 2v2"></path>
+                                                                            <path d="M3 12h2"></path>
+                                                                            <path d="M19 12h2"></path>
+                                                                         </svg>
+                                                                    </th>
+                    
+                                                                    <th >
+                                                                        Details
+                                                                    </th>
+                                                                    <th >
+                                                                        URL
+                                                                    </th>
+                                                                    <th >
+                                                                        Source File
+                                                                    </th>
+                                                                    <th class="text-end">
+                                                                        Manage
+                                                                    </th>
+                    
+                                                                </thead>
+                    
+                                                                <!-- Table body generation:
+                                                                    
+                                                                    All rows will be generated automatically
+                                                                -->
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
+                                                                        <td>
+                                                                            <span class="badge badge-outline bg-green-lt">
+                                                                                Ok
+                                                                            </span>
+                                                                            OR
+                                                                            <span class="badge badge-outline bg-red-lt">
+                                                                                Tracker
+                                                                            </span>
+                                                                            OR
+                                                                            <span class="badge badge-outline bg-orange-lt">
+                                                                                Invalid
+                                                                            </span>
+                                                                        </td>
+                                                                        <td class="text-muted">
+                                                                            <a href="#offcanvas-host" class="nav-link link-secondary" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvas-host"
+                                                                                onclick="toggleHostOffcanvas(this);" host-id="<uuid:host>">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                    <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
+                                                                                    <path d="M4 16v2a2 2 0 0 0 2 2h2"></path>
+                                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v2"></path>
+                                                                                    <path d="M16 20h2a2 2 0 0 0 2 -2v-2"></path>
+                                                                                    <path d="M7 12c3.333 -4.667 6.667 -4.667 10 0"></path>
+                                                                                    <path d="M7 12c3.333 4.667 6.667 4.667 10 0"></path>
+                                                                                    <path d="M12 12h-.01"></path>
+                                                                                 </svg>
+                                                                            </a>
+                                                                        </td>
+                                                                        <td class="text-muted">
+                                                                            <a href="#" target-id="#finding-id-row-{{ forloop.counter }}" id="finding-id-copy-{{ forloop.counter }}"
+                                                                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy URL">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                    <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                                                                                    <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                                                                                </svg>
+                                                                            </a>
+                                                                        </td>
+                                                                        <!-- The file-text should be truncated as it could be long -->
+                                                                        <td>
+                                                                            /path/to/filename
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <a href="#" target-id="#host-row-..." id="host-delete-row-..." 
+                                                                                onclick="verifyAction(this, handleHostDeletion)">
+                                                                                <span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete host result">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                        <path d="M4 7l16 0"></path>
+                                                                                        <path d="M10 11l0 6"></path>
+                                                                                        <path d="M14 11l0 6"></path>
+                                                                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                                                     </svg>
+                                                                                </span>
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            {% endif %}
+                        </div>
 
                     </div>
                 </div>
             </div>
         </div>
+
+
+        {% if active == 'tabs-hosts' %}
+        <div class="offcanvas offcanvas-end" id="offcanvas-host" tabindex="-1" aria-labelledby="off-host-label">
+            <div class="offcanvas-header">
+                <h2 id="off-host-label" class="offcanvas-title">Host Details</h2>
+                <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div>
+                  Host information...
+                </div>
+            </div>
+
+        </div>
+        {% endif %}
     </div>
 
 </div>
@@ -749,6 +898,7 @@
 
 {% block css_extended %}
 <link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
+<link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
 <style>
 .enlighter-default{
     overflow-y: scroll;
@@ -782,8 +932,8 @@
 
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 
+{% if active == "tabs-vulnerabilities" %}
 <script>
-
     loadVulnerability = function(data) {
         // Apply the icon color
         $('#vuln-icon-fg').attr('class', data.icon_fg);
@@ -831,5 +981,118 @@
         console.log($('#finding-id-row-' + row.getAttribute('counter')).attr('value')) 
     };
 </script>
+{% endif %}
+
+{% if active == "tabs-hosts" %}
+<script>
+    var HOSTS_TABLE = null;
+    document.addEventListener("DOMContentLoaded", function() {
+        HOSTS_TABLE = $('#table-hosts').DataTable();
+
+        $('#table-hosts_wrapper').addClass("mt-1 mr-1 ml-1 mb-1");
+    });
+
+    
+    toggleHostOffcanvas = function(element) {
+        console.log(element);
+    };
+
+    handleHostDeletion = function(element, event) {
+        // remove row from datatable
+        console.log($(element).parents('tr'));
+        console.log(event);
+
+        HOSTS_TABLE.row()
+    }
+</script>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+    const map = new jsVectorMap({
+        selector: '#map-world',
+        map: 'world_merc',
+        backgroundColor: 'transparent',
+        regionStyle: {
+            initial: {
+                fill: tabler.getColor('body-bg'),
+                stroke: tabler.getColor('border-color'),
+                strokeWidth: .5,
+            }
+        },
+        zoomOnScroll: false,
+        zoomButtons: true,
+
+        markers: [
+            {
+                coords: [61.524, 105.3188],
+                name: "Russia",
+            },
+            {
+                coords: [56.1304, -106.3468],
+                name: "Canada",
+            },
+            {
+                coords: [71.7069, -42.6043],
+                name: "Greenland",
+            },
+            {
+                coords: [26.8206, 30.8025],
+                name: "Egypt",
+            },
+            {
+                coords: [-14.235, -51.9253],
+                name: "Brazil",
+            },
+            {
+                coords: [35.8617, 104.1954],
+                name: "China",
+            },
+            {
+                coords: [37.0902, -95.7129],
+                name: "United States",
+            },
+            {
+                coords: [60.472024, 8.468946],
+                name: "Norway",
+            },
+            {
+                coords: [48.379433, 31.16558],
+                name: "Ukraine",
+            },
+        ],
+        markerStyle: {
+            initial: {
+                r: 4,
+                stroke: '#fff',
+                opacity: 1,
+                strokeWidth: 3,
+                stokeOpacity: .5,
+                fill: tabler.getColor('red')
+            },
+            hover: {
+                fill: tabler.getColor('red'),
+                stroke: tabler.getColor('red')
+            }
+        },
+        markerLabelStyle: {
+            initial: {
+                fontSize: 10
+            },
+        },
+        labels: {
+            markers: {
+                render: function(marker) {
+                    return marker.name
+                },
+            },
+        },
+    });
+    window.addEventListener("resize", () => {
+        map.updateSize();
+    });
+});
+</script>
+{% endif %}
+
 
 {% endblock js_extended %}

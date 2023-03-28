@@ -17,6 +17,7 @@ class Extension(Enum):
     EXT_VULNERABILITIES = 'vulnerabilities'
     EXT_PERMISSIONS = 'permissions'
     EXT_DETAILS = 'details'
+    EXT_HOSTS = 'hosts'
 
     def __str__(self) -> str:
         return self.value
@@ -135,4 +136,7 @@ class ScannerPlugin(metaclass=ABCMeta):
             data['scan_type'] = "TODO"
             data['CVSS'] = "TODO"
         return { 'data': data }
+    
+    def ext_hosts(self, project: Project) -> dict:
+        return {} #TODO
             

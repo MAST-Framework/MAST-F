@@ -4,13 +4,7 @@ requests
 bs4
 colorlog
 whitenoise
-waitress>=1.4.4;platform_system=='Windows'
-gunicorn>=20.0.4;platform_system!='Windows'
-lief>=0.12.1
-pdfkit>=0.6.1
-androguard==3.4.0a1
-apkid==2.1.4
-quark-engine==22.10.1
-frida==15.2.2
-svgutils==0.3.4
+waitress;platform_system=='Windows'
+gunicorn;platform_system!='Windows'
 celery
+djangorestframework

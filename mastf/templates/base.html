@@ -342,7 +342,7 @@
         {% block modals %}
         
         {% endblock modals %}
-
+        
         <!-- Libs JS -->
         <script src="{% static "libs/apexcharts/apexcharts.min.js"%}" defer></script>
         <script src="{% static "libs/jsvectormap/js/jsvectormap.min.js"%}" defer></script>
@@ -366,6 +366,52 @@
             them directly.
         -->
         {% endblock js_extended %}
+
+        {% block verify_modal %}
+        <!-- This block should be removed of no validation action is implemented -->
+        <div class="modal modal-blur fade" id="modal-verify" tabindex="-1" role="dialog"
+            aria-modal="true" aria-hidden="true">
+          <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="modal-title" id="modal-verify-title">Are you sure?</div>
+                <div id="modal-verify-description">If you proceed, you will delete the selected data.</div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                  id="modal-verify-submit">
+                  Proceed
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          verifyAction = function(element, EventHandler) {
+            modal = $('#modal-verify');
+
+            $('#modal-verify-title').html(
+              element.getAttribute('modal-title') || "Are you sure?"
+            );
+            $('#modal-verify-description').html(
+              element.getAttribute('modal-text') || "If you proceed, you will delete the selected data"
+            );
+            
+            submit = $('#modal-verify-submit')
+            submit.html(
+              element.getAttribute('modal-submit-text') || "Proceed"
+            );
+            
+            modal.on("click", function(event) {
+              EventHandler(element, event);
+            });
+            modal.modal('toggle');
+          };
+
+        </script>
+        {% endblock verify_modal %}
 
     </body>
 </html>

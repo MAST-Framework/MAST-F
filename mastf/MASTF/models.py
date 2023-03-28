@@ -60,6 +60,7 @@ class ProjectGroup(models.Model):
     project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
     """Stores the project reference"""
 
+
 class ProjectScanner(models.Model):
     
     project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
@@ -211,7 +212,6 @@ class Permission(models.Model):
     short_description = models.CharField(max_length=256, blank=True)
     description = models.CharField(max_length=4096, blank=True)
 
-    source = models.CharField(max_length=512, null=True)
     risk = models.CharField(max_length=8192, null=True)
 
     def plevel_status(self) -> dict:

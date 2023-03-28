@@ -22,6 +22,8 @@ class SASTScannerPlugin(ScannerPlugin):
         # Same as vulnerability extension, but there is not grouping
         # by language (and secure results can be included as well)
         'findings',
+        
+        Extension.EXT_HOSTS,
     ]
     
 
