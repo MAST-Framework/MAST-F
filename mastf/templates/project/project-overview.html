@@ -1,0 +1,647 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- Title -->
+{% block title %}
+MAST-F Project | {{ project.name }}
+{% endblock title %}
+
+{% block css_extended %}
+<link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
+{% endblock css_extended %}
+
+{% block page_header %}
+<div class="page-header">
+<div class="container-xl">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="page-pretitle">
+          Project &lt; {{ project.project_uuid }} &gt;  |  
+          <span class="badge {% if not scan.risk_level %}bg-secondary-lt \
+                {% elif scan.risk_level|lower == "high" %}bg-red-lt \
+                {% elif scan.risk_level|lower == "medium"%}bg-orange-lt\
+                {% elif scan.risk_level|lower == "low" %}bg-yellow-lt
+                {% else %}bg-secondary-lt{% endif %}">
+            {{ project.risk_level }}
+            </span>
+        </div>
+        <h2 class="page-title">
+          {{ project.name }} 
+        </h2>
+        
+      </div>
+      <div class="col-auto ms-auto">
+        <div class="btn-list">
+          <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-new-scan">
+            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
+                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
+                <path d="M12 12v9"></path>
+             </svg>
+            Scan
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>
+{% endblock page_header %}
+
+{% block page_body %}
+<!-- Page body: -->
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row-auto">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                            <li class="nav-item">
+                                <a href="{% url 'ProjectOverview' project_id=project.project_uuid %}" class="nav-link {% if active == "tabs-overview" %}active{% endif %}">
+                                    Overview
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'ProjectScanHistory' project_id=project.project_uuid %}" class="nav-link {% if active == "tabs-scan-history" %}active{% endif %}">
+                                    Scan History
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'ProjectScanners' project_id=project.project_uuid  %}" class="nav-link {% if active == "tabs-scanners" %}active{% endif %}">
+                                    Scanners
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'ProjectPackages' project_id=project.project_uuid  %}" class="nav-link {% if active == "tabs-packages" %}active{% endif %}">
+                                    Packages
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'ProjectSettings' project_id=project.project_uuid  %}" class="nav-link {% if active == "tabs-settings" %}active{% endif %}">
+                                    Settings
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                        <!-- Note that each tab content will be loaded on the right URL-->
+                        <div class="tab-pane {% if active == "tabs-overview" %}active show{% endif %}" id="tabs-overview">
+                            {% if active == "tabs-overview" %}
+                            
+                            {% endif %}
+                        </div>
+
+                        <!-- Table with all recent scan activities-->
+                        <div class="tab-pane {% if active == "tabs-scan-history" %}active show{% endif %}" id="tabs-scan-history">
+                            {% if active == "tabs-scan-history" %}
+                            <!-- Row with main table data -->
+                            <div class="row mt-2">
+
+                                <div class="col">
+                                    <!-- Body -->
+                                    <div class="table-responsive">
+                                        <table id="scan-history-table" class="table card-table text-nowrap datatable"
+                                            style="width:100%">
+                                            <thead>
+                                                <th class="w-1">
+                                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all">
+                                                </th>
+                                                <th>ID</th>
+                                                <th>Source</th>
+                                                <th>Scan Type</th>
+                                                <th>Origin</th>
+                                                <th>Scan Date</th>
+                                                <th>Risk Level</th>
+                                                <th class="w-1">
+                                                    <span class="text-red">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path>
+                                                        </svg>
+                                                    </span>
+                                                </th>
+                                                <th class="w-1">
+                                                    <span class="text-orange">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path>
+                                                        </svg>
+                                                    </span>
+                                                </th>
+                                                <th class="w-1">
+                                                    <span class="text-yellow">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path>
+                                                        </svg>
+                                                    </span>
+                                                </th>
+                                                
+                                                <!-- The 'Scan' action has no heading -->
+                                                <th></th>
+                                                
+                                                <th class="w-1 text-end">
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modal-cols">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments-horizontal" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M14 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                                                                <path d="M4 6l8 0"></path>
+                                                                <path d="M16 6l4 0"></path>
+                                                                <path d="M8 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                                                                <path d="M4 12l2 0"></path>
+                                                                <path d="M10 12l10 0"></path>
+                                                                <path d="M17 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                                                                <path d="M4 18l11 0"></path>
+                                                                <path d="M19 18l1 0"></path>
+                                                            </svg>
+                                                        </span>
+                                                    </a>
+                                                </th>
+                                            </thead>
+
+                                            <!-- Table body generation:
+                                                
+                                                Each row contains a different value to be stored with a different display format. The
+                                                first and last three columns of each row will be the same for all.
+                                            -->
+                                            <tbody>
+                                                {% for scan in scan_data %}
+                                                <tr>
+                                                    <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
+                                                    <td>
+                                                        <input type="hidden" value="{{ scan.scan_uuid }}" id="scan-id-row-{{ forloop.counter }}">
+                                                        <a href="#" target-id="#scan-id-row-{{ forloop.counter }}" id="scan-id-copy-{{ forloop.counter }}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Scan-ID">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                                                                <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                                                            </svg>
+                                                        </a>
+                                                    </td>
+                                                    <td class="text-muted">{{ scan.source }}</td>
+                                                    <td class="text-muted">{{ scan.scan_type }}</td>
+                                                    <td class="text-muted">
+                                                        {% if scan.origin == "Play-Store" %}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google-play" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M4 3.71v16.58a.7 .7 0 0 0 1.05 .606l14.622 -8.42a.55 .55 0 0 0 0 -.953l-14.622 -8.419a.7 .7 0 0 0 -1.05 .607z"></path>
+                                                            <path d="M15 9l-10.5 11.5"></path>
+                                                            <path d="M4.5 3.5l10.5 11.5"></path>
+                                                         </svg>
+                                                        {% elif scan.origin == "App-Store" %}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-appstore" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                                                            <path d="M8 16l1.106 -1.99m1.4 -2.522l2.494 -4.488"></path>
+                                                            <path d="M7 14h5m2.9 0h2.1"></path>
+                                                            <path d="M16 16l-2.51 -4.518m-1.487 -2.677l-1 -1.805"></path>
+                                                         </svg>
+                                                        {% elif scan.origin == "" %}
+                                                        {% endif %}
+
+                                                        {{ scan.origin }}
+                                                    </td>
+                                                    <td class="text-muted">{{ scan.start_date }}</td>
+                                                    <td>
+                                                        <span class="badge {% if not scan.risk_level %}bg-secondary-lt \
+                                                            {% elif scan.risk_level|lower == "high" %}bg-red-lt \
+                                                            {% elif scan.risk_level|lower == "medium"%}bg-orange-lt\
+                                                            {% elif scan.risk_level|lower == "low" %}bg-yellow-lt
+                                                            {% else %}bg-secondary-lt{% endif %}">{{ scan.risk_level }}</span>
+                                                    </td>
+                                                    <td class="text-muted">
+                                                        {{ scan.high_risks }}
+                                                    </td>
+                                                    <td class="text-muted">
+                                                        {{ scan.medium_risks }}
+                                                    </td>
+                                                    <td class="text-muted">
+                                                        {{ scan.low_risks }}
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {% if scan.status == "completed" %}bg-green-lt{% elif scan.status == "prepared" %}bg-azure-lt{% else %}bg-secondary-lt{% endif %}">
+                                                            {{ scan.status }}
+                                                        </span>
+                                                    </td>
+                                                    
+
+                                                    <td>
+                                                        <a href="#" class="nav-link px-0 link-secondary" data-bs-toggle="modal" data-bs-target="#modal-scan-table">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
+                                                                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
+                                                                <path d="M12 12v9"></path>
+                                                                </svg>
+                                                                Scan
+                                                        </a>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span class="dropdown">
+                                                        <a href="#" class="nav-link px-0 link-secondary text-align-right"  tabindex="-1" data-bs-toggle="dropdown">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                                <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                                <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                             </svg>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
+                                                            <a class="dropdown-item" href="{% url 'ProjectOverview' %}" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}">
+                                                                <span class="dropdown-item-icon text-red">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                        <path d="M4 7l16 0"></path>
+                                                                        <path d="M10 11l0 6"></path>
+                                                                        <path d="M14 11l0 6"></path>
+                                                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                                        </svg>
+                                                                </span>
+                                                                Delete
+                                                            </a>
+                                                        </div>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="tab-pane {% if active == "tabs-scanners" %}active show{% endif %}" id="tabs-scanners">
+                            {% if active == "tabs-scanners" %}
+                            <div class="row">
+                                <!-- Vertical navigation bar for each scanner -->
+                                <div class="col-3">
+                                    <div class="nav flex-column nav-tabs text-center" role="tablist" aria-orientation="vertical">
+                                        <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-vertical pe-0 pe-md-3 mb-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-target-arrow" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                <path d="M12 7a5 5 0 1 0 5 5"></path>
+                                                <path d="M13 3.055a9 9 0 1 0 7.941 7.945"></path>
+                                                <path d="M15 6v3h3l3 -3h-3v-3z"></path>
+                                                <path d="M15 9l-3 3"></path>
+                                             </svg>
+                                             Scanners
+                                        </h1>
+
+                                        <!-- All tabs contain each scanner's name -->
+                                        {% for scanner_name in scan_results %}
+                                        <a class="nav-link {% if forloop.counter0 == 0 %}active{% endif %}" data-bs-toggle="tab" role="tab" 
+                                            aria-selected="{% if forloop.counter0 == 0 %}true{% else %}false{% endif %}"
+                                            aria-controls="v-scanner-tab-{{ scanner_name }}" href="#v-scanner-tab-{{ scanner_name }}"
+                                            id="v-scanner-nav-tab-{{ scanner_name }}" onclick="viewScanResults(this);">
+                                            {{ scanner_name }}
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Actual tab content -->
+                                <div class="col-9">
+                                    <div class="tab-content">
+                                        {% for scanner_name, data in scan_results.items %}
+
+                                        <div class="tab-pane fade {% if forloop.counter0 == 0 %} show active{% endif %}"
+                                            id="v-scanner-tab-{{ scanner_name }}" role="tabpanel" 
+                                            aria-labelledby="v-scanner-nav-tab-{{ scanner_name }}">
+                                        
+                                            <div class="page-header-tabs mb-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col">
+                                                        <h3 class="page-title">
+                                                            {{ scanner_name }}
+                                                            <span class="page-pretitle"> ({{ data.start_date }})</span>
+                                                        </h3>
+                                                    </div>
+                                                    <div class="col-auto ms-auto">
+                                                        <div class="btn-list">
+                                                            <!-- Use if statement to check whether a progress is active -->
+                                                            <a href="#" class="btn btn-secondary-lt">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-hour-4 align-center" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                                                                    <path d="M12 12l3 2"></path>
+                                                                    <path d="M12 7v5"></path>
+                                                                    </svg>
+                                                                Show Progress
+                                                            </a>
+                                                            <a href="{% url 'ScannerResults' project_id=project.project_uuid name=scanner_name|lower %}" 
+                                                                class="btn btn-primary d-none d-sm-inline-block">
+                                                                View Results
+                                                              </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Basic statistics -->
+                                            <div class="row row-deck mb-2">
+                                                <div class="col-md-4">
+                                                    <!-- Card with risk count-->
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h3 class="card-title">Results</h3>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <p class="text-muted"><b>{{ data.vuln_count }}</b></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <!-- Card with vulnerability count -->
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <p class="mb-3">Total Vulnerabilities <strong> {% if vuln_count %}{{vuln_count}}{% else %}0{% endif %} </strong></p>
+                                                            <div class="progress progress-separated mb-3">
+                                                                {% if data.vuln_data %}
+                                                                    {% for category in data.vuln_data %}
+                                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>    
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="row">
+                                                                {% for category in data.vuln_data %}
+                                                                <div class="col-auto d-flex align-items-center pe-2">
+                                                                    <span class="legend me-2 {{ category.color }}"></span>
+                                                                    <span>{{ category.name }}</span>
+                                                                    <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">{{ category.count }}</span>
+                                                                </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- TODO: eventually add charts here -->
+                                        </div>
+                                        {% empty %}
+                                        <div class="container-xl d-flex flex-column justify-content-center align-items-center">
+                                            <div class="empty">
+                                              <div class="empty-img">
+                                                <img src="{% static 'static/undraw_bug_fixing_oc7a.svg' %}" height="128" alt="">
+                                              </div>
+                                              <p class="empty-title">Nothing here</p>
+                                              <p class="empty-subtitle text-muted">
+                                                This state can be achieved if no scan has been started or no scanner is
+                                                available.
+                                              </p>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endif %}
+                        </div>
+
+                        <div class="tab-pane {% if active == "tabs-packages" %}active show{% endif %}" id="tabs-packages">
+                            {% if active == "tabs-packages" %}
+                            
+                            {% endif %}
+                        </div>
+
+                        <div class="tab-pane {% if active == "tabs-settings" %}active show{% endif %}" id="tabs-settings">
+                            {% if active == "tabs-settings" %}
+                            
+                            {% endif %}
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+
+{% block modals %}
+<!-- Modal for creating new projects -->
+<div class="modal modal-blur fade" id="modal-new-scan" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- 
+        The project dialog will consume a lot of screen space, so
+        it should be placed in the center of it.
+    -->
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                <span>
+                    <!-- Icon: https://tabler-icons.io/i/target -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-target" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                     </svg>
+                </span>New Scan
+            </h5>
+            <!-- Simple workaround to close this modal -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- Scan Dialog:
+            
+        -->
+        <form id="new-scan-form" method="POST" action="{% url 'NewScan' %}"
+            enctype="multipart/form-data">
+            <div class="modal-body">
+            
+                {% csrf_token %}
+                <input type="hidden" name="project_id" value="{{ project.project_uuid }}">
+
+                <label class="form-label required">
+                    Scanners
+                    <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                        data-bs-content="<p>Select the scanner you want to include in your scan</p>">
+                        ?
+                    </span>
+                </label>
+                <div class="form-selectgroup-boxes mb-3 row">
+                    {% for name, plugin in scanners.items %}
+                    <div class="col-lg-4">
+                        <label class="form-selectgroup-item mt-2">
+                            <input type="checkbox" name="selected_scanners_{{ forloop.counter0 }}" value="{{ plugin.name }}" class="form-selectgroup-input">
+                            <span class="form-selectgroup-label d-flex align-items-center p-3">
+                            <span class="me-3">
+                                <span class="form-selectgroup-check"></span>
+                            </span>
+                            <span class="form-selectgroup-label-content">
+                                <span class="form-selectgroup-title strong mb-1">{{ plugin.name }}
+                                    {% if plugin.help %}
+                                    <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                                        data-bs-content="{{ plugin.help }}">
+                                        ?
+                                    </span>
+                                    {% endif %}
+                                </span>
+                                <span class="d-block text-muted">{{ plugin.title }}</span>
+                            </span>
+                            </span>
+                        </label>
+                        </div>    
+                    {% endfor %}
+                    </div>
+                <div class="hr-text">Config</div>
+                  <div class="row">
+                    <div class="col">
+                        <label class="form-label required">Source</label>
+                        <select class="form-select" name="source" onchange="onSourceSelectionChanged(this);">
+                            <option value="URL" selected>URL</option>
+                            <option value="File">File</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="mb-3" id="div-input-url">
+                            <label class="form-label">
+                                Store/File URL
+                                <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                                    data-bs-content="<p>Note that is is possible to place the target package name of an app and
+                                        it will be downloaded automatically.</p>">
+                                    ?
+                                </span>
+                            </label>
+                            
+                            <input type="text" class="form-control" value="" name="file-url" placeholder="https://...">
+                        </div>
+                        <div class="mb-3 visually-hidden" id="div-input-file">
+                            <label class="form-label required">Upload File</label>
+                            <input type="file" class="form-control" value="" name="file" id="uploaded-file" placeholder="Choose File">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="mb-3">
+                        <label class="form-label required">Start Date</label>
+                        <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="{{ date_value|date:"d m Y" }}" 
+                            type="date" name="start_date"/>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-auto">
+                        <div class="mb-3">
+                          <label class="form-label required">App Type</label>
+                          <div class="form-selectgroup">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="app_type" value="Android" class="form-selectgroup-input" checked>
+                                <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-android" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M4 10l0 6"></path>
+                                        <path d="M20 10l0 6"></path>
+                                        <path d="M7 9h10v8a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-8a5 5 0 0 1 10 0"></path>
+                                        <path d="M8 3l1 2"></path>
+                                        <path d="M16 3l-1 2"></path>
+                                        <path d="M9 18l0 3"></path>
+                                        <path d="M15 18l0 3"></path>
+                                     </svg>
+                                    Android
+                                </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                              <input type="radio" name="app_type" value="iOS" class="form-selectgroup-input">
+                              <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-apple" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M9 7c-3 0 -4 3 -4 5.5c0 3 2 7.5 4 7.5c1.088 -.046 1.679 -.5 3 -.5c1.312 0 1.5 .5 3 .5s4 -3 4 -5c-.028 -.01 -2.472 -.403 -2.5 -3c-.019 -2.17 2.416 -2.954 2.5 -3c-1.023 -1.492 -2.951 -1.963 -3.5 -2c-1.433 -.111 -2.83 1 -3.5 1c-.68 0 -1.9 -1 -3 -1z"></path>
+                                    <path d="M12 4a2 2 0 0 0 2 -2a2 2 0 0 0 -2 2"></path>
+                                </svg>
+                                iOS
+                            </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="app_type" value="iOS" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-windows" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M17.8 20l-12 -1.5c-1 -.1 -1.8 -.9 -1.8 -1.9v-9.2c0 -1 .8 -1.8 1.8 -1.9l12 -1.5c1.2 -.1 2.2 .8 2.2 1.9v12.1c0 1.2 -1.1 2.1 -2.2 1.9z"></path>
+                                        <path d="M12 5l0 14"></path>
+                                        <path d="M4 12l16 0"></path>
+                                     </svg>
+                                  Windows App
+                              </span>
+                            </label>
+                              <label class="form-selectgroup-item">
+                                <input type="radio" name="app_type" value="ELF" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-binary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M11 10v-5h-1m8 14v-5h-1"></path>
+                                        <path d="M15 5m0 .5a.5 .5 0 0 1 .5 -.5h2a.5 .5 0 0 1 .5 .5v4a.5 .5 0 0 1 -.5 .5h-2a.5 .5 0 0 1 -.5 -.5z"></path>
+                                        <path d="M10 14m0 .5a.5 .5 0 0 1 .5 -.5h2a.5 .5 0 0 1 .5 .5v4a.5 .5 0 0 1 -.5 .5h-2a.5 .5 0 0 1 -.5 -.5z"></path>
+                                        <path d="M6 10h.01m-.01 9h.01"></path>
+                                     </svg>
+                                  ELF
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+            </div>
+        
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <input type="submit" class="btn btn-primary" value="Start Scan" id="scan-submit">
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock modals %}
+
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        /**
+         * Setup popover classes to dispose on the user's next click event
+         */
+        $('.popover-dismiss').popover({
+            trigger: 'focus'
+        });
+
+        /**
+         * Make the table a 'datatable' with search bar, configurable row count and 
+         * pagination. (jQuery-datatable)
+         */
+        $("#scan-history-table").DataTable();
+        // add margin to table element
+        $("#scan-history-table_wrapper").addClass("mt-1 mr-1 ml-1 mb-1")
+    });
+
+    onSourceSelectionChanged = function(element) {
+        if (element.value == "URL") {
+            $("#div-input-file").addClass("visually-hidden");
+            $("#div-input-url").removeClass("visually-hidden");
+        } else {
+            $("#div-input-url").addClass("visually-hidden");
+            $("#div-input-file").removeClass("visually-hidden");
+        }
+        console.log(element);
+    };
+
+</script>
+
+
+{% endblock js_extended %}
+
