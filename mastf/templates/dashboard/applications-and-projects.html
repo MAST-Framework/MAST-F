@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mastf_tags %}
 
 <!-- Title -->
 {{ "Applications and Projects"|title }}
@@ -225,7 +226,7 @@
                                                         <td class="text-muted">
                                                             {{ value }}
                                                         </td>
-                                                        {% elif name == "ID" %}
+                                                        {% elif name == "project_uuid" %}
                                                         <td>
                                                             <input type="hidden" value="{{ value }}" id="project-id-row-{{ forloop.parentloop.counter }}">
                                                             <a href="#" target-id="#project-id-row-{{ forloop.parentloop.counter }}" id="project-id-copy-{{ forloop.parentloop.counter }}"
@@ -238,19 +239,26 @@
                                                             </a>
                                                         </td>
 
-                                                        {% elif name == "Risk Level" %}
+                                                        {% elif name == "risk_level" %}
                                                         <td>
-                                                            <span class="badge {{ value.bg_color }}">{{ value.text }}</span>
+                                                            {% with value|lower|capfirst as level %}
+                                                            <span class="badge bg-{% if level == 'Critical' %}pink
+                                                                {% elif level == 'High'%}red{% elif level == 'Medium' %}orange
+                                                                {% elif level == 'Low' %}yellow{% else %}secondary{% endif %}-lt">
+                                                                {{ level }}
+                                                            </span>
+                                                            {% endwith %}
                                                         </td>
 
-                                                        {% elif name in "TagsGroups" %}
+                                                        {% elif name in "tags" %}
                                                         <td class="text-truncate">
-                                                            {% for name in value %}
-                                                            <span class="badge bg-secondary-lt text-truncate">{{ name }}</span>, 
+                                                            {% with value|split:"," as names %}{% endwith %}
+                                                            {% for tag in names %}
+                                                            <span class="badge bg-secondary-lt text-truncate">{{ tag }}</span>, 
                                                             {% endfor %}
                                                         </td>
 
-                                                        {% elif name == "Project Name" %}
+                                                        {% elif name == "name" %}
                                                         <td>
                                                             <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.parentloop.counter }}" 
                                                                 id="project-view-link-{{ forloop.parentloop.counter }}">
@@ -596,7 +604,8 @@
 
 {% block modals %}
 <!-- Modal for creating new projects -->
-<div class="modal modal-blur fade" id="modal-new-project" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal modal-blur fade" id="modal-new-project" tabindex="-1" 
+    role="dialog" aria-hidden="true">
     <!-- 
         The project dialog will consume a lot of screen space, so
         it should be placed in the center of it.
@@ -635,13 +644,14 @@
             - 'private': Only you can see and manage your project
             - 'internal': Only you and users in your organisation can see and manage the project
         -->
-        <form id="new-project-form" method="POST" action="{% url 'newProject' %}">
+        <form id="new-project-form" method="post" action="{% url 'Projects' %}">
             <div class="modal-body">
             
                 {% csrf_token %}
+                <input type="hidden" class="form-control" name="risk_level" value="None">
                 <div class="mb-3">
                     <label class="form-label required">Name</label>
-                    <input type="text" class="form-control" name="project_name" placeholder="Your project name"
+                    <input type="text" class="form-control" name="name" placeholder="Your project name"
                             minlength="5", maxlength="256" required>
                   </div>
                   <label class="form-label required">Report type</label>
@@ -649,7 +659,7 @@
                   <div class="form-selectgroup-boxes row mb-3">
                     <div class="col-lg-6">
                       <label class="form-selectgroup-item">
-                        <input type="radio" name="report_type" value="simple" class="form-selectgroup-input" checked>
+                        <input type="radio" name="inspection_type" value="simple" class="form-selectgroup-input" checked>
                         <span class="form-selectgroup-label d-flex align-items-center p-3">
                           <span class="me-3">
                             <span class="form-selectgroup-check"></span>
@@ -663,7 +673,7 @@
                     </div>
                     <div class="col-lg-6">
                       <label class="form-selectgroup-item">
-                        <input type="radio" name="report_type" value="advanced" class="form-selectgroup-input">
+                        <input type="radio" name="inspection_type" value="advanced" class="form-selectgroup-input">
                         <span class="form-selectgroup-label d-flex align-items-center p-3">
                           <span class="me-3">
                             <span class="form-selectgroup-check"></span>
@@ -740,9 +750,9 @@
         console.error($(this))
         console.log(selector)
         $.ajax({
-            type: 'POST',
-            url: '{% url "deleteProject" %}',
-            data: encodeURI("csrfmiddlewaretoken=" + csrftoken + "&project_uuid=" + $(selector).attr('value')),
+            type: 'DELETE',
+            url: '/api/v1/project/' + $(selector).attr('value'),
+            data: encodeURI("csrfmiddlewaretoken=" + csrftoken),
             dataType: 'application/json',
             success: function(data) {
                 location.reload();
@@ -751,7 +761,7 @@
         return true;
     };
 
-    // <!> DELETE PROJECT <!>
+    // <!> COPY PROJECT <!>
     copyProjectID = function(event) {
         event.preventDefault();
         selector = $(this).attr('target-id');
@@ -790,6 +800,7 @@
         $("#projects-table").DataTable();
         // add margin to table element
         $("#projects-table_wrapper").addClass("mt-1 mr-1 ml-1 mb-1")
+
 
         /**
          * Adding the 'deleteProject' handler when the document content has

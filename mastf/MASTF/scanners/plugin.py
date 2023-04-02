@@ -3,8 +3,7 @@ from enum import Enum
 from django.db.models import Count
 
 from mastf.MASTF.models import (
-    Vulnerability, Project, ProjectScanner,
-    Details, PermissionFinding
+    Project, ProjectScanner, Scan
 )
 
 __scanners__ = {}
@@ -55,7 +54,7 @@ class ScannerPlugin(metaclass=ABCMeta):
 
         __scanners__[self.name.lower()] = self
 
-    def context(self, extension: str, project) -> dict:
+    def context(self, extension: str, project: Project) -> dict:
         """Generates the rendering context for the given extension
 
         :param extension: the extension to render
@@ -69,6 +68,9 @@ class ScannerPlugin(metaclass=ABCMeta):
             return getattr(self, func_name)(project)
         
         return {}
+
+    def results(self, extension: str, scan: Scan) -> dict:
+        pass
 
     @staticmethod
     def all() -> dict:
@@ -85,58 +87,3 @@ class ScannerPlugin(metaclass=ABCMeta):
                 result[key] = value
         return result
 
-    def ext_vulnerabilities(self, project: Project) -> dict:
-        context = {
-            'data': [],
-            'vuln_count': 0
-        }
-
-        vuln = (Vulnerability.objects.filter(scan__project=project, scanner=self.name)
-                .values('language').annotate(lcount=Count('language'))
-                .order_by())
-        if len(vuln) == 0:
-            return context
-
-        data = context['data']
-        for language in vuln:
-            lang = { 'name': language['language'], 'count': language['lcount'] }
-            categories = []
-
-            vuln = ( Vulnerability.objects.filter(
-                scan__project=project, scanner=self.name, language=language['language'])
-                    .values('template').annotate(tcount=Count('template'))
-                    .order_by()
-            )
-            for category in vuln:
-                template = category['template'].title
-                cat = {'name': template, 'count': category['tcount'], 'vuln_data': []}
-                for vulnerability in Vulnerability.objects.filter(
-                    scan__project=project, scanner=self.name, language=language['language'],
-                    template = category['template']):
-                    cat['vuln_data'].append(vulnerability)
-
-                categories.append(cat)
-
-            lang['categories'] = categories
-            data.append(lang)
-
-    def ext_permissions(self, project: Project) -> dict:
-        data = []
-        for finding in PermissionFinding.objects.filter(scan__project=project):
-            data.append(finding)
-            
-        return {'data': data}
-    
-    def ext_details(self, project: Project) -> dict:
-        details = Details.objects.filter(scan__project=project).first()
-        data = {}
-        
-        if details:
-            data['name'] = details.name    
-            data['scan_type'] = "TODO"
-            data['CVSS'] = "TODO"
-        return { 'data': data }
-    
-    def ext_hosts(self, project: Project) -> dict:
-        return {} #TODO
-            

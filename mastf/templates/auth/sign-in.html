@@ -25,7 +25,7 @@
         </p>   
         {% endfor %}
       {% endif %}
-      <form action="{% url 'LoginUser' %}" method="POST">
+      <form action="{% url 'User-Login' %}" method="POST" id="login-form">
         {% csrf_token %}
         {% if request.GET.next %}
           {% autoescape on %}
@@ -67,7 +67,7 @@
     </div>
   </div>
   <div class="text-center text-muted mt-3">
-    Don't have account yet? <a href="{% url 'SignUp' %}" tabindex="-1">Sign up</a>
+    Don't have account yet? <a href="{% url 'User-Registration' %}" tabindex="-1">Sign up</a>
   </div>
 </div>
 {% endblock page_body %}
@@ -89,5 +89,6 @@
             
         });
     });
+
 </script>
 {% endblock js_extended %}

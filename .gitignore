@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# uploaded files
+mastf/projects/
+
 # C extensions
 *.so
 

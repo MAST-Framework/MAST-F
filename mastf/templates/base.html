@@ -28,10 +28,8 @@
 
         <!-- CSS files -->
         <link href="{% static "css/tabler.min.css"%}" rel="stylesheet"/>
-        <link href="{% static "css/tabler-flags.min.css"%}" rel="stylesheet"/>
-        <link href="{% static "css/tabler-payments.min.css"%}" rel="stylesheet"/>
         <link href="{% static "css/tabler-vendors.min.css"%}" rel="stylesheet"/>
-        <link href="{% static "css/demo.min.css"%}" rel="stylesheet"/>
+        <link href="{% static "css/tabler-addon.min.css"%}" rel="stylesheet"/>
         <style>
             @import url('https://rsms.me/inter/inter.css');
             :root {
@@ -49,7 +47,7 @@
 
     <!-- HTML-Body -->
     <body>
-        <script src="{% static "js/demo-theme.min.js"%}"></script>
+        <script src="{% static "js/tabler-addon-theme.min.js"%}"></script>
 
         <!-- 
             The main content will be split into several parts: 
@@ -108,7 +106,7 @@
                             <div class="card">
                               <div class="card-header">
                                 {% if messages %}
-                                <h3 class="card-title">Last updates</h3>
+                                <h3 class="card-title">Errors</h3>
                                 {% else %}
                                 <h3 class="card-title">No messages</h3>
                                 {% endif %}
@@ -117,7 +115,7 @@
                                 {% if messages %}
                                 {% for message in messages %}
                                 <div class="list-group-item">
-                                    <div class="row align-items-center">
+                                    <div class="row row-cols-lg-2 align-items-center">
                                       <div class="col-auto">
                                         <span class="status-dot status-dot-animated {% if message.background %}{{message.background}}{% else %}bg-red{% endif %} d-block">
                                         </span>
@@ -153,8 +151,8 @@
                         <a href="./profile.html" class="dropdown-item">Profile</a>
                         <a href="#" class="dropdown-item">Feedback</a>
                         <div class="dropdown-divider"></div>
-                        <a href="{% url 'UserSettings' %}" class="dropdown-item">Settings</a>
-                        <form action="{% url 'SignOut' %}" method="post">
+                        <a href="{% url 'Settings' %}" class="dropdown-item">Settings</a>
+                        <form action="/web/logout" method="post">
                           {% csrf_token %}
                           <input type="submit" class="dropdown-item" value="Logout" id="project-submit">
                         </form>
@@ -172,7 +170,7 @@
                     <div class="container-xl">
                       <ul class="navbar-nav">
                         <li class="nav-item ">
-                          <a class="nav-link" href="{% url 'Index' %}" >
+                          <a class="nav-link" href="{% url 'Dashboard' %}" >
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                               <!-- Download SVG icon from http://tabler-icons.io/i/star -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -188,7 +186,7 @@
                           </a>
                         </li>
                         <li class="nav-item ">
-                          <a class="nav-link" href="{% url 'applicationsAndProjects' %}" >
+                          <a class="nav-link" href="{% url 'Projects' %}" >
                             <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-stack-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -202,8 +200,24 @@
                             </span>
                           </a>
                         </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="{% url 'Applications' %}" >
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-box" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path>
+                                <path d="M12 12l8 -4.5"></path>
+                                <path d="M12 12l0 9"></path>
+                                <path d="M12 12l-8 -4.5"></path>
+                             </svg>
+                            </span>
+                            <span class="nav-link-title">
+                              Applications
+                            </span>
+                          </a>
+                        </li>
                         <li class="nav-item ">
-                            <a class="nav-link" href="{% url 'applicationsAndProjects' %}" >
+                            <a class="nav-link" href="{% url 'Scans' %}" >
                               <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -222,7 +236,7 @@
                             </a>
                         </li>
                         <li class="nav-item ">
-                            <a class="nav-link" href="{% url 'applicationsAndProjects' %}" >
+                            <a class="nav-link" href="{% url 'Plug-Ins' %}" >
                               <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
                                   <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plug" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -350,7 +364,7 @@
         <script src="{% static "libs/jsvectormap/maps/world-merc.js"%}" defer></script>
         <!-- Tabler Core -->
         <script src="{% static "js/tabler.min.js"%}" defer></script>
-        <script src="{% static "js/demo.min.js"%}" defer></script>
+        <script src="{% static "js/tabler-addon.min.js"%}" defer></script>
         <script src="{% static "js/jquery-3.6.4.min.js"%}"></script>
 
         <script>

@@ -3,11 +3,49 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+class Namespace(dict):
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+    
+    def __setattr__(self, __name: str, __value) -> None:
+        self[__name] = __value
 
-class Group(models.Model):
+    def __getattribute__(self, __name: str):
+        if __name in self:
+            return self[__name]
+        
+        return super().__getattribute__(__name)
 
-    name = models.CharField(max_length=256, null=True)
-    """The group's name"""
+
+class Project(models.Model):
+
+    project_uuid = models.CharField(primary_key=True, null=False, max_length=256)
+    """Stores the UUID of this project."""
+
+    name = models.CharField(null=True, max_length=256)
+    """Stores the display name of this application."""
+
+    tags = models.CharField(max_length=4096, null=True)
+    """Stores tags for this project (comma-spearated)"""
+
+    visibility = models.CharField(max_length=32, null=True)
+
+    risk_level = models.CharField(max_length=16, null=True)
+
+    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+
+    inspection_type = models.CharField(max_length=32, default='simple')
+
+    @staticmethod
+    def stats(owner: User) -> Namespace:
+        projects = Project.objects.filter(owner=owner)
+        data = Namespace()
+
+        data.count = len(projects)
+        data.risk_high = len(projects.filter(risk_level='High'))
+        data.risk_medium = len(projects.filter(risk_level='Medium'))
+        return data
 
 
 class File(models.Model):
@@ -28,43 +66,9 @@ class File(models.Model):
     file_size = models.CharField(max_length=50, default='')
     '''The available disk space needed to save the uploaded file'''
 
+    file_path = models.CharField(max_length=2048, null=True)
 
-class Project(models.Model):
-
-    project_uuid = models.CharField(primary_key=True, null=False, max_length=256)
-    """Stores the UUID of this project."""
-
-    name = models.CharField(null=True, max_length=256)
-    """Stores the display name of this application."""
-
-    tags = models.CharField(max_length=4096, null=True)
-    """Stores tags for this project (comma-spearated)"""
-
-    visibility = models.CharField(max_length=32, null=True)
-
-    risk_level = models.CharField(max_length=16, null=True)
-
-    owner = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
-
-
-class ProjectFile(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
-    file = models.ForeignKey(File, on_delete=models.DO_NOTHING)
-
-
-class ProjectGroup(models.Model):
-
-    group = models.ForeignKey(Group, on_delete=models.DO_NOTHING)
-    """Stores the group reference."""
-
-    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
-    """Stores the project reference"""
-
-
-class ProjectScanner(models.Model):
-    
-    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
-    scanner = models.CharField(max_length=256, null=True)
+    project = models.ForeignKey(Project, models.CASCADE)
 
 
 class Scan(models.Model):
@@ -74,9 +78,7 @@ class Scan(models.Model):
 
     origin = models.CharField(null=True, max_length=32)
     """Stores the scan origin of the scan.
-
     The origin can point to the following values:
-
     - Play-Store
     - iOS-App-Store
     - APKPure
@@ -85,14 +87,12 @@ class Scan(models.Model):
 
     source = models.CharField(null=True, max_length=256)
     """Stores the file source.
-
     The source of an uploaded file can be one of the following:
-
     - URL: An URL was given from where the file was downloaded
     - File: Simple file upload
     """
 
-    project = models.ForeignKey(Project, on_delete=models.DO_NOTHING)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     """The project of this scan"""
 
     scan_type = models.CharField(null=True, max_length=50)
@@ -102,7 +102,7 @@ class Scan(models.Model):
     """Stores the start time of this scan"""
 
     end_date = models.DateField(null=True)
-    """Stores the actual duration of the scan"""
+    """Stores the ent datetime of the scan"""
 
     status = models.CharField(null=True, max_length=256)
     """Stores information about the current scan's status"""
@@ -110,33 +110,52 @@ class Scan(models.Model):
     risk_level = models.CharField(null=True, max_length=256)
     """Stores the classification (LOW, MEDIUM, HIGH)"""
 
-    initiator = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    initiator = models.ForeignKey(User, on_delete=models.CASCADE)
     """Stores the user that started the scan"""
 
     is_active = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)
 
 
+class ProjectScanner(models.Model):
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    name = models.CharField(max_length=256, null=False)
+
+
 class FindingTemplate(models.Model):
-    template_id = models.CharField(max_length=50, null=True)
+    template_id = models.CharField(max_length=128, null=True)
     title = models.CharField(max_length=256, blank=True)
-    description = models.CharField(max_length=4096, blank=True)
+    description = models.TextField()
     severity = models.CharField(max_length=256, null=True)
-    format_keys = models.CharField(max_length=4096, null=True)
+    risk = models.TextField()
+    mitigation = models.TextField()
+
+
+class AppPermission(models.Model):
+    permission_uuid = models.UUIDField(primary_key=True)
+    identifier = models.CharField(max_length=256, null=False)
+    name = models.CharField(max_length=256, null=True)
+    protection_level = models.CharField(max_length=256, blank=True)
+    dangerous = models.BooleanField(default=False)
+    group = models.CharField(max_length=256, null=True)
+
+    short_description = models.CharField(max_length=256, blank=True)
+    description = models.TextField(blank=True)
+
+    risk = models.TextField(blank=True)
 
 
 class AbstractBaseFinding(models.Model):
     finding_id = models.CharField(max_length=256, blank=True)
-    scan = models.ForeignKey(Scan, on_delete=models.DO_NOTHING)
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE)
 
     language = models.CharField(null=True, max_length=256)
     """Specifies the programming language this finding was found in (optional)"""
 
     severity = models.CharField(max_length=32)
     """Specifies the severity of this finding.
-
     There are five common severity states:
-
     - ``INFO``: Used on vulnerabilites that can't be exploited or that are
                 just informational
     - ``LOW``: Vulnerabilites that don't have big impact on the application
@@ -157,7 +176,7 @@ class AbstractBaseFinding(models.Model):
 
     scanner = models.CharField(null=True, max_length=256)
 
-    template = models.ForeignKey(FindingTemplate, on_delete=models.DO_NOTHING, null=True)
+    template = models.ForeignKey(FindingTemplate, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         abstract = True
@@ -172,9 +191,7 @@ class Vulnerability(AbstractBaseFinding):
 
     state = models.CharField(null=True, max_length=256)
     """Specifies the state of this vulnerability.
-
     There are five states by default:
-
     - ``To Verify``: Identified vulnerabilites that must be verified
     - `'Not Exploitable``: Identified vulnerabilities that can't be exploited
     - ``Proposed Not Exploitable``: this vulnerability is proposed to be not
@@ -186,44 +203,32 @@ class Vulnerability(AbstractBaseFinding):
     status = models.CharField(null=True, max_length=256)
     """The status of this vulnerability"""
 
+    @staticmethod
+    def stats(initiator: User = None, project: Project = None) -> Namespace:
+        data = Namespace()
+        if initiator:
+            vuln = Vulnerability.objects.filter(scan__initiator=initiator)
+        
+        elif project:
+            vuln = Vulnerability.objects.filter(scan__project=project)
+        
+        else:
+            return data
 
-class AccountData(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    is_private = models.BooleanField(default=True)
-    avatar = models.ForeignKey(File, on_delete=models.CASCADE)
+        data.count = len(vuln)
+        data.critical_vuln = len(vuln.filter(severity='Critical'))
+        data.high_vuln = len(vuln.filter(severity='High'))
+        data.medium_vuln = len(vuln.filter(severity='Medium'))
+        data.low_vuln = len(vuln.filter(severity='Low'))
+
+        data.other_vuln = data.count - (data.critical_vuln + data.high_vuln
+            + data.medium_vuln + data.low_vuln)
+        data.rel_count = data.count if data.count > 0 else 1
+        return data
+
+
+
+
+class Account(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, null=True)
-
-
-class ScanResult(models.Model):
-
-    scan = models.ForeignKey(Scan, models.DO_NOTHING)
-    recurring_results = models.IntegerField(default=0)
-    new_results = models.IntegerField(default=0)
-
-
-class Permission(models.Model):
-    permission_uuid = models.UUIDField(primary_key=True)
-    identifier = models.CharField(max_length=256, null=False)
-    name = models.CharField(max_length=256, null=True)
-    protection_level = models.CharField(max_length=256, blank=True)
-    dangerous = models.BooleanField(default=False)
-    group = models.CharField(max_length=256, null=True)
-
-    short_description = models.CharField(max_length=256, blank=True)
-    description = models.CharField(max_length=4096, blank=True)
-
-    risk = models.CharField(max_length=8192, null=True)
-
-    def plevel_status(self) -> dict:
-        return {'Dangerous': 'red'}
-
-
-class PermissionFinding(AbstractBaseFinding):
-    
-    permission = models.ForeignKey(Permission, models.DO_NOTHING)
-
-
-class Details(models.Model):
-    name = models.CharField(max_length=512, null=True)
-    scan = models.ForeignKey(Scan, models.DO_NOTHING)
-    
