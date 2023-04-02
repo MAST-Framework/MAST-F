@@ -84,7 +84,7 @@
                                             <h3 class="card-title">Managed Projects</h3>
                                         </div>
                                         <div class="card-body">
-                                            <p class="text-muted"><b>{{ project_count }}</b></p>
+                                            <p class="text-muted"><b>{{ count }}</b></p>
                                         </div>
                                     </div>
                                 </div>
@@ -219,62 +219,96 @@
                                                 {% for row in project_table_data %}
                                                 <tr>
                                                     <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
-                                                    {% for name, value in row.items %}
-                                                    {% if name in columns %}
-                                                        <!-- Vulnerability counters will be displayed as text -->
-                                                        {% if name in "HighMediumLow" %}
-                                                        <td class="text-muted">
-                                                            {{ value }}
-                                                        </td>
-                                                        {% elif name == "project_uuid" %}
-                                                        <td>
-                                                            <input type="hidden" value="{{ value }}" id="project-id-row-{{ forloop.parentloop.counter }}">
-                                                            <a href="#" target-id="#project-id-row-{{ forloop.parentloop.counter }}" id="project-id-copy-{{ forloop.parentloop.counter }}"
-                                                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Project-ID">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                                    <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
-                                                                    <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
-                                                                </svg>
-                                                            </a>
-                                                        </td>
+                                                    
+                                                    <td>
+                                                       <!-- The project id can be queried using a jQuery selector
+                                                            that has the following structure:
+                                                                - "project-id-row-" <ROW_NUMBER>
+                                                        --> 
+                                                        <input type="hidden" value="{{ row.project_uuid }}" id="project-id-row-{{ forloop.counter }}">
+                                                        <a href="#" target-id="#project-id-row-{{ forloop.counter }}" 
+                                                            id="project-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip" 
+                                                            data-bs-placement="bottom" title="Copy Project-ID">
 
-                                                        {% elif name == "risk_level" %}
-                                                        <td>
-                                                            {% with value|lower|capfirst as level %}
-                                                            <span class="badge bg-{% if level == 'Critical' %}pink
-                                                                {% elif level == 'High'%}red{% elif level == 'Medium' %}orange
-                                                                {% elif level == 'Low' %}yellow{% else %}secondary{% endif %}-lt">
-                                                                {{ level }}
-                                                            </span>
-                                                            {% endwith %}
-                                                        </td>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                                                                <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                                                            </svg>
+                                                        </a>
+                                                    </td>
 
-                                                        {% elif name in "tags" %}
-                                                        <td class="text-truncate">
-                                                            {% with value|split:"," as names %}{% endwith %}
-                                                            {% for tag in names %}
-                                                            <span class="badge bg-secondary-lt text-truncate">{{ tag }}</span>, 
-                                                            {% endfor %}
-                                                        </td>
+                                                    <!-- Project Name -->
+                                                    <td class="text-muted">
+                                                        <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.counter }}" 
+                                                            id="project-view-link-{{ forloop.counter }}">
+                                                            {{ row.name }}
+                                                        </a>
+                                                    </td>
 
-                                                        {% elif name == "name" %}
-                                                        <td>
-                                                            <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.parentloop.counter }}" 
-                                                                id="project-view-link-{{ forloop.parentloop.counter }}">
-                                                                {{ value }}
-                                                            </a>
-                                                        </td>
-
+                                                    <!-- Last scan origin -->
+                                                    <td class="text-muted">
+                                                        {% if row.scan %}
+                                                        {{ row.scan.origin }}
                                                         {% else %}
-                                                        <td class="text-muted">
-                                                            {{ value }}
-                                                        </td>
-
+                                                        -
                                                         {% endif %}
-                                                    {% endif %}
-                                                    {% endfor %}
-                                                
+                                                    </td>
+
+                                                    <!-- Last scan time -->
+                                                    <td class="text-muted">
+                                                        {% if row.scan %}
+                                                        {{ row.scan.start_date|timesince:today }}
+                                                        {% else %}
+                                                        -
+                                                        {% endif %}
+                                                    </td>
+
+                                                    <!-- tags -->
+                                                    <td class="text-truncate">
+                                                        {# Split can be used when importing mastf_tags #}
+                                                        {% with value|split:"," as names %}
+                                                            {% for tag in names %}
+                                                                {% if tag %}
+                                                        <span class="badge bg-secondary-lt text-truncate">{{ tag }}</span>, 
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endwith %}
+                                                    </td>
+
+                                                    <td><!-- Groups are not implemented yet --></td>
+
+                                                    <!-- Risk level -->
+                                                    <td>
+                                                        {% with value|lower as level %}
+                                                        <span class="badge bg-{% if level == 'critical' %}pink
+                                                            {% elif level == 'high'%}red{% elif level == 'medium' %}orange
+                                                            {% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"
+                                                        >
+                                                            {% if level %}    
+                                                            {{ level|capfirst }}
+                                                            {% else %}
+                                                            Undefined
+                                                            {% endif %}
+                                                        </span>
+                                                        {% endwith %}
+                                                    </td>
+
+                                                    <!-- High -->
+                                                    <td class="text-muted">
+                                                        {{ row.high_vuln }}
+                                                    </td>
+
+                                                    <!-- Medium -->
+                                                    <td class="text-muted">
+                                                        {{ row.medium_vuln }}
+                                                    </td>
+
+                                                    <!-- High -->
+                                                    <td class="text-muted">
+                                                        {{ row.low_vuln }}
+                                                    </td>
+                                                    
                                                     <td>
                                                         <a href="#" class="nav-link px-0 link-secondary" data-bs-toggle="modal" data-bs-target="#modal-scan-table">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -729,20 +763,6 @@
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 
 <script>
-    
-    /*
-    var HandleSubmit = function(event) {
-        event.preventDefault();
-        $.post($(this).attr('action'), $(this).serializeArray(), function(data) {
-            console.log(data);
-        }, 'json');
-        $('.modal').modal('hide');
-        return false;
-    };
-
-    $("#new-project-form").on("submit", HandleSubmit);
-    console.log($("#new-project-form"))
-    */
     
     // <!> DELETE PROJECT <!>
     deleteProject = function(event) {

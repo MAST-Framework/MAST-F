@@ -60,27 +60,27 @@ MAST-F Project | {{ project.name }}
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                             <li class="nav-item">
-                                <a href="{% url 'ProjectOverview' project_id=project.project_uuid %}" class="nav-link {% if active == "tabs-overview" %}active{% endif %}">
+                                <a href="{% url 'Project-Overview' project_uuid=project.project_uuid %}" class="nav-link {% if active == "tabs-overview" %}active{% endif %}">
                                     Overview
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'ProjectScanHistory' project_id=project.project_uuid %}" class="nav-link {% if active == "tabs-scan-history" %}active{% endif %}">
+                                <a href="{% url 'Project-Scan-History' project_uuid=project.project_uuid %}" class="nav-link {% if active == "tabs-scan-history" %}active{% endif %}">
                                     Scan History
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'ProjectScanners' project_id=project.project_uuid  %}" class="nav-link {% if active == "tabs-scanners" %}active{% endif %}">
+                                <a href="{% url 'Project-Scanners' project_uuid=project.project_uuid  %}" class="nav-link {% if active == "tabs-scanners" %}active{% endif %}">
                                     Scanners
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'ProjectPackages' project_id=project.project_uuid  %}" class="nav-link {% if active == "tabs-packages" %}active{% endif %}">
+                                <a href="{% url 'Project-Packages' project_uuid=project.project_uuid  %}" class="nav-link {% if active == "tabs-packages" %}active{% endif %}">
                                     Packages
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{% url 'ProjectSettings' project_id=project.project_uuid  %}" class="nav-link {% if active == "tabs-settings" %}active{% endif %}">
+                                <a href="{% url 'Project-Settings' project_uuid=project.project_uuid  %}" class="nav-link {% if active == "tabs-settings" %}active{% endif %}">
                                     Settings
                                 </a>
                             </li>
@@ -253,7 +253,7 @@ MAST-F Project | {{ project.name }}
                                                              </svg>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
-                                                            <a class="dropdown-item" href="{% url 'ProjectOverview' %}" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}">
+                                                            <a class="dropdown-item" href="{% url 'Project-Overview' %}" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}">
                                                                 <span class="dropdown-item-icon text-red">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -339,7 +339,7 @@ MAST-F Project | {{ project.name }}
                                                                     </svg>
                                                                 Show Progress
                                                             </a>
-                                                            <a href="{% url 'ScannerResults' project_id=project.project_uuid name=scanner_name|lower %}" 
+                                                            <a href="{% url 'Scan-Results' project_uuid=project.project_uuid name=scanner_name|lower extension="details" %}" 
                                                                 class="btn btn-primary d-none d-sm-inline-block">
                                                                 View Results
                                                               </a>
@@ -458,12 +458,12 @@ MAST-F Project | {{ project.name }}
         <!-- Scan Dialog:
             
         -->
-        <form id="new-scan-form" method="POST" action="{% url 'NewScan' %}"
+        <form id="new-scan-form" method="POST" action="/api/v1/scan/create"
             enctype="multipart/form-data">
             <div class="modal-body">
             
                 {% csrf_token %}
-                <input type="hidden" name="project_id" value="{{ project.project_uuid }}">
+                <input type="hidden" name="project_uuid" value="{{ project.project_uuid }}">
 
                 <label class="form-label required">
                     Scanners

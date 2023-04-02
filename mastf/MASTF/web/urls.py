@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from mastf.MASTF.web import views
 
@@ -23,5 +23,16 @@ urlpatterns = [
     # uses POST to perform an action.
     path(r"web/login", views.LoginView.as_view(), name='User-Login'),
     path(r"web/register", views.RegstrationView.as_view(), name='User-Registration'),
+    
+    
+    path(r"web/projects/<uuid:project_uuid>/", include([
+        path(r"overview", views.UserProjectView.as_view(), name='Project-Overview'),
+        path(r"scan-history", views.UserProjectView.as_view(), name='Project-Scan-History'),
+        path(r"scanners", views.UserProjectView.as_view(), name='Project-Scanners'),
+        path(r"packages", views.UserProjectView.as_view(), name='Project-Packages'),
+        path(r"settings", views.UserProjectView.as_view(), name='Project-Settings'),
+        path(r"results/<str:name>/<str:extension>", views.UserProjectView.as_view(), name='Scan-Results')
+    ])),
+    
     
 ]

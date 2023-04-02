@@ -52,6 +52,9 @@ class ProjectCreationView(CreationAPIViewBase):
     def on_create(self, request: Request, instance: Project) -> None:
         path = settings.PROJECTS_ROOT / str(instance.project_uuid)
         path.mkdir()
+        
+    def set_defaults(self, request: Request, data: dict) -> None:
+        data['owner'] = request.user
 
 
 class ProjectListView(ListAPIViewBase):
