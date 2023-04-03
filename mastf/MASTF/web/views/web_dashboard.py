@@ -53,7 +53,6 @@ class ProjectsView(VulnContextMixin, ContextMixinBase):
             project_table_data.append(self._get_project_context(project))
         
         context['project_table_data'] = project_table_data
-        print(context)
         return context
 
     def _get_project_context(self, project: Project) -> Namespace:

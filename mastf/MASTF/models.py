@@ -68,7 +68,6 @@ class File(models.Model):
 
     file_path = models.CharField(max_length=2048, null=True)
 
-    project = models.ForeignKey(Project, models.CASCADE)
 
 
 class Scan(models.Model):
@@ -91,6 +90,9 @@ class Scan(models.Model):
     - URL: An URL was given from where the file was downloaded
     - File: Simple file upload
     """
+    
+    file = models.ForeignKey(File, on_delete=models.CASCADE, null=True)
+    
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     """The project of this scan"""
@@ -115,6 +117,16 @@ class Scan(models.Model):
 
     is_active = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)
+
+    @staticmethod
+    def last_scan(project: Project = None, initiator: User = None):
+        scans = []
+        if project:
+            scans = Scan.objects.filter(project=project).order_by('start_date')
+        elif initiator:
+            scans = Scan.objects.filter(initiator=initiator).order_by('start_date')
+        
+        return scans[0] if len(scans) > 0 else None
 
 
 class ProjectScanner(models.Model):
@@ -174,7 +186,7 @@ class AbstractBaseFinding(models.Model):
     discovery_date = models.DateField(null=True)
     """Stores the date this vulnerability was detected."""
 
-    scanner = models.CharField(null=True, max_length=256)
+    scanner = models.ForeignKey(ProjectScanner, on_delete=models.SET_NULL, null=True)
 
     template = models.ForeignKey(FindingTemplate, on_delete=models.SET_NULL, null=True)
 
@@ -185,6 +197,32 @@ class AbstractBaseFinding(models.Model):
 class Finding(AbstractBaseFinding):
 
     is_custom = models.BooleanField(default=False)
+    
+    def stats(initiator: User = None, project: Project = None,
+              scan: Scan = None) -> Namespace:
+        data = Namespace()
+        if initiator:
+            finding = Finding.objects.filter(scan__initiator=initiator)
+        
+        elif project:
+            finding = Finding.objects.filter(scan__project=project)
+        
+        elif scan:
+            finding = Finding.objects.filter(scan=scan)
+        
+        else:
+            return data
+
+        data.count = len(finding)
+        data.critical_finding = len(finding.filter(severity='Critical'))
+        data.high_finding = len(finding.filter(severity='High'))
+        data.medium_finding = len(finding.filter(severity='Medium'))
+        data.low_finding = len(finding.filter(severity='Low'))
+
+        data.other_finding = data.count - (data.critical_finding + data.high_finding
+            + data.medium_finding + data.low_finding)
+        data.rel_count = data.count if data.count > 0 else 1
+        return data
 
 
 class Vulnerability(AbstractBaseFinding):
@@ -204,13 +242,17 @@ class Vulnerability(AbstractBaseFinding):
     """The status of this vulnerability"""
 
     @staticmethod
-    def stats(initiator: User = None, project: Project = None) -> Namespace:
+    def stats(initiator: User = None, project: Project = None,
+              scan: Scan = None) -> Namespace:
         data = Namespace()
         if initiator:
             vuln = Vulnerability.objects.filter(scan__initiator=initiator)
         
         elif project:
             vuln = Vulnerability.objects.filter(scan__project=project)
+        
+        elif scan:
+            vuln = Vulnerability.objects.filter(scan=scan)
         
         else:
             return data
@@ -227,8 +269,23 @@ class Vulnerability(AbstractBaseFinding):
         return data
 
 
-
-
 class Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, null=True)
+    
+
+class ScanTask(models.Model):
+    scan = models.ForeignKey(Scan, models.CASCADE)
+    scanner = models.ForeignKey(ProjectScanner, models.SET_NULL, null=True)
+    
+    celery_id = models.CharField(max_length=256, null=True)
+    active = models.BooleanField(default=True)
+    
+    def active_tasks(scan: Scan = None, project: Project = None) -> list:
+        if scan:
+            return ScanTask.objects.filter(active=True, scan=scan)
+        
+        if project:
+            return ScanTask.objects.filter(active=True, scan__project=project)
+        
+        return []

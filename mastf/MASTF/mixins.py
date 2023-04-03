@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.http import HttpRequest
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -53,6 +54,6 @@ class VulnContextMixin:
 class UserProjectMixin:
     
     def apply_project_context(self, context: dict, project_uuid) -> None:
-        context['project'] = Project.objects.filter(project_uuid=project_uuid).first()
+        context['project'] = get_object_or_404(Project.objects.all(), project_uuid=project_uuid)
         context['scanners'] = ScannerPlugin.all()
     

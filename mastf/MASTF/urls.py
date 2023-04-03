@@ -22,7 +22,7 @@ register_converter(converters.VulnerabilityIDConverter, 'svid')
 register_converter(converters.FindingIDConverter, 'sfid')
 
 urlpatterns = [
-    path('', include('mastf.MASTF.rest.urls')),
+    path('api/v1/', include('mastf.MASTF.rest.urls')),
 ]
 
 if settings.DEBUG:
@@ -32,5 +32,5 @@ if settings.DEBUG:
 
 if not settings.API_ONLY:
     urlpatterns.extend([
-        path("", include('mastf.MASTF.web.urls'))
+        path("web/", include('mastf.MASTF.web.urls'))
     ])

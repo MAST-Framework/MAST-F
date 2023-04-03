@@ -15,30 +15,10 @@ from rest_framework import (
 
 logger = logging.getLogger(__name__)
 
-class APIViewBase(APIView):
-    """Base class for default implementations of an APIView.
-
-    This class implements the behaviour for retrieving, updating
-    and removing database model related information. Therefore,
-    the following HTTP-methods are implemented:
-
-        - ``GET``: Retrieving instances
-        - ``DELETE``: Removing an instance
-        - ``PATCH``: Updating single columns
-    """
-
-    authentication_classes = [
-        authentication.BasicAuthentication,
-        authentication.SessionAuthentication,
-        authentication.TokenAuthentication
-    ]
-
+class GetObjectMixin:
     model = None
     """The model used to retrieve instances."""
-
-    serializer_class = None
-    """The serializer used to parse, validate and update data"""
-
+    
     lookup_field: str = 'pk'
     """The field that should be used within object lookup"""
 
@@ -66,6 +46,29 @@ class APIViewBase(APIView):
         self.check_object_permissions(self.request, instance)
         return instance
 
+
+class APIViewBase(GetObjectMixin, APIView):
+    """Base class for default implementations of an APIView.
+
+    This class implements the behaviour for retrieving, updating
+    and removing database model related information. Therefore,
+    the following HTTP-methods are implemented:
+
+        - ``GET``: Retrieving instances
+        - ``DELETE``: Removing an instance
+        - ``PATCH``: Updating single columns
+    """
+
+    authentication_classes = [
+        authentication.BasicAuthentication,
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication
+    ]
+
+    serializer_class = None
+    """The serializer used to parse, validate and update data"""
+
+    
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Returns information about a single object
 

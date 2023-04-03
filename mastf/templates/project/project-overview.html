@@ -14,37 +14,58 @@ MAST-F Project | {{ project.name }}
 <div class="page-header">
 <div class="container-xl">
     <div class="row align-items-center">
-      <div class="col">
-        <div class="page-pretitle">
-          Project &lt; {{ project.project_uuid }} &gt;  |  
-          <span class="badge {% if not scan.risk_level %}bg-secondary-lt \
-                {% elif scan.risk_level|lower == "high" %}bg-red-lt \
-                {% elif scan.risk_level|lower == "medium"%}bg-orange-lt\
-                {% elif scan.risk_level|lower == "low" %}bg-yellow-lt
-                {% else %}bg-secondary-lt{% endif %}">
-            {{ project.risk_level }}
-            </span>
-        </div>
-        <h2 class="page-title">
-          {{ project.name }} 
-        </h2>
-        
-      </div>
-      <div class="col-auto ms-auto">
-        <div class="btn-list">
-          <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-new-scan">
-            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
-                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
-                <path d="M12 12v9"></path>
-             </svg>
-            Scan
-          </a>
-        </div>
-      </div>
+        <div class="row align-items-center">
+            <div class="col-auto">
+              <span class="status-indicator status-{% if not data.scan.risk_level %}secondary \
+                  {% elif data.scan.risk_level|lower == "high" %}red \
+                  {% elif data.scan.risk_level|lower == "medium"%}orange\
+                  {% elif data.scan.risk_level|lower == "low" %}yellow
+                  {% else %}green{% endif %} status-indicator-animated">
+                  <span class="status-indicator-circle"></span>
+                  <span class="status-indicator-circle"></span>
+                  <span class="status-indicator-circle"></span>
+                </span>
+            </div>
+            <div class="col">
+              <h2 class="page-title">
+                  {{ project.name }} 
+                </h2>
+                <div class="text-muted">
+                  <ul class="list-inline list-inline-dots mb-0" >
+                      <li class="list-inline-item">
+                          Project
+                      </li>
+                      <li class="list-inline-item">
+                          {{ project.project_uuid }} 
+                      </li>
+                      <li class="list-inline-item">
+                          <span class="badge {% if not data.scan.risk_level %}bg-secondary-lt \
+                              {% elif data.scan.risk_level|lower == "high" %}bg-red-lt \
+                              {% elif data.scan.risk_level|lower == "medium"%}bg-orange-lt\
+                              {% elif data.scan.risk_level|lower == "low" %}bg-yellow-lt
+                              {% else %}bg-secondary-lt{% endif %}">
+                          {{ project.risk_level }}
+                          </span>
+                      </li>
+                  </ul>
+                </div>
+            </div>
+            <div class="col-auto ms-auto">
+              <div class="btn-list">
+                <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-new-scan">
+                  <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                      <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                      <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
+                      <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
+                      <path d="M12 12v9"></path>
+                   </svg>
+                  Scan
+                </a>
+              </div>
+            </div>
+          </div>
     </div>
   </div>  
 </div>
@@ -91,7 +112,139 @@ MAST-F Project | {{ project.name }}
                         <!-- Note that each tab content will be loaded on the right URL-->
                         <div class="tab-pane {% if active == "tabs-overview" %}active show{% endif %}" id="tabs-overview">
                             {% if active == "tabs-overview" %}
-                            
+                            <div class="row row-cards">
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="subheader">total identified risks</div>
+                                            <div class="h2">
+                                                {% if vuln_count %}
+                                                {{ vuln_count }}
+                                                {% else %}
+                                                None
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="subheader">Last scan</div>
+                                            {% if data.is_active %}
+                                            <div class="h2 text-muted">
+                                                <span class="badge bg-green-lt">
+                                                    Active
+                                                </span>
+                                            </div>
+                                            {% else %}
+                                            <div class="h2">
+                                                {% if scan %}
+                                                {{ data.scan.start_date|timesince:today }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="subheader">Verified vulnerabilities</div>
+                                            <div class="h2">
+                                                {% if verified %}
+                                                {{ verified }}
+                                                {% else %}
+                                                None
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row row-cards">
+                                {% if is_active %}
+                                <div class="hr-text mb-3">Progress</div>
+
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="subheader mb-2">Process overview</div>
+                                            <div class="list-group">
+                                                {% for process in active_data %}
+                                                <div class="list-group-item">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <div class="status-indicator status-{% if process.state == 'FAILURE' %}red{%else%}green{% endif %} 
+                                                                {% if not process.status.complete %} status-indicator-animated {%endif %}"
+                                                                id="process-indicator-{{ process.id }}">
+                                                                <div class="status-indicator-circle"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="progressbg">
+                                                                <div class="progress progressbg-progress">
+                                                                    <div class="progress-bar bg-primary-lt" style="width: {{ process.status.total }}%;"
+                                                                        role="progressbar" aria-valuenow="{{ process.status.total }}" aria-valuemax="100"
+                                                                        aria-valuemin="0" aria-label="{{ process.status.percent }}% Complete"
+                                                                        id="process-pgb-{{ process.id }}">
+                
+                                                                        <div class="visually-hidden">{{ process.status.percent }}% Complete</div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="progressbg-text"  id="process-pgb-text-{{ process.id }}">
+                                                                    {% if process.status.detail %}
+                                                                    {{ process.status.detail }}
+                                                                    {% else %}
+                                                                    {{ process.status.percent }}% of 100% completed
+                                                                    {% endif %}
+                                                                    </div>
+                                                                <div class="progressbg-value"  id="process-pgb-value-{{ process.id }}">
+                                                                    {{ process.status.percent }}%
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% endif %}
+                                <div class="hr-text mb-2">Overview</div>
+
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h3 class="card-title">Findings timeline</h3>
+                                            <div class="text-muted mb-1" id="no-timeline-data">
+                                                No timeline data available
+                                            </div>
+                                            <div id="chart-finding-timeline"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h3 class="card-title">Findings by Type</h3>
+                                            <div class="text-muted mb-1" id="no-finding-data">
+                                                No scan findings available
+                                            </div>
+                                            <div id="chart-finding-by-type"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {% endif %}
                         </div>
 
@@ -169,11 +322,11 @@ MAST-F Project | {{ project.name }}
                                                 first and last three columns of each row will be the same for all.
                                             -->
                                             <tbody>
-                                                {% for scan in scan_data %}
+                                                {% for data in scan_data %}
                                                 <tr>
                                                     <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
                                                     <td>
-                                                        <input type="hidden" value="{{ scan.scan_uuid }}" id="scan-id-row-{{ forloop.counter }}">
+                                                        <input type="hidden" value="{{ data.scan.scan_uuid }}" id="scan-id-row-{{ forloop.counter }}">
                                                         <a href="#" target-id="#scan-id-row-{{ forloop.counter }}" id="scan-id-copy-{{ forloop.counter }}"
                                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Scan-ID">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -183,17 +336,17 @@ MAST-F Project | {{ project.name }}
                                                             </svg>
                                                         </a>
                                                     </td>
-                                                    <td class="text-muted">{{ scan.source }}</td>
-                                                    <td class="text-muted">{{ scan.scan_type }}</td>
+                                                    <td class="text-muted">{{ data.scan.source }}</td>
+                                                    <td class="text-muted">{{ data.scan.scan_type }}</td>
                                                     <td class="text-muted">
-                                                        {% if scan.origin == "Play-Store" %}
+                                                        {% if data.scan.origin == "Play-Store" %}
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google-play" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                             <path d="M4 3.71v16.58a.7 .7 0 0 0 1.05 .606l14.622 -8.42a.55 .55 0 0 0 0 -.953l-14.622 -8.419a.7 .7 0 0 0 -1.05 .607z"></path>
                                                             <path d="M15 9l-10.5 11.5"></path>
                                                             <path d="M4.5 3.5l10.5 11.5"></path>
                                                          </svg>
-                                                        {% elif scan.origin == "App-Store" %}
+                                                        {% elif data.scan.origin == "App-Store" %}
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-appstore" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                             <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
@@ -201,31 +354,41 @@ MAST-F Project | {{ project.name }}
                                                             <path d="M7 14h5m2.9 0h2.1"></path>
                                                             <path d="M16 16l-2.51 -4.518m-1.487 -2.677l-1 -1.805"></path>
                                                          </svg>
-                                                        {% elif scan.origin == "" %}
+                                                        {% elif data.scan.origin == "" %}
                                                         {% endif %}
 
-                                                        {{ scan.origin }}
+                                                        {{ data.scan.origin }}
                                                     </td>
-                                                    <td class="text-muted">{{ scan.start_date }}</td>
+                                                    <td class="text-muted">{{ data.scan.start_date }}</td>
                                                     <td>
-                                                        <span class="badge {% if not scan.risk_level %}bg-secondary-lt \
-                                                            {% elif scan.risk_level|lower == "high" %}bg-red-lt \
-                                                            {% elif scan.risk_level|lower == "medium"%}bg-orange-lt\
-                                                            {% elif scan.risk_level|lower == "low" %}bg-yellow-lt
-                                                            {% else %}bg-secondary-lt{% endif %}">{{ scan.risk_level }}</span>
+                                                        <span class="badge {% if not data.scan.risk_level %}bg-secondary-lt \
+                                                            {% elif data.scan.risk_level|lower == "high" %}bg-red-lt \
+                                                            {% elif data.scan.risk_level|lower == "medium"%}bg-orange-lt\
+                                                            {% elif data.scan.risk_level|lower == "low" %}bg-yellow-lt
+                                                            {% else %}bg-secondary-lt{% endif %}">
+
+                                                            {% if data.scan.risk_level %}
+                                                            {{ data.scan.risk_level }}
+                                                            {% else %}
+                                                            Undefined
+                                                            {% endif %}
+                                                        </span>
                                                     </td>
                                                     <td class="text-muted">
-                                                        {{ scan.high_risks }}
+                                                        {{ data.high_risks }}
                                                     </td>
                                                     <td class="text-muted">
-                                                        {{ scan.medium_risks }}
+                                                        {{ data.medium_risks }}
                                                     </td>
                                                     <td class="text-muted">
-                                                        {{ scan.low_risks }}
+                                                        {{ data.low_risks }}
                                                     </td>
                                                     <td>
-                                                        <span class="badge {% if scan.status == "completed" %}bg-green-lt{% elif scan.status == "prepared" %}bg-azure-lt{% else %}bg-secondary-lt{% endif %}">
-                                                            {{ scan.status }}
+                                                        <span class="badge {% if data.scan.status|lower == "completed" %}bg-green-lt
+                                                            {% elif data.scan.status|lower == "prepared" %}bg-azure-lt{% else %}
+                                                            bg-secondary-lt{% endif %}"
+                                                        >
+                                                            {{ data.scan.status }}
                                                         </span>
                                                     </td>
                                                     
@@ -517,7 +680,7 @@ MAST-F Project | {{ project.name }}
                                 </span>
                             </label>
                             
-                            <input type="text" class="form-control" value="" name="file-url" placeholder="https://...">
+                            <input type="text" class="form-control" value="" name="file_url" placeholder="https://...">
                         </div>
                         <div class="mb-3 visually-hidden" id="div-input-file">
                             <label class="form-label required">Upload File</label>
@@ -538,7 +701,7 @@ MAST-F Project | {{ project.name }}
                           <label class="form-label required">App Type</label>
                           <div class="form-selectgroup">
                             <label class="form-selectgroup-item">
-                                <input type="radio" name="app_type" value="Android" class="form-selectgroup-input" checked>
+                                <input type="radio" name="scan_type" value="Android" class="form-selectgroup-input" checked>
                                 <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-android" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -554,7 +717,7 @@ MAST-F Project | {{ project.name }}
                                 </span>
                             </label>
                             <label class="form-selectgroup-item">
-                              <input type="radio" name="app_type" value="iOS" class="form-selectgroup-input">
+                              <input type="radio" name="scan_type" value="iOS" class="form-selectgroup-input">
                               <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-apple" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -563,31 +726,6 @@ MAST-F Project | {{ project.name }}
                                 </svg>
                                 iOS
                             </span>
-                            </label>
-                            <label class="form-selectgroup-item">
-                                <input type="radio" name="app_type" value="iOS" class="form-selectgroup-input">
-                                <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-windows" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M17.8 20l-12 -1.5c-1 -.1 -1.8 -.9 -1.8 -1.9v-9.2c0 -1 .8 -1.8 1.8 -1.9l12 -1.5c1.2 -.1 2.2 .8 2.2 1.9v12.1c0 1.2 -1.1 2.1 -2.2 1.9z"></path>
-                                        <path d="M12 5l0 14"></path>
-                                        <path d="M4 12l16 0"></path>
-                                     </svg>
-                                  Windows App
-                              </span>
-                            </label>
-                              <label class="form-selectgroup-item">
-                                <input type="radio" name="app_type" value="ELF" class="form-selectgroup-input">
-                                <span class="form-selectgroup-label"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-binary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M11 10v-5h-1m8 14v-5h-1"></path>
-                                        <path d="M15 5m0 .5a.5 .5 0 0 1 .5 -.5h2a.5 .5 0 0 1 .5 .5v4a.5 .5 0 0 1 -.5 .5h-2a.5 .5 0 0 1 -.5 -.5z"></path>
-                                        <path d="M10 14m0 .5a.5 .5 0 0 1 .5 -.5h2a.5 .5 0 0 1 .5 .5v4a.5 .5 0 0 1 -.5 .5h-2a.5 .5 0 0 1 -.5 -.5z"></path>
-                                        <path d="M6 10h.01m-.01 9h.01"></path>
-                                     </svg>
-                                  ELF
-                              </span>
                             </label>
                           </div>
                         </div>
@@ -599,7 +737,10 @@ MAST-F Project | {{ project.name }}
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <input type="submit" class="btn btn-primary" value="Start Scan" id="scan-submit">
+                <a href="#" class="btn btn-primary" data-bs-dismiss="modal"
+                    id="scan-submit">
+                    Start scan
+                </a>
             </div>
         </form>
       </div>
@@ -619,6 +760,8 @@ MAST-F Project | {{ project.name }}
         $('.popover-dismiss').popover({
             trigger: 'focus'
         });
+
+        $('#scan-submit').on('click', submitScanForm);
 
         /**
          * Make the table a 'datatable' with search bar, configurable row count and 
@@ -640,8 +783,222 @@ MAST-F Project | {{ project.name }}
         console.log(element);
     };
 
-</script>
+    submitScanForm = function(event) {
+        event.preventDefault();
+        console.log('Starting scan!');
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/scan/create',
+            data: $("#new-scan-form").serialize(),
+            success: function(data) {
+                location.reload();
+            }
+        });
+        return true;
+    };
 
+</script>
+{% if active == "tabs-overview" %}
+<script>
+    createTimeline = function(data) {
+        dates = [];
+        vuln_data = [];
+        finding_data = [];
+
+        for (key in data) {
+            dates.push(key);
+
+            values = data[key];
+            vuln_data.push(values.vuln_count);
+            finding_data.push(values.finding_count);
+        }
+
+        if (dates.length > 0) {
+            document.getElementById('no-timeline-data').remove();
+        }
+
+        timeline = new ApexCharts(document.getElementById('chart-finding-timeline'), {
+            chart: {
+                type: "area",
+                fontFamily: 'inherit',
+                height: 240,
+                parentHeightOffset: 0,
+                toolbar: {
+                    show: true,
+                },
+                animations: {
+                    enabled: false
+                },
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            fill: {
+                opacity: .16,
+                type: 'solid'
+            },
+            stroke: {
+                width: 2,
+                lineCap: "round",
+                curve: "smooth",
+            },
+            series: [{
+                name: 'Vulnerabilities',
+                data: vuln_data
+            }, {
+                name: 'Findings',
+                data: finding_data
+            }],
+            tooltip: {
+                theme: 'dark'
+            },
+            grid: {
+                padding: {
+                    top: -20,
+                    right: 0,
+                    left: -4,
+                    bottom: -4
+                },
+                strokeDashArray: 4,
+            },
+            xaxis: {
+                labels: {
+                    padding: 0,
+                },
+                tooltip: {
+                    enabled: false
+                },
+                axisBorder: {
+                    show: false,
+                },
+                type: 'datetime',
+            },
+            yaxis: {
+                labels: {
+                    padding: 4
+                },
+            },
+            labels: [
+                dates
+            ],
+            colors: [tabler.getColor("primary"), tabler.getColor("purple")],
+            legend: {
+                show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                    width: 10,
+                    height: 10,
+                    radius: 100
+                },
+                itemMargin: {
+                    horizontal: 8,
+                    vertical: 8
+                }
+            },
+        })
+        timeline.render();
+    };
+
+    createPie = function(data) {
+        colors = [];
+        series = [];
+        labels = [];
+        index = 0.0;
+
+        for (key in data) {
+            labels.push(key);
+            series.push(data[key]);
+
+            var x = 1.0 - i;
+            if (x > 0.4) {
+                colors.push(tabler.getColor("primary", x));    
+            }
+            else {
+                colors.push(tabler.getColor("secondary", 1.0 - x));
+            }
+            i -= 0.2
+        }
+
+        if (labels.length > 0) {
+            document.getElementById('no-finding-data').remove();
+        }
+
+        pie = new ApexCharts(document.getElementById('chart-finding-by-type'), {
+            chart: {
+                type: "donut",
+                fontFamily: 'inherit',
+                height: 240,
+                parentHeightOffset: 0,
+                sparkline: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: false
+                },
+            },
+            fill: {
+                opacity: 1,
+            },
+            series: series,
+            labels: labels,
+            tooltip: {
+                theme: 'dark'
+            },
+            grid: {
+                strokeDashArray: 4,
+            },
+            colors: colors,
+            legend: {
+                show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                    width: 10,
+                    height: 10,
+                    radius: 120,
+                },
+                itemMargin: {
+                    horizontal: 8,
+                    vertical: 8
+                },
+            },
+            tooltip: {
+                fillSeriesColor: false
+            },
+        });
+    
+        pie.render();
+    };
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // fetch data from API and create a timeline chart
+        $.ajax({
+            url: "/api/v1/project/{{ project.project_uuid }}/chart/timeline",
+            method: 'GET',
+            success: function(data) {
+                createTimeline(data);
+            }
+        });
+
+        $.ajax({
+            url: "/api/v1/project/{{ project.project_uuid }}/chart/pie",
+            method: 'GET',
+            success: function(data) {
+                createPie(data);
+            }
+        });
+
+        {% for task in active_data %}
+        ScanTaskProgressBar.create("/api/v1/scan/task/{{task.id}}", {
+            task_id: task.id
+        });
+        {% endfor %}
+
+    });
+</script>
+{% endif %}
 
 {% endblock js_extended %}
 

@@ -1,21 +1,34 @@
-from uuid import uuid4
+from uuid import UUID
 from shutil import rmtree
 
 from django.db.models import Q, QuerySet
 
-from rest_framework import permissions
+from rest_framework import permissions, views, authentication, status
 from rest_framework.request import Request
+from rest_framework.response import Response
 
 from mastf.MASTF import settings
 from mastf.MASTF.rest.permissions import IsOwnerOrPublic
 from mastf.MASTF.serializers import ProjectSerializer
-from mastf.MASTF.models import Project
+from mastf.MASTF.models import (
+    Project, 
+    Scan, 
+    Finding, 
+    Vulnerability,
+    ProjectScanner
+)
 from mastf.MASTF.forms import ProjectCreationForm
 
-from .base import ListAPIViewBase, APIViewBase, CreationAPIViewBase
+from .base import (
+    ListAPIViewBase, 
+    APIViewBase, 
+    CreationAPIViewBase, 
+    GetObjectMixin
+)
 
 __all__ = [
-    'ProjectView', 'ProjectCreationView', 'ProjectListView'
+    'ProjectView', 'ProjectCreationView', 'ProjectListView',
+    'ProjectChartView'
 ]
 
 class ProjectView(APIViewBase):
@@ -73,3 +86,49 @@ class ProjectListView(ListAPIViewBase):
         return queryset.filter(
             Q(owner=self.request.user) | Q(visibility='public')
         )
+
+
+class ProjectChartView(GetObjectMixin, views.APIView):
+    authentication_classes = [
+        authentication.BasicAuthentication,
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication
+    ]
+    
+    permission_classes = [permissions.IsAuthenticated & IsOwnerOrPublic]
+    
+    model = Project
+    lookup_field = 'project_uuid'
+    
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        """Generates a timeline for all vulnerabilities and findings of a project.
+
+        :param request: the HttpRequest
+        :type request: Request
+        :return: a timeline in JSON format
+        :rtype: Response
+        """
+        project = self.get_object()
+        name = self.kwargs['name']
+        if not hasattr(self, f"chart_{name}"):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        func = getattr(self, f"chart_{name}")
+        data = func(project)
+        return Response(data)
+    
+    def chart_timeline(self, project: Project) -> dict:
+        data = {}
+        for scan in Scan.objects.filter(project=project):
+            data[str(scan.start_date)] = {
+                'vuln_count': len(Vulnerability.objects.filter(scan=scan)),
+                'finding_count': len(Finding.objects.filter(scan=scan))
+            }
+        return data
+    
+    def chart_pie(self, project: Project) -> dict:
+        data = {}
+        for scanner in ProjectScanner.objects.filter(project=project):
+            data[scanner.name] = len(Finding.objects.filter(scan__project=project, scanner=scanner))
+
+        return data

@@ -63,14 +63,18 @@ class ScannerPlugin(metaclass=ABCMeta):
         :rtype: dict
         """
         
-        func_name = f"ext_{extension}"
+        func_name = f"ctx_{extension}"
         if hasattr(self, func_name):
             return getattr(self, func_name)(project)
         
         return {}
 
     def results(self, extension: str, scan: Scan) -> dict:
-        pass
+        func_name = f"res_{extension}"
+        if hasattr(self, func_name):
+            return getattr(self, func_name)(scan)
+        
+        return {}
 
     @staticmethod
     def all() -> dict:
