@@ -13,7 +13,7 @@ from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
 # display the web frontend
 
 __all__ = [
-    'DashboardView', 'ProjectsView'
+    'DashboardView', 'ProjectsView', 'LicenseView'
 ]
 
 class DashboardView(ContextMixinBase):
@@ -66,6 +66,7 @@ class ProjectsView(VulnContextMixin, ContextMixinBase):
         return data
 
 
-
+class LicenseView(ContextMixinBase):
+    template_name = 'license.html'
 
 

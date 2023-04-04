@@ -26,12 +26,13 @@ The directory structure of a simple project can be summarized to the following:
 projects/
     <uuid:project_uuid>/
         uploadedFile.[apk|ipa]
-        src/
-            [ java/ ]
-            [ smali/ ]
-            [ swift/ ]
-            [ assembler/ ]
-        contents/
-            # initial ZIP-File data
+        <md5:file_md5>/
+            src/
+                [ java/ ]
+                [ smali/ ]
+                [ swift/ ]
+                [ assembler/ ]
+            contents/
+                # initial ZIP-File data
 ```
     

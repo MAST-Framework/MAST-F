@@ -17,6 +17,7 @@ class Extension(Enum):
     EXT_PERMISSIONS = 'permissions'
     EXT_DETAILS = 'details'
     EXT_HOSTS = 'hosts'
+    EXT_FINDINGS = 'findings'
 
     def __str__(self) -> str:
         return self.value
@@ -35,7 +36,7 @@ class Extension(Enum):
 class ScannerPlugin(metaclass=ABCMeta):
 
     name: str = None
-    """The name of this scanner type"""
+    """The name (slug) of this scanner type (should contain no whitespace characters)"""
 
     help: str = None
     """The help that will be displayed on the WebUI"""
@@ -87,7 +88,22 @@ class ScannerPlugin(metaclass=ABCMeta):
             return result
         
         for key, value in __scanners__.items():
-            if ProjectScanner.objects.filter(scanner=key, project=project).exists():
+            if ProjectScanner.objects.filter(name=key, project=project).exists():
                 result[key] = value
         return result
 
+
+@Plugin
+class TestScanner(ScannerPlugin):
+    extensions = [
+        Extension.EXT_DETAILS,
+        
+        Extension.EXT_PERMISSIONS,
+        Extension.EXT_HOSTS,
+        Extension.EXT_VULNERABILITIES,
+        Extension.EXT_FINDINGS
+    ]
+    
+    name = "Test"
+    help = "Basic testing"
+    title = "Test Scanner Plugin" 

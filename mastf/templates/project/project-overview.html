@@ -16,11 +16,16 @@ MAST-F Project | {{ project.name }}
     <div class="row align-items-center">
         <div class="row align-items-center">
             <div class="col-auto">
-              <span class="status-indicator status-{% if not data.scan.risk_level %}secondary \
-                  {% elif data.scan.risk_level|lower == "high" %}red \
-                  {% elif data.scan.risk_level|lower == "medium"%}orange\
-                  {% elif data.scan.risk_level|lower == "low" %}yellow
-                  {% else %}green{% endif %} status-indicator-animated">
+              <span class="status-indicator
+              {% if not data.scan.risk_level %}status-secondary
+                    {% else %}
+                        {% if data.scan.risk_level|lower == "high" %}status-red
+                        {% elif data.scan.risk_level|lower == "medium"%}status-orange
+                        {% elif data.scan.risk_level|lower == "low" %}status-yellow
+                        {% else %}status-green
+                        {% endif %} 
+                    status-indicator-animated
+                    {% endif %}">
                   <span class="status-indicator-circle"></span>
                   <span class="status-indicator-circle"></span>
                   <span class="status-indicator-circle"></span>

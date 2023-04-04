@@ -66,7 +66,10 @@ class ScanCreationView(CreationAPIViewBase):
         data['project'] = project
         data['initiator'] = request.user
         data['risk_level'] = 'None'
-        data['status'] = 'Pending'
+        data['status'] = 'Scheduled'
+        if not data['start_date']:
+            # The date would be set automatically
+            data.pop('start_date')
         
         # remove the delivered scanners
         plugins = ScannerPlugin.all_of(project)
@@ -78,8 +81,8 @@ class ScanCreationView(CreationAPIViewBase):
             if not name or name not in plugins:
                 break
             
-            if not ProjectScanner.objects.filter(project=project, scanner=name).exists():
-                ProjectScanner(project=project, scanner=name).save()
+            if not ProjectScanner.objects.filter(project=project, name=name).exists():
+                ProjectScanner(project=project, name=name).save()
             # Even if the scanner is present, we have to add it
             # to the list of scanners to start
             selected.append(selected)

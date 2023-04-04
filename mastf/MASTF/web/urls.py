@@ -5,6 +5,7 @@ from mastf.MASTF.web import views
 urlpatterns = [
     path(r"", views.DashboardView.as_view(), name='Index'),
     path(r"dashboard", views.DashboardView.as_view(), name='Dashboard'),
+    path(r"license", views.LicenseView.as_view(), name='License'),
     
     # URLs for the main navigation bar - Currently, there are only four options
     # (five with dashboard):
