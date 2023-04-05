@@ -12,7 +12,7 @@ urlpatterns = [
     path(r"projects/", views.ProjectsView.as_view(), name='Projects'),
     path(r"applications/", views.DashboardView.as_view(), name='Applications'),
     path(r"scans/", views.DashboardView.as_view(), name='Scans'),
-    path(r"plug-ins/", views.DashboardView.as_view(), name='Plug-Ins'),
+    path(r"plug-ins/", views.PluginsView.as_view(), name='Plug-Ins'),
     
     # Top navigation bar links, that can be used to view the user's profile, 
     # logout or to navigate to the global settings.

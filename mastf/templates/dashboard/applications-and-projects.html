@@ -3,7 +3,9 @@
 {% load mastf_tags %}
 
 <!-- Title -->
-{{ "Applications and Projects"|title }}
+{% block title %}
+Applications and Projects
+{% endblock title %}
 
 {% block css_extended %}
 <link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
@@ -11,7 +13,7 @@
 
 {% block page_header %}
 <div class="page-header">
-<div class="container-xl">
+<div class="container-fluid">
     <div class="row align-items-center">
       <div class="col">
         <div class="page-pretitle">
@@ -55,7 +57,7 @@
 {% block page_body %}
 <!-- Page body -->
 <div class="page-body">
-    <div class="container-xl">
+    <div class="container-fluid">
         <div class="row-auto">
             <div class="col">
                 <div class="card">

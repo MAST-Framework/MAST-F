@@ -13,7 +13,7 @@ from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
 # display the web frontend
 
 __all__ = [
-    'DashboardView', 'ProjectsView', 'LicenseView'
+    'DashboardView', 'ProjectsView', 'LicenseView', 'PluginsView'
 ]
 
 class DashboardView(ContextMixinBase):
@@ -73,3 +73,10 @@ class LicenseView(ContextMixinBase):
     template_name = 'license.html'
 
 
+class PluginsView(ContextMixinBase):
+    template_name = 'dashboard/plugins.html'
+
+    def get_context_data(self, **kwargs: dict) -> dict:
+        context = super().get_context_data(**kwargs)
+        context['active'] = 'tabs-permissions'
+        return context

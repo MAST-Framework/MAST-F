@@ -3,7 +3,7 @@
 
 {% block page_header %}
 <div class="page-header">
-<div class="container-xl">
+<div class="container-fluid">
     <div class="row align-items-center">
         <div class="row align-items-center">
             <div class="col-auto ms-auto">
@@ -57,7 +57,7 @@
         tab should be visible.
     -->
 
-    <div class="container-xl">
+    <div class="container-fluid">
         <div class="row">
             <div class="card">
                 <div class="card-header">
@@ -448,7 +448,7 @@
                                                                 </h2>
                                                                 <div id="collapse-{{ language.name }}-{{ category.name.trim|lower }}-acc" class="accordion-collapse collapse" 
                                                                     data-bs-parent="#acc-child-{{ language.name }}">
-                                                                    <div class="accordion-body container-xl">
+                                                                    <div class="accordion-body container-fluid">
                                                                         <div class="row mt-2">
                                                                             <div class="col">
                                                                                 <div class="table-responsive">
@@ -588,7 +588,7 @@
                                         </div>
                                         <div id="collapse-{{ permission.name.strip|lower }}-acc" class="accordion-collapse collapse" 
                                             data-bs-parent="#acc-parent">
-                                            <div class="accordion-body container-xl">
+                                            <div class="accordion-body container-fluid">
                                                 <div class="datagrid">
                                                     <div class="row row-cols-3">
                                                         <div class="col-md-4">
@@ -664,7 +664,7 @@
                                     </div>
                                     {% endwith %}
                                 {% empty %}
-                                <div class="container-xl d-flex flex-column justify-content-center">
+                                <div class="container-fluid d-flex flex-column justify-content-center">
                                     <div class="empty">
                                       <div class="empty-img"><img src="{% static 'static/undraw_printing_invoices_5r4r.svg' %}" height="128" alt="">
                                       </div>
@@ -797,7 +797,7 @@
                                                     data-bs-parent="#acc-parent">
 
                                                     <div class="accordion-body pt-0">
-                                                        <div class="accordion-body container-xl">
+                                                        <div class="accordion-body container-fluid">
                                                             <div class="row mt-2">
                                                                 <div class="col">
                                                                     <div class="table-responsive">
@@ -901,7 +901,7 @@
                                 <div class="row mt-2">
                                     <div class="col">
                                         <div class="card">
-                                            <div class="card-body container-xl">
+                                            <div class="card-body container-fluid">
                                                 <div class="card-title">Identified and Scanned Hosts</div>
                                                 <div class="row">
                                                     <div class="col mt-2">

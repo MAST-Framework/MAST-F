@@ -12,7 +12,7 @@ MAST-F Project | {{ project.name }}
 
 {% block page_header %}
 <div class="page-header">
-<div class="container-xl">
+<div class="container-fluid">
     <div class="row align-items-center">
         <div class="row align-items-center">
             <div class="col-auto">
@@ -79,7 +79,7 @@ MAST-F Project | {{ project.name }}
 {% block page_body %}
 <!-- Page body: -->
 <div class="page-body">
-    <div class="container-xl">
+    <div class="container-fluid">
         <div class="row-auto">
             <div class="col">
                 <div class="card">
@@ -559,7 +559,7 @@ MAST-F Project | {{ project.name }}
                                             <!-- TODO: eventually add charts here -->
                                         </div>
                                         {% empty %}
-                                        <div class="container-xl d-flex flex-column justify-content-center align-items-center">
+                                        <div class="container-fluid d-flex flex-column justify-content-center align-items-center">
                                             <div class="empty">
                                               <div class="empty-img">
                                                 <img src="{% static 'static/undraw_bug_fixing_oc7a.svg' %}" height="128" alt="">
