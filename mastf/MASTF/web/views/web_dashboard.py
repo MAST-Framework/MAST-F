@@ -22,6 +22,9 @@ class DashboardView(ContextMixinBase):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['selected'] = 'Home'
+        
+        messages.error(self.request, "Some error message", "Internal server Error")
+        
         return context
 
 

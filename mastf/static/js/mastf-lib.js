@@ -11,7 +11,7 @@ class ScanTaskProgressBar {
         this.url = backendUrl;
         
         var options = options || {};
-        let task_id = options.task_id
+        let task_id = options.task_id;
         if (task_id === undefined) {
             console.error('[CRITICAL] Invalid task ID');
             return;

@@ -258,7 +258,12 @@
                                                     <!-- Last scan time -->
                                                     <td class="text-muted">
                                                         {% if row.scan %}
-                                                        {{ row.scan.start_date|timesince:today }}
+                                                            {% if row.scan.start_date %}
+                                                            {{row.scan.start_date}}
+                                                            {{ row.scan.start_date|date|timesince }}
+                                                            {% else %}
+                                                            Scheduled
+                                                            {% endif %}
                                                         {% else %}
                                                         -
                                                         {% endif %}
@@ -342,7 +347,7 @@
                                                              </svg>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
-                                                            <a class="dropdown-item" href="{% url 'Projects' %}" project_id_element="#project-id-row-{{ forloop.counter }}" id="delete-project-action-{{ forloop.counter }}">
+                                                            <a class="dropdown-item" href="#" project_id_element="#project-id-row-{{ forloop.counter }}" id="delete-project-action-{{ forloop.counter }}">
                                                                 <span class="dropdown-item-icon text-red">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -737,7 +742,8 @@
                       <div class="mb-3">
                         <label class="form-label required">Visibility</label>
                         <select class="form-select" name="visibility">
-                          <option value="PRIVATE" selected>Private</option>
+                     
+                            <option value="PRIVATE" selected>Private</option>
                           <option value="PUBLIC">Public</option>
                           <option value="INTERNAL">Internal</option>
                         </select>
@@ -772,10 +778,11 @@
         $.ajax({
             type: 'DELETE',
             url: '/api/v1/project/' + $(selector).attr('value'),
-            data: encodeURI("csrfmiddlewaretoken=" + csrftoken),
-            dataType: 'application/json',
             success: function(data) {
                 location.reload();
+            },
+            headers: {
+                'X-CSRFToken': csrftoken
             }
         });
         return true;

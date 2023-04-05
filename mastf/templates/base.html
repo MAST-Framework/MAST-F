@@ -83,58 +83,14 @@
                       </div>
                     </div>
                     <div class="d-none d-md-flex">
-                      <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                      <a href="?theme=dark" class="nav-link px-0 hide-theme-dark me-2" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
                         <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
                       </a>
-                      <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                      <a href="?theme=light" class="nav-link px-0 hide-theme-light me-2" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
                         <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
                       </a>
-
-                      <div class="nav-item dropdown d-none d-md-flex me-3">
-                        <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
-                          {% if messages %}
-                          <span class="badge bg-red"></span>
-                          {% endif %}
-                        </a>
-                        {% block messages %}
-                        <!-- Put notifications here -->
-                        <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end dropdown-menu-card">
-                            <div class="card">
-                              <div class="card-header">
-                                {% if messages %}
-                                <h3 class="card-title">Errors</h3>
-                                {% else %}
-                                <h3 class="card-title">No messages</h3>
-                                {% endif %}
-                              </div>
-                              <div class="list-group list-group-flush list-group-hoverable">
-                                {% if messages %}
-                                {% for message in messages %}
-                                <div class="list-group-item">
-                                    <div class="row row-cols-lg-2 align-items-center">
-                                      <div class="col-auto">
-                                        <span class="status-dot status-dot-animated {% if message.background %}{{message.background}}{% else %}bg-red{% endif %} d-block">
-                                        </span>
-                                      </div>
-                                      <div class="col text-truncate">
-                                        <a href="#" class="text-body d-block">{{ message.title }}</a>
-                                        <div class="d-block text-muted text-truncate mt-n1">
-                                          {{ message.text }}
-                                        </div>
-                                      </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                {% endif %}
-                              </div>
-                            </div>
-                          </div>
-                        {% endblock messages %}
-                      </div>
                     </div>
                     <div class="nav-item dropdown">
                       <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
@@ -357,12 +313,60 @@
         {% block modals %}
         
         {% endblock modals %}
+
+        
+        {% block alerts %}
+        <div class="toast-container bottom-0 end-0">
+          {% for message in messages %}
+          <div class="alert 
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}alert-danger
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}alert-success
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}alert-info
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}alert-warning
+            {% else %}alert-secondary
+            {% endif %}alert-dismissible mb-2" role="alert">
+            <div class="d-flex">
+              <div>
+                {# Icon #}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l0 4" /><path d="M12 16l.01 0" /></svg>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l.01 0" /><path d="M11 12l1 0l0 4l1 0" /></svg>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-accessible" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                  <path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1"></path>
+                  <circle cx="12" cy="7.5" r=".5" fill="currentColor"></circle>
+               </svg>
+                {% endif %}
+                
+              </div>
+              <div>
+                {# Use extra_tags here instead of tags, because we don't want the level tag #}
+                <h4 class="alert-title">{{ message.extra_tags }}</h4>
+                <div class="text-muted">{{ message }}</div>
+              </div>
+            </div>
+            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+          </div>
+          {% endfor %}
+
+        </div>
+        {% endblock %}
+
+
         
         <!-- Libs JS -->
         <script src="{% static "libs/apexcharts/apexcharts.min.js"%}" defer></script>
         <script src="{% static "libs/jsvectormap/js/jsvectormap.min.js"%}" defer></script>
         <script src="{% static "libs/jsvectormap/maps/world.js"%}" defer></script>
         <script src="{% static "libs/jsvectormap/maps/world-merc.js"%}" defer></script>
+        <script src="{% static "js/mastf-lib.js"%}" defer></script>
         <!-- Tabler Core -->
         <script src="{% static "js/tabler.min.js"%}" defer></script>
         <script src="{% static "js/tabler-addon.min.js"%}" defer></script>
@@ -373,6 +377,21 @@
            * See https://docs.djangoproject.com/en/4.1/howto/csrf/
            */
           const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+          // fade out all error messages
+          fadeOutMessages = function() {
+            alerts = document.getElementsByClassName("alert");
+            var i = alerts.length;
+            for (let alertElement of alerts) {
+              i--;
+              time = 6000+(2000*i);
+              setTimeout(function() {
+                $(alertElement).fadeOut("slow");
+              }, time);
+            }
+          };
+
+          document.addEventListener("DOMContentLoaded", fadeOutMessages);
         </script>
 
         {% block js_extended %}

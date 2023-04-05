@@ -36,8 +36,8 @@ def get_file_cheksum(fp) -> tuple:
 def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project) -> File:
     path = settings.PROJECTS_ROOT / str(project.project_uuid) / file.name
     if path.exists():
-        logger.warning('Uploaded file destination already exists!')
-        return None
+        logger.info('Uploaded file destination already exists!')
+        return File.objects.get(file_path=str(path))
         
     with open(path, 'wb') as dest:
         if file.multiple_chunks():
@@ -53,6 +53,7 @@ def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project) -> Fi
         return None
 
     db_file = File(md5=md5, sha1=sha1, sha256=sha256,
-                   file_name=file.name, file_size=file.size)
+                   file_name=file.name, file_size=file.size,
+                   file_path=str(path))
     db_file.save()
     return db_file

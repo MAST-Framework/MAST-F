@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from django.shortcuts import get_object_or_404
 from django.db.models import QuerySet
+from django.contrib import messages
 
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 class GetObjectMixin:
     model = None
     """The model used to retrieve instances."""
-    
+
     lookup_field: str = 'pk'
     """The field that should be used within object lookup"""
 
@@ -68,7 +69,7 @@ class APIViewBase(GetObjectMixin, APIView):
     serializer_class = None
     """The serializer used to parse, validate and update data"""
 
-    
+
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Returns information about a single object
 
@@ -103,9 +104,10 @@ class APIViewBase(GetObjectMixin, APIView):
             serializer = self.serializer_class(instance, data=data, partial=True)
             serializer.save()
         except Exception as err:
+            messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
 
-        logger.debug('Instance-Update: %s', instance)
+        logger.debug('(%s) Instance-Update: %s', self.__class__.__name__, instance)
         return Response({'success': True})
 
     def delete(self, request: Request, *args, **kwargs) -> Response:
@@ -122,7 +124,8 @@ class APIViewBase(GetObjectMixin, APIView):
             self.on_delete(request, instance)
             instance.delete()
         except Exception as err:
-            logger.exception("Delete-Instance: ")
+            logger.exception("(%s) Delete-Instance: ", self.__class__.__name__)
+            messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
 
         logger.debug('Delete-Instance (success): id=%s', instance.pk)
@@ -187,7 +190,7 @@ class CreationAPIViewBase(APIView):
         form_data = request.data
         if not form_data:
             form_data = request.POST
-        
+
         form = self.form_class(data=form_data)
         if not form.is_valid():
             logger.warning('Form-Invalid at %s:\n%s', self.request.path, form.errors)
@@ -202,9 +205,10 @@ class CreationAPIViewBase(APIView):
 
             instance = self.model.objects.create(**data)
             self.on_create(request, instance)
-            logger.debug('New-Instance: %s', instance)
+            logger.debug('(%s) New-Instance: %s', self.__class__.__name__, instance)
         except Exception as err:
             logger.exception("New-Instance")
+            messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({'detail': str(err)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(

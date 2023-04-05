@@ -44,10 +44,10 @@ MAST-F Project | {{ project.name }}
                           {{ project.project_uuid }} 
                       </li>
                       <li class="list-inline-item">
-                          <span class="badge {% if not data.scan.risk_level %}bg-secondary-lt \
-                              {% elif data.scan.risk_level|lower == "high" %}bg-red-lt \
-                              {% elif data.scan.risk_level|lower == "medium"%}bg-orange-lt\
-                              {% elif data.scan.risk_level|lower == "low" %}bg-yellow-lt
+                          <span class="badge {% if not project.risk_level %}bg-secondary-lt \
+                              {% elif project.risk_level|lower == "high" %}bg-red-lt \
+                              {% elif project.risk_level|lower == "medium"%}bg-orange-lt\
+                              {% elif project.risk_level|lower == "low" %}bg-yellow-lt
                               {% else %}bg-secondary-lt{% endif %}">
                           {{ project.risk_level }}
                           </span>
@@ -137,7 +137,7 @@ MAST-F Project | {{ project.name }}
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="subheader">Last scan</div>
-                                            {% if data.is_active %}
+                                            {% if is_active %}
                                             <div class="h2 text-muted">
                                                 <span class="badge bg-green-lt">
                                                     Active
@@ -146,7 +146,7 @@ MAST-F Project | {{ project.name }}
                                             {% else %}
                                             <div class="h2">
                                                 {% if scan %}
-                                                {{ data.scan.start_date|timesince:today }}
+                                                {{ scan.start_date|timesince:today }} ago
                                                 {% else %}
                                                 -
                                                 {% endif %}
@@ -186,9 +186,10 @@ MAST-F Project | {{ project.name }}
                                                 <div class="list-group-item">
                                                     <div class="row align-items-center">
                                                         <div class="col-auto">
-                                                            <div class="status-indicator status-{% if process.state == 'FAILURE' %}red{%else%}green{% endif %} 
+                                                            <div class="status-indicator status-{% if process.state == 'FAILURE' or not process.id %}red{%else%}green{% endif %} 
                                                                 {% if not process.status.complete %} status-indicator-animated {%endif %}"
                                                                 id="process-indicator-{{ process.id }}">
+                                                                <div class="status-indicator-circle"></div>
                                                                 <div class="status-indicator-circle"></div>
                                                             </div>
                                                         </div>
@@ -211,7 +212,9 @@ MAST-F Project | {{ project.name }}
                                                                     {% endif %}
                                                                     </div>
                                                                 <div class="progressbg-value"  id="process-pgb-value-{{ process.id }}">
+                                                                    {% if process.status.percent %}
                                                                     {{ process.status.percent }}%
+                                                                    {% endif %}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -299,6 +302,8 @@ MAST-F Project | {{ project.name }}
                                                     </span>
                                                 </th>
                                                 
+                                                <th>State</th>
+
                                                 <!-- The 'Scan' action has no heading -->
                                                 <th></th>
                                                 
@@ -316,7 +321,6 @@ MAST-F Project | {{ project.name }}
                                                                 <path d="M4 18l11 0"></path>
                                                                 <path d="M19 18l1 0"></path>
                                                             </svg>
-                                                        </span>
                                                     </a>
                                                 </th>
                                             </thead>
@@ -400,14 +404,11 @@ MAST-F Project | {{ project.name }}
 
                                                     <td>
                                                         <a href="#" class="nav-link px-0 link-secondary" data-bs-toggle="modal" data-bs-target="#modal-scan-table">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                                                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
-                                                                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
-                                                                <path d="M12 12v9"></path>
-                                                                </svg>
-                                                                Scan
+                                                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                                <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                             </svg>
                                                         </a>
                                                     </td>
                                                     <td class="text-end">
@@ -421,7 +422,8 @@ MAST-F Project | {{ project.name }}
                                                              </svg>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
-                                                            <a class="dropdown-item" href="{% url 'Project-Overview' %}" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}">
+                                                            <a class="dropdown-item" href="#" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}"
+                                                                onclick="deleteScan(this);">
                                                                 <span class="dropdown-item-icon text-red">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -492,7 +494,7 @@ MAST-F Project | {{ project.name }}
                                                     <div class="col">
                                                         <h3 class="page-title">
                                                             {{ scanner_name }}
-                                                            <span class="page-pretitle"> ({{ data.start_date }})</span>
+                                                            <span class="page-pretitle ms-2"> ({{ data.start_date }})</span>
                                                         </h3>
                                                     </div>
                                                     <div class="col-auto ms-auto">
@@ -626,8 +628,8 @@ MAST-F Project | {{ project.name }}
         <!-- Scan Dialog:
             
         -->
-        <form id="new-scan-form" method="POST" action="/api/v1/scan/create"
-            enctype="multipart/form-data">
+        <form id="new-scan-form" method="POST" action="{% url 'Project-Scanners' project.project_uuid %}"
+            enctype="multipart/form-data" >
             <div class="modal-body">
             
                 {% csrf_token %}
@@ -742,10 +744,8 @@ MAST-F Project | {{ project.name }}
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <a href="#" class="btn btn-primary" data-bs-dismiss="modal"
-                    id="scan-submit">
-                    Start scan
-                </a>
+                <input type="submit" class="btn btn-primary" data-bs-dismiss="modal"
+                    id="scan-submit" title="Start scan">
             </div>
         </form>
       </div>
@@ -766,8 +766,6 @@ MAST-F Project | {{ project.name }}
             trigger: 'focus'
         });
 
-        $('#scan-submit').on('click', submitScanForm);
-
         /**
          * Make the table a 'datatable' with search bar, configurable row count and 
          * pagination. (jQuery-datatable)
@@ -787,22 +785,28 @@ MAST-F Project | {{ project.name }}
         }
         console.log(element);
     };
-
-    submitScanForm = function(event) {
-        event.preventDefault();
-        console.log('Starting scan!');
-        $.ajax({
-            type: 'POST',
-            url: '/api/v1/scan/create',
-            data: $("#new-scan-form").serialize(),
-            success: function(data) {
-                location.reload();
-            }
-        });
-        return true;
-    };
-
 </script>
+,
+
+{% if active == "tabs-scan-history" %}
+<script>
+    deleteScan = function(element) {
+            var selector = $(element).attr("scan-id-element");
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/v1/scan/' + $(selector).attr('value'),
+                success: function(data) {
+                    location.reload();
+                },
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            });
+            return true;
+    };
+</script>
+{% endif %}
+
 {% if active == "tabs-overview" %}
 <script>
     createTimeline = function(data) {
@@ -996,9 +1000,11 @@ MAST-F Project | {{ project.name }}
         });
 
         {% for task in active_data %}
-        ScanTaskProgressBar.create("/api/v1/scan/task/{{task.id}}", {
-            task_id: task.id
-        });
+            {% if task.id %}
+            ScanTaskProgressBar.create("/api/v1/scan/task/{{task.id}}", {
+                task_id: {{ task.id }}
+            });
+            {% endif %}
         {% endfor %}
 
     });

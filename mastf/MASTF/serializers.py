@@ -62,3 +62,14 @@ class CeleryResultSerializer(serializers.Serializer):
     id = serializers.CharField(required=True)
     state = serializers.CharField(required=True)
     status = CeleryStatusSerializer(required=True)
+    
+    @staticmethod
+    def empty() -> dict:
+        # This method should be called whenever the celery worker has not been 
+        # started and a scan should be done
+        return {
+            "state": "PENDING",
+            "status": {
+                "pending": True, "detail": "Celery Worker not started"
+            }
+        }

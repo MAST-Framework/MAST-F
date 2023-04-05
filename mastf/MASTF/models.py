@@ -69,7 +69,6 @@ class File(models.Model):
     file_path = models.CharField(max_length=2048, null=True)
 
 
-
 class Scan(models.Model):
 
     scan_uuid = models.CharField(primary_key=True, max_length=256)
@@ -92,7 +91,6 @@ class Scan(models.Model):
     """
     
     file = models.ForeignKey(File, on_delete=models.CASCADE, null=True)
-    
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     """The project of this scan"""
@@ -243,7 +241,7 @@ class Vulnerability(AbstractBaseFinding):
 
     @staticmethod
     def stats(initiator: User = None, project: Project = None,
-              scan: Scan = None) -> Namespace:
+              scan: Scan = None, vuln=None) -> Namespace:
         data = Namespace()
         if initiator:
             vuln = Vulnerability.objects.filter(scan__initiator=initiator)
@@ -254,7 +252,7 @@ class Vulnerability(AbstractBaseFinding):
         elif scan:
             vuln = Vulnerability.objects.filter(scan=scan)
         
-        else:
+        elif not vuln:
             return data
 
         data.count = len(vuln)
@@ -275,12 +273,14 @@ class Account(models.Model):
     
 
 class ScanTask(models.Model):
+    task_uuid = models.UUIDField(max_length=32 ,primary_key=True, null=False)
     scan = models.ForeignKey(Scan, models.CASCADE)
     scanner = models.ForeignKey(ProjectScanner, models.SET_NULL, null=True)
     
     celery_id = models.CharField(max_length=256, null=True)
     active = models.BooleanField(default=True)
     
+    @staticmethod
     def active_tasks(scan: Scan = None, project: Project = None) -> list:
         if scan:
             return ScanTask.objects.filter(active=True, scan=scan)
@@ -289,3 +289,14 @@ class ScanTask(models.Model):
             return ScanTask.objects.filter(active=True, scan__project=project)
         
         return []
+
+
+class Details(models.Model):
+    scan = models.ForeignKey(Scan, models.CASCADE, null=True)
+    
+    cvss = models.FloatField(default=0)
+    file = models.ForeignKey(File, models.SET_NULL, null=True)
+    tracker_count = models.IntegerField(default=0)
+    
+    
+    

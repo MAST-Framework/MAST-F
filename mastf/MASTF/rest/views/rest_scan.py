@@ -13,27 +13,28 @@ from rest_framework.authentication import (
 )
 
 from django.shortcuts import get_object_or_404
-from django.http import Http404
 from django.db.models import QuerySet
 
 from celery.result import AsyncResult
 
 from mastf.MASTF.serializers import ScanSerializer, CeleryResultSerializer
 from mastf.MASTF.models import (
-    Scan, 
-    Project, 
-    ScanTask, 
-    ProjectScanner
+    Scan,
+    Project,
+    ScanTask,
+    ProjectScanner,
+    Details
 )
 from mastf.MASTF.forms import ScanForm
-from mastf.MASTF.rest.permissions import ReadOnly, IsScanInitiator
+from mastf.MASTF.rest.permissions import ReadOnly, IsScanInitiator, IsScanTaskInitiator
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.utils.upload import handle_scan_file_upload
+from mastf.MASTF.workers import tasks
 
 from .base import (
-    APIViewBase, 
-    ListAPIViewBase, 
-    CreationAPIViewBase, 
+    APIViewBase,
+    ListAPIViewBase,
+    CreationAPIViewBase,
     GetObjectMixin
 )
 
@@ -56,7 +57,7 @@ class ScanCreationView(CreationAPIViewBase):
     model = Scan
 
     permission_classes = [IsAuthenticated]
-    
+
     def set_defaults(self, request, data: dict) -> None:
         project_id = data.pop('project_uuid', None)
         if not project_id:
@@ -70,46 +71,61 @@ class ScanCreationView(CreationAPIViewBase):
         if not data['start_date']:
             # The date would be set automatically
             data.pop('start_date')
-        
+
         # remove the delivered scanners
-        plugins = ScannerPlugin.all_of(project)
+        plugins = ScannerPlugin.all()
         selected = []
         for i in range(len(plugins)):
             # Remove each scanner so that it won't be used
             # to create the Scan object
-            name = data.pop(f"selected_scanners_{i}", None)
+            name = self.request.POST.get(f"selected_scanners_{i}", None).lower()
             if not name or name not in plugins:
                 break
-            
+
             if not ProjectScanner.objects.filter(project=project, name=name).exists():
                 ProjectScanner(project=project, name=name).save()
             # Even if the scanner is present, we have to add it
             # to the list of scanners to start
             selected.append(selected)
-        
+
         if len(selected) == 0:
             logger.warning('No scanner selected - aborting scan generation')
             raise ValueError('At least one scanner has to be selected')
-        
+
         # As the QueryDict is mutable, we can store the selected
         # parameters before we're starting each scanner
+        setattr(self.request.POST, '_mutable', True)
         self.request.POST['selected_scanners'] = selected
+
         # the file has to be downloaded before any action shoule be executed
-        if not data.get('file_url', None):
+        file_url = data.pop('file_url', None)
+        if not file_url:
             file = handle_scan_file_upload(self.request.FILES['file'], project)
             if not file:
                 raise ValueError('Could not save uploaded file')
-            
-            data['file'] = file
-        
+
+            self.request.POST['File'] = file
         else:
             raise NotImplementedError('URL not implemented!')
-        
-        
-            
+
     def on_create(self, request: Request, instance: Scan) -> None:
+        # create scan details
+        Details(scan=instance, file=self.request.POST['File']).save()
+
         # Create desired project scanners
-        raise NotImplemented()
+        selected = self.request.POST['selected_scanners']
+        task_uuid = self.make_uuid()
+
+        # Step 1: Create a new database task.
+        task = ScanTask(task_uuid=task_uuid, scan=instance)
+        task.save()
+
+        # Step 2: Execute the preparation task (file preparation,
+        # decompilation of files, prepare filesystem)
+        result: AsyncResult = tasks.prepare_scan.delay(instance, selected)
+        task.celery_id = result.id
+        task.save()
+
 
 class ScanListView(ListAPIViewBase):
     serializer_class = ScanSerializer
@@ -166,14 +182,17 @@ class ScanTaskView(GetObjectMixin, views.APIView):
         TokenAuthentication
     ]
 
-    permission_classes = [IsAuthenticated & IsScanInitiator]
+    permission_classes = [IsAuthenticated & IsScanTaskInitiator]
 
     model = ScanTask
     lookup_field = 'task_uuid'
 
     def get(self, request: Request, task_uuid: UUID) -> Response:
-        task = self.get_object()
-        result = AsyncResult(task.celery_id)
-        data = CeleryResultSerializer(result).data
-        
+        task: ScanTask = self.get_object()
+        if not task.celery_id:
+            data = CeleryResultSerializer.empty()
+        else:
+            result = AsyncResult(task.celery_id)
+            data = CeleryResultSerializer(result).data
+
         return Response(data)

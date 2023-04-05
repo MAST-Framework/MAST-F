@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from mastf.MASTF import settings
 from mastf.MASTF.scanners.plugin import ScannerPlugin
-from mastf.MASTF.models import Account, Project
+from mastf.MASTF.models import Account, Project, Scan
 
 LOGIN_URL = '/web/login'
 
@@ -33,7 +33,7 @@ class ContextMixinBase(LoginRequiredMixin, TemplateView):
 class VulnContextMixin:
 
     def apply_vuln_context(self, context: dict, vuln: dict) -> None:
-        context['vuln_count'] = vuln.count
+        context['vuln_count'] = vuln.get("count", 0)
         context['vuln_data'] = [
             self.get_vuln_context(vuln, "Critical", "pink"),
             self.get_vuln_context(vuln, "High", "red"),
@@ -47,8 +47,8 @@ class VulnContextMixin:
         return {
             'name': name,
             'color': f"bg-{bg}",
-            'percent': (stats[field] / stats.rel_count) * 100,
-            'count': stats[field]
+            'percent': (stats.get(field, 0) / stats.get('rel_count', 1)) * 100,
+            'count': stats.get(field, 0)
         }
 
 class UserProjectMixin:
@@ -56,4 +56,4 @@ class UserProjectMixin:
     def apply_project_context(self, context: dict, project_uuid) -> None:
         context['project'] = get_object_or_404(Project.objects.all(), project_uuid=project_uuid)
         context['scanners'] = ScannerPlugin.all()
-    
+        

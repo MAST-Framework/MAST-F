@@ -14,7 +14,8 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase):
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context, self.kwargs['project_uuid'])
 
-        plugins = ScannerPlugin.all_of(context['project'])
+        project = context['project']
+        plugins = ScannerPlugin.all_of(project)
         name = self.kwargs['name']
         extension = self.kwargs['extension']
         if name not in plugins:
@@ -27,6 +28,6 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase):
         context["extensions"] = plugin.extensions
         context['scanner_name'] = name
         context['active'] = f"tabs-{extension}"
-        context['data'] = plugin.context(extension, context['project'])
+        context['data'] = plugin.context(extension, project)
         return context
 

@@ -1,6 +1,52 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block page_header %}
+<div class="page-header">
+<div class="container-xl">
+    <div class="row align-items-center">
+        <div class="row align-items-center">
+            <div class="col-auto ms-auto">
+                <div class="btn-list">
+                  <a href="/web/projects/{{ project.project_uuid }}/scanners" class="btn btn-primary d-none d-sm-inline-block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M15 6l-6 6l6 6"></path>
+                     </svg>
+                     Back
+                  </a>
+                </div>
+              </div>
+            <div class="col">
+              <h2 class="page-title">
+                  Scanner &lt; {{ scanner_name }} &gt;
+                </h2>
+                <div class="text-muted">
+                  <ul class="list-inline list-inline-dots mb-0" >
+                      <li class="list-inline-item">
+                          Project
+                      </li>
+                      <li class="list-inline-item">
+                          {{ project.project_uuid }} 
+                      </li>
+                      <li class="list-inline-item">
+                          <span class="badge {% if not project.risk_level %}bg-secondary-lt \
+                              {% elif project.risk_level|lower == "high" %}bg-red-lt \
+                              {% elif project.risk_level|lower == "medium"%}bg-orange-lt\
+                              {% elif project.risk_level|lower == "low" %}bg-yellow-lt
+                              {% else %}bg-secondary-lt{% endif %}">
+                          {{ project.risk_level }}
+                          </span>
+                      </li>
+                  </ul>
+                </div>
+            </div>
+          </div>
+    </div>
+  </div>  
+</div>
+{% endblock page_header %}
+
 
 {% block page_body %}
 <div class="page-body">
@@ -18,7 +64,7 @@
                     <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     {% for extension_name in extensions %}
                         <li class="nav-item">
-                            <a href="/projects/{{ project.project_uuid }}/scanners/{{ scanner_name }}/{{ extension_name }}" 
+                            <a href="/web/results/{{ project.project_uuid }}/{{ scanner_name }}/{{ extension_name }}" 
                                 class="nav-link {% if extension_name in active %}active{% endif %}">
                                     {{ extension_name|capfirst }}
                             </a>
@@ -34,133 +80,235 @@
                             id="tabs-details">
                             
                             {% if active == "tabs-details" %}
-                            {% with data as details %}
-                            <div class="row">
-                                <div class="datagrid">
-                                    <div class="row row-cols-2">
-                                        <div class="col-md-3">
-                                            <div class="datagrid-item me-2">
-                                                <div class="datagrid-title">Scan Target</div>
-                                                <div class="datagrid-content">
+                            <div class="card">
+                                <div class="row g-0">
+                                    <div class="col-3 d-none d-md-block border-end">
+                                        <div class="card-body">
+                                            <h4 class="subheader">Scan Targets</h4>
+                                            <ul class="nav nav-tabs list-group list-group-transparent" data-bs-toggle="tabs">
+                                                {% for details in details_data %}
+                                                <li class="nav-item">
+                                                    <a href="#scan-file-{{ forloop.counter0 }}" 
+                                                        class="list-group-item list-group-item-action d-flex align-items-center {% if forloop.counter0 == 0 %}active{% endif %}">
+                                                        {% if details.file %}    
+                                                        {{ details.file.file_name|capfirst }}
+                                                        {% else %}
+                                                        &lt; Undefined &gt;
+                                                        {% endif %}
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col d-flex flex-column">
+                                        <div class="card-body">
+                                            <div class="tab-content">
+                                                {% for details in details_data %}
+                                                <div class="tab-pane {% if forloop.counter0 == 0%}active show{% endif %}"
+                                                    id="scan-files-{{ forloop.counter0 }}">
                                                     <div class="row">
-                                                        <div class="col">
-                                                            <span class="avatar avatar-xl rounded"
-                                                                style="background-image: url(/icons/{% if details.icon %}{{ details.icon }}{% else %}unknown{% endif %});"
-                                                            ></span>
-                                                        </div>
-                                                        <div class="col text-truncate align-left text-left">
-                                                            <span class="text-muted">
-                                                                <b>{{ details.name }}</b>
-                                                            </span>
-                                                            <div class="text-muted text-truncate mt-n1">
-                                                                {{ details.scan_type }}
+                                                        <div class="datagrid">
+                                                            <div class="row row-cols-2">
+                                                                <div class="col-md-3">
+                                                                    <div class="datagrid-item me-2">
+                                                                        <div class="datagrid-title">Scan Target</div>
+                                                                        <div class="datagrid-content">
+                                                                            <div class="row">
+                                                                                <div class="col-auto">
+                                                                                    <span class="avatar avatar-lg rounded">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-question-mark" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                            <path d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"></path>
+                                                                                            <path d="M12 19l0 .01"></path>
+                                                                                            </svg>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="col text-truncate align-left text-left">
+                                                                                    <span class="text-muted h4">
+                                                                                        <b>
+                                                                                            {% if details.name %}
+                                                                                            {{ details.name }}
+                                                                                            {% else %}
+                                                                                            &lt; Name not defined &gt;
+                                                                                            {% endif %}
+                                                                                        </b>
+                                                                                    </span>
+                                                                                    <div class="text-muted text-truncate mt-n1">
+                                                                                        {% if scan.scan_type %}
+                                                                                        {{ scan.scan_type }}
+                                                                                        {% else %}
+                                                                                        No Scan Type defined
+                                                                                        {% endif %}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-9">
+                                                                    <div class="row row-cols-3 align-items-center">
+                                                                        <div class="col-md-4">
+                                                                            <div class="datagrid-item">
+                                                                                <div class="datagrid-title">CVSS</div>
+                                                                                <div class="datagrid-content">
+                                                                                    {% if details.cvss %}
+                                                                                    <span class="badge badge-outline
+                                                                                        {% if details.cvss > 9 %}bg-pink-lt
+                                                                                        {% elif details.cvss > 7 %}bg-red-lt
+                                                                                        {% elif details.cvss > 4 %}bg-orange-lt
+                                                                                        {% elif details.cvss > 1 %}bg-yellow-lt
+                                                                                        {% else %}bg-secondary-lt
+                                                                                        {% endif %}">
+                                                                                        {{ details.cvss }}
+                                                                                    </span>
+                                                                                    {% else %}
+                                                                                    <span class="badge badge-outline bg-secondary-lt">
+                                                                                        Not Set
+                                                                                    </span>
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="datagrid-item">
+                                                                                <div class="datagrid-title">Risk Level</div>
+                                                                                <div class="datagrid-content">
+                                                                                    {% if scan.risk_level %}
+                                                                                    {% with scan.risk_level|lower as level %}
+                                                                                    <span class="badge badge-outline 
+                                                                                        {% if level == 'high' %}bg-red-lt
+                                                                                        {% elif level == 'critical' %}bg-pink-lt
+                                                                                        {% elif level == 'medium' %}bg-orange-lt
+                                                                                        {% elif level == 'low' %}bg-yellow-lt
+                                                                                        {% elif level == 'info' %}bg-primary-lt
+                                                                                        {% elif level == 'secure' %}bg-green-lt
+                                                                                        {% else %}bg-secondary-lt
+                                                                                        {% endif %}">
+                                                                                        {{ scan.risk_level }}
+                                                                                    </span>
+                                                                                    {% endwith %}
+                                                                                    {% else %}
+                                                                                    <span class="badge badge-outline bg-secondary-lt">
+                                                                                        Undefined
+                                                                                    </span>
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="datagrid-item">
+                                                                                <div class="datagrid-title">Trackers</div>
+                                                                                <div class="datagrid-content">
+                                                                                    <span class="text-muted">
+                                                                                    {% if details.tracker_count %}
+                                                                                    {{ details.tracker_count }}
+                                                                                    {% else %}
+                                                                                    No Trackers found
+                                                                                    {% endif %}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                        
+                                                                    <div class="row row-cols-3 align-items-center mt-3">
+                                                                        <div class="col-md-4">
+                                                                            <div class="datagrid-item">
+                                                                                <div class="datagrid-title">File Name</div>
+                                                                                <div class="datagrid-content">
+                                                                                    <span class="text-muted">
+                                                                                        {% if details.file.file_name %}
+                                                                                        {{ details.file.file_name }}
+                                                                                        {% else %}
+                                                                                        No File Name provided
+                                                                                        {% endif %}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="datagrid-item">
+                                                                                <div class="datagrid-title">File Size</div>
+                                                                                <div class="datagrid-content">
+                                                                                    <span class="text-muted">
+                                                                                        {% if details.file.file_size %}
+                                                                                        {{ details.file.file_size }}
+                                                                                        {% else %}
+                                                                                        0 Bytes
+                                                                                        {% endif %}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="datagrid-item">
+                                                                                <div class="datagrid-title">MD5</div>
+                                                                                <div class="datagrid-content text-muted">
+                                                                                    {% if details.file.md5 %}
+                                                                                    {{ details.file.md5 }}
+                                                                                    {% else %}
+                                                                                    &lt; Undefined &gt;
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    {% if details.store %}
+                                                    <div class="hr-text">{{ details.store.name }} information</div>
+                                                    <div class="row">
+                                                        <div class="datagrid">
+                                                            {% with details.store as store %}
+                                                            {% for info in store.fields %}
+                                                            <div class="datagrid-item">
+                                                                <div class="datagrid-title">{{ info.name }}</div>
+                                                                
+                                                                <div class="datagrid-content">
+                                                                    {% if info.type == "str" %}
+                                                                    {{ info.value }}
+                                                                
+                                                                    {% elif info.type == "link" %}
+                                                                    <a target="_blank" href="{{ info.link }}" rel="noopener noreferer"
+                                                                        class="nav-link link-secondary">
+                                                                        <i>{{ info.value }}</i>
+                                                                    </a>
+                                                                    {% elif info.type == "badge" %}
+                                                                    <span class="badge {{ info.color }} mb-1">
+                                                                        {{ info.value }}
+                                                                    </span>
+                                                                    {% endif %}
+                                                                </div>
+                                                                
+                                                            </div>
+                                                            {% endfor %}
+                                                            {% endwith %}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
+                                                {% empty %}
+                                                <div class="tab-pane active show">
+                                                    <div class="row flex-column justify-content-center">
+                                                        <div class="empty">
+                                                        <p class="empty-title">No scan targets found</p>
+                                                        <p class="empty-subtitle text-muted">
+                                                            There might be no finding for this type of result.
+                                                        </p>
+                                                        </div>
+                                                    </div> 
+                                                </div>
+                                                {% endfor %}
                                             </div>
                                         </div>
-                                        <div class="col-md-9">
-                                            <div class="row row-cols-3 align-items-center">
-                                                <div class="col-md-4">
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">CVSS</div>
-                                                        <div class="datagrid-content">
-                                                            <span class="badge badge-outline bg-orange-lt">
-                                                                {{ details.cvss }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">Risk Level</div>
-                                                        <div class="datagrid-content">
-                                                            <span class="badge bg-orange-lt">
-                                                                {{ details.risk_level }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">Trackers</div>
-                                                        <div class="datagrid-content text-muted">
-                                                            {{ details.tracker_count }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row row-cols-3 align-items-center mt-3">
-                                                <div class="col-md-4">
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">File Name</div>
-                                                        <div class="datagrid-content">
-                                                            <span class="tex-muted">
-                                                                {{ details.file.name }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">File Size</div>
-                                                        <div class="datagrid-content">
-                                                            <span class="text-muted">
-                                                                {{ details.file.size }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">MD5</div>
-                                                        <div class="datagrid-content text-muted">
-                                                            {{ details.file.md5 }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
                                     </div>
-
                                 </div>
                             </div>
-                                {% if details.store %}
-                                <div class="hr-text">{{ details.store.name }} information</div>
-                                <div class="row">
-                                    <div class="datagrid">
-                                        {% with details.store as store %}
-                                        {% for info in store.fields %}
-                                        <div class="datagrid-item">
-                                            <div class="datagrid-title">{{ info.name }}</div>
-                                            
-                                            <div class="datagrid-content">
-                                                {% if info.type == "str" %}
-                                                {{ info.value }}
-                                            
-                                                {% elif info.type == "link" %}
-                                                <a target="_blank" href="{{ info.link }}" rel="noopener noreferer"
-                                                    class="nav-link link-secondary">
-                                                    <i>{{ info.value }}</i>
-                                                </a>
-                                                {% elif info.type == "badge" %}
-                                                <span class="badge {{ info.color }} mb-1">
-                                                    {{ info.value }}
-                                                </span>
-                                                {% endif %}
-                                            </div>
-                                            
-                                        </div>
-                                        {% endfor %}
-                                        {% endwith %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            {% endwith %}
                             {% endif %}
+                            
                         </div>    
                         {% endif %}
                         
@@ -866,7 +1014,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                             {% endif %}
                         </div>
 

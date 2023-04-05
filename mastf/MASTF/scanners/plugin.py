@@ -1,7 +1,7 @@
 from abc import ABCMeta
 from enum import Enum
-from django.db.models import Count
 
+from mastf.MASTF.scanners.mixins import DetailsMixin
 from mastf.MASTF.models import (
     Project, ProjectScanner, Scan
 )
@@ -53,7 +53,8 @@ class ScannerPlugin(metaclass=ABCMeta):
         if self.name in __scanners__:
             raise KeyError("Scanner already registered")
 
-        __scanners__[self.name.lower()] = self
+        self._internal = self.name.lower().replace(' ', "-").replace('--', '-')
+        __scanners__[self._internal] = self
 
     def context(self, extension: str, project: Project) -> dict:
         """Generates the rendering context for the given extension
@@ -76,6 +77,10 @@ class ScannerPlugin(metaclass=ABCMeta):
             return getattr(self, func_name)(scan)
         
         return {}
+    
+    @property
+    def internal_name(self) -> str:
+        return self._internal
 
     @staticmethod
     def all() -> dict:
@@ -93,8 +98,10 @@ class ScannerPlugin(metaclass=ABCMeta):
         return result
 
 
+# TEST: The scanner implements all context functions in 
+# order to test the functionality of scanner pages.
 @Plugin
-class TestScanner(ScannerPlugin):
+class TestScanner(DetailsMixin, ScannerPlugin):
     extensions = [
         Extension.EXT_DETAILS,
         
@@ -107,3 +114,4 @@ class TestScanner(ScannerPlugin):
     name = "Test"
     help = "Basic testing"
     title = "Test Scanner Plugin" 
+
