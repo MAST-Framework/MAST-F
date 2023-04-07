@@ -14,3 +14,6 @@ class VulnerabilityIDConverter(StringConverter):
 
 class FindingIDConverter(StringConverter):
     regex = r"SF-\w{32}-\w{32}"
+    
+class MD5Converter(StringConverter):
+    regex = r"[0-9a-fA-F]{32}"

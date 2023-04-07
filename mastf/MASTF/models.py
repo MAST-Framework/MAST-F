@@ -7,14 +7,14 @@ class Namespace(dict):
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
-    
+
     def __setattr__(self, __name: str, __value) -> None:
         self[__name] = __value
 
     def __getattribute__(self, __name: str):
         if __name in self:
             return self[__name]
-        
+
         return super().__getattribute__(__name)
 
 
@@ -89,7 +89,7 @@ class Scan(models.Model):
     - URL: An URL was given from where the file was downloaded
     - File: Simple file upload
     """
-    
+
     file = models.ForeignKey(File, on_delete=models.CASCADE, null=True)
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -118,13 +118,24 @@ class Scan(models.Model):
 
     @staticmethod
     def last_scan(project: Project = None, initiator: User = None):
-        scans = []
+        scans = Scan.objects.order_by('start_date')
         if project:
-            scans = Scan.objects.filter(project=project).order_by('start_date')
-        elif initiator:
-            scans = Scan.objects.filter(initiator=initiator).order_by('start_date')
-        
+            scans = scans.filter(project=project)
+
+        if initiator:
+            scans = scans.filter(initiator=initiator)
+
         return scans[0] if len(scans) > 0 else None
+
+    @staticmethod
+    def files(project: Project = None, initiator: User = None) -> list:
+        scans = Scan.objects.all()
+        if project:
+            scans = scans.filter(project=project)
+        if initiator:
+            scans = scans.filter(initiator=initiator)
+
+        return [x.file for x in scans]
 
 
 class ProjectScanner(models.Model):
@@ -158,12 +169,12 @@ class AppPermission(models.Model):
 
 class AbstractBaseFinding(models.Model):
     finding_id = models.CharField(max_length=256, blank=True)
-    scan = models.ForeignKey(Scan, on_delete=models.CASCADE)
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
 
     language = models.CharField(null=True, max_length=256)
     """Specifies the programming language this finding was found in (optional)"""
 
-    severity = models.CharField(max_length=32)
+    severity = models.CharField(max_length=32, default='INFO')
     """Specifies the severity of this finding.
     There are five common severity states:
     - ``INFO``: Used on vulnerabilites that can't be exploited or that are
@@ -195,19 +206,19 @@ class AbstractBaseFinding(models.Model):
 class Finding(AbstractBaseFinding):
 
     is_custom = models.BooleanField(default=False)
-    
+
     def stats(initiator: User = None, project: Project = None,
               scan: Scan = None) -> Namespace:
         data = Namespace()
         if initiator:
             finding = Finding.objects.filter(scan__initiator=initiator)
-        
+
         elif project:
             finding = Finding.objects.filter(scan__project=project)
-        
+
         elif scan:
             finding = Finding.objects.filter(scan=scan)
-        
+
         else:
             return data
 
@@ -245,13 +256,13 @@ class Vulnerability(AbstractBaseFinding):
         data = Namespace()
         if initiator:
             vuln = Vulnerability.objects.filter(scan__initiator=initiator)
-        
+
         elif project:
             vuln = Vulnerability.objects.filter(scan__project=project)
-        
+
         elif scan:
             vuln = Vulnerability.objects.filter(scan=scan)
-        
+
         elif not vuln:
             return data
 
@@ -267,36 +278,40 @@ class Vulnerability(AbstractBaseFinding):
         return data
 
 
+class PermissionFinding(AbstractBaseFinding):
+    
+    permission = models.ForeignKey(AppPermission, null=True, on_delete=models.SET_NULL)
+    
+
 class Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, null=True)
-    
+
 
 class ScanTask(models.Model):
     task_uuid = models.UUIDField(max_length=32 ,primary_key=True, null=False)
     scan = models.ForeignKey(Scan, models.CASCADE)
-    scanner = models.ForeignKey(ProjectScanner, models.SET_NULL, null=True)
-    
+    scanner = models.ForeignKey(ProjectScanner, models.CASCADE, null=True)
+
     celery_id = models.CharField(max_length=256, null=True)
     active = models.BooleanField(default=True)
-    
+
     @staticmethod
     def active_tasks(scan: Scan = None, project: Project = None) -> list:
         if scan:
             return ScanTask.objects.filter(active=True, scan=scan)
-        
+
         if project:
             return ScanTask.objects.filter(active=True, scan__project=project)
-        
+
         return []
 
 
 class Details(models.Model):
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
-    
+
     cvss = models.FloatField(default=0)
     file = models.ForeignKey(File, models.SET_NULL, null=True)
     tracker_count = models.IntegerField(default=0)
-    
-    
-    
+
+

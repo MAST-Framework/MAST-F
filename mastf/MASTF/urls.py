@@ -20,6 +20,7 @@ from mastf.MASTF import settings, converters
 register_converter(converters.FindingTemplateIDConverter, 'ftid')
 register_converter(converters.VulnerabilityIDConverter, 'svid')
 register_converter(converters.FindingIDConverter, 'sfid')
+register_converter(converters.MD5Converter, 'md5')
 
 urlpatterns = [
     path('api/v1/', include('mastf.MASTF.rest.urls')),

@@ -36,17 +36,6 @@ Applications and Projects
               </a>
             {% endif %}
           </span>
-          <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-report">
-            <!-- Download SVG icon from http://tabler-icons.io/i/plus -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
-                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
-                <path d="M12 12v9"></path>
-             </svg>
-            Scan
-          </a>
         </div>
       </div>
     </div>
@@ -190,9 +179,6 @@ Applications and Projects
                                                 <!-- The 'Scan' action has no heading -->
                                                 <th></th>
                                                 
-                                                <!-- As well as the 'view' action which should trigger an offcanvas. -->
-                                                <th></th>
-
                                                 <th class="w-1 text-end">
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#modal-cols">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments-horizontal" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -283,8 +269,6 @@ Applications and Projects
                                                         {% endwith %}
                                                     </td>
 
-                                                    <td><!-- Groups are not implemented yet --></td>
-
                                                     <!-- Risk level -->
                                                     <td>
                                                         {% with value|lower as level %}
@@ -316,18 +300,6 @@ Applications and Projects
                                                         {{ row.low_vuln }}
                                                     </td>
                                                     
-                                                    <td>
-                                                        <a href="#" class="nav-link px-0 link-secondary" data-bs-toggle="modal" data-bs-target="#modal-scan-table">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                                                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
-                                                                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
-                                                                <path d="M12 12v9"></path>
-                                                                </svg>
-                                                                Scan
-                                                        </a>
-                                                    </td>
                                                     <td>
                                                         <a href="#" class="nav-link px-0 link-secondary" target-id="#project-id-row-{{ forloop.counter }}" 
                                                             id="project-view-action-{{ forloop.counter }}">

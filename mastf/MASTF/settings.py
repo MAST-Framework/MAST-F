@@ -165,13 +165,10 @@ PROJECTS_TABLE_COLUMNS = [
     "Last Scan Origin",
     "Last Scan",
     "Tags",
-    "Groups",
     "Risk Level",
     "High",
     "Medium",
     "Low",
-    # Uncomment the next line to be able to see SECURE results
-    # "Secure",
 ]
 
 APPS_TABLE_COLUMNS = [

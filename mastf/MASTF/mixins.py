@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from rest_framework.permissions import BasePermission
+
 from mastf.MASTF import settings
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.models import Account, Project, Scan
@@ -13,6 +15,8 @@ LOGIN_URL = '/web/login'
 
 class ContextMixinBase(LoginRequiredMixin, TemplateView):
     login_url = LOGIN_URL
+    
+    object_permissions = None
     
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -29,6 +33,17 @@ class ContextMixinBase(LoginRequiredMixin, TemplateView):
             context['user_role'] = account.role
 
         return context
+    
+    def check_object_permissions(self, obj) -> bool:
+        if self.object_permissions:
+            for permission in self.object_permissions:
+                # Rather use an additional instance check here instead of 
+                # throwing an exception
+                if isinstance(permission, BasePermission):
+                    if not permission.has_object_permission(self.request, obj, self):
+                        return False
+        # Return True by default
+        return True
 
 class VulnContextMixin:
 

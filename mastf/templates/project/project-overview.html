@@ -509,7 +509,7 @@ MAST-F Project | {{ project.name }}
                                                                     </svg>
                                                                 Show Progress
                                                             </a>
-                                                            <a href="{% url 'Scan-Results' project_uuid=project.project_uuid name=scanner_name|lower extension="details" %}" 
+                                                            <a href="{% url 'Scan-Index' project_uuid=project.project_uuid name=scanner_name|lower %}" 
                                                                 class="btn btn-primary d-none d-sm-inline-block">
                                                                 View Results
                                                               </a>
@@ -914,25 +914,34 @@ MAST-F Project | {{ project.name }}
         series = [];
         labels = [];
         index = 0.0;
-
+        
         for (key in data) {
             labels.push(key);
             series.push(data[key]);
 
-            var x = 1.0 - i;
+            var x = 1.0 - index;
             if (x > 0.4) {
                 colors.push(tabler.getColor("primary", x));    
             }
             else {
                 colors.push(tabler.getColor("secondary", 1.0 - x));
             }
-            i -= 0.2
+            index -= 0.2
         }
 
         if (labels.length > 0) {
-            document.getElementById('no-finding-data').remove();
+            var gtz = false;
+            for (let value of series) {
+                if (value > 0) {
+                    document.getElementById('no-finding-data').remove();
+                    gtz = true;
+                    break;
+                }
+            }
+            if (!gtz) {
+                return;
+            }
         }
-
         pie = new ApexCharts(document.getElementById('chart-finding-by-type'), {
             chart: {
                 type: "donut",

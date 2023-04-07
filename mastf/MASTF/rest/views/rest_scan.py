@@ -111,7 +111,9 @@ class ScanCreationView(CreationAPIViewBase):
     def on_create(self, request: Request, instance: Scan) -> None:
         # create scan details
         Details(scan=instance, file=self.request.POST['File']).save()
-
+        instance.file = self.request.POST['file']
+        instance.save()
+        
         # Create desired project scanners
         selected = self.request.POST['selected_scanners']
         task_uuid = self.make_uuid()
