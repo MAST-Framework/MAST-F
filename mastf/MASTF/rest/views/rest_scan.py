@@ -100,33 +100,19 @@ class ScanCreationView(CreationAPIViewBase):
         # the file has to be downloaded before any action shoule be executed
         file_url = data.pop('file_url', None)
         if not file_url:
-            file = handle_scan_file_upload(self.request.FILES['file'], project)
-            if not file:
+            uploaded_file = handle_scan_file_upload(self.request.FILES['file'], project)
+            if not uploaded_file:
                 raise ValueError('Could not save uploaded file')
 
-            self.request.POST['File'] = file
+            self.request.POST['File'] = uploaded_file
         else:
             raise NotImplementedError('URL not implemented!')
 
     def on_create(self, request: Request, instance: Scan) -> None:
-        # create scan details
-        Details(scan=instance, file=self.request.POST['File']).save()
-        instance.file = self.request.POST['file']
-        instance.save()
-        
-        # Create desired project scanners
-        selected = self.request.POST['selected_scanners']
-        task_uuid = self.make_uuid()
-
-        # Step 1: Create a new database task.
-        task = ScanTask(task_uuid=task_uuid, scan=instance)
-        task.save()
-
-        # Step 2: Execute the preparation task (file preparation,
-        # decompilation of files, prepare filesystem)
-        result: AsyncResult = tasks.prepare_scan.delay(instance, selected)
-        task.celery_id = result.id
-        task.save()
+        tasks.schedule_scan(
+            instance, request.POST['File'], 
+            request.POST['selected_scanners']
+        )
 
 
 class ScanListView(ListAPIViewBase):

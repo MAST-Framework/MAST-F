@@ -59,10 +59,10 @@ class ScanTaskProgressBar {
     onData(data) {
         let done = data.status.completed;
         this.pgbElement.setAttribute("aria-valuenow", data.status.current);
-        this.pgbElement.setAttribute("aria-label", data.status.percent + "% Complete");
-        this.pgbElement.setAttribute("style", "width: " + data.status.percent + "%;");
+        this.pgbElement.setAttribute("aria-label", data.status.current + "% Complete");
+        this.pgbElement.setAttribute("style", "width: " + data.status.current + "%;");
         
-        let percent = data.status.percent;
+        let percent = data.status.current;
         if (data.status.detail) {
             this.detailElement.innerHTML = data.status.detail;
         } else {

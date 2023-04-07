@@ -67,6 +67,8 @@ class File(models.Model):
     '''The available disk space needed to save the uploaded file'''
 
     file_path = models.CharField(max_length=2048, null=True)
+    
+    internal_name = models.CharField(max_length=32, default='')
 
 
 class Scan(models.Model):

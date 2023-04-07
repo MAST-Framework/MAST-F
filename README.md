@@ -35,4 +35,14 @@ projects/
             contents/
                 # initial ZIP-File data
 ```
+
+
+## ScanTask design
+
+After a new scan has been requested, it will be executed on the target scan date. Before each
+scanner is exeuted, there is a preparation task, that is called asynchronously:
+
+    1. Preparation: create directories, extract ZIP Files, decompile binaries
+    2. Call Plugins: each scanner comes with a ``task`` field that should be 
+        a function that takes a ``Scan`` and ``ScanTask`` object as input.
     

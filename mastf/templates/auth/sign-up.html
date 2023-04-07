@@ -9,9 +9,9 @@
 {% block page_body %}
 <div class="container container-tight py-4">
   <div class="text-center mb-4">
-    <a href="." class="navbar-brand navbar-brand-autodark"><img src="{% static 'static/new-logo-base.svg' %}" height="36" alt=""></a>
+    <a href="." class="navbar-brand navbar-brand-autodark"><img src="{% static 'static/new-logo-base.svg' %}" height="64" alt=""></a>
   </div>
-  <form class="card card-md" action="{% url 'RegisterUser' %}" method="POST" autocomplete="off">
+  <form class="card card-md" action="{% url 'User-Registration' %}" method="POST" autocomplete="off">
     {% csrf_token %}
 
     <div class="card-body">
@@ -47,7 +47,7 @@
     </div>
   </form>
   <div class="text-center text-muted mt-3">
-    Already have account? <a href="{% url 'SignIn' %}" tabindex="-1">Sign in</a>
+    Already have account? <a href="{% url 'User-Login' %}" tabindex="-1">Sign in</a>
   </div>
 </div>
 {% endblock page_body %}

@@ -2,7 +2,7 @@ import json
 
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.http import HttpResponseForbidden
 from django.db.models import QuerySet, Q
 
 from celery.result import AsyncResult
@@ -39,6 +39,10 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase):
         self.apply_project_context(context, self.kwargs['project_uuid'])
 
         project = context['project']
+        if not self.check_object_permissions(project):
+            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
+            return context
+
         context['active'] = 'tabs-overview'
 
         vuln = Vulnerability.objects.filter(scan__project=project)
@@ -69,6 +73,10 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase):
         self.apply_project_context(context, self.kwargs['project_uuid'])
 
         project = context['project']
+        if not self.check_object_permissions(project):
+            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
+            return context
+        
         context['active'] = 'tabs-scan-history'
         context['scan_data'] = [
             self.get_scan_history(scan) for scan in Scan.objects.filter(project=project)
@@ -98,6 +106,10 @@ class UserProjectScannersView(UserProjectMixin, VulnContextMixin, ContextMixinBa
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context, self.kwargs['project_uuid'])
+        if not self.check_object_permissions(context['project']):
+            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
+            return context
+        
         context['active'] = 'tabs-scanners'
 
         project = context['project']

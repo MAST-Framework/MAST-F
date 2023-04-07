@@ -198,22 +198,22 @@ MAST-F Project | {{ project.name }}
                                                                 <div class="progress progressbg-progress">
                                                                     <div class="progress-bar bg-primary-lt" style="width: {{ process.status.total }}%;"
                                                                         role="progressbar" aria-valuenow="{{ process.status.total }}" aria-valuemax="100"
-                                                                        aria-valuemin="0" aria-label="{{ process.status.percent }}% Complete"
+                                                                        aria-valuemin="0" aria-label="{{ process.status.current }}% Complete"
                                                                         id="process-pgb-{{ process.id }}">
                 
-                                                                        <div class="visually-hidden">{{ process.status.percent }}% Complete</div>
+                                                                        <div class="visually-hidden">{{ process.status.current }}% Complete</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="progressbg-text"  id="process-pgb-text-{{ process.id }}">
                                                                     {% if process.status.detail %}
                                                                     {{ process.status.detail }}
                                                                     {% else %}
-                                                                    {{ process.status.percent }}% of 100% completed
+                                                                    {{ process.status.current }}% of 100% completed
                                                                     {% endif %}
                                                                     </div>
                                                                 <div class="progressbg-value"  id="process-pgb-value-{{ process.id }}">
-                                                                    {% if process.status.percent %}
-                                                                    {{ process.status.percent }}%
+                                                                    {% if process.status.current %}
+                                                                    {{ process.status.current }}%
                                                                     {% endif %}
                                                                 </div>
                                                             </div>
@@ -304,9 +304,6 @@ MAST-F Project | {{ project.name }}
                                                 
                                                 <th>State</th>
 
-                                                <!-- The 'Scan' action has no heading -->
-                                                <th></th>
-                                                
                                                 <th class="w-1 text-end">
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#modal-cols">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments-horizontal" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -393,8 +390,8 @@ MAST-F Project | {{ project.name }}
                                                         {{ data.low_risks }}
                                                     </td>
                                                     <td>
-                                                        <span class="badge {% if data.scan.status|lower == "completed" %}bg-green-lt
-                                                            {% elif data.scan.status|lower == "prepared" %}bg-azure-lt{% else %}
+                                                        <span class="badge {% if data.scan.status|lower == "Active" %}bg-green-lt
+                                                            {% elif data.scan.status|lower == "Scheduled" %}bg-azure-lt{% else %}
                                                             bg-secondary-lt{% endif %}"
                                                         >
                                                             {{ data.scan.status }}
@@ -402,15 +399,6 @@ MAST-F Project | {{ project.name }}
                                                     </td>
                                                     
 
-                                                    <td>
-                                                        <a href="#" class="nav-link px-0 link-secondary" data-bs-toggle="modal" data-bs-target="#modal-scan-table">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                                <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                                                <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
-                                                             </svg>
-                                                        </a>
-                                                    </td>
                                                     <td class="text-end">
                                                         <span class="dropdown">
                                                         <a href="#" class="nav-link px-0 link-secondary text-align-right"  tabindex="-1" data-bs-toggle="dropdown">

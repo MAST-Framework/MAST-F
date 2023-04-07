@@ -33,8 +33,9 @@ def get_file_cheksum(fp) -> tuple:
 
     return sha256.hexdigest(), sha1.hexdigest(), md5.hexdigest()
 
-def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project) -> File:
-    path = settings.PROJECTS_ROOT / str(project.project_uuid) / file.name
+def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project):
+    internal_name = hashlib.md5(file.name.encode()).hexdigest()
+    path = settings.PROJECTS_ROOT / str(project.project_uuid) / internal_name
     if path.exists():
         logger.info('Uploaded file destination already exists!')
         return File.objects.get(file_path=str(path))
@@ -54,6 +55,6 @@ def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project) -> Fi
 
     db_file = File(md5=md5, sha1=sha1, sha256=sha256,
                    file_name=file.name, file_size=file.size,
-                   file_path=str(path))
+                   file_path=str(path), internal_name=internal_name)
     db_file.save()
     return db_file

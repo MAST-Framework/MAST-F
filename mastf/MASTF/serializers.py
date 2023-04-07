@@ -53,7 +53,6 @@ class CeleryStatusSerializer(serializers.Serializer):
     pending = serializers.BooleanField(default=False, required=False)
     current = serializers.IntegerField(required=True)
     total = serializers.IntegerField(default=100, required=False)
-    percent = serializers.FloatField(required=True)
     detail = serializers.CharField(default=None, required=False)
     complete = serializers.BooleanField(default=False, required=False)
     
