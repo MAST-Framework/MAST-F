@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.http import HttpRequest
+from django.http import HttpRequest, Http404
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,10 +13,50 @@ from mastf.MASTF.models import Account, Project, Scan
 
 LOGIN_URL = '/web/login'
 
-class ContextMixinBase(LoginRequiredMixin, TemplateView):
-    login_url = LOGIN_URL
+class TemplateAPIView(TemplateView):
     
-    object_permissions = None
+    permission_classes = None
+    
+    def check_object_permissions(self, request, obj) -> bool:
+        if self.permission_classes:
+            for permission in self.permission_classes:
+                # Rather use an additional instance check here instead of 
+                # throwing an exception
+                if isinstance(permission, BasePermission):
+                    if not permission.has_object_permission(request, obj, self):
+                        return False
+        # Return Ture by default
+        return True
+    
+    def get_object(self, model, pk_field: str):
+        """Returns a project mapped to a given primary key
+
+        :return: the instance of the desired model
+        :rtype: ? extends Model
+        """
+        assert model is not None, (
+            "The stored model must not be null"
+        )
+
+        assert pk_field is not None, (
+            "The field used for lookup must not be null"
+        )
+
+        assert pk_field in self.kwargs, (
+            "Invalid lookup field - not included in args"
+        )
+
+        instance = get_object_or_404(
+            model.objects.all(), **{pk_field: self.kwargs[pk_field]}
+        )
+        if not self.check_object_permissions(self.request, instance):
+            raise Http404
+        
+        return instance
+
+
+class ContextMixinBase(LoginRequiredMixin):
+    login_url = LOGIN_URL
     
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -34,16 +74,6 @@ class ContextMixinBase(LoginRequiredMixin, TemplateView):
 
         return context
     
-    def check_object_permissions(self, obj) -> bool:
-        if self.object_permissions:
-            for permission in self.object_permissions:
-                # Rather use an additional instance check here instead of 
-                # throwing an exception
-                if isinstance(permission, BasePermission):
-                    if not permission.has_object_permission(self.request, obj, self):
-                        return False
-        # Return True by default
-        return True
 
 class VulnContextMixin:
 
@@ -68,7 +98,7 @@ class VulnContextMixin:
 
 class UserProjectMixin:
     
-    def apply_project_context(self, context: dict, project_uuid) -> None:
-        context['project'] = get_object_or_404(Project.objects.all(), project_uuid=project_uuid)
+    def apply_project_context(self, context: dict) -> None:
+        context['project'] = self.get_object(Project, 'project_uuid')
         context['scanners'] = ScannerPlugin.all()
         

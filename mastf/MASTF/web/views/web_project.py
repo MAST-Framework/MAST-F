@@ -1,8 +1,5 @@
-import json
-
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.http import HttpResponseForbidden
 from django.db.models import QuerySet, Q
 
 from celery.result import AsyncResult
@@ -10,7 +7,8 @@ from celery.result import AsyncResult
 from mastf.MASTF.mixins import (
     ContextMixinBase,
     UserProjectMixin,
-    VulnContextMixin
+    VulnContextMixin,
+    TemplateAPIView
 )
 from mastf.MASTF.models import (
     Vulnerability,
@@ -23,6 +21,8 @@ from mastf.MASTF.models import (
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.rest.views import ScanCreationView
+from mastf.MASTF.rest.permissions import IsOwnerOrPublic
+from mastf.MASTF.utils.enum import State
 
 __all__ = [
     'UserProjectDetailsView', 'UserProjectScanHistoryView',
@@ -31,28 +31,26 @@ __all__ = [
 
 OVERVIEW_PATH = 'project/project-overview.html'
 
-class UserProjectDetailsView(UserProjectMixin, ContextMixinBase):
+class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
+    permission_classes = [IsOwnerOrPublic]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.apply_project_context(context, self.kwargs['project_uuid'])
+        self.apply_project_context(context)
 
         project = context['project']
-        if not self.check_object_permissions(project):
-            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
-            return context
 
         context['active'] = 'tabs-overview'
 
         vuln = Vulnerability.objects.filter(scan__project=project)
         context['risk_count'] = len(vuln)
-        context['verified'] = len(vuln.filter())
+        context['verified'] = len(vuln.filter(Q(severity=str(State.CONFIRMED))))
         context['scan'] = Scan.last_scan(project)
 
         tasks = ScanTask.active_tasks(project=project)
         context['is_active'] = len(tasks) > 0
-        if context['is_active']:
+        if context['is_active'] and context['scan'].is_active:
             active_data = []
             for task in tasks:
                 if not task.celery_id:
@@ -65,18 +63,15 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase):
         return context
 
 
-class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase):
+class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
+    permission_classes = [IsOwnerOrPublic]
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-        self.apply_project_context(context, self.kwargs['project_uuid'])
+        self.apply_project_context(context)
 
         project = context['project']
-        if not self.check_object_permissions(project):
-            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
-            return context
-        
         context['active'] = 'tabs-scan-history'
         context['scan_data'] = [
             self.get_scan_history(scan) for scan in Scan.objects.filter(project=project)
@@ -95,8 +90,10 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase):
         return data
 
 
-class UserProjectScannersView(UserProjectMixin, VulnContextMixin, ContextMixinBase):
+class UserProjectScannersView(UserProjectMixin, VulnContextMixin, 
+                              ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
+    permission_classes = [IsOwnerOrPublic]
 
     def post(self, request, *args, **kwargs):
         view = ScanCreationView.as_view()
@@ -105,10 +102,7 @@ class UserProjectScannersView(UserProjectMixin, VulnContextMixin, ContextMixinBa
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-        self.apply_project_context(context, self.kwargs['project_uuid'])
-        if not self.check_object_permissions(context['project']):
-            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
-            return context
+        self.apply_project_context(context)
         
         context['active'] = 'tabs-scanners'
 

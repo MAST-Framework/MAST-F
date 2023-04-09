@@ -14,7 +14,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+DETAILS_DIR = BASE_DIR / 'static' / 'json'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -157,7 +157,15 @@ if not PROJECTS_ROOT.exists():
 DEBUG_HTML = True
 API_ONLY = False
 
+# Constant to set the working directory for dex2jar tools.
+# Note that the provided string must be a prefix and not the 
+# full path of a single tool, for instance:
+#      - D2J_TOOLSET := '/home/admin/tools/dex-tools/d2j-'
+# or on windows:
+#      - D2J_TOOLSET := 'C:\Users\Public\Tools\dex-tools\d2j-'
+D2J_TOOLSET = os.getenv('TOOLS_BAKSMALI', "d2j-")
 
+APKTOOL = os.getenv('TOOLS_APKTOOL', "apktool")
 
 PROJECTS_TABLE_COLUMNS = [
     "ID", # the project's ID won't be visible directly
@@ -237,6 +245,16 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        
     },
 }
+
+###############################################################################
+# Articles
+###############################################################################
+ARTICLES = {}
+for platform in DETAILS_DIR.iterdir():
+    if platform.is_dir():
+        data = []
+        for file in platform.iterdir():
+            data.append({'internal_name': file.stem.lower().replace(' ', '-'), 'name': file.stem})
+        ARTICLES[platform.name.capitalize()] = data

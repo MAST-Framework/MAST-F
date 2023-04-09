@@ -36,7 +36,7 @@ class FindingCodeView(views.APIView):
 
         # Either provide the whole file or send a code
         # snippet with all relevant lines
-        path = settings.PROJECTS_ROOT / str(project.project_uuid) / "src"
+        path = settings.PROJECTS_ROOT / str(project.project_uuid) / str(finding.scan.file.md5) / "src"
         if not path.exists():
             return Response({'detail': "Project source file directory does not exist"}, 
                             status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -50,7 +50,10 @@ class FindingCodeView(views.APIView):
         
         data = {
             'name': finding.source_file,
-            'code': path.open().read()
+            'code': path.open().read(),
+            'file': {
+                'size': size
+            }
         }
         return Response(data)
 

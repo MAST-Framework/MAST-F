@@ -6,7 +6,8 @@ from mastf.MASTF.models import (
     FindingTemplate,
     AppPermission,
     Scan,
-    Finding
+    Finding,
+    Vulnerability
 )
 
 
@@ -42,12 +43,18 @@ class ScanSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class FindingSerializer(serializers.ModelSerializer):
-    template = ScanSerializer(many=False)
+    template = TemplateSerializer(many=False)
     
     class Meta:
         model = Finding
         fields = '__all__'
-        
+
+class VulnerabilitySerializer(serializers.ModelSerializer):
+    template = TemplateSerializer(many=False)
+    
+    class Meta:
+        model = Vulnerability
+        fields = '__all__'
 
 class CeleryStatusSerializer(serializers.Serializer):
     pending = serializers.BooleanField(default=False, required=False)

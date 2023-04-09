@@ -16,11 +16,6 @@ __all__ = [
 class FindingTemplateView(APIViewBase):
     """API-Endpoint for creating, managing and removing finding templates."""
 
-    authentication_classes = [
-        authentication.BasicAuthentication,
-        authentication.SessionAuthentication
-    ]
-
     permission_classes = [permissions.IsAuthenticated]
 
     model = FindingTemplate

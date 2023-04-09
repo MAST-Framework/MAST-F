@@ -1,4 +1,6 @@
+import os
 import logging
+import shutil
 
 from uuid import UUID
 
@@ -14,16 +16,17 @@ from rest_framework.authentication import (
 
 from django.shortcuts import get_object_or_404
 from django.db.models import QuerySet
+from django.contrib import messages
 
 from celery.result import AsyncResult
 
+from mastf.MASTF.settings import PROJECTS_ROOT
 from mastf.MASTF.serializers import ScanSerializer, CeleryResultSerializer
 from mastf.MASTF.models import (
     Scan,
     Project,
     ScanTask,
     ProjectScanner,
-    Details
 )
 from mastf.MASTF.forms import ScanForm
 from mastf.MASTF.rest.permissions import ReadOnly, IsScanInitiator, IsScanTaskInitiator
@@ -50,7 +53,15 @@ class ScanView(APIViewBase):
     model = Scan
     serializer_class = ScanSerializer
     lookup_field = 'scan_uuid'
-
+    
+    def on_delete(self, request: Request, obj: Scan) -> None:
+        path = obj.project.dir(obj.file.internal_name, create=False)
+        try:
+            os.remove(obj.file.file_path)
+            shutil.rmtree(str(path))
+        except OSError as err:
+            messages.error(request, str(err), err.__class__.__name__)
+            
 
 class ScanCreationView(CreationAPIViewBase):
     form_class = ScanForm
@@ -86,7 +97,7 @@ class ScanCreationView(CreationAPIViewBase):
                 ProjectScanner(project=project, name=name).save()
             # Even if the scanner is present, we have to add it
             # to the list of scanners to start
-            selected.append(selected)
+            selected.append(name)
 
         if len(selected) == 0:
             logger.warning('No scanner selected - aborting scan generation')

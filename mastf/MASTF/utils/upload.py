@@ -35,7 +35,9 @@ def get_file_cheksum(fp) -> tuple:
 
 def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project):
     internal_name = hashlib.md5(file.name.encode()).hexdigest()
-    path = settings.PROJECTS_ROOT / str(project.project_uuid) / internal_name
+    
+    suffix = file.name.split('.')[-1]
+    path = settings.PROJECTS_ROOT / str(project.project_uuid) / f"{internal_name}.{suffix}"
     if path.exists():
         logger.info('Uploaded file destination already exists!')
         return File.objects.get(file_path=str(path))

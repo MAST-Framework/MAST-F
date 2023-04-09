@@ -4,7 +4,7 @@
 
 <!-- Title -->
 {% block title %}
-Applications and Projects
+Bundles and Projects
 {% endblock title %}
 
 {% block css_extended %}
@@ -20,7 +20,7 @@ Applications and Projects
           Overview
         </div>
         <h2 class="page-title">
-          Applications and Projects
+          Bundles and Projects
         </h2>
       </div>
       <div class="col-auto ms-auto">
@@ -30,7 +30,7 @@ Applications and Projects
             <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#modal-new-project">
                 New Project
               </a>
-            {% elif active == "tabs-applications" %}
+            {% elif active == "tabs-bundles" %}
             <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#modal-new-app">
                 New Application
               </a>
@@ -56,7 +56,7 @@ Applications and Projects
                             <a href="{% url 'Projects' %}" class="nav-link {% if active == "tabs-projects" %}active{% endif %}">Projects</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'Applications' %}" class="nav-link {% if active == "tabs-applications" %}active{% endif %}">Applications</a>
+                            <a href="{% url 'Bundles' %}" class="nav-link {% if active == "tabs-bundles" %}active{% endif %}">Bundles</a>
                         </li>
                     </ul>
                 </div>
@@ -348,13 +348,13 @@ Applications and Projects
                             {% endif %}
                         </div>
 
-                        <!-- Applications:
+                        <!-- Bundles:
                             
-                            Applications are groups of projects (aggregation of projects). They summarize scan results
+                            Bundles are groups of projects (aggregation of projects). They summarize scan results
                             for different components of each project.
                         -->
-                        <div class="tab-pane {% if active == "tabs-applications" %}active show{% endif %}" id="tabs-applications">
-                        {% if active == "tabs-applications" %}
+                        <div class="tab-pane {% if active == "tabs-bundles" %}active show{% endif %}" id="tabs-bundles">
+                        {% if active == "tabs-bundles" %}
                             <!-- Row with risk counters -->
                             <div class="row row-deck">
                                 
@@ -362,7 +362,7 @@ Applications and Projects
                                     <!-- Card with application count -->
                                     <div class="card">
                                         <div class="card-header">
-                                            <h3 class="card-title">Managed Applications</h3>
+                                            <h3 class="card-title">Managed Bundles</h3>
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted"><b>{{ app_count }}</b></p>
@@ -374,7 +374,7 @@ Applications and Projects
                                     <!-- Card with high risk count -->
                                     <div class="card">
                                         <div class="card-header">
-                                            <h3 class="card-title">High Risk Applications</h3>
+                                            <h3 class="card-title">High Risk Bundles</h3>
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted"><b>
@@ -394,7 +394,7 @@ Applications and Projects
                                     <!-- Card with medium risk count -->
                                     <div class="card">
                                         <div class="card-header">
-                                            <h3 class="card-title">Medium Risk Applications</h3>
+                                            <h3 class="card-title">Medium Risk Bundles</h3>
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted"><b>
@@ -809,7 +809,7 @@ Applications and Projects
          * console if 'DEBUG_HTML' is enabled in Django's settings.
          * 
          * This loop also adds links to the overview page of projects and
-         * applications
+         * bundles
          */
         for (const index of Array({{ project_table_data|length }}).keys()) {
             // DELETE PROJECT

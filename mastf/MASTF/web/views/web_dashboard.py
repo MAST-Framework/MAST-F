@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 from mastf.MASTF import settings
-from mastf.MASTF.mixins import ContextMixinBase, VulnContextMixin
+from mastf.MASTF.mixins import ContextMixinBase, VulnContextMixin, TemplateAPIView
 from mastf.MASTF.rest.views import rest_project
 from mastf.MASTF.models import (
     Project, Vulnerability, Namespace, Scan
@@ -16,20 +16,20 @@ __all__ = [
     'DashboardView', 'ProjectsView', 'LicenseView', 'PluginsView'
 ]
 
-class DashboardView(ContextMixinBase):
+class DashboardView(ContextMixinBase, TemplateAPIView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['selected'] = 'Home'
         
-        messages.error(self.request, "Some error message", "Internal server Error")
+        messages.error(self.request, "Example error message", "Internal server Error")
         
         return context
 
 
-class ProjectsView(VulnContextMixin, ContextMixinBase):
-    template_name = 'dashboard/applications-and-projects.html'
+class ProjectsView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
+    template_name = 'dashboard/bundles-and-projects.html'
 
     def post(self, request, *args, **kwargs):
         view = rest_project.ProjectCreationView.as_view()
@@ -69,11 +69,11 @@ class ProjectsView(VulnContextMixin, ContextMixinBase):
         return data
 
 
-class LicenseView(ContextMixinBase):
+class LicenseView(ContextMixinBase, TemplateAPIView):
     template_name = 'license.html'
 
 
-class PluginsView(ContextMixinBase):
+class PluginsView(ContextMixinBase, TemplateAPIView):
     template_name = 'dashboard/plugins.html'
 
     def get_context_data(self, **kwargs: dict) -> dict:

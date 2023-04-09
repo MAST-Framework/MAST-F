@@ -360,7 +360,8 @@ MAST-F Project | {{ project.name }}
                                                             <path d="M7 14h5m2.9 0h2.1"></path>
                                                             <path d="M16 16l-2.51 -4.518m-1.487 -2.677l-1 -1.805"></path>
                                                          </svg>
-                                                        {% elif data.scan.origin == "" %}
+                                                        {% else %}
+                                                        {{data.scan.origin}}
                                                         {% endif %}
 
                                                         {{ data.scan.origin }}
@@ -411,7 +412,7 @@ MAST-F Project | {{ project.name }}
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
                                                             <a class="dropdown-item" href="#" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}"
-                                                                onclick="deleteScan(this);">
+                                                                onclick="verifyAction(this, deleteScan);" modal-title="Delete selected scan?">
                                                                 <span class="dropdown-item-icon text-red">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -523,7 +524,7 @@ MAST-F Project | {{ project.name }}
                                                     <!-- Card with vulnerability count -->
                                                     <div class="card">
                                                         <div class="card-body">
-                                                            <p class="mb-3">Total Vulnerabilities <strong> {% if vuln_count %}{{vuln_count}}{% else %}0{% endif %} </strong></p>
+                                                            <p class="mb-3">Total Vulnerabilities <strong> {% if data.vuln_count %}{{data.vuln_count}}{% else %}0{% endif %} </strong></p>
                                                             <div class="progress progress-separated mb-3">
                                                                 {% if data.vuln_data %}
                                                                     {% for category in data.vuln_data %}
@@ -778,7 +779,7 @@ MAST-F Project | {{ project.name }}
 
 {% if active == "tabs-scan-history" %}
 <script>
-    deleteScan = function(element) {
+    deleteScan = function(element, event) {
             var selector = $(element).attr("scan-id-element");
             $.ajax({
                 type: 'DELETE',
@@ -810,10 +811,11 @@ MAST-F Project | {{ project.name }}
             finding_data.push(values.finding_count);
         }
 
-        if (dates.length > 0) {
-            document.getElementById('no-timeline-data').remove();
+        if (dates.length == 0) {
+            return;
         }
 
+        document.getElementById('no-timeline-data').remove();
         timeline = new ApexCharts(document.getElementById('chart-finding-timeline'), {
             chart: {
                 type: "area",
@@ -894,6 +896,7 @@ MAST-F Project | {{ project.name }}
                 }
             },
         })
+
         timeline.render();
     };
 

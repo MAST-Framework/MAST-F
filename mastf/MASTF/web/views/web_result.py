@@ -1,6 +1,6 @@
 from django.contrib import messages
 
-from mastf.MASTF.mixins import ContextMixinBase, UserProjectMixin
+from mastf.MASTF.mixins import ContextMixinBase, UserProjectMixin, TemplateAPIView
 from mastf.MASTF.rest.permissions import IsOwnerOrPublic
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.models import File, Scan
@@ -9,32 +9,26 @@ __all__ = [
     'ScannerResultsView', 'ScanIndexView'
 ]
 
-class ScanIndexView(UserProjectMixin, ContextMixinBase):
+class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = 'project/project-scan-results.html'
-    
-    object_permissions = [IsOwnerOrPublic]
+    permission_classes = [IsOwnerOrPublic]
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.apply_project_context(context, self.kwargs['project_uuid'])
+        self.apply_project_context(context)
 
         project = context['project']
-        if not self.check_object_permissions(project):
-            messages.error(self.request, "Insufficient project permissions", "PermissionError")
-            return context
-
         # Apply scan files after permission check
         context['scan_files'] = Scan.files(project=project)
         return context
 
-class ScannerResultsView(UserProjectMixin, ContextMixinBase):
+class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = 'project/project-scan-results.html'
-
-    object_permissions = [IsOwnerOrPublic]
+    permission_classes = [IsOwnerOrPublic]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.apply_project_context(context, self.kwargs['project_uuid'])
+        self.apply_project_context(context)
 
         file_md5 = self.kwargs.get('file_md5', None)
         active_file = File.objects.filter(md5=file_md5).first()
@@ -43,13 +37,10 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase):
             return context
 
         project = context['project']
-        if not self.check_object_permissions(project):
-            messages.error(self.request, "Insufficient project permissions", "PermissionError")
-            return context
-
         # Apply scan files after permission check
         context['scan_files'] = Scan.files(project=project)
         context['active_file'] = active_file
+        context['scan'] = Scan.objects.filter(project=project, file=active_file)
 
         plugins = ScannerPlugin.all_of(project)
         name = self.kwargs['name']

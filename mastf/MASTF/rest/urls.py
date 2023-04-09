@@ -19,10 +19,22 @@ urlpatterns = [
 
     # Note that we're using the custom converter defined in
     # mastf/MASTF/converters.py
-    path(r"finding/template/all", views.FindingTemplateListView.as_view()),
-    path(r"finding/template/create", views.FindingTemplateCreationView.as_view()),
-    path(r"finding/template/<ftid:template_id>", views.FindingTemplateView.as_view()),
-
+    path(r"finding/", include([
+        # REVISIT: Potential information leakage when listing vulnerabilities 
+        # from other projects
+        path(r"all", views.FindingListView.as_view()),
+        path(r"create", views.FindingCreationView.as_view()),
+        path(r"<sfid:finding_id>", views.FindingView.as_view()),
+        
+        path(r"vulnerability/all", views.VulnerabilityListView.as_view()),
+        path(r"vulnerability/create", views.VulnerabilityCreationView.as_view()),
+        path(r"vulnerability/<svid:finding_id>", views.VulnerabilityView.as_view()),
+        
+        path(r"template/all", views.FindingTemplateListView.as_view()),
+        path(r"template/create", views.FindingTemplateCreationView.as_view()),
+        path(r"template/<ftid:template_id>", views.FindingTemplateView.as_view()),
+    ])),
+    
     path(r"app-permission/all", views.AppPermissionListView.as_view()),
     path(r"app-permission/create", views.AppPermissionCreationView.as_view()),
     path(r"app-permission/<uuid:permission_uuid>", views.AppPermissionView.as_view()),

@@ -66,3 +66,24 @@ class ScanForm(forms.Form):
     start_date = forms.DateField(required=False)
     status = forms.CharField(max_length=256, required=False)
     file_url = forms.CharField(max_length=512, required=False)
+
+
+class AbstractFindingForm(forms.Form):
+    scan = forms.CharField(max_length=256, required=True)
+    language = forms.CharField(max_length=256, required=False)
+    severity = forms.CharField(max_length=32, required=True)
+    source_file = forms.CharField(max_length=512, required=True)
+    source_line = forms.CharField(max_length=512, required=False)
+    scanner = forms.CharField(max_length=256, required=True)
+    template = forms.CharField(max_length=256, required=True)
+    
+    class Meta:
+        abstract = True
+
+class FindingForm(AbstractFindingForm):
+    is_custom = forms.BooleanField(required=False)
+
+class VulnerabilityForm(AbstractFindingForm):
+    state = forms.CharField(max_length=256, required=True)
+    
+

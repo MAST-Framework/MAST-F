@@ -1,0 +1,37 @@
+{
+    "title": "Android Logging",
+    "pretitle": "OWASP Mobile Top 10 2016: M4 - Insecure Authentication and Authorization",
+    "short_summary": "Logging is a common practice in Android app development for debugging purposes. However, logging can also introduce security risks if sensitive information is logged and the logs are not properly secured.",
+
+    "sources": [
+        {
+            "value": "https://developer.android.com/topic/security/best-practices/logging-best-practices",
+            "name": "Android Security: Logging Best Practices"
+        }
+    ],
+
+    "content": [
+        {
+            "type": "html",
+            "tag": "h3",
+            "content": "Android Logging Security Risks"
+        },
+        "Here are some security risks associated with logging in Android apps:",
+        {
+            "type": "ol",
+            "content": [
+                "Sensitive information leakage: If sensitive information such as passwords, API keys, and user data is logged, it can be easily accessed by attackers who gain access to the logs. This can lead to data breaches and other security incidents.",
+                "Code injection attacks: If logging statements are not properly sanitized, attackers can inject malicious code into the logs, which can then be executed when the logs are viewed or processed.",
+                "Denial of service attacks: Logging can consume significant system resources, which can lead to denial of service attacks if an attacker floods the app with logging requests."
+            ]
+        },
+        "Here's an example of how logging can introduce security risks:",
+        {
+            "type": "code",
+            "language": "java",
+            "content": "public class LoginActivity extends AppCompatActivity {\n\n    private EditText usernameEditText;\n    private EditText passwordEditText;\n    private Button loginButton;\n\n    @Override\n    protected void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        setContentView(R.layout.activity_login);\n\n        usernameEditText = findViewById(R.id.usernameEditText);\n        passwordEditText = findViewById(R.id.passwordEditText);\n        loginButton = findViewById(R.id.loginButton);\n\n        loginButton.setOnClickListener(new View.OnClickListener() {\n            @Override\n            public void onClick(View v) {\n                String username = usernameEditText.getText().toString();\n                String password = passwordEditText.getText().toString();\n\n                // Logging sensitive information (password)\n                Log.d(\"LoginActivity\", \"Login attempt: username=\" + username + \", password=\" + password);\n\n                // Perform login\n                // ...\n            }\n        });\n    }\n}\n"
+        },
+        "In this example, the <code class=\"language-plaintext highlighter-rouge\">LoginActivity</code> logs the username and password entered by the user when the login button is clicked. This can introduce a security risk because the password is sensitive information that should not be logged.",
+        "To mitigate this security risk, sensitive information such as passwords should never be logged. Instead, apps should use secure logging practices such as redaction or obfuscation of sensitive information, and ensure that logs are properly secured. Additionally, logs should be regularly reviewed and audited for any security incidents."
+    ]
+}

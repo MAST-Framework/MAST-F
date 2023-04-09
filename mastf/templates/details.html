@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block title %}
+{{ data.title }}
+{% endblock title %}
+
+{% block page_body %}
+<div class="page-body">
+    <div class="container-fluid">
+      <div class="row row-cards">
+        <div class="col-lg-4">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-lock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                  <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
+                                  <path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                  <path d="M12 12l0 2.5"></path>
+                               </svg>
+                            </div>
+                            <div>
+                              <small class="text-muted">{{ data.pretitle }}</small>
+                              <h3 class="lh-1">{{ data.title }}</h3>
+                            </div>
+                          </div>
+                          <div class="text-muted mb-3">
+                              {{ data.short_summary }}
+                          </div>
+                          <h4>Sources</h4>
+                          <ul class="list-unstyled space-y-1">
+                              {% for link in data.sources %}
+                              <li>
+                                  <a href="{{link.value}}" target="_blank" class="nav-link link-secondary">
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="icon text-blue" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l.01 0" /><path d="M11 12l1 0l0 4l1 0" /></svg>
+                                      {{ link.name }}
+                                  </a>
+                              </li>
+                              {% empty %}
+                              <li>
+                                  There are no sources for this element.
+                              </li>
+                              {% endfor %}
+                          </ul>
+                        </div>
+                        <div class="card-footer">
+                          This article is part of the general MAST-F documentation.
+                          <a href="https://mastf.github.io/docs" target="_blank">
+                              Learn more about this project.</a>
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="hr-text">Details Search</div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-vcenter" id="table-pages">
+                                    <thead>
+                                        <tr>
+                                            <th>Link</th>
+                                            <th>Platform</th>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for platform, articles in pages.items %}
+                                        {% for article in articles %}
+                                        <tr>
+                                            <td>
+                                             <a href="/web/details/{{platform|lower}}/{{article.internal_name|lower}}">
+                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                     <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"></path>
+                                                     <path d="M10 14l10 -10"></path>
+                                                     <path d="M15 4l5 0l0 5"></path>
+                                                  </svg>
+                                                </a> 
+                                            </td>
+                                            <td class="text-truncate">
+                                             {{platform|capfirst}}
+                                            </td>
+                                            <td class="text-truncate">
+                                             {{article.name|capfirst}}
+                                            </td>
+                                         </tr>
+                                        {% endfor %}
+                                        
+                                        
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+
+            <div class="col-lg-8">
+                <div class="card card-lg">
+                    <div class="card-body markd">
+                        {% autoescape off %}
+                        {% for line in data.content %}
+
+                        {% if line.type == "ul" or line.type == "ol" %}
+                        <{{line.type}}>
+                            {% for element in line.content %}
+                            <li>{{ element }}</li>
+                            {% endfor %}
+                        </{{line.type}}>
+                        
+                        {% elif line.type == "code" %}
+                        <pre class="example_code_{{forloop.counter}}" style="resize: vertical; margin-bottom: 0px;" 
+                            id="example-code-{{forloop.counter}}">{{line.content}}</pre>
+
+                        {% elif line.type == 'html' %}
+                        <{{line.tag}} {{line.attrs}}>
+                        {{line.content}}
+                        </{{line.tag}}
+
+
+                        {% else %}
+                        
+                        <p>{{ line }}</p>
+                        {% endif %}
+                        {% endfor %}
+                        {% endautoescape %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+{% block css_extended %}
+<link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
+<link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
+<style>
+.enlighter-default{
+    overflow-y: scroll;
+    resize: vertical;
+}
+.enlighter-btn-raw{
+    display: none !important;
+}
+
+.enlighter-btn-window{
+    display: none !important;
+}
+
+.enlighter-btn-website{
+    display: none !important;
+}
+
+</style>
+{% endblock css_extended %}
+
+{% block js_extended %}
+<script type="text/javascript" src="{% static 'libs/enlighterjs/enlighterjs.min.js' %}"></script>
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#table-pages').DataTable();
+        $('#table-pages_wrapper').addClass("mt-1 ms-1 me-1 mb-1");
+
+        let theme_name = 'enlighter';
+        if (params.theme == 'dark') {
+            theme_name = 'dracula';
+        }
+
+        code_blocks = {
+        {% for line in data.content %}
+
+        {% if line.type == "code" %}
+            example_code_{{forloop.counter}}: "{{line.language}}",
+        {% endif %}
+
+        {% endfor %}
+        };
+
+        for (key in code_blocks) {
+            EnlighterJS.init('pre', 'code.' + key, {
+                language : code_blocks[key],
+                theme: theme_name,
+                indent : 2,
+                textOverflow: 'scroll'
+            });
+        }
+    });
+</script>
+{% endblock js_extended %}

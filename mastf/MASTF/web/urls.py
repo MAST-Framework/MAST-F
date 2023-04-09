@@ -10,7 +10,7 @@ urlpatterns = [
     # URLs for the main navigation bar - Currently, there are only four options
     # (five with dashboard):
     path(r"projects/", views.ProjectsView.as_view(), name='Projects'),
-    path(r"applications/", views.DashboardView.as_view(), name='Applications'),
+    path(r"bundles/", views.DashboardView.as_view(), name='Bundles'),
     path(r"scans/", views.DashboardView.as_view(), name='Scans'),
     path(r"plug-ins/", views.PluginsView.as_view(), name='Plug-Ins'),
 
@@ -42,5 +42,7 @@ urlpatterns = [
         path(r"<md5:file_md5>/", views.ScannerResultsView.as_view(), name='Scan-Results-Index'),
         path(r"<md5:file_md5>/<str:extension>", views.ScannerResultsView.as_view(), name='Scan-Results'),
     ])),
+    
+    path(r"details/<str:platform>/<str:name>", views.DetailsView.as_view(), name="Details"),
 
 ]

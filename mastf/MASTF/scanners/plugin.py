@@ -49,10 +49,11 @@ class ScannerPlugin(metaclass=ABCMeta):
         :return: the final context
         :rtype: dict
         """
+        scanner = ProjectScanner.objects.get(project=project, name=self.internal_name)
         
         func_name = f"ctx_{extension}"
         if hasattr(self, func_name):
-            return getattr(self, func_name)(project, file)
+            return getattr(self, func_name)(project, file, scanner)
         
         return {}
 

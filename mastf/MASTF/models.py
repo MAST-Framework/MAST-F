@@ -1,7 +1,10 @@
 import datetime
+import pathlib
 
 from django.db import models
 from django.contrib.auth.models import User
+
+from mastf.MASTF import settings
 
 class Namespace(dict):
     def __init__(self, **kwargs):
@@ -47,7 +50,17 @@ class Project(models.Model):
         data.risk_medium = len(projects.filter(risk_level='Medium'))
         return data
 
+    @property
+    def directory(self) -> pathlib.Path:
+        return settings.BASE_DIR / str(self.project_uuid)
+    
+    def dir(self, path: str, create: bool = True) -> pathlib.Path:
+        directory = self.directory / str(path)
+        if create and not directory.exists():
+            directory.mkdir(parents=True, exist_ok=True)
+        return directory
 
+      
 class File(models.Model):
     '''Stores information about the uploaded file'''
 
@@ -153,6 +166,7 @@ class FindingTemplate(models.Model):
     severity = models.CharField(max_length=256, null=True)
     risk = models.TextField()
     mitigation = models.TextField()
+    article = models.CharField(max_length=256, null=True)
 
 
 class AppPermission(models.Model):
@@ -188,10 +202,10 @@ class AbstractBaseFinding(models.Model):
     - ``CRITICAL``: Verified vulnerabilites that have been marked as ``HIGH``
     """
 
-    source_file = models.CharField(max_length=256, null=True)
+    source_file = models.CharField(max_length=512, null=True)
     """Returns the relative path to the source code file"""
 
-    source_line = models.CharField(max_length=256, null=True)
+    source_line = models.CharField(max_length=512, null=True)
     """Stores the lines in the source code that indicate this vulnerability."""
 
     discovery_date = models.DateField(null=True)
@@ -209,6 +223,7 @@ class Finding(AbstractBaseFinding):
 
     is_custom = models.BooleanField(default=False)
 
+    @staticmethod
     def stats(initiator: User = None, project: Project = None,
               scan: Scan = None) -> Namespace:
         data = Namespace()

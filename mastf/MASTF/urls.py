@@ -17,6 +17,7 @@ from django.urls import include, path, register_converter
 
 from mastf.MASTF import settings, converters
 
+
 register_converter(converters.FindingTemplateIDConverter, 'ftid')
 register_converter(converters.VulnerabilityIDConverter, 'svid')
 register_converter(converters.FindingIDConverter, 'sfid')
@@ -32,6 +33,9 @@ if settings.DEBUG:
     ])
 
 if not settings.API_ONLY:
+    from mastf.MASTF.web import views
+    
     urlpatterns.extend([
-        path("web/", include('mastf.MASTF.web.urls'))
+        path("web/", include('mastf.MASTF.web.urls')),
+        path("", views.DashboardView.as_view())
     ])

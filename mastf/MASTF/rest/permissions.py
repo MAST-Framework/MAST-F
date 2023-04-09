@@ -1,6 +1,7 @@
 from rest_framework.request import HttpRequest
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+from django.contrib import messages
 
 class ReadOnly(BasePermission):
     '''Checks whether the request is read-only'''
@@ -11,7 +12,11 @@ class ReadOnly(BasePermission):
 class IsOwnerOrPublic(BasePermission):
     
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user or str(obj.visibility).lower() == 'public'
+        if not (obj.owner == request.user or str(obj.visibility).lower() == 'public'):
+            messages.error(self.request, "Insufficient permissions to view project", "UnauthorizedError")
+            return False
+        
+        return True
 
 
 class IsUser(BasePermission):

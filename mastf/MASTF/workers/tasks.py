@@ -7,7 +7,7 @@ from datetime import datetime
 from celery import shared_task, group, states
 from celery.result import AsyncResult, GroupResult
 
-from mastf.android.tools import apktool
+from mastf.android.tools import apktool, baksmali
 from mastf.MASTF import settings
 from mastf.MASTF.models import (
     Scan,
@@ -57,9 +57,7 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     self.update_state(state='PROGRESS', meta={'current': 10, 'detail': "Directory setup..."})
 
     # Setup of special directories in our project directory:
-    project_dir = settings.BASE_DIR / str(scan.project.project_uuid)
-    file_dir = project_dir / str(scan.file.md5)
-    file_dir.mkdir(exist_ok=True)
+    file_dir = scan.project.dir(scan.file.md5)
 
     # The first directory will store decompiled source code files,
     # and the second will store data that has been extracted initially.
@@ -68,19 +66,24 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
 
     src.mkdir(exist_ok=True)
     contents.mkdir(exist_ok=True)
-
     self.update_state(state='PROGRESS', meta={'current': 30, 'detail': "Extracting files"})
-    with zipfile.ZipFile(str(file_dir / scan.file.internal_name)) as zfile:
-        # Extract initial files
-        zfile.extractall(str(contents))
-
-    self.update_state(state='PROGRESS', meta={'current': 60, 'detail': "Decompilation of binary files"})
-    # If we try to analyze an APK file, the files have to be decompiled
-    # (currenlty only Smali)
     if scan.scan_type.lower() == 'android':
+        apktool.extractrsc(str(file_dir / scan.file.internal_name), str(contents), settings.APKTOOL)
+        self.update_state(state='PROGRESS', meta={'current': 60, 'detail': "Decompilation of binary files"})
+
+        smali_dir = src / 'smali'
+        smali_dir.mkdir(exist_ok=True)
+        tool = settings.D2J_TOOLSET + 'dex2smali'
         for path in contents.iterdir():
+            # If we try to analyze an APK file, the files have to be decompiled
+            # (currenlty only Smali)
             if path.suffix == 'dex':
-                apktool.decompile(str(path), str(src))
+                baksmali.decompile(str(path), str(smali_dir), tool)
+
+    else:
+        with zipfile.ZipFile(str(file_dir / scan.file.internal_name)) as zfile:
+            # Extract initial files
+            zfile.extractall(str(contents))
 
     self.update_state(state='PROGRESS', meta={'current': 80, 'detail': "Setting up scanners' tasks"})
     for name in selected_scanners:
@@ -105,8 +108,6 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     task.celery_id = None
     task.save()
 
-
-
 @shared_task(bind=True)
 def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
     try:
@@ -124,5 +125,4 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
         plugin.task(scan, task)
     except Exception:
         logger.exception("Unhandled worker exeption:")
-
 

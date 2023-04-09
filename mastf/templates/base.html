@@ -37,8 +37,7 @@
             }
             body {
                 font-feature-settings: "cv03", "cv04", "cv11";
-            }
-        </style>
+            }</style>
 
         {% block css_extended %}
         {% endblock css_extended %}
@@ -157,7 +156,7 @@
                           </a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="{% url 'Applications' %}" >
+                          <a class="nav-link" href="{% url 'Bundles' %}" >
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                               <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-box" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -168,7 +167,7 @@
                              </svg>
                             </span>
                             <span class="nav-link-title">
-                              Applications
+                              Bundles
                             </span>
                           </a>
                         </li>
@@ -394,6 +393,12 @@
           document.addEventListener("DOMContentLoaded", fadeOutMessages);
         </script>
 
+        <script type="text/javascript">
+          const params = new Proxy(new URLSearchParams(window.location.search), {
+              get: (searchParams, prop) => searchParams.get(prop),
+          });
+        </script>
+
         {% block js_extended %}
         <!--
             Put extra JavaScript references in this block rather than specifying 
@@ -438,7 +443,7 @@
               element.getAttribute('modal-submit-text') || "Proceed"
             );
             
-            modal.on("click", function(event) {
+            submit.on("click", function(event) {
               EventHandler(element, event);
             });
             modal.modal('toggle');
