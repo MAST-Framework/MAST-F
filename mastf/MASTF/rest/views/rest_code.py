@@ -7,9 +7,14 @@ from rest_framework import status
 
 from mastf.MASTF import settings
 from mastf.MASTF.rest.permissions import IsOwnerOrPublic
-from mastf.MASTF.models import Finding
+from mastf.MASTF.models import Finding, Vulnerability
+from mastf.MASTF.serializers import SnippetSerializer
 
-class FindingCodeView(views.APIView):
+__all__ = [
+    'FindingCodeView', 'VulnerabilityCodeView'
+]
+
+class CodeView(views.APIView):
 
     authentication_classes = [
         authentication.BasicAuthentication,
@@ -20,12 +25,18 @@ class FindingCodeView(views.APIView):
     permission_classes = [
         permissions.IsAuthenticated & IsOwnerOrPublic
     ]
+    
+    model = None
 
     def get(self, request: Request, finding_id: str) -> Response:
-        finding = get_object_or_404(Finding.objects.all(), finding_id=finding_id)
+        finding = get_object_or_404(self.model.objects.all(), finding_id=finding_id)
 
-        src_file = finding.source_file
-        language = finding.language
+        snippet = finding.snippet
+        if not snippet:
+            return Response({'detail': 'No Code assigned to this template'}, status.HTTP_204_NO_CONTENT)
+        
+        src_file = snippet.sys_path
+        language = snippet.language
         if not src_file or not language:
             return Response({'detail': 'Invalid file pointer'}, status.HTTP_204_NO_CONTENT)
 
@@ -45,15 +56,20 @@ class FindingCodeView(views.APIView):
         if not path.exists():
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-        # TODO: Add size check
-        size = path.stat().st_size
-        
+        with path.open(encoding='utf-8') as fp:
+            code = fp.read()
+            
+        serializer = SnippetSerializer(snippet)
         data = {
-            'name': finding.source_file,
-            'code': path.open().read(),
-            'file': {
-                'size': size
-            }
+            'code': code,
+            'snippet': serializer.data
         }
         return Response(data)
 
+class FindingCodeView(CodeView):
+    model = Finding
+    
+class VulnerabilityCodeView(CodeView):
+    model = Vulnerability
+
+   

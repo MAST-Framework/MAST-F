@@ -7,7 +7,8 @@ from mastf.MASTF.models import (
     AppPermission,
     Scan,
     Finding,
-    Vulnerability
+    Vulnerability,
+    Snippet
 )
 
 
@@ -42,8 +43,15 @@ class ScanSerializer(serializers.ModelSerializer):
         model = Scan
         fields = '__all__'
 
+class SnippetSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Snippet
+        exclude = ['sys_path']
+
 class FindingSerializer(serializers.ModelSerializer):
     template = TemplateSerializer(many=False)
+    snippet = SnippetSerializer(many=False)
     
     class Meta:
         model = Finding
@@ -51,6 +59,7 @@ class FindingSerializer(serializers.ModelSerializer):
 
 class VulnerabilitySerializer(serializers.ModelSerializer):
     template = TemplateSerializer(many=False)
+    snippet = SnippetSerializer(many=False)
     
     class Meta:
         model = Vulnerability

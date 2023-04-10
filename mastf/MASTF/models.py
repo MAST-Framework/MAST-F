@@ -183,12 +183,24 @@ class AppPermission(models.Model):
     risk = models.TextField(blank=True)
 
 
+class Snippet(models.Model):
+    lines = models.CharField(max_length=2048, blank=True)
+    """Stores lines that should be highlighted."""
+    
+    sys_path = models.CharField(max_length=1024, null=True)
+    language = models.CharField(max_length=32, null=True)
+    """Specifies the programming language this finding was found in (optional)"""
+    
+    file_name = models.CharField(max_length=256, null=True)
+    file_size = models.CharField(max_length=256, null=True)
+    
+    
+
 class AbstractBaseFinding(models.Model):
     finding_id = models.CharField(max_length=256, blank=True)
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
 
-    language = models.CharField(null=True, max_length=256)
-    """Specifies the programming language this finding was found in (optional)"""
+    snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
 
     severity = models.CharField(max_length=32, default='INFO')
     """Specifies the severity of this finding.
@@ -201,12 +213,6 @@ class AbstractBaseFinding(models.Model):
     - ``HIGH``: Important or known issues that can lead to dangerous situations
     - ``CRITICAL``: Verified vulnerabilites that have been marked as ``HIGH``
     """
-
-    source_file = models.CharField(max_length=512, null=True)
-    """Returns the relative path to the source code file"""
-
-    source_line = models.CharField(max_length=512, null=True)
-    """Stores the lines in the source code that indicate this vulnerability."""
 
     discovery_date = models.DateField(null=True)
     """Stores the date this vulnerability was detected."""

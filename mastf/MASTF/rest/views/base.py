@@ -103,7 +103,12 @@ class APIViewBase(GetObjectMixin, APIView):
         try:
             data = request.data
             serializer = self.serializer_class(instance, data=data, partial=True)
-            serializer.save()
+            if serializer.is_valid(): # we must call .is_valid() before .save()
+                serializer.save()
+            else:
+                messages.error(self.request, str(serializer.errors), str(self.serializer_class.__name__))    
+                return Response(serializer.errors)
+                
         except Exception as err:
             messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)

@@ -10,7 +10,8 @@ from mastf.MASTF.models import (
     PermissionFinding,
     Vulnerability,
     Finding,
-    ProjectScanner
+    ProjectScanner,
+    FindingTemplate
 )
 
 
@@ -69,23 +70,24 @@ class VulnerabilitiesMixin:
         vuln = Vulnerability.objects.filter(scan__project=project, scan__file=file, scanner=scanner)
         data = []
 
-        languages = vuln.values('language').annotate(lcount=Count('language')).order_by()
+        languages = vuln.values('snippet__language').annotate(lcount=Count('snippet__language')).order_by()
         if len(languages) == 0:
             return data
 
         for language in languages:
-            lang = { 'name': language['language'], 'count': language['lcount'] }
+            lang = { 'name': language['snippet__language'], 'count': language['lcount'] }
             categories = []
 
-            templates = (vuln.filter(language=lang['name'])
+            templates = (vuln.filter(snippet__language=lang['name'])
                 .values('template').annotate(tcount=Count('template'))
                 .order_by())
 
             for category in templates:
-                template = category['template']
+                template_pk = category['template']
+                template = FindingTemplate.objects.get(pk=template_pk)
                 cat = {'name': template.title if template else 'Untitled', 'count': category['tcount']}
 
-                cat['vuln_data'] = vuln.filter(language=lang['name'], template=template)
+                cat['vuln_data'] = vuln.filter(snippet__language=lang['name'], template=template)
                 categories.append(cat)
 
             lang['categories'] = categories

@@ -19,7 +19,7 @@ class FindingTemplateView(APIViewBase):
     permission_classes = [permissions.IsAuthenticated]
 
     model = FindingTemplate
-    lookup_field = 'finding_id'
+    lookup_field = 'template_id'
     serializer_class = TemplateSerializer
     
 

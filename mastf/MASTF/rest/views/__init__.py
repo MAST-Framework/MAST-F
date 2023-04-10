@@ -4,5 +4,5 @@ from .rest_project import *
 from .rest_template import *
 from .rest_app_permission import *
 from .rest_scan import *
-from .rest_code import FindingCodeView
+from .rest_code import *
 from .rest_finding import *

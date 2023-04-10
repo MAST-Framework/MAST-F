@@ -333,7 +333,7 @@
                                                 <div class="tab-pane {% if active == "tabs-vulnerabilities" %}active show{% endif %}" 
                                                     id="tabs-vulnerabilities">
                                                     {% if active == "tabs-vulnerabilities" %}
-                                                    <div class="row" id="vuln-card">
+                                                    <div class="row visually-hidden" id="vuln-card">
                                                         <div class="card">
                                                             <div class="progress card-progress">
                                                                 <div class="progress-bar bg-red" style="width: 80%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" aria-label="20% Complete"
@@ -345,7 +345,7 @@
                                                                 <h3 class="card-title">
                                                                     <ul class="list-inline list-inline-dots mb-0">
                                                                         <li class="list-inline-item">
-                                                                            <a href="#" id="vuln-title">Vulnerability Title with Link to full description</a>
+                                                                            <a href="#" target="_blank" id="vuln-title">Vulnerability Title with Link to full description</a>
                                                                         </li>
                                                                         <li class="list-inline-item">
                                                                             <span class="dropdown">
@@ -411,13 +411,12 @@
                                                                                         <dl class="row">
                                                                                           <dt class="col-5">Size:</dt>
                                                                                           <dd class="col-7" id="vuln-details-file-size">##</dd>
-                                                                                          <dt class="col-5">Account:</dt>
-                                                                                          <dd class="col-7">tabler</dd>
-                                                                                          <dt class="col-5">Location:</dt>
-                                                                                          <dd class="col-7"><span class="flag flag-country-pl"></span>
-                                                                                            Poland</dd>
-                                                                                          <dt class="col-5">IP Address:</dt>
-                                                                                          <dd class="col-7">46.113.11.3</dd>
+                                                                                          <dt class="col-5">Language:</dt>
+                                                                                          <dd class="col-7" id="vuln-details-language"></dd>
+                                                                                          <dt class="col-5">File Name:</dt>
+                                                                                          <dd class="col-7" id="vuln-details-file-name"></dd>
+                                                                                          <dt class="col-5">Lines:</dt>
+                                                                                          <dd class="col-7" id="vuln-details-lines">46.113.11.3</dd>
                                                                                           <dt class="col-5">Operating system:</dt>
                                                                                           <dd class="col-7">OS X 10.15.2 64-bit</dd>
                                                                                           <dt class="col-5">Browser:</dt>
@@ -547,7 +546,7 @@
                                                                                                                 </td>
                                                                                                                 <td class="text-muted">{{ vulnerability.status }}</td>
                                                                                                                 <td class="text-muted">{{ vulnerability.state }}</td>
-                                                                                                                <td class="text-muted nav-link link-secondary">{{ vulnerability.source_file }}</td>
+                                                                                                                <td class="text-muted nav-link link-secondary">{{ vulnerability.snippet.file_name }}</td>
                                                                                                                 <td>
                                                                                                                     <a href="#" class="nav-link px-0 link-secondary" onclick="Vulnerability.load(this);" counter="{{ forloop.counter }}" 
                                                                                                                         id="vuln-view-action-{{ forloop.counter }}">
@@ -1172,39 +1171,6 @@
 
 {% if active == "tabs-vulnerabilities" %}
 <script>
-    loadVulnerability = function(data) {
-        // Apply the icon color
-        $('#vuln-icon-fg').attr('class', data.icon_fg);
-
-        // Apply the vulnerability's title and subtitle
-        $('#vuln-title').text(data.title + " ( " + data.total_count +  " )");
-        $('#vuln-subtitle').text(data.subtitle);
-
-        $('#vuln-file-name').text(data.file_name);
-        $('#vuln-file-path').text(data.file_path);
-        $('#vuln-code').text(data.code);
-        $('#vuln-info-text').text(data.details)
-
-        let theme_name = 'enlighter';
-        if (params.theme == 'dark') {
-            theme_name = 'dracula';
-        }
-        
-        // together with API fetch
-        EnlighterJS.init('pre', 'code.vuln_code', {
-            language : data.language,
-            theme: theme_name,
-            indent : 2,
-            textOverflow: 'scroll'
-        });
-    };
-
-    handleVulnClick = function(row) {
-        $('#vuln-card').removeClass('visually-hidden');
-        console.log(row)
-        console.log($('#vuln-id-row-' + row.getAttribute('counter')).attr('value'));
-    };
-
     hideVuln = function() {
         $('#vuln-card').addClass('visually-hidden');
     };

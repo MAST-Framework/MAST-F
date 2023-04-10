@@ -52,25 +52,23 @@ Vulnerability = {
         scan_id = Utils.getValue('#scan-id');
 
         REST.doGet("/api/v1/finding/template/" + template_id, function(data) {
-            document.getElementById('#vuln-info-text').innerHTML = data.description
+            document.getElementById('vuln-info-text').innerHTML = data.description
 
             title = $('#vuln-title')
             title.html(data.title);
-            if (data.article != null) {
-                title.attr('href', "/web/details/" + data.article);
-            }
+            title.attr('href', "/web/details/" + data.article);
         });
 
         REST.doGet("/api/v1/finding/vulnerability/" + finding_id, function(data) {
             console.log(data);
             Vulnerability.setSeverity(data.severity);
             $('#vuln-details-dropdown').html(data.state);
-            $('#vuln-language').html(data.language);
+            $('#vuln-language').html(data.snippet?.language);
+            $('#vuln-details-file-size').html(data.snippet?.file_size);
         });
 
         REST.doGet("/api/v1/code/" + finding_id, function(data) {
             $('#vuln-code').html(data.code);
-            $('#vuln-details-file-size').html(data.file?.size);
 
             let theme_name = 'enlighter';
             if (params.theme == 'dark') {

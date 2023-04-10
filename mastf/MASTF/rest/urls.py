@@ -50,7 +50,7 @@ urlpatterns = [
 
     # Code methods for findings and vulerabilities
     path(r"code/<sfid:finding_id>", views.FindingCodeView.as_view()),
-    path(r"code/<svid:finding_id>", views.FindingCodeView.as_view()),
+    path(r"code/<svid:finding_id>", views.VulnerabilityCodeView.as_view()),
 
 ]
 
