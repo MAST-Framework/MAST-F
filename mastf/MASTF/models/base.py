@@ -74,7 +74,7 @@ class Team(models.Model):
     users = models.ManyToManyField(User, related_name='teams')
     """A ``many-to-many`` relation that simulates a membership in a team"""
     
-    owner = models.ForeignKey(User, null=True)
+    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     """The owner of this team (the user that created the team)"""
     
     visibility = models.CharField(default=Visibility.PUBLIC, choices=VISIBILITY_CHOICES, max_length=256)

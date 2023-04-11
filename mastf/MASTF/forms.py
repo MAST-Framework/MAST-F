@@ -81,10 +81,17 @@ class AbstractFindingForm(forms.Form):
     class Meta:
         abstract = True
 
+
 class FindingForm(AbstractFindingForm):
     is_custom = forms.BooleanField(required=False)
+
 
 class VulnerabilityForm(AbstractFindingForm):
     state = forms.CharField(max_length=256, required=True)
     
 
+class TeamForm(forms.Form):
+    name = forms.CharField(max_length=256, required=True)
+    owner_pk = forms.IntegerField(required=True)
+    users = forms.CharField()
+    

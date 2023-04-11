@@ -20,7 +20,6 @@ from django.contrib import messages
 
 from celery.result import AsyncResult
 
-from mastf.MASTF.settings import PROJECTS_ROOT
 from mastf.MASTF.serializers import ScanSerializer, CeleryResultSerializer
 from mastf.MASTF.models import (
     Scan,
@@ -29,7 +28,7 @@ from mastf.MASTF.models import (
     Scanner,
 )
 from mastf.MASTF.forms import ScanForm
-from mastf.MASTF.rest.permissions import ReadOnly, IsScanInitiator, IsScanTaskInitiator
+from mastf.MASTF.rest.permissions import ReadOnly, CanEditScan
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.utils.upload import handle_scan_file_upload
 from mastf.MASTF.workers import tasks
@@ -49,7 +48,7 @@ __all__ = [
 ]
 
 class ScanView(APIViewBase):
-    permission_classes = [IsAuthenticated & (IsScanInitiator | ReadOnly)]
+    permission_classes = [IsAuthenticated & (CanEditScan | ReadOnly)]
     model = Scan
     serializer_class = ScanSerializer
     lookup_field = 'scan_uuid'
@@ -93,8 +92,6 @@ class ScanCreationView(CreationAPIViewBase):
             if not name or name not in plugins:
                 break
 
-            if not Scanner.objects.filter(project=project, name=name).exists():
-                Scanner(project=project, name=name).save()
             # Even if the scanner is present, we have to add it
             # to the list of scanners to start
             selected.append(name)
@@ -142,7 +139,7 @@ class ScannerView(views.APIView):
         TokenAuthentication
     ]
 
-    permission_classes = [IsAuthenticated & IsScanInitiator]
+    permission_classes = [IsAuthenticated & CanEditScan]
 
     def get(self, request: Request, scan_id: UUID, name: str,
             extension: str) -> Response:
@@ -161,7 +158,7 @@ class ScannerView(views.APIView):
         """
         # TODO: maybe add pagination
         scan = get_object_or_404(Scan.objects.all(), scan_uuid=scan_id)
-        plugins = ScannerPlugin.all_of(scan.project)
+        plugins = Scanner.names(scan.project)
 
         if name not in plugins:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -181,7 +178,7 @@ class ScanTaskView(GetObjectMixin, views.APIView):
         TokenAuthentication
     ]
 
-    permission_classes = [IsAuthenticated & IsScanTaskInitiator]
+    permission_classes = [IsAuthenticated & CanEditScan]
 
     model = ScanTask
     lookup_field = 'task_uuid'

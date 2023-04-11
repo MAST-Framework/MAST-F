@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from mastf.MASTF.utils.enum import Severity, State
+from mastf.MASTF.utils.enum import Severity, State, Visibility
 
 from .base import Project, namespace, RISK_CHOICES, Team
 from .mod_scan import Scan, Scanner
@@ -68,11 +68,14 @@ class AbstractBaseFinding(models.Model):
         abstract = True
 
     @staticmethod
-    def stats(model, initiator: User = None, project: Project = None, scan: Scan = None,
+    def stats(model, member: User = None, project: Project = None, scan: Scan = None,
               team: Team = None, base=None) -> namespace:
-        data = namespace()
-        if initiator:
-            base = (base or model.objects).filter(scan__initiator=initiator)
+        data = namespace(count=0, high=0, critical=0, medium=0, low=0)
+        if member:
+            base = (base or model.objects).filter(
+                models.Q(scan__initiator=member) | models.Q(scan__project__owner=member) 
+                | models.Q(scan__project__team__users__pk=member.pk) 
+                | models.Q(scan__project__visibility=Visibility.PUBLIC, scan__project__team=None))
 
         if project:
             base = (base or model.objects).filter(scan__project=project)
@@ -87,13 +90,13 @@ class AbstractBaseFinding(models.Model):
             return data
 
         data.count = len(base)
-        data.critical_vuln = len(base.filter(severity=Severity.CRITICAL))
-        data.high_vuln = len(base.filter(severity=Severity.HIGH))
-        data.medium_vuln = len(base.filter(severity=Severity.MEDIUM))
-        data.low_vuln = len(base.filter(severity=Severity.LOW))
+        data.critical = len(base.filter(severity=Severity.CRITICAL))
+        data.high = len(base.filter(severity=Severity.HIGH))
+        data.medium = len(base.filter(severity=Severity.MEDIUM))
+        data.low = len(base.filter(severity=Severity.LOW))
 
-        data.other_vuln = data.count - (data.critical_vuln + data.high_vuln
-            + data.medium_vuln + data.low_vuln)
+        data.other = data.count - (data.critical + data.high
+            + data.medium + data.low)
         data.rel_count = data.count if data.count > 0 else 1
         return data
 

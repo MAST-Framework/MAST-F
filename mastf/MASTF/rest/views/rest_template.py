@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from rest_framework import permissions, authentication
+from rest_framework import permissions
 
 from mastf.MASTF.serializers import TemplateSerializer
 from mastf.MASTF.models import FindingTemplate
@@ -21,7 +21,7 @@ class FindingTemplateView(APIViewBase):
     model = FindingTemplate
     lookup_field = 'template_id'
     serializer_class = TemplateSerializer
-    
+
 
 class FindingTemplateCreationView(CreationAPIViewBase):
     """Separate APIView for creating new ``FindingTemplate`` objects"""
@@ -29,7 +29,7 @@ class FindingTemplateCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
     form_class = FindingTemplateForm
     model = FindingTemplate
-    
+
     def make_uuid(self):
         return f"FT-{uuid4()}-{uuid4()}"
 

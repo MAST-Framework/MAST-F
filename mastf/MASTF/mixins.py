@@ -88,7 +88,7 @@ class VulnContextMixin:
         ]
 
     def get_vuln_context(self, stats: dict, name: str, bg: str) -> dict:
-        field = f"{name.lower()}_vuln"
+        field = name.lower()
         return {
             'name': name,
             'color': f"bg-{bg}",
@@ -97,7 +97,6 @@ class VulnContextMixin:
         }
 
 class UserProjectMixin:
-    
     def apply_project_context(self, context: dict) -> None:
         context['project'] = self.get_object(Project, 'project_uuid')
         context['scanners'] = ScannerPlugin.all()

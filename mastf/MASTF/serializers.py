@@ -8,7 +8,8 @@ from mastf.MASTF.models import (
     Scan,
     Finding,
     Vulnerability,
-    Snippet
+    Snippet,
+    Team
 )
 
 
@@ -19,6 +20,11 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'groups', 'date_joined',
             'user_permissions'
         ]
+        
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = '__all__'
         
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:

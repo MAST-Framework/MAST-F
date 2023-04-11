@@ -17,6 +17,10 @@ class StringEnum(Enum):
     def __hash__(self) -> int:
         return hash(self.value)
     
+    @property
+    def choices(self) -> list:
+        return [(str(x), str(x)) for x in self.__class__]
+    
 
 class Severity(StringEnum):
     CRITICAL = "Critical"
@@ -43,3 +47,15 @@ class Visibility(StringEnum):
 class InspectionType(StringEnum):
     SIMPLE = "Simple"
     ADVANCED = "Advanced"
+
+class Platform(StringEnum):
+    ANDROID = "Android"
+    IOS = "iOS"
+    UNKNOWN = "Undefined"
+    
+class PackageType(StringEnum):
+    GITHUB = "Github"
+    DART = "Dart"
+    CORDOVA = "Cordova"
+    FLUTTER = "Flutter"
+    NONE = "None"

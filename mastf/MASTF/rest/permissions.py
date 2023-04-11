@@ -7,10 +7,13 @@ from mastf.MASTF.utils.enum import Visibility
 
 class ReadOnly(BasePermission):
     '''Checks whether the request is read-only'''
-    
     def has_permission(self, request: HttpRequest, view):
         return request.method in SAFE_METHODS
 
+class IsUser(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj
+    
 
 class IsProjectOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -24,6 +27,7 @@ class IsProjectMember(BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user in obj.team.users
 
+CanEditProject = (IsProjectOwner | IsProjectMember | IsProjectPublic)
 
 class IsOwnerOrPublic(BasePermission):
     
@@ -38,16 +42,31 @@ class IsOwnerOrPublic(BasePermission):
         return True
 
 
-class IsUser(BasePermission):
-    
-    def has_object_permission(self, request, view, obj):
-        return request.user == obj
-    
 class IsScanInitiator(BasePermission):
-    
     def has_object_permission(self, request, view, obj):
         return request.user == obj.initiator
     
+class IsScanProjectMember(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return CanEditProject().has_object_permission(request, view, obj.project)
+
+CanEditScan = (IsScanInitiator | IsScanProjectMember)
+
 class IsScanTaskInitiator(BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user == obj.scan.initiator
+    
+class IsScanTaskMember(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return CanEditProject().has_object_permission(request, view, obj.project)
+    
+CanEditScanTask = (IsScanTaskInitiator | IsScanTaskMember)
+
+
+class IsTeamOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.owner == request.user
+
+class IsTeamMember(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.user in obj.users

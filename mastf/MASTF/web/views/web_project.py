@@ -16,12 +16,13 @@ from mastf.MASTF.models import (
     ScanTask,
     Finding,
     namespace,
-    Scanner
+    Scanner,
+    AbstractBaseFinding
 )
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.rest.views import ScanCreationView
-from mastf.MASTF.rest.permissions import IsOwnerOrPublic
+from mastf.MASTF.rest.permissions import CanEditProject
 from mastf.MASTF.utils.enum import State
 
 __all__ = [
@@ -33,14 +34,13 @@ OVERVIEW_PATH = 'project/project-overview.html'
 
 class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
-    permission_classes = [IsOwnerOrPublic]
+    permission_classes = [CanEditProject]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
         project = context['project']
-
         context['active'] = 'tabs-overview'
 
         vuln = Vulnerability.objects.filter(scan__project=project)
@@ -65,7 +65,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
 
 class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
-    permission_classes = [IsOwnerOrPublic]
+    permission_classes = [CanEditProject]
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -80,20 +80,20 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
 
     def get_scan_history(self, scan: Scan) -> dict:
         data = namespace()
-        vuln_data = Vulnerability.stats(scan=scan)
-        finding_data = Finding.stats(scan=scan)
+        vuln_data = AbstractBaseFinding.stats(Vulnerability, scan=scan)
+        finding_data = AbstractBaseFinding.stats(Finding, scan=scan)
 
         data.scan = scan
-        data.high_risks = vuln_data.high_vuln + finding_data.high_finding
-        data.medium_risks = vuln_data.medium_vuln + finding_data.medium_finding
-        data.low_risks = vuln_data.low_vuln + finding_data.low_finding
+        data.high_risks = vuln_data.high + finding_data.high
+        data.medium_risks = vuln_data.medium + finding_data.medium
+        data.low_risks = vuln_data.low + finding_data.low
         return data
 
 
-class UserScannersView(UserProjectMixin, VulnContextMixin, 
+class UserScannersView(UserProjectMixin, VulnContextMixin,
                               ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
-    permission_classes = [IsOwnerOrPublic]
+    permission_classes = [CanEditProject]
 
     def post(self, request, *args, **kwargs):
         view = ScanCreationView.as_view()
@@ -103,7 +103,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
-        
+
         context['active'] = 'tabs-scanners'
 
         project = context['project']
@@ -112,7 +112,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 
         results = {}
         for name, scanner in scanners.items():
-            project_scanner = Scanner.objects.get(project=project, name=name)
+            project_scanner = Scanner.objects.get(scan__project=project, name=name)
             results[scanner.name] = self.get_scan_results(scans, project_scanner)
 
         context['scan_results'] = results
@@ -135,7 +135,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 
 
         vuln = Vulnerability.objects.filter(scan_query & Q(scanner=scanner))
-        self.apply_vuln_context(data, Vulnerability.stats(vuln=vuln))
+        self.apply_vuln_context(data, AbstractBaseFinding.stats(Vulnerability, base=vuln))
         data.results = len(vuln)
         return data
 

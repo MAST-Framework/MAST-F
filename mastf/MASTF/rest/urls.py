@@ -52,6 +52,11 @@ urlpatterns = [
     path(r"code/<sfid:finding_id>", views.FindingCodeView.as_view()),
     path(r"code/<svid:finding_id>", views.VulnerabilityCodeView.as_view()),
 
+    path(r"team/", include([
+        path("<int:pk>", views.TeamView.as_view()),
+        path("all", views.TeamCreationView.as_view()),
+        path("create", views.TeamListView.as_view()),
+    ])),
 ]
 
 

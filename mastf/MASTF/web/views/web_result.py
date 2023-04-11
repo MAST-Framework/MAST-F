@@ -40,16 +40,16 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
         # Apply scan files after permission check
         context['scan_files'] = Scan.files(project=project)
         context['active_file'] = active_file
-        context['scan'] = Scan.objects.filter(project=project, file=active_file)
+        context['scan'] = Scan.objects.filter(project=project, file=active_file).first()
 
         plugins = ScannerPlugin.all_of(project)
         name = self.kwargs['name']
-        extension = self.kwargs.get('extension', None)
         if name not in plugins:
             messages.error(self.request, "Invalid scanner name for selected project", "404NotFoundError")
             return context
 
         plugin: ScannerPlugin = plugins[name]
+        extension = self.kwargs.get('extension', plugin.extensions[0])
         if extension not in plugin.extensions and extension is not None:
             messages.error(self.request, "Invalid extension name for selected scanner", "404NotFoundError")
             return context
@@ -57,6 +57,6 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
         context["extensions"] = plugin.extensions
         context['scanner_name'] = name
         context['active'] = f"tabs-{extension}"
-        context['data'] = plugin.context(extension, project, active_file)
+        context['data'] = plugin.context(extension, context['scan'], active_file)
         return context
 

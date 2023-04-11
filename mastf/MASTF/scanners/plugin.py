@@ -41,7 +41,7 @@ class ScannerPlugin(metaclass=ABCMeta):
         self._internal = self.name.lower().replace(' ', "-").replace('--', '-')
         __scanners__[self._internal] = self
 
-    def context(self, extension: str, project: Project, file: File) -> dict:
+    def context(self, extension: str, scan: Scan, file: File) -> dict:
         """Generates the rendering context for the given extension
 
         :param extension: the extension to render
@@ -49,11 +49,11 @@ class ScannerPlugin(metaclass=ABCMeta):
         :return: the final context
         :rtype: dict
         """
-        scanner = Scanner.objects.get(project=project, name=self.internal_name)
+        scanner = Scanner.objects.filter(scan=scan, name=self.internal_name).first()
         
         func_name = f"ctx_{extension}"
         if hasattr(self, func_name):
-            return getattr(self, func_name)(project, file, scanner)
+            return getattr(self, func_name)(scan, file, scanner)
         
         return {}
 
@@ -78,9 +78,9 @@ class ScannerPlugin(metaclass=ABCMeta):
         if not project:
             return result
         
-        for key, value in __scanners__.items():
-            if Scanner.objects.filter(name=key, project=project).exists():
-                result[key] = value
+        for name in Scanner.names(project):
+            result[name] = __scanners__[name]
+        
         return result
 
 

@@ -63,19 +63,8 @@ class LoginView(APIView):
 
 
 class RegistrationView(APIView):
-    """Endpoint for creating new users.
+    """Endpoint for creating new users."""
 
-    By default, new users can be created by administrators only.
-    """
-
-    # authentication_classes = [
-    #     authentication.BasicAuthentication,
-    #     authentication.SessionAuthentication
-    # ]
-
-    # permission_classes = [
-    #     permissions.IsAdminUser & permissions.IsAuthenticated
-    # ]
 
     def post(self, request: Request):
         """Creates a new user in the shared database.
