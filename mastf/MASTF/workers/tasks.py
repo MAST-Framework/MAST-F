@@ -12,7 +12,7 @@ from mastf.MASTF import settings
 from mastf.MASTF.models import (
     Scan,
     ScanTask,
-    ProjectScanner,
+    Scanner,
     File,
     Details
 )
@@ -87,7 +87,7 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
 
     self.update_state(state='PROGRESS', meta={'current': 80, 'detail': "Setting up scanners' tasks"})
     for name in selected_scanners:
-        scanner = ProjectScanner.objects.get(project=scan.project, name=name)
+        scanner = Scanner.objects.get(project=scan.project, name=name)
         # Note that we're creating scan tasks before calling the asynchronous
         # group. The 'execure_scan' task will set the celery_id when it gets
         # executed.
@@ -114,7 +114,7 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
         plugin = ScannerPlugin.all()[plugin_name]
         scan = Scan.objects.get(scan_uuid=scan_uuid)
 
-        scanner = ProjectScanner.objects.get(project=scan.project, name=plugin.internal_name)
+        scanner = Scanner.objects.get(project=scan.project, name=plugin.internal_name)
         task = ScanTask.objects.get(scan=scan, scanner=scanner)
 
         # Before calling the actual task, the celery ID must be set in order

@@ -26,7 +26,7 @@ from mastf.MASTF.models import (
     Scan,
     Project,
     ScanTask,
-    ProjectScanner,
+    Scanner,
 )
 from mastf.MASTF.forms import ScanForm
 from mastf.MASTF.rest.permissions import ReadOnly, IsScanInitiator, IsScanTaskInitiator
@@ -93,8 +93,8 @@ class ScanCreationView(CreationAPIViewBase):
             if not name or name not in plugins:
                 break
 
-            if not ProjectScanner.objects.filter(project=project, name=name).exists():
-                ProjectScanner(project=project, name=name).save()
+            if not Scanner.objects.filter(project=project, name=name).exists():
+                Scanner(project=project, name=name).save()
             # Even if the scanner is present, we have to add it
             # to the list of scanners to start
             selected.append(name)

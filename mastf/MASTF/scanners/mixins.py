@@ -5,12 +5,12 @@ from django.db.models import Count
 from mastf.MASTF.models import (
     Project,
     Details,
-    Namespace,
+    namespace,
     File,
     PermissionFinding,
     Vulnerability,
     Finding,
-    ProjectScanner,
+    Scanner,
     FindingTemplate
 )
 
@@ -26,7 +26,7 @@ class DetailsMixin:
     """Defines whether summary charts should be displayed on the
     details page."""
 
-    def ctx_details(self, project: Project, file: File, scanner: ProjectScanner) -> dict:
+    def ctx_details(self, project: Project, file: File, scanner: Scanner) -> dict:
         """Returns the details context for the desired extension.
 
         :param scan: the scan to view
@@ -34,7 +34,7 @@ class DetailsMixin:
         :return: all relevant context information
         :rtype: dict
         """
-        context = Namespace()
+        context = namespace()
         context.details = Details.objects.filter(scan__project=project, file=file).first()
         context.charts = self.charts
         return context
@@ -48,7 +48,7 @@ class PermissionsMixin:
     reference.
     """
 
-    def ctx_permissions(self, project: Project, file: File, scanner: ProjectScanner) -> list:
+    def ctx_permissions(self, project: Project, file: File, scanner: Scanner) -> list:
         """Returns all permissions mapped to a specific file."""
         return PermissionFinding.objects.filter(scan__project=project, scan__file=file, scanner=scanner)
 
@@ -57,7 +57,7 @@ class VulnerabilitiesMixin:
     """Add-on to generate vulnerabilites according to the selected file.
     """
 
-    def ctx_vulnerabilities(self, project: Project, file: File, scanner: ProjectScanner) -> list:
+    def ctx_vulnerabilities(self, project: Project, file: File, scanner: Scanner) -> list:
         """Returns all vulnerabilities that have been identified in the scan target.
 
         :param project: the project instance
@@ -99,7 +99,7 @@ class VulnerabilitiesMixin:
 class FindingsMixins:
     """Add-on to generate a finding list according to the selected file."""
 
-    def ctx_findings(self, project: Project, file: File, scanner: ProjectScanner) -> list:
+    def ctx_findings(self, project: Project, file: File, scanner: Scanner) -> list:
         """Returns all findings that have been identified in the scan target.
 
         :param project: the project instance

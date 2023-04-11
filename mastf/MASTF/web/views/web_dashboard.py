@@ -6,7 +6,7 @@ from mastf.MASTF import settings
 from mastf.MASTF.mixins import ContextMixinBase, VulnContextMixin, TemplateAPIView
 from mastf.MASTF.rest.views import rest_project
 from mastf.MASTF.models import (
-    Project, Vulnerability, Namespace, Scan
+    Project, Vulnerability, namespace, Scan
 )
 from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
 # This file stores additional views that will be used to
@@ -58,8 +58,8 @@ class ProjectsView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
         context['project_table_data'] = project_table_data
         return context
 
-    def _get_project_context(self, project: Project) -> Namespace:
-        data = Namespace()
+    def _get_project_context(self, project: Project) -> namespace:
+        data = namespace()
         data.update(ProjectSerializer(project).data)
         data.update(Vulnerability.stats(project=project))
         

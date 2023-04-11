@@ -29,7 +29,7 @@ urlpatterns = [
     path(r"projects/<uuid:project_uuid>/", include([
         path(r"overview", views.UserProjectDetailsView.as_view(), name='Project-Overview'),
         path(r"scan-history", views.UserProjectScanHistoryView.as_view(), name='Project-Scan-History'),
-        path(r"scanners", views.UserProjectScannersView.as_view(), name='Project-Scanners'),
+        path(r"scanners", views.UserScannersView.as_view(), name='Project-Scanners'),
         path(r"packages", views.UserProjectDetailsView.as_view(), name='Project-Packages'),
         path(r"settings", views.UserProjectDetailsView.as_view(), name='Project-Settings'),
     ])),

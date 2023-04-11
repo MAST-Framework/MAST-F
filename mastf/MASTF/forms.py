@@ -25,6 +25,7 @@ class ProjectCreationForm(forms.Form):
     visibility = forms.CharField(max_length=32, required=True)
     risk_level = forms.CharField(max_length=16, required=True)
     inspection_type = forms.CharField(max_length=32, required=True)
+    team_name = forms.CharField(max_length=256, required=False)
 
 
 class FindingTemplateForm(forms.Form):

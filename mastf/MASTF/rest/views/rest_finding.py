@@ -3,7 +3,7 @@ from uuid import uuid4
 from rest_framework import permissions
 
 from mastf.MASTF.serializers import FindingSerializer, VulnerabilitySerializer
-from mastf.MASTF.models import Finding, Vulnerability, ProjectScanner, Scan, FindingTemplate
+from mastf.MASTF.models import Finding, Vulnerability, Scanner, Scan, FindingTemplate
 from mastf.MASTF.forms import FindingForm, VulnerabilityForm
 
 from mastf.MASTF.rest.permissions import IsScanInitiator
@@ -31,7 +31,7 @@ class FindingCreationView(CreationAPIViewBase):
         self.check_object_permissions(self.request, data['scan'])
         
         data['template'] = Scan.objects.get(template_id=data['template'])
-        data['scanner'] = ProjectScanner.objects.get(name=data['scanner'], project=data['scan'].project)
+        data['scanner'] = Scanner.objects.get(name=data['scanner'], project=data['scan'].project)
     
     
     def make_uuid(self):
@@ -64,7 +64,7 @@ class VulnerabilityCreationView(CreationAPIViewBase):
         self.check_object_permissions(self.request, data['scan'])
         
         data['template'] = Scan.objects.get(template_id=data['template'])
-        data['scanner'] = ProjectScanner.objects.get(name=data['scanner'], project=data['scan'].project)
+        data['scanner'] = Scanner.objects.get(name=data['scanner'], project=data['scan'].project)
     
     def make_uuid(self):
         return f"SV-{uuid4()}-{uuid4()}"

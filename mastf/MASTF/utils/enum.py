@@ -25,6 +25,7 @@ class Severity(StringEnum):
     LOW = "Low"
     INFO = "Info"
     SECURE = "Secure"
+    NONE = "None"
 
 
 class State(StringEnum):
@@ -34,3 +35,11 @@ class State(StringEnum):
     NOT_EXPLOITABLE = "Not Exploitable"
     PROPOSED_NOT_EXPLOITABLE = "Proposed not exploitable"
     
+class Visibility(StringEnum):
+    PUBLIC = "Public"
+    PRIVATE = "Private"
+    INTERNAL = "Internal"
+
+class InspectionType(StringEnum):
+    SIMPLE = "Simple"
+    ADVANCED = "Advanced"

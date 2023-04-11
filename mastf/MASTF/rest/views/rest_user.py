@@ -68,18 +68,14 @@ class RegistrationView(APIView):
     By default, new users can be created by administrators only.
     """
 
-    authentication_classes = [
-        # There are two authentication methods supported by
-        # this view:
-        authentication.BasicAuthentication,
-        authentication.SessionAuthentication
-    ]
+    # authentication_classes = [
+    #     authentication.BasicAuthentication,
+    #     authentication.SessionAuthentication
+    # ]
 
-    permission_classes = [
-        # This specific configuration should be changes as new
-        # users should register on their own.
-        permissions.IsAdminUser & permissions.IsAuthenticated
-    ]
+    # permission_classes = [
+    #     permissions.IsAdminUser & permissions.IsAuthenticated
+    # ]
 
     def post(self, request: Request):
         """Creates a new user in the shared database.
@@ -100,7 +96,7 @@ class RegistrationView(APIView):
             return Response(data={'message': 'User already present'},
                             status=status.HTTP_409_CONFLICT)
 
-        User.objects.create(username=username, password=form.cleaned_data['password'])
+        User.objects.create_user(username=username, password=form.cleaned_data['password'])
         return Response({'success': True}, status.HTTP_200_OK)
 
 

@@ -15,8 +15,8 @@ from mastf.MASTF.models import (
     Scan,
     ScanTask,
     Finding,
-    Namespace,
-    ProjectScanner
+    namespace,
+    Scanner
 )
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
@@ -26,7 +26,7 @@ from mastf.MASTF.utils.enum import State
 
 __all__ = [
     'UserProjectDetailsView', 'UserProjectScanHistoryView',
-    'UserProjectScannersView'
+    'UserScannersView'
 ]
 
 OVERVIEW_PATH = 'project/project-overview.html'
@@ -79,7 +79,7 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
         return context
 
     def get_scan_history(self, scan: Scan) -> dict:
-        data = Namespace()
+        data = namespace()
         vuln_data = Vulnerability.stats(scan=scan)
         finding_data = Finding.stats(scan=scan)
 
@@ -90,7 +90,7 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
         return data
 
 
-class UserProjectScannersView(UserProjectMixin, VulnContextMixin, 
+class UserScannersView(UserProjectMixin, VulnContextMixin, 
                               ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [IsOwnerOrPublic]
@@ -112,14 +112,14 @@ class UserProjectScannersView(UserProjectMixin, VulnContextMixin,
 
         results = {}
         for name, scanner in scanners.items():
-            project_scanner = ProjectScanner.objects.get(project=project, name=name)
+            project_scanner = Scanner.objects.get(project=project, name=name)
             results[scanner.name] = self.get_scan_results(scans, project_scanner)
 
         context['scan_results'] = results
         return context
 
     def get_scan_results(self, scans: QuerySet, scanner: str) -> dict:
-        data = Namespace()
+        data = namespace()
         data.vuln_count = 0
         data.vuln_data = []
         data.start_date = None

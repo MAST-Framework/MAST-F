@@ -8,14 +8,20 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from mastf.MASTF import settings
-from mastf.MASTF.rest.permissions import IsOwnerOrPublic
+from mastf.MASTF.utils.enum import Visibility
+from mastf.MASTF.rest.permissions import (
+    IsProjectMember,
+    IsProjectOwner,
+    IsProjectPublic
+)
 from mastf.MASTF.serializers import ProjectSerializer
 from mastf.MASTF.models import (
     Project, 
     Scan, 
     Finding, 
     Vulnerability,
-    ProjectScanner
+    Scanner,
+    Team
 )
 from mastf.MASTF.forms import ProjectCreationForm
 
@@ -43,7 +49,7 @@ class ProjectView(APIViewBase):
 
     permission_classes = [
         # The user has to be authenticated
-        permissions.IsAuthenticated & IsOwnerOrPublic
+        permissions.IsAuthenticated & (IsProjectPublic | IsProjectMember | IsProjectOwner)
     ]
 
     model = Project
@@ -58,7 +64,6 @@ class ProjectCreationView(CreationAPIViewBase):
     """Basic API-Endpoint to create a new project."""
 
     permission_classes = [permissions.IsAuthenticated]
-
     form_class = ProjectCreationForm
     model = Project
     
@@ -67,7 +72,11 @@ class ProjectCreationView(CreationAPIViewBase):
         path.mkdir()
         
     def set_defaults(self, request: Request, data: dict) -> None:
-        data['owner'] = request.user
+        if data.get('team_name', None):
+            data['team'] = Team.get(request.user, data.pop('team_name'))
+        
+        if not data.get('team', None):
+            data['owner'] = request.user
 
 
 class ProjectListView(ListAPIViewBase):
@@ -79,12 +88,12 @@ class ProjectListView(ListAPIViewBase):
     serializer_class = ProjectSerializer
     # The user must be the owner or the project must be public
     permission_classes = [
-        permissions.IsAuthenticated & IsOwnerOrPublic
+        permissions.IsAuthenticated & (IsProjectPublic | IsProjectMember | IsProjectOwner)
     ]
 
     def filter_queryset(self, queryset: QuerySet) -> QuerySet:
-        return queryset.filter(
-            Q(owner=self.request.user) | Q(visibility='public')
+        return queryset.filter(Q(owner=self.request.user) 
+            | Q(team__users__pk=self.request.user) | Q(visibility=Visibility.PUBLIC, team=None)
         )
 
 
@@ -95,7 +104,7 @@ class ProjectChartView(GetObjectMixin, views.APIView):
         authentication.TokenAuthentication
     ]
     
-    permission_classes = [permissions.IsAuthenticated & IsOwnerOrPublic]
+    permission_classes = [permissions.IsAuthenticated & (IsProjectPublic | IsProjectMember | IsProjectOwner)]
     
     model = Project
     lookup_field = 'project_uuid'
@@ -128,7 +137,7 @@ class ProjectChartView(GetObjectMixin, views.APIView):
     
     def chart_pie(self, project: Project) -> dict:
         data = {}
-        for scanner in ProjectScanner.objects.filter(project=project):
+        for scanner in Scanner.objects.filter(project=project):
             data[scanner.name] = len(Finding.objects.filter(scan__project=project, scanner=scanner))
 
         return data
