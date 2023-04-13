@@ -1,5 +1,0 @@
-EXT_VULNERABILITIES = 'vulnerabilities'
-EXT_PERMISSIONS = 'permissions'
-EXT_DETAILS = 'details'
-EXT_HOSTS = 'hosts'
-EXT_FINDINGS = 'findings'

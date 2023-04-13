@@ -27,11 +27,7 @@ class FindingCreationView(CreationAPIViewBase):
     form_class = FindingForm
     
     def set_defaults(self, request, data: dict) -> None:
-        data['scan'] = Scan.objects.get(scan_uuid=data['scan'])
         self.check_object_permissions(self.request, data['scan'])
-        
-        data['template'] = Scan.objects.get(template_id=data['template'])
-        data['scanner'] = Scanner.objects.get(name=data['scanner'], project=data['scan'].project)
     
     
     def make_uuid(self):
@@ -60,11 +56,7 @@ class VulnerabilityCreationView(CreationAPIViewBase):
     form_class = VulnerabilityForm
     
     def set_defaults(self, request, data: dict) -> None:
-        data['scan'] = Scan.objects.get(scan_uuid=data['scan'])
         self.check_object_permissions(self.request, data['scan'])
-        
-        data['template'] = Scan.objects.get(template_id=data['template'])
-        data['scanner'] = Scanner.objects.get(name=data['scanner'], project=data['scan'].project)
     
     def make_uuid(self):
         return f"SV-{uuid4()}-{uuid4()}"

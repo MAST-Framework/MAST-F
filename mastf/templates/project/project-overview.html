@@ -106,6 +106,16 @@ MAST-F Project | {{ project.name }}
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{% url 'Project-Explorer' project_uuid=project.project_uuid  %}" class="nav-link {% if active == "tabs-explorer" %}active{% endif %}">
+                                    Explorer
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'Project-Export' project_uuid=project.project_uuid  %}" class="nav-link {% if active == "tabs-export" %}active{% endif %}">
+                                    Export
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{% url 'Project-Settings' project_uuid=project.project_uuid  %}" class="nav-link {% if active == "tabs-settings" %}active{% endif %}">
                                     Settings
                                 </a>
@@ -412,7 +422,8 @@ MAST-F Project | {{ project.name }}
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
                                                             <a class="dropdown-item" href="#" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}"
-                                                                onclick="verifyAction(this, deleteScan);" modal-title="Delete selected scan?">
+                                                                onclick="verifyAction(this, deleteScan);" modal-title="Delete selected scan?"
+                                                                modal-text="If you proceed, you will delete all data that is related to the selected scan, including all findings and vulnerabilities." >
                                                                 <span class="dropdown-item-icon text-red">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -570,7 +581,66 @@ MAST-F Project | {{ project.name }}
 
                         <div class="tab-pane {% if active == "tabs-packages" %}active show{% endif %}" id="tabs-packages">
                             {% if active == "tabs-packages" %}
-                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="table-responsive">
+                                        <table class="table card-table table-vcenter text-nowrap datatable" id="table-packages">
+                                            <thead>
+                                            <tr>
+                                                <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all invoices"></th>
+                                                <th class="w-1">No. <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>
+                                                </th>
+                                                <th>Invoice Subject</th>
+                                                <th>Client</th>
+                                                <th>VAT No.</th>
+                                                <th>Created</th>
+                                                <th>Status</th>
+                                                <th>Price</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice"></td>
+                                                <td><span class="text-muted">001401</span></td>
+                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">Design Works</a></td>
+                                                <td>
+                                                <span class="flag flag-country-us"></span>
+                                                Carlson Limited
+                                                </td>
+                                                <td>
+                                                87956621
+                                                </td>
+                                                <td>
+                                                15 Dec 2017
+                                                </td>
+                                                <td>
+                                                <span class="badge bg-success me-1"></span> Paid
+                                                </td>
+                                                <td>$887</td>
+                                                <td class="text-end">
+                                                <span class="dropdown">
+                                                    <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">
+                                                        Action
+                                                    </a>
+                                                    <a class="dropdown-item" href="#">
+                                                        Another action
+                                                    </a>
+                                                    </div>
+                                                </span>
+                                                </td>
+                                            </tr>
+                                            
+                                            </tbody>
+                                        </table>
+                                    </div> 
+                                </div>
+                                
+                            </div>
+                    
                             {% endif %}
                         </div>
 
@@ -622,7 +692,7 @@ MAST-F Project | {{ project.name }}
             <div class="modal-body">
             
                 {% csrf_token %}
-                <input type="hidden" name="project_uuid" value="{{ project.project_uuid }}">
+                <input type="hidden" name="project" value="{{ project.project_uuid }}">
 
                 <label class="form-label required">
                     Scanners
@@ -760,6 +830,8 @@ MAST-F Project | {{ project.name }}
          * pagination. (jQuery-datatable)
          */
         $("#scan-history-table").DataTable();
+        $('#table-packages').DataTable();
+
         // add margin to table element
         $("#scan-history-table_wrapper").addClass("mt-1 mr-1 ml-1 mb-1")
     });

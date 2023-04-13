@@ -7,3 +7,4 @@ from .rest_scan import *
 from .rest_code import *
 from .rest_finding import *
 from .rest_team import *
+from .rest_package import *

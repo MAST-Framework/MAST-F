@@ -58,13 +58,11 @@ class ProjectsView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
         return context
 
     def _get_project_context(self, project: Project) -> namespace:
-        data = namespace()
-        data.update(ProjectSerializer(project).data)
+        data = namespace(project=project)
         data.update(AbstractBaseFinding.stats(Vulnerability, project=project))
 
         scan = Scan.objects.filter(project=project).order_by('start_date')
         data['scan'] = ScanSerializer(scan[0]).data if len(scan) > 0 else None
-        print(data)
         return data
 
 

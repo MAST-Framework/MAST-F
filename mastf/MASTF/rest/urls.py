@@ -54,9 +54,25 @@ urlpatterns = [
 
     path(r"team/", include([
         path("<int:pk>", views.TeamView.as_view()),
-        path("all", views.TeamCreationView.as_view()),
-        path("create", views.TeamListView.as_view()),
+        path("all", views.TeamListView.as_view()),
+        path("create", views.TeamCreationView.as_view()),
     ])),
+    
+    path(r"package/", include([
+        # We have to use 'pk' here as the name, because we haven't specified
+        # a custom lookup field in the PackageView class
+        path(r"<uuid:pk>", views.PackageView.as_view()),
+        path(r"all", views.PackageListView.as_view()),
+        path(r"create", views.PackageCreationView.as_view()),
+        
+        path(r"vulnerability/", include([
+            path(r"<uuid:pk>", views.PackageVulnerabilityView.as_view()),
+            path(r"all", views.PackageVulnerabilityListView.as_view()),
+            path(r"create", views.PackageVulnerabilityCreationView.as_view()),
+        ]))
+    ])),
+    
+    
 ]
 
 

@@ -213,7 +213,7 @@ Bundles and Projects
                                                             that has the following structure:
                                                                 - "project-id-row-" <ROW_NUMBER>
                                                         --> 
-                                                        <input type="hidden" value="{{ row.project_uuid }}" id="project-id-row-{{ forloop.counter }}">
+                                                        <input type="hidden" value="{{ row.project.project_uuid }}" id="project-id-row-{{ forloop.counter }}">
                                                         <a href="#" target-id="#project-id-row-{{ forloop.counter }}" 
                                                             id="project-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip" 
                                                             data-bs-placement="bottom" title="Copy Project-ID">
@@ -230,13 +230,28 @@ Bundles and Projects
                                                     <td class="text-muted">
                                                         <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.counter }}" 
                                                             id="project-view-link-{{ forloop.counter }}">
-                                                            {{ row.name }}
+                                                            {{ row.project.name }}
                                                         </a>
+                                                    </td>
+
+                                                    <!-- Owner -->
+                                                    <td class="text-truncate">
+                                                        <span class="badge bg-secondary-lt">
+                                                            {% if row.project.team %}
+                                                            {{ row.project.team.name }}
+                                                            {% else %}
+                                                                {% if row.project.owner == request.user %}
+                                                                You
+                                                                {% else %}
+                                                                {{ row.project.owner.username }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </span>
                                                     </td>
 
                                                     <!-- Last scan origin -->
                                                     <td class="text-muted">
-                                                        {% if row.scan %}
+                                                        {% if row.scan.origin %}
                                                         {{ row.scan.origin }}
                                                         {% else %}
                                                         -
@@ -260,18 +275,20 @@ Bundles and Projects
                                                     <!-- tags -->
                                                     <td class="text-truncate">
                                                         {# Split can be used when importing mastf_tags #}
-                                                        {% with value|split:"," as names %}
+                                                        {% with row.project.tags|split:"," as names %}
                                                             {% for tag in names %}
                                                                 {% if tag %}
                                                         <span class="badge bg-secondary-lt text-truncate">{{ tag }}</span>, 
                                                                 {% endif %}
+                                                            {% empty %}
+                                                            -
                                                             {% endfor %}
                                                         {% endwith %}
                                                     </td>
 
                                                     <!-- Risk level -->
                                                     <td>
-                                                        {% with value|lower as level %}
+                                                        {% with row.project.risk_level|lower as level %}
                                                         <span class="badge bg-{% if level == 'critical' %}pink
                                                             {% elif level == 'high'%}red{% elif level == 'medium' %}orange
                                                             {% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"

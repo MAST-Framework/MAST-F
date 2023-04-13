@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from mastf.MASTF.utils.enum import Severity, State, Visibility
 
-from .base import Project, namespace, RISK_CHOICES, Team
+from .base import Project, namespace, Team
 from .mod_scan import Scan, Scanner
 
 __all__ = [
@@ -19,7 +19,7 @@ class FindingTemplate(models.Model):
     template_id = models.CharField(max_length=128, null=True)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField()
-    default_severity = models.CharField(default=Severity.NONE, choices=RISK_CHOICES, max_length=256)
+    default_severity = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=256)
     risk = models.TextField()
     mitigation = models.TextField()
     article = models.CharField(max_length=256, null=True)
@@ -46,7 +46,7 @@ class AbstractBaseFinding(models.Model):
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
     snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
 
-    severity = models.CharField(default=Severity.NONE, choices=RISK_CHOICES, max_length=256)
+    severity = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=256)
     """Specifies the severity of this finding.
     There are five common severity states:
     - ``INFO``: Used on vulnerabilites that can't be exploited or that are

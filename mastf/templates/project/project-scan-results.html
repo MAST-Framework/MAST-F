@@ -61,13 +61,13 @@
         <div class="card">
             <div class="row g-0">
                 <div class="col-2 border-end">
-                    <div class="card-body text-truncate">
+                    <div class="card-body">
                         <h4 class="subheader">Scan Targets</h4>
-                        <ul class="nav nav-tabs list-group list-group-transparent" data-bs-toggle="tabs">
+                        <ul class="nav nav-tabs list-group list-group-transparent text-wrap text-truncate" data-bs-toggle="tabs">
                             {% for file in scan_files %}
                             <li class="nav-item">
                                 <a href="{% url 'Scan-Results-Index' project.project_uuid name file.md5 %}"  
-                                    class="list-group-item list-group-item-action d-flex align-items-center {% if active_file == file %}active{% endif %}"
+                                    class="list-group-item list-group-item-action {% if active_file == file %}active{% endif %}"
                                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ file.file_name|capfirst }}">
                                     {% if file.file_name %}    
                                     {{ file.file_name|capfirst }}

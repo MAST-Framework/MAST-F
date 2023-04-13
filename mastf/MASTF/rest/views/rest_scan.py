@@ -69,12 +69,6 @@ class ScanCreationView(CreationAPIViewBase):
     permission_classes = [IsAuthenticated]
 
     def set_defaults(self, request, data: dict) -> None:
-        project_id = data.pop('project_uuid', None)
-        if not project_id:
-            raise ValueError('Could not find a valid project UUID')
-
-        project = Project.objects.get(project_uuid=project_id)
-        data['project'] = project
         data['initiator'] = request.user
         data['risk_level'] = 'None'
         data['status'] = 'Scheduled'
@@ -108,7 +102,7 @@ class ScanCreationView(CreationAPIViewBase):
         # the file has to be downloaded before any action shoule be executed
         file_url = data.pop('file_url', None)
         if not file_url:
-            uploaded_file = handle_scan_file_upload(self.request.FILES['file'], project)
+            uploaded_file = handle_scan_file_upload(self.request.FILES['file'], data['project'])
             if not uploaded_file:
                 raise ValueError('Could not save uploaded file')
 

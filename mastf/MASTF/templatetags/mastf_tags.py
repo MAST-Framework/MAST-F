@@ -7,4 +7,4 @@ def split(value: str, key: str) -> list:
     """
     Returns the value turned into a list.
     """
-    return value.split(key)
+    return value.split(key) if value else []

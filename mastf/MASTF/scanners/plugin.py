@@ -1,11 +1,9 @@
 from abc import ABCMeta
 
-
+from mastf.MASTF.utils.enum import StringEnum
 from mastf.MASTF.models import (
     Project, Scanner, Scan, File
 )
-
-from . import extensions
 
 __scanners__ = {}
 
@@ -13,7 +11,15 @@ def Plugin(clazz):
     clazz()
     return clazz
 
+class Extension(StringEnum):
+    DETAILS = "details"
+    PERMISSIONS = "permissions"
+    HOSTS = "hosts"
+    VULNERABILITIES = "vulnerabilities"
+    FINDINGS = "findings"
     
+    # Proposed:
+    COMPONENTS = "components"
 
 class ScannerPlugin(metaclass=ABCMeta):
 
@@ -87,17 +93,17 @@ class ScannerPlugin(metaclass=ABCMeta):
 # TEST: The scanner implements all context functions in 
 # order to test the functionality of scanner pages.
 from mastf.MASTF.scanners.mixins import *
+
 @Plugin
 class TestScanner(DetailsMixin, VulnerabilitiesMixin,
                   PermissionsMixin, FindingsMixins,
                   ScannerPlugin):
     extensions = [
-        extensions.EXT_DETAILS,
-        
-        extensions.EXT_PERMISSIONS,
-        extensions.EXT_HOSTS,
-        extensions.EXT_VULNERABILITIES,
-        extensions.EXT_FINDINGS
+        Extension.DETAILS,
+        Extension.PERMISSIONS,
+        Extension.HOSTS,
+        Extension.VULNERABILITIES,
+        Extension.FINDINGS
     ]
     
     name = "Test"

@@ -17,11 +17,6 @@ class StringEnum(Enum):
     def __hash__(self) -> int:
         return hash(self.value)
     
-    @property
-    def choices(self) -> list:
-        return [(str(x), str(x)) for x in self.__class__]
-    
-
 class Severity(StringEnum):
     CRITICAL = "Critical"
     HIGH = "High"    
@@ -30,15 +25,14 @@ class Severity(StringEnum):
     INFO = "Info"
     SECURE = "Secure"
     NONE = "None"
-
-
+    
 class State(StringEnum):
     TO_VERIFY = "To Verify"
     CONFIRMED = "Confirmed"
     URGENT = "Urgent"
     NOT_EXPLOITABLE = "Not Exploitable"
     PROPOSED_NOT_EXPLOITABLE = "Proposed not exploitable"
-    
+
 class Visibility(StringEnum):
     PUBLIC = "Public"
     PRIVATE = "Private"
@@ -52,10 +46,19 @@ class Platform(StringEnum):
     ANDROID = "Android"
     IOS = "iOS"
     UNKNOWN = "Undefined"
-    
+
 class PackageType(StringEnum):
     GITHUB = "Github"
     DART = "Dart"
     CORDOVA = "Cordova"
     FLUTTER = "Flutter"
     NONE = "None"
+    
+    
+class Relation(StringEnum):
+    TRANSITIVE = 'Transitive'
+    DIRECT = 'Direct'
+
+for cls in (PackageType, Visibility, Severity, Platform, InspectionType, 
+            Relation):
+    setattr(cls, 'choices', [(str(x), str(x)) for x in cls])

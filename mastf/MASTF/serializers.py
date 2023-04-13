@@ -9,7 +9,10 @@ from mastf.MASTF.models import (
     Finding,
     Vulnerability,
     Snippet,
-    Team
+    Team,
+    Package,
+    PackageVulnerability,
+    Dependency
 )
 
 
@@ -20,17 +23,22 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'groups', 'date_joined',
             'user_permissions'
         ]
-        
+
+
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = '__all__'
-        
+
+
 class ProjectSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(many=False)
+    team = TeamSerializer(many=False)
+    
     class Meta:
         model = Project
         fields = '__all__'
-        
+
         
 class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,11 +57,13 @@ class ScanSerializer(serializers.ModelSerializer):
         model = Scan
         fields = '__all__'
 
+
 class SnippetSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Snippet
         exclude = ['sys_path']
+
 
 class FindingSerializer(serializers.ModelSerializer):
     template = TemplateSerializer(many=False)
@@ -63,6 +73,7 @@ class FindingSerializer(serializers.ModelSerializer):
         model = Finding
         fields = '__all__'
 
+
 class VulnerabilitySerializer(serializers.ModelSerializer):
     template = TemplateSerializer(many=False)
     snippet = SnippetSerializer(many=False)
@@ -70,6 +81,7 @@ class VulnerabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Vulnerability
         fields = '__all__'
+
 
 class CeleryStatusSerializer(serializers.Serializer):
     pending = serializers.BooleanField(default=False, required=False)
@@ -94,3 +106,25 @@ class CeleryResultSerializer(serializers.Serializer):
                 "pending": True, "detail": "Celery Worker not started"
             }
         }
+
+
+class PackageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Package
+        fields = '__all__'
+        
+class PackageVulnerabilitySerializer(serializers.ModelSerializer):
+    package = PackageSerializer(many=False)
+    
+    class Meta:
+        model = PackageVulnerability
+        fields = '__all__'
+    
+
+class DependencySerializer(serializers.ModelSerializer):
+    package = PackageSerializer(many=False)
+    
+    class Meta:
+        model = Dependency
+        fields = '__all__'
+    

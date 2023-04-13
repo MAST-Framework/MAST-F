@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from mastf.MASTF.utils.enum import Severity
 
-from .base import Project, File, Team, RISK_CHOICES
+from .base import Project, File, Team
 
 __all__ = [
     'Scan', 'Scanner', 'ScanTask', 'Details'
@@ -52,7 +52,7 @@ class Scan(models.Model):
     status = models.CharField(null=True, max_length=256)
     """Stores information about the current scan's status"""
 
-    risk_level = models.CharField(default=Severity.NONE, choices=RISK_CHOICES, max_length=256)
+    risk_level = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=256)
     """Stores the classification (LOW, MEDIUM, HIGH)"""
 
     initiator = models.ForeignKey(User, on_delete=models.CASCADE)

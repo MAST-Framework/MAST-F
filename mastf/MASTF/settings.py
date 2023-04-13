@@ -172,6 +172,7 @@ APKTOOL = os.getenv('TOOLS_APKTOOL', "apktool")
 PROJECTS_TABLE_COLUMNS = [
     "ID", # the project's ID won't be visible directly
     "Project Name",
+    "Owner",
     "Last Scan Origin",
     "Last Scan",
     "Tags",

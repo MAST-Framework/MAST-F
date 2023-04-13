@@ -14,10 +14,6 @@ __all__ = [
     'Project',
     'File',
     'Account',
-    
-    'VISIBILITY_CHOICES',
-    'RISK_CHOICES',
-    'INSPECTION_TYPE_CHOICES',
 ]
 
 class namespace(dict):
@@ -47,19 +43,10 @@ class namespace(dict):
         # methods are not stored in our dictionary.
         return super().__getattribute__(__name)
 
+
 ############################################################
 # Django Models
 ############################################################
-VISIBILITY_CHOICES = [(str(x), str(x)) for x in Visibility]
-"""Default visbility options for projects"""
-
-RISK_CHOICES = [(str(x), str(x)) for x in Severity]
-"""Default risk level choices"""
-
-INSPECTION_TYPE_CHOICES = [(str(x), str(x)) for x in InspectionType]
-"""Default inspection type choices"""
-
-
 class Team(models.Model):
     """A team contains a set of users.
 
@@ -77,7 +64,7 @@ class Team(models.Model):
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     """The owner of this team (the user that created the team)"""
     
-    visibility = models.CharField(default=Visibility.PUBLIC, choices=VISIBILITY_CHOICES, max_length=256)
+    visibility = models.CharField(default=Visibility.PUBLIC, choices=Visibility.choices, max_length=256)
     """The team's visibility.
     
     Note that internal should not be applied to teams as this state 
@@ -111,10 +98,10 @@ class Project(models.Model):
     tags = models.CharField(max_length=4096, null=True)
     """Stores tags for this project (comma-spearated)"""
 
-    visibility = models.CharField(default=Visibility.PRIVATE, choices=VISIBILITY_CHOICES, max_length=256)
+    visibility = models.CharField(default=Visibility.PRIVATE, choices=Visibility.choices, max_length=256)
     """Stores the visibility of this project."""
 
-    risk_level = models.CharField(default=Severity.INFO, choices=RISK_CHOICES, max_length=256)
+    risk_level = models.CharField(default=Severity.INFO, choices=Severity.choices, max_length=256)
     """Stores the current risk level (bound to severity types)"""
 
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
@@ -126,7 +113,7 @@ class Project(models.Model):
     team = models.ForeignKey(Team, null=True, on_delete=models.CASCADE)
     """Specifies the owner of this project. (may be null)"""
 
-    inspection_type = models.CharField(default=InspectionType.SIMPLE, choices=INSPECTION_TYPE_CHOICES, max_length=256)
+    inspection_type = models.CharField(default=InspectionType.SIMPLE, choices=InspectionType.choices, max_length=256)
     """Specifies the inspection type to apply when scanning an app."""
     
 

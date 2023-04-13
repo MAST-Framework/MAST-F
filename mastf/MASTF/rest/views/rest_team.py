@@ -37,8 +37,8 @@ class TeamCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
     
     def set_defaults(self, request: Request, data: dict) -> None:
-        data.pop('pk')
         # TODO: transform user primary keys
+        # REVISIT: user will be added automatically via ModelField
         return super().set_defaults(request, data)
     
     
