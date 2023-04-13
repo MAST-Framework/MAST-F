@@ -45,3 +45,4 @@ class PackageVulnerabilityListView(ListAPIViewBase):
     serializer_class = PackageVulnerabilitySerializer
     
     
+'Dependency'

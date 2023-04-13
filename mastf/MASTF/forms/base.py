@@ -9,20 +9,36 @@ __all__ = [
 ]
 
 class ModelField(forms.CharField):
+    """To apply foreign-key references, just use the ``ModelField`` declared in ``base.py`` in the *forms*
+    directory:
+
+    >>> class ExampleForm(forms.Form):
+    ...    user = ModelField(User)
+    >>> # The cleaned data will store the referenced User instance
+    >>> POST = {'user': 1}
+    >>> form = ExampleForm(POST)
+    >>> if form.is_valid():
+    ...     cleaned = form.cleaned_data
+    ...     user = cleaned['user']
+    ...     print(user.username)
+
+    """
     
     def __init__(self, model, field_name='pk', **kwargs) -> None:
         super().__init__(**kwargs)
         self.model = model
         self.field_name = field_name
-    
-    def to_python(self, value: str) -> object:
-        return self.model.objects.get(**{self.field_name: value})
-
-    def validate(self, value: object) -> None:
-        query = {self.field_name: value}
-        if not self.model.objects.filter(**query).exists():
+        
+    def clean(self, value) -> object:
+        value = super().clean(value)
+        queryset = self.model.objects.filter(**{self.field_name: value})
+        
+        if not queryset.exists():
             raise forms.ValidationError(
                 "This field must be a reference to an existing model", code="required")
+        
+        return queryset.first()
+        
 
 
 class RegistrationForm(forms.Form):
