@@ -5,6 +5,7 @@ __pycache__/
 
 # uploaded files
 mastf/projects/
+test_env.*
 
 # C extensions
 *.so

@@ -2,7 +2,7 @@
 class StringConverter:
     def to_python(self, value: str) -> str:
         return value
-    
+
     def to_url(self, value: str) -> str:
         return value
 
@@ -14,6 +14,6 @@ class VulnerabilityIDConverter(StringConverter):
 
 class FindingIDConverter(StringConverter):
     regex = r"SF-[\w-]{36}-[\w-]{36}"
-    
+
 class MD5Converter(StringConverter):
     regex = r"[0-9a-fA-F]{32}"

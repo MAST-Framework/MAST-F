@@ -73,7 +73,7 @@ class RegstrationView(TemplateView):
 
 
 class LogoutView(View):
-    
+
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         """Registers a new user by calling the REST-API view.
 
@@ -84,9 +84,9 @@ class LogoutView(View):
         """
         view = rest_user.LogoutView.as_view()
         result = view(request)
-        
+
         if result.status_code == 200:
             return redirect('User-Login')
-        
+
         messages.error(request, 'Could not logout user!')
         return redirect('Index')

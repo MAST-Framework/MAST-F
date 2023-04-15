@@ -106,9 +106,9 @@ class APIViewBase(GetObjectMixin, APIView):
             if serializer.is_valid(): # we must call .is_valid() before .save()
                 serializer.save()
             else:
-                messages.error(self.request, str(serializer.errors), str(self.serializer_class.__name__))    
+                messages.error(self.request, str(serializer.errors), str(self.serializer_class.__name__))
                 return Response(serializer.errors)
-                
+
         except Exception as err:
             messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
@@ -238,3 +238,4 @@ class CreationAPIViewBase(APIView):
     def make_uuid(self):
         """Creates the UUID for a new instance"""
         return uuid4()
+

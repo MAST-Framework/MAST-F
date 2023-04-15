@@ -11,7 +11,7 @@ from mastf.MASTF.rest.permissions import IsScanInitiator
 from .base import APIViewBase, CreationAPIViewBase, ListAPIViewBase
 
 __all__ = [
-    'FindingView', 'FindingCreationView', 'FindingListView', 
+    'FindingView', 'FindingCreationView', 'FindingListView',
     'VulnerabilityView', 'VulnerabilityCreationView', 'VulnerabilityListView'
 ]
 
@@ -20,27 +20,27 @@ class FindingView(APIViewBase):
     model = Finding
     lookup_field = 'finding_id'
     serializer_class = FindingSerializer
-    
+
 class FindingCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated & IsScanInitiator]
     model = Finding
     form_class = FindingForm
-    
+
     def set_defaults(self, request, data: dict) -> None:
         self.check_object_permissions(self.request, data['scan'])
-    
-    
+
+
     def make_uuid(self):
         return f"SF-{uuid4()}-{uuid4()}"
-    
+
 class FindingListView(ListAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Finding.objects.all()
     serializer_class = FindingSerializer
-    
+
     def filter_queryset(self, queryset):
         return queryset.filter(scan__initiator=self.request.user)
-    
+
 ##############################################################################
 # Vulnerability
 ##############################################################################
@@ -49,23 +49,23 @@ class VulnerabilityView(APIViewBase):
     model = Vulnerability
     lookup_field = 'finding_id'
     serializer_class = VulnerabilitySerializer
-    
+
 class VulnerabilityCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated & IsScanInitiator]
     model = Vulnerability
     form_class = VulnerabilityForm
-    
+
     def set_defaults(self, request, data: dict) -> None:
         self.check_object_permissions(self.request, data['scan'])
-    
+
     def make_uuid(self):
         return f"SV-{uuid4()}-{uuid4()}"
-    
+
 class VulnerabilityListView(ListAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Vulnerability.objects.all()
     serializer_class = VulnerabilitySerializer
-    
+
     def filter_queryset(self, queryset):
         return queryset.filter(scan__initiator=self.request.user)
-    
+

@@ -5,9 +5,9 @@ from mastf.MASTF.models import Package, Project, Scanner
 from .base import ModelField
 
 __all__ = [
-    'PackageForm', 'PackageVulnerabilityForm'
+    'PackageForm', 'PackageVulnerabilityForm', 'DependencyForm'
 ]
-  
+
 class PackageForm(forms.Form):
     name = forms.CharField(max_length=512, required=True)
     artifact_id = forms.CharField(max_length=512, required=True)
@@ -29,6 +29,5 @@ class DependencyForm(forms.Form):
     outdated = forms.CharField(max_length=512, required=False)
     version = forms.CharField(max_length=512, required=False)
     license = forms.CharField(max_length=256, required=False)
-    
-    
-    
+
+

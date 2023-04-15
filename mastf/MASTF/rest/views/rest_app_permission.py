@@ -14,7 +14,7 @@ __all__ = [
 
 class AppPermissionView(APIViewBase):
     """Basic API-Endpoint to update, delete and fetch app permissions"""
-    
+
     permission_classes = [permissions.IsAuthenticated]
     model = AppPermission
     serializer_class = AppPermissionSerializer
@@ -22,14 +22,14 @@ class AppPermissionView(APIViewBase):
 
 
 class AppPermissionCreationView(CreationAPIViewBase):
-    
+
     permission_classes = [permissions.IsAuthenticated]
     model = AppPermission
     form_class = AppPermissionForm
 
 
 class AppPermissionListView(ListAPIViewBase):
-    
+
     queryset = AppPermission.objects.all()
     serializer_class = AppPermissionSerializer
     permission_classes = [permissions.IsAuthenticated]

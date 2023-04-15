@@ -17,7 +17,7 @@ class Extension(StringEnum):
     HOSTS = "hosts"
     VULNERABILITIES = "vulnerabilities"
     FINDINGS = "findings"
-    
+
     # Proposed:
     COMPONENTS = "components"
 
@@ -33,7 +33,7 @@ class ScannerPlugin(metaclass=ABCMeta):
     """Actual name (more details than ``name``)"""
 
     extensions: list = []
-    
+
     task = None
     """The task to perform asynchronously"""
 
@@ -56,20 +56,20 @@ class ScannerPlugin(metaclass=ABCMeta):
         :rtype: dict
         """
         scanner = Scanner.objects.filter(scan=scan, name=self.internal_name).first()
-        
+
         func_name = f"ctx_{extension}"
         if hasattr(self, func_name):
             return getattr(self, func_name)(scan, file, scanner)
-        
+
         return {}
 
     def results(self, extension: str, scan: Scan) -> dict:
         func_name = f"res_{extension}"
         if hasattr(self, func_name):
             return getattr(self, func_name)(scan)
-        
+
         return {}
-    
+
     @property
     def internal_name(self) -> str:
         return self._internal
@@ -77,20 +77,20 @@ class ScannerPlugin(metaclass=ABCMeta):
     @staticmethod
     def all() -> dict:
         return __scanners__
-    
+
     @staticmethod
     def all_of(project: Project) -> dict:
         result = {}
         if not project:
             return result
-        
+
         for name in Scanner.names(project):
             result[name] = __scanners__[name]
-        
+
         return result
 
 
-# TEST: The scanner implements all context functions in 
+# TEST: The scanner implements all context functions in
 # order to test the functionality of scanner pages.
 from mastf.MASTF.scanners.mixins import *
 
@@ -105,8 +105,8 @@ class TestScanner(DetailsMixin, VulnerabilitiesMixin,
         Extension.VULNERABILITIES,
         Extension.FINDINGS
     ]
-    
+
     name = "Test"
     help = "Basic testing"
-    title = "Test Scanner Plugin" 
+    title = "Test Scanner Plugin"
 

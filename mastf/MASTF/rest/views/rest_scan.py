@@ -52,7 +52,7 @@ class ScanView(APIViewBase):
     model = Scan
     serializer_class = ScanSerializer
     lookup_field = 'scan_uuid'
-    
+
     def on_delete(self, request: Request, obj: Scan) -> None:
         path = obj.project.dir(obj.file.internal_name, create=False)
         try:
@@ -60,7 +60,7 @@ class ScanView(APIViewBase):
             shutil.rmtree(str(path))
         except OSError as err:
             messages.error(request, str(err), err.__class__.__name__)
-            
+
 
 class ScanCreationView(CreationAPIViewBase):
     form_class = ScanForm
@@ -112,7 +112,7 @@ class ScanCreationView(CreationAPIViewBase):
 
     def on_create(self, request: Request, instance: Scan) -> None:
         tasks.schedule_scan(
-            instance, request.POST['File'], 
+            instance, request.POST['File'],
             request.POST['selected_scanners']
         )
 

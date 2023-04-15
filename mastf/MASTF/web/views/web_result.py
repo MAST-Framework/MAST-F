@@ -1,7 +1,7 @@
 from django.contrib import messages
 
 from mastf.MASTF.mixins import ContextMixinBase, UserProjectMixin, TemplateAPIView
-from mastf.MASTF.rest.permissions import IsOwnerOrPublic
+from mastf.MASTF.rest.permissions import CanEditProject
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.models import File, Scan
 
@@ -11,8 +11,8 @@ __all__ = [
 
 class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = 'project/project-scan-results.html'
-    permission_classes = [IsOwnerOrPublic]
-    
+    permission_classes = [CanEditProject]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
@@ -24,7 +24,7 @@ class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
 
 class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = 'project/project-scan-results.html'
-    permission_classes = [IsOwnerOrPublic]
+    permission_classes = [CanEditProject]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

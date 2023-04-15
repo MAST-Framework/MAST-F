@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load mastf_tags %}
 
 <!-- Title -->
 {% block title %}
@@ -23,7 +24,7 @@ MAST-F Project | {{ project.name }}
                         {% elif data.scan.risk_level|lower == "medium"%}status-orange
                         {% elif data.scan.risk_level|lower == "low" %}status-yellow
                         {% else %}status-green
-                        {% endif %} 
+                        {% endif %}
                     status-indicator-animated
                     {% endif %}">
                   <span class="status-indicator-circle"></span>
@@ -33,7 +34,7 @@ MAST-F Project | {{ project.name }}
             </div>
             <div class="col">
               <h2 class="page-title">
-                  {{ project.name }} 
+                  {{ project.name }}
                 </h2>
                 <div class="text-muted">
                   <ul class="list-inline list-inline-dots mb-0" >
@@ -41,7 +42,7 @@ MAST-F Project | {{ project.name }}
                           Project
                       </li>
                       <li class="list-inline-item">
-                          {{ project.project_uuid }} 
+                          {{ project.project_uuid }}
                       </li>
                       <li class="list-inline-item">
                           <span class="badge {% if not project.risk_level %}bg-secondary-lt \
@@ -72,7 +73,7 @@ MAST-F Project | {{ project.name }}
             </div>
           </div>
     </div>
-  </div>  
+  </div>
 </div>
 {% endblock page_header %}
 
@@ -196,7 +197,7 @@ MAST-F Project | {{ project.name }}
                                                 <div class="list-group-item">
                                                     <div class="row align-items-center">
                                                         <div class="col-auto">
-                                                            <div class="status-indicator status-{% if process.state == 'FAILURE' or not process.id %}red{%else%}green{% endif %} 
+                                                            <div class="status-indicator status-{% if process.state == 'FAILURE' or not process.id %}red{%else%}green{% endif %}
                                                                 {% if not process.status.complete %} status-indicator-animated {%endif %}"
                                                                 id="process-indicator-{{ process.id }}">
                                                                 <div class="status-indicator-circle"></div>
@@ -210,7 +211,7 @@ MAST-F Project | {{ project.name }}
                                                                         role="progressbar" aria-valuenow="{{ process.status.total }}" aria-valuemax="100"
                                                                         aria-valuemin="0" aria-label="{{ process.status.current }}% Complete"
                                                                         id="process-pgb-{{ process.id }}">
-                
+
                                                                         <div class="visually-hidden">{{ process.status.current }}% Complete</div>
                                                                     </div>
                                                                 </div>
@@ -311,7 +312,7 @@ MAST-F Project | {{ project.name }}
                                                         </svg>
                                                     </span>
                                                 </th>
-                                                
+
                                                 <th>State</th>
 
                                                 <th class="w-1 text-end">
@@ -333,7 +334,7 @@ MAST-F Project | {{ project.name }}
                                             </thead>
 
                                             <!-- Table body generation:
-                                                
+
                                                 Each row contains a different value to be stored with a different display format. The
                                                 first and last three columns of each row will be the same for all.
                                             -->
@@ -408,7 +409,7 @@ MAST-F Project | {{ project.name }}
                                                             {{ data.scan.status }}
                                                         </span>
                                                     </td>
-                                                    
+
 
                                                     <td class="text-end">
                                                         <span class="dropdown">
@@ -470,7 +471,7 @@ MAST-F Project | {{ project.name }}
 
                                         <!-- All tabs contain each scanner's name -->
                                         {% for scanner_name in scan_results %}
-                                        <a class="nav-link {% if forloop.counter0 == 0 %}active{% endif %}" data-bs-toggle="tab" role="tab" 
+                                        <a class="nav-link {% if forloop.counter0 == 0 %}active{% endif %}" data-bs-toggle="tab" role="tab"
                                             aria-selected="{% if forloop.counter0 == 0 %}true{% else %}false{% endif %}"
                                             aria-controls="v-scanner-tab-{{ scanner_name }}" href="#v-scanner-tab-{{ scanner_name }}"
                                             id="v-scanner-nav-tab-{{ scanner_name }}" onclick="viewScanResults(this);">
@@ -486,9 +487,9 @@ MAST-F Project | {{ project.name }}
                                         {% for scanner_name, data in scan_results.items %}
 
                                         <div class="tab-pane fade {% if forloop.counter0 == 0 %} show active{% endif %}"
-                                            id="v-scanner-tab-{{ scanner_name }}" role="tabpanel" 
+                                            id="v-scanner-tab-{{ scanner_name }}" role="tabpanel"
                                             aria-labelledby="v-scanner-nav-tab-{{ scanner_name }}">
-                                        
+
                                             <div class="page-header-tabs mb-1">
                                                 <div class="row align-items-center">
                                                     <div class="col">
@@ -509,7 +510,7 @@ MAST-F Project | {{ project.name }}
                                                                     </svg>
                                                                 Show Progress
                                                             </a>
-                                                            <a href="{% url 'Scan-Index' project_uuid=project.project_uuid name=scanner_name|lower %}" 
+                                                            <a href="{% url 'Scan-Index' project_uuid=project.project_uuid name=scanner_name|lower %}"
                                                                 class="btn btn-primary d-none d-sm-inline-block">
                                                                 View Results
                                                               </a>
@@ -539,7 +540,7 @@ MAST-F Project | {{ project.name }}
                                                             <div class="progress progress-separated mb-3">
                                                                 {% if data.vuln_data %}
                                                                     {% for category in data.vuln_data %}
-                                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>    
+                                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
                                                                     {% endfor %}
                                                                 {% endif %}
                                                             </div>
@@ -587,78 +588,161 @@ MAST-F Project | {{ project.name }}
                                         <table class="table card-table table-vcenter text-nowrap datatable" id="table-packages">
                                             <thead>
                                             <tr>
-                                                <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select all invoices"></th>
-                                                <th class="w-1">No. <!-- Download SVG icon from http://tabler-icons.io/i/chevron-up -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm icon-thick" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>
-                                                </th>
-                                                <th>Name</th>
-                                                <th>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-exclamation" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                        <path d="M20.986 12.502a9 9 0 1 0 -5.973 7.98"></path>
-                                                        <path d="M12 7v5l3 3"></path>
-                                                        <path d="M19 16v3"></path>
-                                                        <path d="M19 22v.01"></path>
-                                                     </svg>
-                                                     Outdated</th>
+                                                <th>View</th>
+                                                <th>Package</th>
+                                                <th>Version</th>
+                                                <th>Outdated</th>
                                                 <th>License</th>
                                                 <th>Risks</th>
                                                 <th>Relation</th>
-                                                <th>Price</th>
-                                                <th></th>
+                                                <th>Dependency Type</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td><input class="form-check-input m-0 align-middle" type="checkbox" aria-label="Select invoice"></td>
-                                                <td><span class="text-muted">001401</span></td>
-                                                <td><a href="invoice.html" class="text-reset" tabindex="-1">Design Works</a></td>
-                                                <td>
-                                                <span class="flag flag-country-us"></span>
-                                                Carlson Limited
-                                                </td>
-                                                <td>
-                                                87956621
-                                                </td>
-                                                <td>
-                                                15 Dec 2017
-                                                </td>
-                                                <td>
-                                                <span class="badge bg-success me-1"></span> Paid
-                                                </td>
-                                                <td>$887</td>
-                                                <td class="text-end">
-                                                <span class="dropdown">
-                                                    <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">
-                                                        Action
-                                                    </a>
-                                                    <a class="dropdown-item" href="#">
-                                                        Another action
-                                                    </a>
-                                                    </div>
-                                                </span>
-                                                </td>
-                                            </tr>
-                                            
+                                                {% for dependency in dependencies %}
+                                                <tr>
+                                                    {# The package name will be displayed when a package defined within the dependency #}
+                                                    <td>
+                                                        <a href="#offcanvas-package" class="nav-link link-secondary" data-bs-toggle="offcanvas"
+                                                            role="button" aria-controls="offcanvas-package" onclick="togglePackageInfo(this);"
+                                                            package-id="{{ dependency.package.package_uuid }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
+                                                                <path d="M4 16v2a2 2 0 0 0 2 2h2"></path>
+                                                                <path d="M16 4h2a2 2 0 0 1 2 2v2"></path>
+                                                                <path d="M16 20h2a2 2 0 0 0 2 -2v-2"></path>
+                                                                <path d="M7 12c3.333 -4.667 6.667 -4.667 10 0"></path>
+                                                                <path d="M7 12c3.333 4.667 6.667 4.667 10 0"></path>
+                                                                <path d="M12 12h-.01"></path>
+                                                            </svg>
+                                                        </a>
+                                                    </td>
+                                                    <td class="text-muted">
+                                                        {# should be a link #}
+                                                        {% if not dependency.package %}
+                                                        &lt; Undefined &gt;
+                                                        {% else %}
+                                                        {{ dependency.package.name }}
+                                                        {% endif %}
+                                                    </td>
+
+                                                    {# VERSION #}
+                                                    <td class="text-muted">
+                                                        {% if dependency.version %}
+                                                        {{ dependency.version }}
+                                                        {% else %}
+                                                        <span class="text-teal-fg">
+                                                            Undefined
+                                                        </span>
+                                                        {% endif %}
+                                                    </td>
+
+                                                    {# OUTDATED #}
+                                                    <td class="text-muted">
+                                                        {% if not dependency.package or not dependency.package.outdated %}
+                                                        -
+                                                        {% else %}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-exclamation" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M20.986 12.502a9 9 0 1 0 -5.973 7.98"></path>
+                                                            <path d="M12 7v5l3 3"></path>
+                                                            <path d="M19 16v3"></path>
+                                                            <path d="M19 22v.01"></path>
+                                                         </svg>
+                                                        {% endif %}
+                                                    </td>
+
+                                                    {# License #}
+                                                    <td class="text-muted">
+                                                        {% with dependency.license|split:"," as licenses %}
+                                                        {% if licenses|length > 1 %}
+                                                        <span class="text-muted">{{ licenses|first }}</span>
+                                                        <span class="badge bg-secondary-lt">+{{ licenses|length }}</span>
+                                                        {% else %}
+                                                        Undefined
+                                                        {% endif %}
+                                                        {% endwith %}
+                                                    </td>
+
+                                                    {# RISKS #}
+                                                    <td class="text-muted">
+                                                        <div class="progress progress-separated" style="height: 20px;">
+                                                            {% with dependency.vulnerabilities|vuln_stats as vuln_data %}
+                                                            {% if vuln_data %}
+                                                                {% for category in data.vuln_data %}
+                                                                <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}">
+                                                                    {{ category.count }}
+                                                                </div>
+                                                                {% endfor %}
+                                                                {% if vuln_data.vuln_count == 0 %}
+                                                                <div class="progress-bar bg-secondary-lt" role="progressbar" style="width: 100%" aria-label="none">
+                                                                    0
+                                                                </div>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            {% endwith %}
+
+                                                        </div>
+                                                    </td>
+
+                                                    {# Relation #}
+                                                    <td class="text-muted">
+                                                        {{ dependency.relation|default_if_none:"-" }}
+                                                    </td>
+
+                                                    <td class="text-muted">
+                                                        <span class="badge bg-secondary-lt">
+                                                            {{ dependency.package.type|default_if_none:"-" }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+
                                             </tbody>
                                         </table>
-                                    </div> 
+                                    </div>
                                 </div>
-                                
+
                             </div>
-                    
+
                             {% endif %}
                         </div>
 
                         <div class="tab-pane {% if active == "tabs-settings" %}active show{% endif %}" id="tabs-settings">
                             {% if active == "tabs-settings" %}
-                            
+
                             {% endif %}
                         </div>
-                        
+
                     </div>
+
+                    {% if active == "tabs-packages" %}
+                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas-package">
+                        <div class="offcanvas-header">
+                            <span class="offcanvas-title">
+                                <ul class="list-inline list-inline-dots mb-0">
+                                    <li class="list-inline-item">Package Details</li>
+                                    <li class="list-inline-item" id="package-name">##</li>
+                                </ul>
+                            </span>
+                            <button type="button" class="btn btn-outline-primary ms-auto">Update</button>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                          </div>
+                          <div class="offcanvas-body">
+                            <div>
+                                TODO: Add package details here
+                            </div>
+                            <div class="mt-3">
+                              <button class="btn btn-primary" type="button" data-bs-dismiss="offcanvas">
+                                Close offcanvas
+                              </button>
+                            </div>
+                          </div>
+                    </div>
+
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -670,7 +754,7 @@ MAST-F Project | {{ project.name }}
 {% block modals %}
 <!-- Modal for creating new projects -->
 <div class="modal modal-blur fade" id="modal-new-scan" tabindex="-1" role="dialog" aria-hidden="true">
-    <!-- 
+    <!--
         The project dialog will consume a lot of screen space, so
         it should be placed in the center of it.
     -->
@@ -693,18 +777,18 @@ MAST-F Project | {{ project.name }}
         </div>
 
         <!-- Scan Dialog:
-            
+
         -->
         <form id="new-scan-form" method="POST" action="{% url 'Project-Scanners' project.project_uuid %}"
             enctype="multipart/form-data" >
             <div class="modal-body">
-            
+
                 {% csrf_token %}
                 <input type="hidden" name="project" value="{{ project.project_uuid }}">
 
                 <label class="form-label required">
                     Scanners
-                    <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                    <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
                         data-bs-content="<p>Select the scanner you want to include in your scan</p>">
                         ?
                     </span>
@@ -721,7 +805,7 @@ MAST-F Project | {{ project.name }}
                             <span class="form-selectgroup-label-content">
                                 <span class="form-selectgroup-title strong mb-1">{{ plugin.name }}
                                     {% if plugin.help %}
-                                    <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                                    <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
                                         data-bs-content="{{ plugin.help }}">
                                         ?
                                     </span>
@@ -731,7 +815,7 @@ MAST-F Project | {{ project.name }}
                             </span>
                             </span>
                         </label>
-                        </div>    
+                        </div>
                     {% endfor %}
                     </div>
                 <div class="hr-text">Config</div>
@@ -747,13 +831,13 @@ MAST-F Project | {{ project.name }}
                         <div class="mb-3" id="div-input-url">
                             <label class="form-label">
                                 Store/File URL
-                                <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" 
+                                <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
                                     data-bs-content="<p>Note that is is possible to place the target package name of an app and
                                         it will be downloaded automatically.</p>">
                                     ?
                                 </span>
                             </label>
-                            
+
                             <input type="text" class="form-control" value="" name="file_url" placeholder="https://...">
                         </div>
                         <div class="mb-3 visually-hidden" id="div-input-file">
@@ -764,7 +848,7 @@ MAST-F Project | {{ project.name }}
                     <div class="col-lg-4">
                       <div class="mb-3">
                         <label class="form-label required">Start Date</label>
-                        <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="{{ date_value|date:"d m Y" }}" 
+                        <input class="form-control" placeholder="Select a date" id="datepicker-icon-prepend" value="{{ date_value|date:"d m Y" }}"
                             type="date" name="start_date"/>
                       </div>
                     </div>
@@ -806,7 +890,7 @@ MAST-F Project | {{ project.name }}
                       </div>
                   </div>
             </div>
-        
+
             <div class="modal-footer">
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
@@ -834,7 +918,7 @@ MAST-F Project | {{ project.name }}
         });
 
         /**
-         * Make the table a 'datatable' with search bar, configurable row count and 
+         * Make the table a 'datatable' with search bar, configurable row count and
          * pagination. (jQuery-datatable)
          */
         $("#scan-history-table").DataTable();
@@ -985,14 +1069,14 @@ MAST-F Project | {{ project.name }}
         series = [];
         labels = [];
         index = 0.0;
-        
+
         for (key in data) {
             labels.push(key);
             series.push(data[key]);
 
             var x = 1.0 - index;
             if (x > 0.4) {
-                colors.push(tabler.getColor("primary", x));    
+                colors.push(tabler.getColor("primary", x));
             }
             else {
                 colors.push(tabler.getColor("secondary", 1.0 - x));
@@ -1056,7 +1140,7 @@ MAST-F Project | {{ project.name }}
                 fillSeriesColor: false
             },
         });
-    
+
         pie.render();
     };
 

@@ -10,22 +10,22 @@ class StringEnum(Enum):
         if isinstance(__value, str):
             return self.value != __value
         return super().__ne__(__value)
-    
+
     def __str__(self) -> str:
         return self.value
-    
+
     def __hash__(self) -> int:
         return hash(self.value)
-    
+
 class Severity(StringEnum):
     CRITICAL = "Critical"
-    HIGH = "High"    
+    HIGH = "High"
     MEDIUM = "Medium"
     LOW = "Low"
     INFO = "Info"
     SECURE = "Secure"
     NONE = "None"
-    
+
 class State(StringEnum):
     TO_VERIFY = "To Verify"
     CONFIRMED = "Confirmed"
@@ -53,12 +53,12 @@ class PackageType(StringEnum):
     CORDOVA = "Cordova"
     FLUTTER = "Flutter"
     NONE = "None"
-    
-    
+
+
 class Relation(StringEnum):
     TRANSITIVE = 'Transitive'
     DIRECT = 'Direct'
 
-for cls in (PackageType, Visibility, Severity, Platform, InspectionType, 
+for cls in (PackageType, Visibility, Severity, Platform, InspectionType,
             Relation):
     setattr(cls, 'choices', [(str(x), str(x)) for x in cls])

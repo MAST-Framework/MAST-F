@@ -17,7 +17,8 @@ from mastf.MASTF.models import (
     Finding,
     namespace,
     Scanner,
-    AbstractBaseFinding
+    AbstractBaseFinding,
+    Dependency
 )
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
@@ -143,12 +144,12 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [CanEditProject]
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
-        
+
         context['active'] = 'tabs-packages'
+        context['dependencies'] = Dependency.objects.filter(project=context['project'])
         return context
-    
-    
+

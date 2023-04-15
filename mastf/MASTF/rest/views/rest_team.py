@@ -22,12 +22,12 @@ class TeamView(APIViewBase):
     permission_classes = [permissions.IsAuthenticated & (ReadOnly | IsTeamOwner)]
     model = Team
     serializer_class = TeamSerializer
-    
+
 class TeamListView(ListAPIViewBase):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated & (ReadOnly | IsTeamOwner | IsTeamMember)]
-    
+
     def filter_queryset(self, queryset: QuerySet) -> QuerySet:
         return queryset.filter(Q(owner=self.request.user) | Q(users__pk=self.request.user.pk))
 
@@ -35,11 +35,10 @@ class TeamCreationView(CreationAPIViewBase):
     model = TeamSerializer
     form_class = TeamForm
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def set_defaults(self, request: Request, data: dict) -> None:
         # TODO: transform user primary keys
         # REVISIT: user will be added automatically via ModelField
         return super().set_defaults(request, data)
-    
-    
-    
+
+

@@ -34,7 +34,7 @@ if settings.DEBUG:
 
 if not settings.API_ONLY:
     from mastf.MASTF.web import views
-    
+
     urlpatterns.extend([
         path("web/", include('mastf.MASTF.web.urls')),
         path("", views.DashboardView.as_view())

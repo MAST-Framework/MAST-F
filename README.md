@@ -10,10 +10,10 @@ MASTF/ # django-app
     rest/ # directory with all API endpoints
     web/ # directory with all web frontend endpoints
     scanners/ # module for placing scanners
-    models.py # global database models
+    models/ # global database models
     converters.py # URL converters for django
-    forms.py # django forms
-    serializers.py # serializer classes for the REST-API
+    forms/ # django forms
+    serializers/ # serializer classes for the REST-API
     settings.py # server settings
     urls.py # global URL definitions
 ```
@@ -46,26 +46,3 @@ scanner is exeuted, there is a preparation task, that is called asynchronously:
     2. Call Plugins: each scanner comes with a ``task`` field that should be 
         a function that takes a ``Scan`` and ``ScanTask`` object as input.
     
-
-## Form classes
-
-To apply foreign-key references, just use the ``ModelField`` declared in ``base.py`` in the *forms*
-directory:
-
-```python
-from django import forms
-from django.contrib.auth.models import User
-
-from mastf.MASTF.forms import ModelField
-
-class ExampleForm(forms.Form):
-    user = ModelField(User)
-
-# The cleaned data will store the referenced User instance
-POST = {'user': 1}
-form = ExampleForm(POST)
-if form.is_valid():
-    cleaned = form.cleaned_data
-    user = cleaned['user']
-    print(user.username)
-```

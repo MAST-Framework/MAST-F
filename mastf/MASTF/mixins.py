@@ -14,20 +14,20 @@ from mastf.MASTF.models import Account, Project, Scan
 LOGIN_URL = '/web/login'
 
 class TemplateAPIView(TemplateView):
-    
+
     permission_classes = None
-    
+
     def check_object_permissions(self, request, obj) -> bool:
         if self.permission_classes:
             for permission in self.permission_classes:
-                # Rather use an additional instance check here instead of 
+                # Rather use an additional instance check here instead of
                 # throwing an exception
                 if isinstance(permission, BasePermission):
                     if not permission.has_object_permission(request, obj, self):
                         return False
         # Return Ture by default
         return True
-    
+
     def get_object(self, model, pk_field: str):
         """Returns a project mapped to a given primary key
 
@@ -51,13 +51,13 @@ class TemplateAPIView(TemplateView):
         )
         if not self.check_object_permissions(self.request, instance):
             raise Http404
-        
+
         return instance
 
 
 class ContextMixinBase(LoginRequiredMixin):
     login_url = LOGIN_URL
-    
+
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
         context.update(self.prepare_context_data(self.request))
@@ -73,7 +73,7 @@ class ContextMixinBase(LoginRequiredMixin):
             context['user_role'] = account.role
 
         return context
-    
+
 
 class VulnContextMixin:
 
@@ -100,4 +100,4 @@ class UserProjectMixin:
     def apply_project_context(self, context: dict) -> None:
         context['project'] = self.get_object(Project, 'project_uuid')
         context['scanners'] = ScannerPlugin.all()
-        
+

@@ -160,7 +160,7 @@ DEBUG_HTML = True
 API_ONLY = False
 
 # Constant to set the working directory for dex2jar tools.
-# Note that the provided string must be a prefix and not the 
+# Note that the provided string must be a prefix and not the
 # full path of a single tool, for instance:
 #      - D2J_TOOLSET := '/home/admin/tools/dex-tools/d2j-'
 # or on windows:

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from mastf.MASTF.models import Scan
 
 __all__ = [
-    'ScanSerializer', 
+    'ScanSerializer',
     'CeleryStatusSerializer',
     'CeleryResultSerializer',
 ]
@@ -20,16 +20,16 @@ class CeleryStatusSerializer(serializers.Serializer):
     total = serializers.IntegerField(default=100, required=False)
     detail = serializers.CharField(default=None, required=False)
     complete = serializers.BooleanField(default=False, required=False)
-    
+
 
 class CeleryResultSerializer(serializers.Serializer):
     id = serializers.CharField(required=True)
     state = serializers.CharField(required=True)
     status = CeleryStatusSerializer(required=True)
-    
+
     @staticmethod
     def empty() -> dict:
-        # This method should be called whenever the celery worker has not been 
+        # This method should be called whenever the celery worker has not been
         # started and a scan should be done
         return {
             "state": "PENDING",

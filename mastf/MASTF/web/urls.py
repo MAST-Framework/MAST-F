@@ -34,7 +34,7 @@ urlpatterns = [
         path(r"explorer", views.UserProjectDetailsView.as_view(), name='Project-Explorer'),
         path(r"export", views.UserProjectDetailsView.as_view(), name='Project-Export'),
         path(r"settings", views.UserProjectDetailsView.as_view(), name='Project-Settings'),
-        
+
     ])),
 
     path(r"results/<uuid:project_uuid>/<str:name>/", include([
@@ -45,7 +45,7 @@ urlpatterns = [
         path(r"<md5:file_md5>/", views.ScannerResultsView.as_view(), name='Scan-Results-Index'),
         path(r"<md5:file_md5>/<str:extension>", views.ScannerResultsView.as_view(), name='Scan-Results'),
     ])),
-    
+
     path(r"details/<str:platform>/<str:name>", views.DetailsView.as_view(), name="Details"),
 
 ]
