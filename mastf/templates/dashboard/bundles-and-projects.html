@@ -39,7 +39,20 @@ Bundles and Projects
         </div>
       </div>
     </div>
-  </div>  
+
+    <div class="row">
+        <div class="col">
+            <ul class="nav nav-bordered mt-3" data-bs-toggle="tabs">
+                <li class="nav-item">
+                    <a href="{% url 'Projects' %}" class="nav-link {% if active == "tabs-projects" %}active{% endif %}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Bundles' %}" class="nav-link {% if active == "tabs-bundles" %}active{% endif %}">Bundles</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+  </div>
 </div>
 {% endblock page_header %}
 
@@ -50,16 +63,6 @@ Bundles and Projects
         <div class="row-auto">
             <div class="col">
                 <div class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
-                        <li class="nav-item">
-                            <a href="{% url 'Projects' %}" class="nav-link {% if active == "tabs-projects" %}active{% endif %}">Projects</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'Bundles' %}" class="nav-link {% if active == "tabs-bundles" %}active{% endif %}">Bundles</a>
-                        </li>
-                    </ul>
-                </div>
                 <div class="card-body">
                     <div class="tab-content">
                         <!-- Note that the tab content will be loaded on the right URL-->
@@ -67,7 +70,7 @@ Bundles and Projects
                             {% if active == "tabs-projects" %}
                             <!-- Row with vulnerability counters -->
                             <div class="row row-deck">
-                                
+
                                 <div class="col-md-4">
                                     <!-- Card with project count -->
                                     <div class="card">
@@ -130,7 +133,7 @@ Bundles and Projects
                                             <div class="progress progress-separated mb-3">
                                                 {% if vuln_data %}
                                                     {% for category in vuln_data %}
-                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>    
+                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
                                                     {% endfor %}
                                                 {% endif %}
                                             </div>
@@ -146,7 +149,7 @@ Bundles and Projects
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
 
                             <!-- Row with main table data -->
@@ -175,10 +178,10 @@ Bundles and Projects
                                                     <th>{{column}}</th>
                                                     {% endif %}
                                                 {% endfor %}
-                                                
+
                                                 <!-- The 'Scan' action has no heading -->
                                                 <th></th>
-                                                
+
                                                 <th class="w-1 text-end">
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#modal-cols">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments-horizontal" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -199,7 +202,7 @@ Bundles and Projects
                                             </thead>
 
                                             <!-- Table body generation:
-                                                
+
                                                 Each row contains a different value to be stored with a different display format. The
                                                 first and last three columns of each row will be the same for all.
                                             -->
@@ -207,15 +210,15 @@ Bundles and Projects
                                                 {% for row in project_table_data %}
                                                 <tr>
                                                     <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
-                                                    
+
                                                     <td>
                                                        <!-- The project id can be queried using a jQuery selector
                                                             that has the following structure:
                                                                 - "project-id-row-" <ROW_NUMBER>
-                                                        --> 
+                                                        -->
                                                         <input type="hidden" value="{{ row.project.project_uuid }}" id="project-id-row-{{ forloop.counter }}">
-                                                        <a href="#" target-id="#project-id-row-{{ forloop.counter }}" 
-                                                            id="project-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip" 
+                                                        <a href="#" target-id="#project-id-row-{{ forloop.counter }}"
+                                                            id="project-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip"
                                                             data-bs-placement="bottom" title="Copy Project-ID">
 
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -228,7 +231,7 @@ Bundles and Projects
 
                                                     <!-- Project Name -->
                                                     <td class="text-muted">
-                                                        <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.counter }}" 
+                                                        <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
                                                             id="project-view-link-{{ forloop.counter }}">
                                                             {{ row.project.name }}
                                                         </a>
@@ -276,13 +279,15 @@ Bundles and Projects
                                                     <td class="text-truncate">
                                                         {# Split can be used when importing mastf_tags #}
                                                         {% with row.project.tags|split:"," as names %}
-                                                            {% for tag in names %}
-                                                                {% if tag %}
-                                                        <span class="badge bg-secondary-lt text-truncate">{{ tag }}</span>, 
-                                                                {% endif %}
-                                                            {% empty %}
-                                                            -
-                                                            {% endfor %}
+
+                                                        {% if names|length > 1 %}
+                                                        <span class="badge bg-secondary-lt text-truncate">{{ names|first }}</span>,
+                                                        <span class="badge bg-secondary-lt text-truncate">+{{ names|slice:"1:"|length }}</span>
+                                                        {% elif names|length == 0 %}
+                                                        -
+                                                        {% else %}
+                                                        <span class="badge bg-secondary-lt text-truncate">{{ names|first }}</span>
+                                                        {% endif %}
                                                         {% endwith %}
                                                     </td>
 
@@ -293,7 +298,7 @@ Bundles and Projects
                                                             {% elif level == 'high'%}red{% elif level == 'medium' %}orange
                                                             {% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"
                                                         >
-                                                            {% if level %}    
+                                                            {% if level %}
                                                             {{ level|capfirst }}
                                                             {% else %}
                                                             Undefined
@@ -316,9 +321,9 @@ Bundles and Projects
                                                     <td class="text-muted">
                                                         {{ row.low }}
                                                     </td>
-                                                    
+
                                                     <td>
-                                                        <a href="#" class="nav-link px-0 link-secondary" target-id="#project-id-row-{{ forloop.counter }}" 
+                                                        <a href="#" class="nav-link px-0 link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
                                                             id="project-view-action-{{ forloop.counter }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -366,7 +371,7 @@ Bundles and Projects
                         </div>
 
                         <!-- Bundles:
-                            
+
                             Bundles are groups of projects (aggregation of projects). They summarize scan results
                             for different components of each project.
                         -->
@@ -374,7 +379,7 @@ Bundles and Projects
                         {% if active == "tabs-bundles" %}
                             <!-- Row with risk counters -->
                             <div class="row row-deck">
-                                
+
                                 <div class="col-md-4">
                                     <!-- Card with application count -->
                                     <div class="card">
@@ -386,7 +391,7 @@ Bundles and Projects
                                         </div>
                                     </div>
                                 </div>
-        
+
                                 <div class="col-md-4">
                                     <!-- Card with high risk count -->
                                     <div class="card">
@@ -426,7 +431,7 @@ Bundles and Projects
                                         </div>
                                     </div>
                                 </div>
-        
+
                                 <div class="col mt-2">
                                     <!-- Card with projects per risk level count -->
                                     <div class="card">
@@ -435,7 +440,7 @@ Bundles and Projects
                                             <div class="progress progress-separated mb-3">
                                                 {% if risk_level_data %}
                                                     {% for category in risk_level_data %}
-                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>    
+                                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
                                                     {% endfor %}
                                                 {% endif %}
                                             </div>
@@ -451,12 +456,12 @@ Bundles and Projects
                                         </div>
                                     </div>
                                 </div>
-                                    
+
                                 </div>
-        
+
                                 <!-- Row with main table data -->
                                 <div class="row mt-2">
-        
+
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-header">
@@ -480,7 +485,7 @@ Bundles and Projects
                                                     </div>
                                                 </div>
                                             </div>
-        
+
                                             <div class="table-responsive">
                                                 <table class="table card-table table-vcenter text-nowrap datatable">
                                                     <thead>
@@ -501,13 +506,13 @@ Bundles and Projects
                                                             <th>{{column}}</th>
                                                             {% endif %}
                                                         {% endfor %}
-                                                        
+
                                                         <!-- The 'Scan' action has no heading -->
                                                         <th></th>
-                                                        
+
                                                         <!-- As well as the 'view' action which should trigger an offcanvas. -->
                                                         <th></th>
-        
+
                                                         <th class="w-1 text-end">
                                                             <a href="#" data-bs-toggle="modal" data-bs-target="#modal-cols">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-adjustments-horizontal" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -526,9 +531,9 @@ Bundles and Projects
                                                             </a>
                                                         </th>
                                                     </thead>
-        
+
                                                     <!-- Table body generation:
-                                                        
+
                                                         Each row contains a different value to be stored with a different display format. The
                                                         first and last three columns of each row will be the same for all.
                                                     -->
@@ -542,27 +547,27 @@ Bundles and Projects
                                                                 <td class="text-muted">
                                                                     {{ value }}
                                                                 </td>
-        
+
                                                                 {% elif name == "Risk Level" %}
                                                                 <td>
                                                                     <span class="badge {{ value.bg_color }}">{{ value.text }}</span>
                                                                 </td>
-        
+
                                                                 {% elif name in "Tags" %}
                                                                 <td class="text-truncate">
                                                                     {% for name in value %}
-                                                                    <span class="badge bg-secondary-lt text-truncate">{{ name }}</span>, 
+                                                                    <span class="badge bg-secondary-lt text-truncate">{{ name }}</span>,
                                                                     {% endfor %}
                                                                 </td>
-        
+
                                                                 {% else %}
                                                                 <td class="text-muted">
                                                                     {{ value }}
                                                                 </td>
-        
+
                                                                 {% endif %}
                                                             {% endfor %}
-                                                        
+
                                                             <td>
                                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#offcanvas">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -592,7 +597,7 @@ Bundles and Projects
                                                     </tbody>
                                                 </table>
                                             </div>
-        
+
                                             <div class="card-footer d-flex align-items-center">
                                                 <p class="m-0 text-muted">Showing <span>1</span> to <span>8</span> of <span>16</span> entries</p>
                                                 <ul class="pagination m-0 ms-auto">
@@ -618,7 +623,7 @@ Bundles and Projects
                                             </div>
                                         </div>
                                     </div>
-        
+
                                 </div>
                             </div>
                             </div>
@@ -634,9 +639,9 @@ Bundles and Projects
 
 {% block modals %}
 <!-- Modal for creating new projects -->
-<div class="modal modal-blur fade" id="modal-new-project" tabindex="-1" 
+<div class="modal modal-blur fade" id="modal-new-project" tabindex="-1"
     role="dialog" aria-hidden="true">
-    <!-- 
+    <!--
         The project dialog will consume a lot of screen space, so
         it should be placed in the center of it.
     -->
@@ -659,7 +664,7 @@ Bundles and Projects
         </div>
 
         <!-- Project Dialog:
-            
+
             Once the name for the new Project is given, the report type has to be specified.
             that can be 'simple' or 'advanced', which will produce different reports at the
             end of the day.
@@ -676,7 +681,7 @@ Bundles and Projects
         -->
         <form id="new-project-form" method="post" action="{% url 'Projects' %}">
             <div class="modal-body">
-            
+
                 {% csrf_token %}
                 <input type="hidden" class="form-control" name="risk_level" value="None">
                 <div class="mb-3">
@@ -733,7 +738,7 @@ Bundles and Projects
                       <div class="mb-3">
                         <label class="form-label required">Visibility</label>
                         <select class="form-select" name="visibility">
-                     
+
                             <option value="PRIVATE" selected>Private</option>
                           <option value="PUBLIC">Public</option>
                           <option value="INTERNAL">Internal</option>
@@ -742,7 +747,7 @@ Bundles and Projects
                     </div>
                   </div>
             </div>
-        
+
             <div class="modal-footer">
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
@@ -760,7 +765,7 @@ Bundles and Projects
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 
 <script>
-    
+
     // <!> DELETE PROJECT <!>
     deleteProject = function(event) {
         var selector = $(this).attr("project_id_element");
@@ -783,7 +788,7 @@ Bundles and Projects
     copyProjectID = function(event) {
         event.preventDefault();
         selector = $(this).attr('target-id');
-        
+
         var project_id = $(selector).attr('value');
         if (!navigator.clipboard) {
             return;
@@ -812,7 +817,7 @@ Bundles and Projects
         });
 
         /**
-         * Make the table a 'datatable' with search bar, configurable row count and 
+         * Make the table a 'datatable' with search bar, configurable row count and
          * pagination. (jQuery-datatable)
          */
         $("#projects-table").DataTable();
@@ -824,7 +829,7 @@ Bundles and Projects
          * Adding the 'deleteProject' handler when the document content has
          * been loaded successfully. Debug information will be printed on the
          * console if 'DEBUG_HTML' is enabled in Django's settings.
-         * 
+         *
          * This loop also adds links to the overview page of projects and
          * bundles
          */
@@ -849,12 +854,12 @@ Bundles and Projects
             linkActionElement = $("#project-view-action-" + (index+1));
             linkElement = $("#project-view-link-" + (index+1));
             selector = linkElement.attr('target-id');
-        
+
             var project_id = $(selector).attr('value');
             var project_link = "/web/projects/" + project_id + "/overview";
             linkActionElement.attr('href', project_link);
             linkElement.attr('href', project_link);
-               
+
             {% if debug %}
             console.debug(linkActionElement);
             console.debug("[DEBUG] Added ProjectOverviewLink: " + project_link);

@@ -20,6 +20,7 @@ class Extension(StringEnum):
 
     # Proposed:
     COMPONENTS = "components"
+    EXPLORER = "explorer"
 
 class ScannerPlugin(metaclass=ABCMeta):
 
@@ -103,7 +104,9 @@ class TestScanner(DetailsMixin, VulnerabilitiesMixin,
         Extension.PERMISSIONS,
         Extension.HOSTS,
         Extension.VULNERABILITIES,
-        Extension.FINDINGS
+        Extension.FINDINGS,
+        Extension.EXPLORER,
+        Extension.COMPONENTS
     ]
 
     name = "Test"

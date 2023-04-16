@@ -31,7 +31,6 @@ urlpatterns = [
         path(r"scan-history", views.UserProjectScanHistoryView.as_view(), name='Project-Scan-History'),
         path(r"scanners", views.UserScannersView.as_view(), name='Project-Scanners'),
         path(r"packages", views.UserProjectPackagesView.as_view(), name='Project-Packages'),
-        path(r"explorer", views.UserProjectDetailsView.as_view(), name='Project-Explorer'),
         path(r"export", views.UserProjectDetailsView.as_view(), name='Project-Export'),
         path(r"settings", views.UserProjectDetailsView.as_view(), name='Project-Settings'),
 
