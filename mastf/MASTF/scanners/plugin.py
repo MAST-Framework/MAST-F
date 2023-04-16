@@ -95,10 +95,11 @@ class ScannerPlugin(metaclass=ABCMeta):
 # order to test the functionality of scanner pages.
 from mastf.MASTF.scanners.mixins import *
 
+TextScannerMixins = (DetailsMixin, VulnerabilitiesMixin,
+                     PermissionsMixin, FindingsMixins)
+
 @Plugin
-class TestScanner(DetailsMixin, VulnerabilitiesMixin,
-                  PermissionsMixin, FindingsMixins,
-                  ScannerPlugin):
+class TestScanner(*TextScannerMixins, ScannerPlugin):
     extensions = [
         Extension.DETAILS,
         Extension.PERMISSIONS,
@@ -112,4 +113,5 @@ class TestScanner(DetailsMixin, VulnerabilitiesMixin,
     name = "Test"
     help = "Basic testing"
     title = "Test Scanner Plugin"
+
 

@@ -334,13 +334,13 @@
                                         <div class="tab-pane {% if active == "tabs-vulnerabilities" %}active show{% endif %}"
                                             id="tabs-vulnerabilities">
                                             {% if active == "tabs-vulnerabilities" %}
-                                            <div class="row visually-hidden" id="vuln-card">
+                                            <div class="row" id="vuln-card" style="display: none;">
                                                 <div class="card">
                                                     <div class="progress card-progress">
-                                                        <div class="progress-bar bg-red" style="width: 80%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" aria-label="20% Complete"
+                                                        <div class="progress-bar bg-red" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                                                             id="vuln-severity">
                                                             <span class="visually-hidden">##</span>
-                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-header">
                                                         <h3 class="card-title">
@@ -372,7 +372,7 @@
                                                             </ul>
                                                         </h3>
                                                         <div class="card-actions">
-                                                            <a href="#" class="nav-link link-secondary" onclick="hideVuln();">
+                                                            <a href="#" class="nav-link link-secondary" onclick="FindingView.hide(Vulnerability);">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                     <path d="M6 9l6 6l6 -6"></path>
@@ -549,8 +549,8 @@
                                                                                                         <td class="text-muted">{{ vulnerability.state }}</td>
                                                                                                         <td class="text-muted nav-link link-secondary">{{ vulnerability.snippet.file_name }}</td>
                                                                                                         <td>
-                                                                                                            <a href="#" class="nav-link px-0 link-secondary" onclick="Vulnerability.load(this);" counter="{{ forloop.counter }}"
-                                                                                                                id="vuln-view-action-{{ forloop.counter }}">
+                                                                                                            <a href="#" class="nav-link px-0 link-secondary" onclick="FindingView.load(this, Vulnerability);" counter="{{ vulnerability.finding_id }}"
+                                                                                                                id="vuln-view-action-{{ vulnerability.finding_id }}">
                                                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                                                                     <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
@@ -559,9 +559,9 @@
                                                                                                             </a>
                                                                                                         </td>
                                                                                                         <td>
-                                                                                                            <input type="hidden" value="{{ vulnerability.finding_id }}" id="vuln-id-row-{{ forloop.counter }}">
-                                                                                                            <input type="hidden" value="{{ vulnerability.template.template_id }}" id="vuln-template-id-row-{{ forloop.counter }}">
-                                                                                                            <a href="#" target-id="#vuln-id-row-{{ forloop.counter }}" id="vuln-id-copy-{{ forloop.counter }}"
+                                                                                                            <input type="hidden" value="{{ vulnerability.finding_id }}" id="vuln-id-row-{{ vulnerability.finding_id }}">
+                                                                                                            <input type="hidden" value="{{ vulnerability.template.template_id }}" id="vuln-template-id-row-{{ vulnerability.finding_id }}">
+                                                                                                            <a href="#" target-id="#vuln-id-row-{{ vulnerability.finding_id }}" id="vuln-id-copy-{{ vulnerability.finding_id }}"
                                                                                                                 data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Vulnerability-ID">
                                                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -746,33 +746,29 @@
                                         <div class="tab-pane {% if active == "tabs-findings" %}active show{% endif %}"
                                             id="tabs-findings">
                                             {% if active == "tabs-findings" %}
-                                            <div class="row" id="finding-card">
+                                            <div class="row" id="finding-card" style="display: none;">
                                                 <div class="card">
                                                     <div class="progress card-progress">
-                                                        <div class="progress-bar bg-red" style="width: 80%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" aria-label="20% Complete"
+                                                        <div class="progress-bar bg-red" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
                                                             id="finding-severity">
                                                             <span class="visually-hidden">##</span>
-                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="card-header">
                                                         <h3 class="card-title">
                                                             <ul class="list-inline list-inline-dots mb-0">
                                                                 <li class="list-inline-item">
-                                                                    <a href="#" id="vuln-title">Finding Title with Link to full description</a>
+                                                                    <a href="#" target="_blank" id="finding-title">Finding Title with Link to full description</a>
                                                                 </li>
                                                                 <li class="list-inline-item">
-                                                                    <span class="badge {% if not project.risk_level %}bg-secondary-lt
-                                                                        {% elif project.risk_level|lower == "high" %}bg-red-lt
-                                                                        {% elif project.risk_level|lower == "medium"%}bg-orange-lt
-                                                                        {% elif project.risk_level|lower == "low" %}bg-yellow-lt
-                                                                        {% else %}bg-secondary-lt{% endif %}">
-                                                                    {{ project.risk_level }} <!-- Severity -->
+                                                                    <span class="badge bg-secondary-lt" id="finding-severity-badge">
+                                                                    ##
                                                                     </span>
                                                                 </li>
                                                             </ul>
                                                         </h3>
                                                         <div class="card-actions">
-                                                            <a href="#" class="nav-link link-secondary" onclick="hideFinding();">
+                                                            <a href="#" class="nav-link link-secondary" onclick="FindingView.hide(Finding);">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                     <path d="M6 9l6 6l6 -6"></path>
@@ -804,31 +800,30 @@
                                                                     </div>
                                                                     <div class="card-body">
                                                                         <div class="tab-content">
-                                                                        <div class="tab-pane active show" id="tabs-language">
-                                                                            <pre class="finding_code" style="resize: vertical; margin-bottom: 0px;" id="finding-code">##</pre>
-                                                                        </div>
-                                                                        <div class="tab-pane" id="tabs-file-details">
-                                                                            <div class="card-body">
-                                                                                <dl class="row">
-                                                                                    <dt class="col-5">Date:</dt>
-                                                                                    <dd class="col-7">2020-01-05 16:42:29 UTC</dd>
-                                                                                    <dt class="col-5">Account:</dt>
-                                                                                    <dd class="col-7">tabler</dd>
-                                                                                    <dt class="col-5">Location:</dt>
-                                                                                    <dd class="col-7"><span class="flag flag-country-pl"></span>
-                                                                                    Poland</dd>
-                                                                                    <dt class="col-5">IP Address:</dt>
-                                                                                    <dd class="col-7">46.113.11.3</dd>
-                                                                                    <dt class="col-5">Operating system:</dt>
-                                                                                    <dd class="col-7">OS X 10.15.2 64-bit</dd>
-                                                                                    <dt class="col-5">Browser:</dt>
-                                                                                    <dd class="col-7">Chrome</dd>
-                                                                                </dl>
+                                                                            <div class="tab-pane active show" id="tabs-language">
+                                                                                <pre class="finding_code" style="resize: vertical; margin-bottom: 0px;" id="finding-code">##</pre>
+                                                                            </div>
+                                                                            <div class="tab-pane" id="tabs-file-details">
+                                                                                <div class="card-body">
+                                                                                    <dl class="row">
+                                                                                        <dt class="col-5">Size:</dt>
+                                                                                        <dd class="col-7" id="finding-details-file-size">##</dd>
+                                                                                        <dt class="col-5">Language:</dt>
+                                                                                        <dd class="col-7" id="finding-details-language">##</dd>
+                                                                                        <dt class="col-5">File Name:</dt>
+                                                                                        <dd class="col-7" id="finding-details-file-name">##</dd>
+                                                                                        <dt class="col-5">Lines:</dt>
+                                                                                        <dd class="col-7" id="finding-details-lines">46.113.11.3</dd>
+                                                                                        <dt class="col-5">Operating system:</dt>
+                                                                                        <dd class="col-7">OS X 10.15.2 64-bit</dd>
+                                                                                        <dt class="col-5">Browser:</dt>
+                                                                                        <dd class="col-7">Chrome</dd>
+                                                                                    </dl>
                                                                                 </div>
-                                                                        </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    </div>
+                                                                </div>
                                                             </div>
 
                                                             <div class="col col-md-4">
@@ -843,18 +838,13 @@
                                                                             </svg>
                                                                             Details
                                                                         </h2>
-                                                                        <p class="text-muted" id="vuln-info-text">
+                                                                        <p class="text-muted" id="finding-info-text">
                                                                             ##
                                                                         </p>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
-
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -864,7 +854,7 @@
                                                 <div class="accordion" id="acc-parent">
                                                     {% for category in data %}
                                                     <div class="accordion-item">
-                                                        <h2 class="accordion-header">
+                                                        <h2 class="accordion-header bg-secondary-lt">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapse-{{ category.name.trim|lower }}-acc" aria-expanded="false">
                                                                 {{ category.name }} ({{ category.count }})
@@ -899,6 +889,9 @@
                                                                                             Source File
                                                                                         </th>
                                                                                         <th class="w-1">
+                                                                                            View
+                                                                                        </th>
+                                                                                        <th class="w-1">
                                                                                             ID
                                                                                         </th>
 
@@ -909,10 +902,9 @@
                                                                                         All rows will be generated automatically
                                                                                     -->
                                                                                     <tbody>
-                                                                                        {% for finding in category %}
+                                                                                        {% for finding in category.finding_data %}
                                                                                         {% with finding.template as template %}
-                                                                                        <tr onclick="handleFindingClick(this);" counter="{{ forloop.counter }}"
-                                                                                            category="{{ category.name.trim|lower }}">
+                                                                                        <tr>
                                                                                             <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
                                                                                             <td>
                                                                                                 <span class="{% if finding.severity|lower == 'high' %}text-red
@@ -927,11 +919,22 @@
                                                                                                     </svg>
                                                                                                 </span>
                                                                                             </td>
-                                                                                            <td class="text-muted">{{ finding.language }}</td>
-                                                                                            <td class="text-muted">{{ finding.source_file }}</td>
+                                                                                            <td class="text-muted">{{ finding.snippet.language|capfirst }}</td>
+                                                                                            <td class="text-muted">{{ finding.snippet.file_name }}</td>
                                                                                             <td>
-                                                                                                <input type="hidden" value="{{ finding.finding_id }}" id="finding-id-row-{{ forloop.counter }}">
-                                                                                                <a href="#" target-id="#finding-id-row-{{ forloop.counter }}" id="finding-id-copy-{{ forloop.counter }}"
+                                                                                                <a href="#" class="nav-link px-0 link-secondary" onclick="FindingView.load(this, Finding);" counter="{{ finding.finding_id }}"
+                                                                                                    id="finding-view-action-{{ finding.finding_id }}">
+                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                                                                        <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                                                                    </svg>
+                                                                                                </a>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <input type="hidden" value="{{ finding.finding_id }}" id="finding-id-row-{{ finding.finding_id }}">
+                                                                                                <input type="hidden" value="{{ finding.template.template_id }}" id="finding-template-id-row-{{ finding.finding_id }}">
+                                                                                                <a href="#" target-id="#finding-id-row-{{ finding.finding_id }}" id="finding-id-copy-{{ finding.finding_id }}"
                                                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Finding-ID">
                                                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -993,11 +996,9 @@
                                                                             <table id="table-hosts" class="table card-table text-nowrap datatable"
                                                                                 style="width: 100%">
                                                                                 <thead>
-                                                                                    <th>
-                                                                                        <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select">
-                                                                                    </th>
+                                                                                    <th class="w-1">Details</th>
                                                                                     <!-- URL State -->
-                                                                                    <th >
+                                                                                    <th class="w-1">
                                                                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-keyframe-align-center" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                                             <path d="M12 20v2"></path>
@@ -1009,15 +1010,15 @@
                                                                                     </th>
 
                                                                                     <th >
-                                                                                        Details
+                                                                                        Name
                                                                                     </th>
-                                                                                    <th >
-                                                                                        URL
-                                                                                    </th>
-                                                                                    <th >
+                                                                                    <th class="w-1">
                                                                                         Source File
                                                                                     </th>
-                                                                                    <th class="text-end">
+                                                                                    <th class="text-end w-1">
+                                                                                        URL
+                                                                                    </th>
+                                                                                    <th class="text-end w-1">
                                                                                         Manage
                                                                                     </th>
 
@@ -1025,11 +1026,25 @@
 
                                                                                 <!-- Table body generation:
 
-                                                                                    All rows will be generated automatically
+                                                                                    {% comment %} All rows will be generated automatically {% endcomment %}
                                                                                 -->
                                                                                 <tbody>
                                                                                     <tr>
-                                                                                        <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
+                                                                                        <td>
+                                                                                            <a href="#offcanvas-host" class="nav-link link-secondary" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvas-host"
+                                                                                                onclick="toggleHostOffcanvas(this);" host-id="<uuid:host>">
+                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                                    <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
+                                                                                                    <path d="M4 16v2a2 2 0 0 0 2 2h2"></path>
+                                                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v2"></path>
+                                                                                                    <path d="M16 20h2a2 2 0 0 0 2 -2v-2"></path>
+                                                                                                    <path d="M7 12c3.333 -4.667 6.667 -4.667 10 0"></path>
+                                                                                                    <path d="M7 12c3.333 4.667 6.667 4.667 10 0"></path>
+                                                                                                    <path d="M12 12h-.01"></path>
+                                                                                                </svg>
+                                                                                            </a>
+                                                                                        </td>
                                                                                         <td>
                                                                                             <span class="badge badge-outline bg-green-lt">
                                                                                                 Ok
@@ -1043,20 +1058,12 @@
                                                                                                 Invalid
                                                                                             </span>
                                                                                         </td>
+                                                                                        <td class="text-muted text-truncate">
+                                                                                            www.google.com
+                                                                                        </td>
+                                                                                        <!-- The file-text should be truncated as it could be long -->
                                                                                         <td class="text-muted">
-                                                                                            <a href="#offcanvas-host" class="nav-link link-secondary" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvas-host"
-                                                                                                onclick="toggleHostOffcanvas(this);" host-id="<uuid:host>">
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                                                                    <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
-                                                                                                    <path d="M4 16v2a2 2 0 0 0 2 2h2"></path>
-                                                                                                    <path d="M16 4h2a2 2 0 0 1 2 2v2"></path>
-                                                                                                    <path d="M16 20h2a2 2 0 0 0 2 -2v-2"></path>
-                                                                                                    <path d="M7 12c3.333 -4.667 6.667 -4.667 10 0"></path>
-                                                                                                    <path d="M7 12c3.333 4.667 6.667 4.667 10 0"></path>
-                                                                                                    <path d="M12 12h-.01"></path>
-                                                                                                    </svg>
-                                                                                            </a>
+                                                                                            /path/to/filename
                                                                                         </td>
                                                                                         <td class="text-muted">
                                                                                             <a href="#" target-id="#finding-id-row-{{ forloop.counter }}" id="finding-id-copy-{{ forloop.counter }}"
@@ -1068,10 +1075,7 @@
                                                                                                 </svg>
                                                                                             </a>
                                                                                         </td>
-                                                                                        <!-- The file-text should be truncated as it could be long -->
-                                                                                        <td>
-                                                                                            /path/to/filename
-                                                                                        </td>
+
                                                                                         <td class="text-end">
                                                                                             <a href="#" target-id="#host-row-..." id="host-delete-row-..."
                                                                                                 onclick="verifyAction(this, handleHostDeletion)">
@@ -1101,6 +1105,21 @@
                                             {% endif %}
                                         </div>
 
+                                        {% if 'explorer' in extensions %}
+                                        <div class="tab-pane {% if active == "tabs-explorer" %}active show{% endif %}"
+                                            id="tabs-explorer">
+                                            {% if active == "tabs-explorer" %}
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div id="filetree-view">
+                                                        <!-- Will be filled up with JSON data -->
+                                                        <i class="text-azure ti ti-activity-heartbeat"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -1161,6 +1180,11 @@
 }
 </style>
 
+{% if active == "tabs-explorer" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="{% static 'libs/jstree/style.min.css' %}" />
+{% endif %}
+
 {% endblock css_extended %}
 
 {% block js_extended %}
@@ -1168,12 +1192,18 @@
 
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 
+
+{% if active == "tabs-explorer" %}
+<script src="{% static 'libs/jstree/jstree.min.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#jstree_demo_div').jstree();
+    });
+</script>
+{% endif %}
+
 {% if active == "tabs-vulnerabilities" %}
 <script>
-    hideVuln = function() {
-        $('#vuln-card').addClass('visually-hidden');
-    };
-
     hideFinding = function() {
         $('#finding-card').addClass('visually-hidden');
     }

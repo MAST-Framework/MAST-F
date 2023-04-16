@@ -7,11 +7,13 @@ from rest_framework import status
 
 from mastf.MASTF import settings
 from mastf.MASTF.rest.permissions import CanEditProject
-from mastf.MASTF.models import Finding, Vulnerability
+from mastf.MASTF.models import Finding, Vulnerability, Project, File
 from mastf.MASTF.serializers import SnippetSerializer
 
+from .base import GetObjectMixin
+
 __all__ = [
-    'FindingCodeView', 'VulnerabilityCodeView'
+    'FindingCodeView', 'VulnerabilityCodeView', 'FiletreeView'
 ]
 
 class CodeView(views.APIView):
@@ -71,4 +73,23 @@ class FindingCodeView(CodeView):
 
 class VulnerabilityCodeView(CodeView):
     model = Vulnerability
+
+class FiletreeView(GetObjectMixin, views.APIView):
+    authentication_classes = [
+        authentication.BasicAuthentication,
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication
+    ]
+
+    permission_classes = [
+        permissions.IsAuthenticated & CanEditProject
+    ]
+
+    model = Project
+    lookup_field = 'project_uuid'
+
+    def get(self, request, *args, **kwargs):
+        project: Project = self.get_object()
+
+
 

@@ -95,7 +95,6 @@ class VulnerabilitiesMixin:
         return data
 
 
-
 class FindingsMixins:
     """Add-on to generate a finding list according to the selected file."""
 
@@ -109,6 +108,24 @@ class FindingsMixins:
         :return: a list of vulnerabilities
         :rtype: list
         """
-        # TODO
-        return Finding.objects.filter(scan=scan, scanner=scanner)
+        data = []
+        findings = Finding.objects.filter(scan=scan, scanner=scanner)
+
+        templates = (findings.values('template')
+            .annotate(tcount=Count('template'))
+            .order_by())
+        if len(templates) == 0:
+            return data
+
+        for category in templates:
+            pk = category['template']
+            template = FindingTemplate.objects.get(pk=pk)
+            data.append({
+                'name': template.title if template else 'Untitled',
+                'count': category['tcount'],
+                'finding_data': findings.filter(template=template)
+            })
+
+        return data
+
 

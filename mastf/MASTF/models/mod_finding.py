@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from mastf.MASTF.utils.enum import Severity, State, Visibility
+from mastf.MASTF.utils.enum import Severity, State, Visibility, HostType
 
 from .base import Project, namespace, Team
 from .mod_scan import Scan, Scanner
@@ -73,8 +73,8 @@ class AbstractBaseFinding(models.Model):
         data = namespace(count=0, high=0, critical=0, medium=0, low=0)
         if member:
             base = (base or model.objects).filter(
-                models.Q(scan__initiator=member) | models.Q(scan__project__owner=member) 
-                | models.Q(scan__project__team__users__pk=member.pk) 
+                models.Q(scan__initiator=member) | models.Q(scan__project__owner=member)
+                | models.Q(scan__project__team__users__pk=member.pk)
                 | models.Q(scan__project__visibility=Visibility.PUBLIC, scan__project__team=None))
 
         if project:
@@ -129,3 +129,11 @@ class Vulnerability(AbstractBaseFinding):
     def make_uuid(*args) -> str:
         return f"SV-{uuid.uuid4()}-{uuid.uuid4()}"
 
+
+# Host information
+
+# class Host(models.Model):
+#     host_id = models.CharField(max_length=256, primary_key=True)
+#     classification = models.CharField(default=HostType.NOT_SET, choices=HostType.choices, max_length=256)
+#     snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
+#     name = models.CharField(max_length=512, null=True)

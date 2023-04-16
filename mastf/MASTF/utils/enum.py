@@ -1,3 +1,6 @@
+import sys
+import inspect
+
 from enum import Enum
 
 class StringEnum(Enum):
@@ -52,6 +55,7 @@ class PackageType(StringEnum):
     DART = "Dart"
     CORDOVA = "Cordova"
     FLUTTER = "Flutter"
+    NATIVE = "Native"
     NONE = "None"
 
 
@@ -59,6 +63,18 @@ class Relation(StringEnum):
     TRANSITIVE = 'Transitive'
     DIRECT = 'Direct'
 
-for cls in (PackageType, Visibility, Severity, Platform, InspectionType,
-            Relation):
-    setattr(cls, 'choices', [(str(x), str(x)) for x in cls])
+class HostType(StringEnum):
+    INVALID = "Invalid"
+    TRACKER = "Tracker"
+    OK = "Ok"
+    NOT_SET = "Not Set"
+
+mod = sys.modules[__name__]
+# Small workaround to set an additional static attribute for Django
+# models
+def isstringenum(member) -> bool:
+    return (inspect.isclass(member) and issubclass(member, StringEnum)
+        and member.__name__ != 'StringEnum')
+
+for _, clazz in inspect.getmembers(mod, isstringenum):
+    setattr(clazz, 'choices', [(str(x), str(x)) for x in clazz])

@@ -370,10 +370,9 @@ MAST-F Project | {{ project.name }}
                                                             <path d="M16 16l-2.51 -4.518m-1.487 -2.677l-1 -1.805"></path>
                                                          </svg>
                                                         {% else %}
-                                                        {{data.scan.origin}}
+                                                        {{data.scan.origin|default_if_none:"Not defined"}}
                                                         {% endif %}
 
-                                                        {{ data.scan.origin }}
                                                     </td>
                                                     <td class="text-muted">{{ data.scan.start_date }}</td>
                                                     <td>
@@ -400,8 +399,8 @@ MAST-F Project | {{ project.name }}
                                                         {{ data.low_risks }}
                                                     </td>
                                                     <td>
-                                                        <span class="badge {% if data.scan.status|lower == "Active" %}bg-green-lt
-                                                            {% elif data.scan.status|lower == "Scheduled" %}bg-azure-lt{% else %}
+                                                        <span class="badge {% if data.scan.status|lower == "active" %}bg-green-lt
+                                                            {% elif data.scan.status|lower == "scheduled" %}bg-azure-lt{% else %}
                                                             bg-secondary-lt{% endif %}"
                                                         >
                                                             {{ data.scan.status }}

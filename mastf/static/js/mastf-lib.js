@@ -27,67 +27,13 @@ REST = {
 
 Utils = {
     getValue: function(selector) {
-        element = $(selector);
+        element = $('#' + selector);
         if (selector === undefined) {
             // Display error messages (NOT IMPLEMENTED)
             console.error("Could not locate Element: " + selector);
             return null;
         }
         return element.attr('value')
-    }
-}
-
-/**
- * Simple object that defines utility methods when loading information
- * on a single vulnerability. By calling the "load" function, template
- * details, veulnerability details and the target source code will be
- * fetched from the REST API
- */
-Vulnerability = {
-
-    load: function(element) {
-        template_id = Utils.getValue('#vuln-template-id-row-' + element.getAttribute('counter'));
-        finding_id = Utils.getValue('#vuln-id-row-' + element.getAttribute('counter'));
-        scanner_name = Utils.getValue('#scanner-name');
-        scan_id = Utils.getValue('#scan-id');
-
-        REST.doGet("/api/v1/finding/template/" + template_id, function(data) {
-            document.getElementById('vuln-info-text').innerHTML = data.description
-
-            title = $('#vuln-title')
-            title.html(data.title);
-            title.attr('href', "/web/details/" + data.article);
-        });
-
-        REST.doGet("/api/v1/finding/vulnerability/" + finding_id, function(data) {
-            console.log(data);
-            Vulnerability.setSeverity(data.severity);
-            $('#vuln-details-dropdown').html(data.state);
-            $('#vuln-language').html(data.snippet?.language);
-            $('#vuln-details-file-size').html(data.snippet?.file_size);
-        });
-
-        REST.doGet("/api/v1/code/" + finding_id, function(data) {
-            $('#vuln-code').html(data.code);
-
-            let theme_name = 'enlighter';
-            if (params.theme == 'dark') {
-                theme_name = 'dracula';
-            }
-
-            EnlighterJS.init('pre', 'code.vuln_code', {
-                language : data.language.toLowerCase(),
-                theme: theme_name,
-                indent : 2,
-                textOverflow: 'scroll'
-            });
-        });
-
-        $('#vuln-card').removeClass('visually-hidden');
-    },
-
-    applyVulnerabilityState: function(element) {
-
     },
 
     /**
@@ -96,45 +42,180 @@ Vulnerability = {
      *
      * @param {string} severity the current severity string
      */
-    setSeverity(severity) {
-        pgbar = $('#vuln-severity');
-        element = $('#vuln-severity-badge');
-
-        element.html(severity);
+    setSeverity(severity, bar, badge) {
+        badge.html(severity);
         switch (severity.toLowerCase()) {
             case "high":
-                pgbar.attr("style", "width: 80%");
-                pgbar.attr("class", "progress-bar bg-red");
-                element.attr("class", "badge bg-red-lt");
+                bar.attr("style", "width: 80%");
+                bar.attr("class", "progress-bar bg-red");
+                badge.attr("class", "badge bg-red-lt");
                 break;
 
             case "critical":
-                pgbar.attr("style", "width: 100%");
-                pgbar.attr("class", "progress-bar bg-pink");
-                element.attr("class", "badge bg-pink-lt");
+                bar.attr("style", "width: 100%");
+                bar.attr("class", "progress-bar bg-pink");
+                badge.attr("class", "badge bg-pink-lt");
                 break;
 
             case "medium":
-                pgbar.attr("style", "width: 50%");
-                pgbar.attr("class", "progress-bar bg-orange");
-                element.attr("class", "badge bg-orange-lt");
+                bar.attr("style", "width: 50%");
+                bar.attr("class", "progress-bar bg-orange");
+                badge.attr("class", "badge bg-orange-lt");
                 break;
 
             case "low":
-                pgbar.attr("style", "width: 30%");
-                pgbar.attr("class", "progress-bar bg-yellow");
-                element.attr("class", "badge bg-yellow-lt");
+                bar.attr("style", "width: 30%");
+                bar.attr("class", "progress-bar bg-yellow");
+                badge.attr("class", "badge bg-yellow-lt");
                 break;
 
             default:
-                pgbar.attr("style", "width: 0%");
-                pgbar.attr("class", "progress-bar bg-secondary");
-                element.attr("class", "badge bg-secondary-lt");
+                bar.attr("style", "width: 0%");
+                bar.attr("class", "progress-bar bg-secondary");
+                badge.attr("class", "badge bg-secondary-lt");
                 break;
         }
-    }
+    },
+}
 
+/**
+ * Simple object that defines utility methods when loading information
+ * on a single vulnerability. By calling the "load" function, template
+ * details, veulnerability details and the target source code will be
+ * fetched from the REST API
+ */
+FindingView = {
+    load: function(element, interface) {
+        template_id = Utils.getValue(interface.makeTemplateId(element.getAttribute('counter')));
+        finding_id = Utils.getValue(interface.makeFindingId(element.getAttribute('counter')));
+        scanner_name = Utils.getValue(interface.scanner_id);
+        scan_id = Utils.getValue(interface.scan_id);
+
+        REST.doGet("/api/v1/finding/template/" + template_id, interface.handleTemplateData);
+        REST.doGet(interface.makeFindingURL(finding_id), interface.handleFindingData);
+        REST.doGet("/api/v1/code/" + finding_id, interface.handleCode);
+
+        interface.rootElement.fadeIn("slow");
+    },
+
+    hide: function(interface) {
+        interface.rootElement.attr("style", "display: none;");
+        interface?.onClose();
+    },
 };
+
+Vulnerability = {
+
+    scanner_id: "scanner-name",
+    scan_id: "scan-id",
+    rootElement: $('#vuln-card'),
+
+    makeTemplateId: function(counter) {
+        return 'vuln-template-id-row-' + counter;
+    },
+
+    makeFindingId: function(counter) {
+        return 'vuln-id-row-' + counter;
+    },
+
+    makeFindingURL: function(findingId) {
+        return "/api/v1/finding/vulnerability/" + findingId
+    },
+
+    handleTemplateData: function(data) {
+        document.getElementById('vuln-info-text').innerHTML = data.description
+
+        title = $('#vuln-title')
+        title.html(data.title);
+        title.attr('href', "/web/details/" + data.article);
+    },
+
+    handleFindingData: function(data) {
+        Utils.setSeverity(data?.severity, $('#vuln-severity'), $('#vuln-severity-badge'));
+        $('#vuln-details-dropdown').html(data?.state);
+        $('#vuln-language').html(data?.snippet?.language);
+        $('#vuln-details-file-size').html(data?.snippet?.file_size);
+    },
+
+    handleCode: function(data) {
+        $('#vuln-code').html(data?.code || "Not Found");
+
+        let theme_name = 'enlighter';
+        if (params.theme == 'dark') {
+            theme_name = 'dracula';
+        }
+
+        EnlighterJS.init('pre', 'code.vuln_code', {
+            language : data.language.toLowerCase(),
+            theme: theme_name,
+            indent : 2,
+            textOverflow: 'scroll'
+        });
+    },
+
+    applyVulnerabilityState: function(element) {
+
+    },
+
+    onClose: function() {
+        $('#vuln-severity').attr("style", "width: 0%;");
+    },
+};
+
+Finding = {
+    scanner_id: "scanner-name",
+    scan_id: "scan-id",
+    rootElement: $('#finding-card'),
+
+    makeTemplateId: function(counter) {
+        return 'finding-template-id-row-' + counter;
+    },
+
+    makeFindingId: function(counter) {
+        return 'finding-id-row-' + counter;
+    },
+
+    makeFindingURL: function(findingId) {
+        return "/api/v1/finding/" + findingId
+    },
+
+    handleTemplateData: function(data) {
+        document.getElementById('finding-info-text').innerHTML = data.description
+
+        title = $('#finding-title')
+        title.html(data.title);
+        title.attr('href', "/web/details/" + data.article);
+    },
+
+    handleFindingData: function(data) {
+        Utils.setSeverity(data?.severity, $('#finding-severity'), $('#finding-severity-badge'));
+        $('#finding-language').html(data?.snippet?.language);
+        $('#finding-details-file-size').html(data?.snippet?.file_size);
+    },
+
+    handleCode: function(data) {
+        $('#finding-code').html(data?.code || "Not Found");
+
+        let theme_name = 'enlighter';
+        if (params.theme == 'dark') {
+            theme_name = 'dracula';
+        }
+
+        EnlighterJS.init('pre', 'code.finding_code', {
+            language : data.language.toLowerCase(),
+            theme: theme_name,
+            indent : 2,
+            textOverflow: 'scroll'
+        });
+    },
+
+    onClose: function() {
+        $('#finding-severity').attr("style", "width: 0%;");
+    },
+}
+
+
+
 
 /**
  * Utility module to enable a wizard-like view in a modal. This code

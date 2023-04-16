@@ -25,15 +25,15 @@ class AndroidPermissions(dict):
     - ``dangerous``: Lists only permissions that are dangerous
     - ``invisible``: Lists permissions that are invisible to the user by default
                      (will be ignored by default)
-                     
+
     The returned permission and permission-group will have the following structure:
-    
+
     >>> AndroidPermissions.all()
     { \n\
         "identifier": {\n\
             "label": "value" or None or ['protectionLevel1', ...] \n\
         } \n\
-    } 
+    }
 
     """
 
@@ -59,7 +59,7 @@ class AndroidPermissions(dict):
         if self.kwargs.get('group', False):
             return self.get('ungrouped', UNGROUPED_TYPE)
         return self
-    
+
     @staticmethod
     def all(**kwargs) -> 'AndroidPermissions':
         """Returns all Android permissions of a device
@@ -132,14 +132,14 @@ class AndroidPermissions(dict):
             line = line.strip()
             if len(line) == 0:
                 continue
-            
+
             if isinstance(line, (bytes, bytearray)):
                 line = line.decode()
 
             assert isinstance(line, str), (
                 "The input line must be of type string"
             )
-            
+
             if line[0] == '+': # permission or group definition
                 identifier = line[1:].strip()
                 if identifier.startswith(GROUP_TYPE) or identifier == UNGROUPED_TYPE:
@@ -165,3 +165,4 @@ class AndroidPermissions(dict):
                     val[name] = desc.split('|') if desc != 'null' else []
                 else:
                     val[name] = desc if desc != 'null' else None
+

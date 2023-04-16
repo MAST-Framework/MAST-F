@@ -42,6 +42,7 @@ urlpatterns = [
     path(r"scan/", include([
         path(r"all", views.ScanListView.as_view()),
         path(r"create", views.ScanCreationView.as_view()),
+        path(r"filetree", views.FiletreeView.as_view()),
         path(r"<uuid:scan_uuid>", views.ScanView.as_view()),
         path(r"<uuid:scan_uuid>/<str:name>/<str:extension>", views.ScannerView.as_view()),
         path(r"task/<uuid:task_uuid>", views.ScanTaskView.as_view()),
