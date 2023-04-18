@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 
 __all__ = [
-    'ModelField', 'RegistrationForm', 'ProjectCreationForm', 
-    'AppPermissionForm', 'TeamForm', 
+    'ModelField', 'RegistrationForm', 'ProjectCreationForm',
+    'AppPermissionForm', 'TeamForm', 'ManyToManyField'
 ]
 
 class ModelField(forms.CharField):
@@ -23,22 +23,38 @@ class ModelField(forms.CharField):
     ...     print(user.username)
 
     """
-    
+
     def __init__(self, model, field_name='pk', **kwargs) -> None:
         super().__init__(**kwargs)
         self.model = model
         self.field_name = field_name
-        
+
     def clean(self, value) -> object:
         value = super().clean(value)
         queryset = self.model.objects.filter(**{self.field_name: value})
-        
+
         if not queryset.exists():
             raise forms.ValidationError(
                 "This field must be a reference to an existing model", code="required")
-        
+
         return queryset.first()
-        
+
+
+class ManyToManyField(forms.CharField):
+    def __init__(self, model, field_name='pk', **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.model = model
+        self.field_name = field_name
+
+    def clean(self, value: str) -> list:
+        values = value.split(',')
+        elements = []
+        for objid in values:
+            query = self.model.objects.filter(**{self.field_name: objid})
+            if query.exists():
+                elements.append(query.first())
+
+        return elements
 
 
 class RegistrationForm(forms.Form):
@@ -58,7 +74,7 @@ class RegistrationForm(forms.Form):
 
 class ProjectCreationForm(forms.Form):
     """Simple form to create new projects"""
-    
+
     name = forms.CharField(max_length=256, required=True)
     tags = forms.CharField(max_length=4096, required=False)
     visibility = forms.CharField(max_length=32, required=True)
@@ -74,14 +90,14 @@ class AppPermissionForm(forms.Form):
     protection_level = forms.CharField(max_length=256, required=True)
     dangerous = forms.BooleanField(required=False, initial=False)
     group = forms.CharField(max_length=256, required=True)
-    
+
     short_description = forms.CharField(max_length=256, required=True)
     description = forms.CharField(required=False)
-    risk = forms.CharField(required=False) 
+    risk = forms.CharField(required=False)
 
 
 class TeamForm(forms.Form):
     name = forms.CharField(max_length=256, required=True)
     owner = ModelField(User, field_name='username', max_length=256)
     users = forms.CharField()
-    
+

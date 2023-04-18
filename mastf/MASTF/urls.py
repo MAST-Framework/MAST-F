@@ -18,10 +18,8 @@ from django.urls import include, path, register_converter
 from mastf.MASTF import settings, converters
 
 
-register_converter(converters.FindingTemplateIDConverter, 'ftid')
-register_converter(converters.VulnerabilityIDConverter, 'svid')
-register_converter(converters.FindingIDConverter, 'sfid')
-register_converter(converters.MD5Converter, 'md5')
+for name, clazz in converters.listconverters().items():
+    register_converter(clazz, name)
 
 urlpatterns = [
     path('api/v1/', include('mastf.MASTF.rest.urls')),

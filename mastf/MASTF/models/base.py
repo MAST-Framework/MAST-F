@@ -18,17 +18,17 @@ __all__ = [
 
 class namespace(dict):
     """Simple class that stores its attributes in a separate dict.
-    
-    It behaves like a normal dictionary with variable assignment possible. So, 
+
+    It behaves like a normal dictionary with variable assignment possible. So,
     for example:
-    
+
     >>> var = namespace(foo="bar")
     >>> var.foo
     'bar'
-    
-    Variables can still be defined after the object has been created. 
+
+    Variables can still be defined after the object has been created.
     """
-    
+
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -54,20 +54,20 @@ class Team(models.Model):
     class is already defined by Django. Each team can have a list of
     users.
     """
-    
+
     name = models.CharField(max_length=256, null=False)
     """The team's name"""
-    
+
     users = models.ManyToManyField(User, related_name='teams')
     """A ``many-to-many`` relation that simulates a membership in a team"""
-    
+
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     """The owner of this team (the user that created the team)"""
-    
+
     visibility = models.CharField(default=Visibility.PUBLIC, choices=Visibility.choices, max_length=256)
     """The team's visibility.
-    
-    Note that internal should not be applied to teams as this state 
+
+    Note that internal should not be applied to teams as this state
     is related to projects.
     """
 
@@ -78,17 +78,17 @@ class Team(models.Model):
 
 class Project(models.Model):
     """Database model for mobile application projects.
-    
+
     .. info::
-        Projects may be assigned to whole teams instead of set only one user in 
+        Projects may be assigned to whole teams instead of set only one user in
         charge of it. All users that are a member of the project's team are able
         to modify the project.
-        
-    This model class also defines utility methods that can be used to retrieve 
+
+    This model class also defines utility methods that can be used to retrieve
     the local system path of the project directory as well as general stats that
     will be mapped in a ``namespace`` object.
     """
-    
+
     project_uuid = models.CharField(primary_key=True, null=False, max_length=256)
     """Stores the UUID of this project."""
 
@@ -106,16 +106,16 @@ class Project(models.Model):
 
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     """Specifies the onwer of this project.
-    
+
     This field my be null as projects can be assigned to whole teams.
     """
-    
+
     team = models.ForeignKey(Team, null=True, on_delete=models.CASCADE)
     """Specifies the owner of this project. (may be null)"""
 
     inspection_type = models.CharField(default=InspectionType.SIMPLE, choices=InspectionType.choices, max_length=256)
     """Specifies the inspection type to apply when scanning an app."""
-    
+
 
     @staticmethod
     def stats(owner: User) -> namespace:
@@ -126,12 +126,12 @@ class Project(models.Model):
         :return: a dictionary covering general stats (count, risk levels)
         :rtype: namespace
         """
-        
+
         # This query attempts to collect all projects that can be modified by
         # the given owner. That includes projects that are assigned to a team
-        # of which the provided user is a member; projects that are public and 
-        # projects that are maintained by the provided owner. 
-        # @ImplNote: Only projects that are globally PUBLIC and not assigned to 
+        # of which the provided user is a member; projects that are public and
+        # projects that are maintained by the provided owner.
+        # @ImplNote: Only projects that are globally PUBLIC and not assigned to
         # any team will be included in this list.
         query = (models.Q(owner=owner) | models.Q(team__users__pk=owner.pk)
             | models.Q(visibility=Visibility.PUBLIC, team=None)
@@ -141,7 +141,7 @@ class Project(models.Model):
 
         data.risk_high = len(projects.filter(risk_level=Severity.HIGH))
         data.risk_medium = len(projects.filter(risk_level=Severity.MEDIUM))
-        # The project IDs can be used later on in order to prevent a user to 
+        # The project IDs can be used later on in order to prevent a user to
         # create the previous query again.
         data.ids = [x.project_uuid for x in projects]
         return data
@@ -154,7 +154,7 @@ class Project(models.Model):
         :rtype: pathlib.Path
         """
         return settings.MASTF_PROJECTS_DIR / str(self.project_uuid)
-    
+
     def dir(self, path: str, create: bool = True) -> pathlib.Path:
         """Returns the directory at the specified location.
 
@@ -173,7 +173,7 @@ class Project(models.Model):
 
 class File(models.Model):
     '''Stores information about the uploaded file.
-    
+
     Note that this model will store information about the uploaded files only;
     extracted files will be ignored. Each time a scan file is uploaded, it will
     be saved in the projects directory
@@ -196,7 +196,7 @@ class File(models.Model):
 
     file_path = models.CharField(max_length=2048, null=True)
     """Stores the internal file path. (will be localized separately)"""
-    
+
     internal_name = models.CharField(max_length=32, default='')
     """Specifies the uploaded file name."""
 

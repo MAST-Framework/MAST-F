@@ -13,6 +13,7 @@ urlpatterns = [
         path(r"<uuid:project_uuid>", views.ProjectView.as_view()),
         path(r"create", views.ProjectCreationView.as_view()),
         path(r"all", views.ProjectListView.as_view()),
+        path(r"dependencies", views.DependencyListView.as_view()),
 
         path(r"<uuid:project_uuid>/chart/<str:name>", views.ProjectChartView.as_view()),
     ])),
@@ -20,19 +21,15 @@ urlpatterns = [
     # Note that we're using the custom converter defined in
     # mastf/MASTF/converters.py
     path(r"finding/", include([
-        # REVISIT: Potential information leakage when listing vulnerabilities
-        # from other projects
-        path(r"all", views.FindingListView.as_view()),
         path(r"create", views.FindingCreationView.as_view()),
-        path(r"<sfid:finding_id>", views.FindingView.as_view()),
+        path(r"<findingid:finding_id>", views.FindingView.as_view()),
 
-        path(r"vulnerability/all", views.VulnerabilityListView.as_view()),
         path(r"vulnerability/create", views.VulnerabilityCreationView.as_view()),
-        path(r"vulnerability/<svid:finding_id>", views.VulnerabilityView.as_view()),
+        path(r"vulnerability/<vulnerabilityid:finding_id>", views.VulnerabilityView.as_view()),
 
         path(r"template/all", views.FindingTemplateListView.as_view()),
         path(r"template/create", views.FindingTemplateCreationView.as_view()),
-        path(r"template/<ftid:template_id>", views.FindingTemplateView.as_view()),
+        path(r"template/<findingtemplateid:template_id>", views.FindingTemplateView.as_view()),
     ])),
 
     path(r"app-permission/all", views.AppPermissionListView.as_view()),
@@ -43,15 +40,27 @@ urlpatterns = [
         path(r"all", views.ScanListView.as_view()),
         path(r"create", views.ScanCreationView.as_view()),
         path(r"filetree", views.FiletreeView.as_view()),
-        path(r"<uuid:scan_uuid>", views.ScanView.as_view()),
-        path(r"<uuid:scan_uuid>/<str:name>/<str:extension>", views.ScannerView.as_view()),
+        path(r"<uuid:scan_uuid>/", include([
+            path(r"", views.ScanView.as_view()),
+
+            path(r"findings",  views.FindingListView.as_view()),
+            path(r"vulnerabilities", views.VulnerabilityListView.as_view()),
+            path(r"permissions", views.AppPermissionListView.as_view()),
+            path(r"hosts", views.HostListView.as_view()),
+
+            # REVISIT: As we need API endpoints for each model, there is no
+            # need for a generic endpoint that is mapped to a scanner.
+            # path(r"<str:name>/<str:extension>", views.ScannerView.as_view()),
+        ])),
+
+
         path(r"task/<uuid:task_uuid>", views.ScanTaskView.as_view()),
     ])),
 
 
     # Code methods for findings and vulerabilities
-    path(r"code/<sfid:finding_id>", views.FindingCodeView.as_view()),
-    path(r"code/<svid:finding_id>", views.VulnerabilityCodeView.as_view()),
+    path(r"code/<findingid:finding_id>", views.FindingCodeView.as_view()),
+    path(r"code/<vulnerabilityid:finding_id>", views.VulnerabilityCodeView.as_view()),
 
     path(r"team/", include([
         path("<int:pk>", views.TeamView.as_view()),
@@ -63,9 +72,8 @@ urlpatterns = [
         # We have to use 'pk' here as the name, because we haven't specified
         # a custom lookup field in the PackageView class
         path(r"<uuid:pk>", views.PackageView.as_view()),
-        path(r"all", views.PackageListView.as_view()),
         path(r"create", views.PackageCreationView.as_view()),
-
+        path(r"all", views.PackageListView.as_view()),
         path(r"vulnerability/", include([
             path(r"<uuid:pk>", views.PackageVulnerabilityView.as_view()),
             path(r"all", views.PackageVulnerabilityListView.as_view()),
@@ -75,14 +83,41 @@ urlpatterns = [
 
     path(r"dependency/", include([
         path(r"create", views.DependencyCreationView.as_view()),
-
-        # This path can contain a GET parameter named 'project'  which is
-        # designed to hold the project uuid. The parameter can be used to
-        # list all dependencies of one project.
-        path(r"all", views.DependencyListView.as_view()),
         path(r"<str:pk>", views.DependencyView.as_view()),
-    ]))
+    ])),
 
+    path(r"host/", include([
+
+        path(r"create", views.HostCreationView.as_view()),
+        path(r"<hostid:pk>/", include([
+            path(r"", views.HostView.as_view()),
+
+            path(r"tls", views.TLSListView.as_view()),
+            path(r"ciphersuites", views.ConnectionInfoListView.as_view()),
+            path(r"connections", views.TLSListView.as_view()),
+            path(r"datacollection", views.DataCollectionGroupListView.as_view()),
+        ])),
+
+        path(r"tls/", include([
+            path(r"create", views.TLSCreationView.as_view()),
+            path(r"<str:pk>", views.TLSView.as_view()),
+        ])),
+
+        path(r"conn/", include([
+            path(r"create", views.ConnectionInfoCreationView.as_view()),
+            path(r"<str:pk>", views.ConnectionInfoView.as_view()),
+        ])),
+
+        path(r"cipher/", include([
+            path(r"create", views.TLSCreationView.as_view()),
+            path(r"<str:pk>", views.TLSView.as_view()),
+        ])),
+
+        path(r"datacoll/", include([
+            path(r"create", views.DataCollectionGroupCreationView.as_view()),
+            path(r"<str:pk>", views.DataCollectionGroupView.as_view()),
+        ]))
+    ]))
 
 ]
 

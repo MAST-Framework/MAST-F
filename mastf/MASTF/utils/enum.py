@@ -69,6 +69,10 @@ class HostType(StringEnum):
     OK = "Ok"
     NOT_SET = "Not Set"
 
+class DataProtectionLevel(StringEnum):
+    PRIVATE = "Private"
+    PUBLIC = "Public"
+
 mod = sys.modules[__name__]
 # Small workaround to set an additional static attribute for Django
 # models

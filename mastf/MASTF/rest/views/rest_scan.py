@@ -122,6 +122,8 @@ class ScanListView(ListAPIViewBase):
     queryset = Scan.objects.all()
 
     def filter_queryset(self, queryset: QuerySet) -> QuerySet:
+        # TODO: maybe control via GET parameter whether public scans
+        # should be returned as well
         return queryset.filter(initiator=self.request.user)
 
 
@@ -135,7 +137,7 @@ class ScannerView(views.APIView):
 
     permission_classes = [IsAuthenticated & CanEditScan]
 
-    def get(self, request: Request, scan_id: UUID, name: str,
+    def get(self, request: Request, scan_uuid: UUID, name: str,
             extension: str) -> Response:
         """Generates a result JSON for each scanner extension
 
@@ -151,13 +153,13 @@ class ScannerView(views.APIView):
         :rtype: Response
         """
         # TODO: maybe add pagination
-        scan = get_object_or_404(Scan.objects.all(), scan_uuid=scan_id)
+        scan = get_object_or_404(Scan.objects.all(), scan_uuid=scan_uuid)
         plugins = Scanner.names(scan.project)
 
         if name not in plugins:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        plugin: ScannerPlugin = plugins[name]
+        plugin: ScannerPlugin = ScannerPlugin.all()[name]
         if extension not in plugin.extensions:
             return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 

@@ -6,9 +6,9 @@ from mastf.MASTF.serializers import FindingSerializer, VulnerabilitySerializer
 from mastf.MASTF.models import Finding, Vulnerability, Scanner, Scan, FindingTemplate
 from mastf.MASTF.forms import FindingForm, VulnerabilityForm
 
-from mastf.MASTF.rest.permissions import IsScanInitiator
+from mastf.MASTF.rest.permissions import IsScanInitiator, CanEditScanAsField, CanEditScan
 
-from .base import APIViewBase, CreationAPIViewBase, ListAPIViewBase
+from .base import APIViewBase, CreationAPIViewBase, ListAPIViewBase, GetObjectMixin
 
 __all__ = [
     'FindingView', 'FindingCreationView', 'FindingListView',
@@ -29,17 +29,18 @@ class FindingCreationView(CreationAPIViewBase):
     def set_defaults(self, request, data: dict) -> None:
         self.check_object_permissions(self.request, data['scan'])
 
-
     def make_uuid(self):
         return f"SF-{uuid4()}-{uuid4()}"
 
-class FindingListView(ListAPIViewBase):
-    permission_classes = [permissions.IsAuthenticated]
+class FindingListView(GetObjectMixin, ListAPIViewBase):
+    permission_classes = [permissions.IsAuthenticated & CanEditScan]
     queryset = Finding.objects.all()
     serializer_class = FindingSerializer
+    model = Scan
+    lookup_field = 'scan_uuid'
 
     def filter_queryset(self, queryset):
-        return queryset.filter(scan__initiator=self.request.user)
+        return queryset.filter(scan=self.get_object())
 
 ##############################################################################
 # Vulnerability
@@ -61,11 +62,13 @@ class VulnerabilityCreationView(CreationAPIViewBase):
     def make_uuid(self):
         return f"SV-{uuid4()}-{uuid4()}"
 
-class VulnerabilityListView(ListAPIViewBase):
-    permission_classes = [permissions.IsAuthenticated]
+class VulnerabilityListView(GetObjectMixin, ListAPIViewBase):
+    permission_classes = [permissions.IsAuthenticated & CanEditScan]
     queryset = Vulnerability.objects.all()
     serializer_class = VulnerabilitySerializer
+    model = Scan
+    lookup_field = 'scan_uuid'
 
     def filter_queryset(self, queryset):
-        return queryset.filter(scan__initiator=self.request.user)
+        return queryset.filter(scan=self.get_object())
 

@@ -129,11 +129,3 @@ class Vulnerability(AbstractBaseFinding):
     def make_uuid(*args) -> str:
         return f"SV-{uuid.uuid4()}-{uuid.uuid4()}"
 
-
-# Host information
-
-# class Host(models.Model):
-#     host_id = models.CharField(max_length=256, primary_key=True)
-#     classification = models.CharField(default=HostType.NOT_SET, choices=HostType.choices, max_length=256)
-#     snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
-#     name = models.CharField(max_length=512, null=True)
