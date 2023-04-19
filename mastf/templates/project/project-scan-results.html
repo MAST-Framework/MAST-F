@@ -1128,16 +1128,12 @@
                                             {% if active == "tabs-explorer" %}
                                             <div class="row">
                                                 <div class="col-4 border-end scrollable scroll-x scroll-y">
-                                                    <div id="filetree-view" class="transparent-effect">
+                                                    <div id="filetree-view">
                                                         <!-- Will be filled up with JSON data -->
                                                     </div>
                                                 </div>
                                                 <div class="col">
-                                                    <div class="highlight">
-                                                        <pre>
-                                                            <code>Some code</code>
-                                                        </pre>
-                                                    </div>
+                                                    <pre class="file_code" style="resize: vertical; margin-bottom: 0px;" id="file-code">##</pre>
                                                 </div>
                                             </div>
                                             {% endif %}
@@ -1210,7 +1206,11 @@
 <style>
 .enlighter-default{
     overflow-y: scroll;
+    {% if active != "tabs-explorer" %}
     height: 200px;
+    {% else %}
+    height: 500px;
+    {% endif %}
     resize: vertical;
 }
 .enlighter-btn-raw{
@@ -1252,7 +1252,7 @@
     document.addEventListener("DOMContentLoaded", function() {
 
         theme_name = document.body.getAttribute("class") == "theme-dark" ? "default-dark" : "default";
-        $('#filetree-view').jstree({
+        jstree = $('#filetree-view').jstree({
             "animation" : 0,
             "check_callback" : true,
             "themes" : {
@@ -1266,7 +1266,37 @@
                 }
             },
             "types": {% autoescape off %}{{ FILE_TYPES }}{% endautoescape %},
-            "plugins": ["types", "wholerow"]
+            "plugins": ["types", "wholerow", "search", "sort"]
+        });
+
+        jstree.bind("dblclick.jstree", function (e) {
+            var node = $(e.target).closest("li")[0];
+            if (node.getAttribute("is-dir") == "true") {
+                // We don't want to show directories as they don't contain
+                // useful information.
+                return;
+            }
+
+            var path = node.getAttribute("path");
+            var url = "/api/v1/files/" + path.split("/")[0] + "/?file=" + path;
+            REST.doGet(url, function(data) {
+                let theme_name = 'enlighter';
+                if (params.theme == 'dark') {
+                    theme_name = 'dracula';
+                }
+                // We have to use the textContent property here as
+                // wildcard generics '?' in Java would be displayed
+                // wrong.
+                document.getElementById("file-code").textContent = data.join("").replaceAll("<br>", "\n");
+                console.log(node.getAttribute('language'));
+                EnlighterJS.init('pre', 'code.file_code', {
+                    language : node.getAttribute('language'),
+                    theme: theme_name,
+                    indent : 2,
+                    textOverflow: 'scroll'
+                });
+            });
+
         });
     });
 </script>

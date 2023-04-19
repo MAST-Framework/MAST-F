@@ -59,6 +59,7 @@ urlpatterns = [
     # Code methods for findings and vulerabilities
     path(r"code/<findingid:finding_id>", views.FindingCodeView.as_view()),
     path(r"code/<vulnerabilityid:finding_id>", views.VulnerabilityCodeView.as_view()),
+    path(r"files/<md5:internal_name>/", views.FileCodeView.as_view()),
 
     path(r"team/", include([
         path("<int:pk>", views.TeamView.as_view()),

@@ -1,3 +1,4 @@
+from os.path import commonprefix
 from django.shortcuts import get_object_or_404
 
 from rest_framework import permissions, authentication, views
@@ -15,7 +16,7 @@ from mastf.MASTF.utils import filetree
 from .base import GetObjectMixin
 
 __all__ = [
-    'FindingCodeView', 'VulnerabilityCodeView', 'FiletreeView'
+    'FindingCodeView', 'VulnerabilityCodeView', 'FiletreeView', 'FileCodeView'
 ]
 
 class CodeView(views.APIView):
@@ -96,10 +97,45 @@ class FiletreeView(GetObjectMixin, views.APIView):
 
         # The root node's name must be changed as it would display
         # the md5 hash value
-        tree = filetree.apply_rules(target)
+        tree = filetree.apply_rules(target, scan.file.internal_name)
         tree['type'] = 'projectstructure'
         tree['text'] = scan.file.file_name
         return Response(tree)
 
+class FileCodeView(GetObjectMixin, views.APIView):
+    authentication_classes = [
+        authentication.BasicAuthentication,
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication
+    ]
 
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    model = File
+    lookup_field = 'internal_name'
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        scan_file = self.get_object()
+        scan = Scan.objects.get(file=scan_file)
+
+        permission = CanEditScan()
+        if not permission.has_object_permission(request, self, scan):
+            self.permission_denied(
+                request,
+                message=getattr(permission, 'message', None),
+                code=getattr(permission, 'code', None)
+            )
+
+        path = request.query_params.get("file", None)
+        safe_dir = f"{scan_file.internal_name}/"
+        if not path or not commonprefix((safe_dir, path)):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        target = scan.project.directory / path
+        if not target.exists():
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response(open(str(target), 'rb'))
 

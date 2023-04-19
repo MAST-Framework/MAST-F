@@ -1,55 +1,68 @@
 {
     "manifest": {
         "is_dir": false,
-        "suffix": "AndroidManifest\\.xml"
+        "suffix": "AndroidManifest\\.xml",
+        "language": "xml"
     },
     "xml": {
         "is_dir": false,
-        "suffix": ".*\\.xml$"
+        "suffix": ".*\\.xml$",
+        "language": "xml"
     },
     "json": {
         "is_dir": false,
-        "suffix": ".*\\.json$"
+        "suffix": ".*\\.json$",
+        "language": "json"
     },
     "css": {
         "is_dir": false,
-        "suffix": ".*\\.css$"
+        "suffix": ".*\\.css$",
+        "language": "css"
     },
     "js": {
         "is_dir": false,
-        "suffix": ".*\\.js$"
+        "suffix": ".*\\.js$",
+        "language": "javascript"
     },
     "properties": {
         "is_dir": false,
-        "suffix": ".*\\.properties$"
+        "suffix": ".*\\.properties$",
+        "language": "properties"
     },
     "yaml": {
         "is_dir": false,
-        "suffix": ".*\\.(yaml|yml)$"
+        "suffix": ".*\\.(yaml|yml)$",
+        "language": "yaml"
     },
     "zip": {
         "is_dir": false,
-        "suffix": ".*\\.(zip|7z|tar|gz|tar\\.gz)$"
+        "suffix": ".*\\.(zip|7z|tar|gz|tar\\.gz)$",
+        "language": "zip"
     },
     "html": {
         "is_dir": false,
-        "suffix": ".*\\.html$"
+        "suffix": ".*\\.html$",
+        "language": "html"
     },
     "csv": {
         "is_dir": false,
-        "suffix": ".*\\.csv$"
+        "suffix": ".*\\.csv$",
+        "language": "csv"
     },
     "cfg": {
         "is_dir": false,
-        "suffix": ".*\\.(cfg|conf|ini)$"
+        "suffix": ".*\\.(cfg|conf|ini)$",
+        "language": "config"
     },
     "class": {
         "is_dir": false,
-        "suffix": ".*\\.(class|java)$"
+        "suffix": ".*\\.(class|java)$",
+        "language": "java"
     },
     "classsmali": {
         "is_dir": false,
-        "suffix": ".*\\.smali$"
+        "suffix": ".*\\.smali$",
+        "language": "smali"
     },
     "sourceroot": {
         "is_dir": true,
@@ -61,6 +74,7 @@
     },
     "classkotlin": {
         "is_dir": false,
-        "suffix": ".*\\.(kt|kts|ktm)$"
+        "suffix": ".*\\.(kt|kts|ktm)$",
+        "language": "kotlin"
     }
 }
