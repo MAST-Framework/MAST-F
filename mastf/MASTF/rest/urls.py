@@ -48,9 +48,7 @@ urlpatterns = [
             path(r"permissions", views.AppPermissionListView.as_view()),
             path(r"hosts", views.HostListView.as_view()),
 
-            # REVISIT: As we need API endpoints for each model, there is no
-            # need for a generic endpoint that is mapped to a scanner.
-            # path(r"<str:name>/<str:extension>", views.ScannerView.as_view()),
+            path(r"<str:name>/<str:extension>", views.ScannerView.as_view()),
         ])),
 
 
@@ -83,7 +81,7 @@ urlpatterns = [
 
     path(r"dependency/", include([
         path(r"create", views.DependencyCreationView.as_view()),
-        path(r"<str:pk>", views.DependencyView.as_view()),
+        path(r"<uuid:pk>", views.DependencyView.as_view()),
     ])),
 
     path(r"host/", include([
@@ -100,7 +98,7 @@ urlpatterns = [
 
         path(r"tls/", include([
             path(r"create", views.TLSCreationView.as_view()),
-            path(r"<str:pk>", views.TLSView.as_view()),
+            path(r"<uuid:pk>", views.TLSView.as_view()),
         ])),
 
         path(r"conn/", include([
@@ -110,12 +108,12 @@ urlpatterns = [
 
         path(r"cipher/", include([
             path(r"create", views.TLSCreationView.as_view()),
-            path(r"<str:pk>", views.TLSView.as_view()),
+            path(r"<uuid:pk>", views.TLSView.as_view()),
         ])),
 
         path(r"datacoll/", include([
             path(r"create", views.DataCollectionGroupCreationView.as_view()),
-            path(r"<str:pk>", views.DataCollectionGroupView.as_view()),
+            path(r"<uuid:pk>", views.DataCollectionGroupView.as_view()),
         ]))
     ]))
 

@@ -1,6 +1,6 @@
 from django import forms
 
-from mastf.MASTF.models import Host, Scan, Snippet
+from mastf.MASTF.models import Host, Scan, Snippet, Scanner
 
 from .base import ModelField, ManyToManyField
 
@@ -38,6 +38,7 @@ class DataCollectionGroupForm(forms.Form):
 
 class HostForm(forms.Form):
     scan = ModelField(Scan, required=True)
+    scanner = ModelField(Scanner, required=True)
     classification = forms.CharField(max_length=256, required=False)
     snippet = ModelField(Snippet, required=False)
     url = forms.URLField(max_length=2048, required=True)

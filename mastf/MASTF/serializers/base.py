@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Manager
 from rest_framework import serializers
 
 from mastf.MASTF.models import (
@@ -37,7 +38,10 @@ class ManyToManyField(serializers.Field):
         if isinstance(value, str) or not value:
             return str(value)
 
-        return ','.join([str(x.pk) for x in value])
+        if isinstance(value, Manager):
+            value = value.all()
+
+        return [str(x.pk) for x in value]
 
 class ManyToManySerializer(serializers.ModelSerializer):
     rel_fields = None

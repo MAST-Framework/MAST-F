@@ -113,7 +113,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 
         results = {}
         for name, scanner in scanners.items():
-            project_scanner = Scanner.objects.get(scan__project=project, name=name)
+            project_scanner = Scanner.objects.filter(scan__project=project, name=name).first()
             results[scanner.name] = self.get_scan_results(scans, project_scanner)
 
         context['scan_results'] = results

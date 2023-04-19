@@ -63,6 +63,7 @@ class HostListView(GetObjectMixin, ListAPIViewBase):
     queryset = Host.objects.all()
     model = Scan
     lookup_field = 'scan_uuid'
+    serializer_class = HostSerializer
     permission_classes = [permissions.IsAuthenticated & CanEditScan]
 
     def filter_queryset(self, queryset):

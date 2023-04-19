@@ -22,7 +22,18 @@ REST = {
                 'X-CSRFToken': csrftoken
             }
         })
-    }
+    },
+
+    patch: function(url, data, onsuccess) {
+        $.ajax(url, {
+            method: 'PATCH',
+            success: onsuccess,
+            data: data,
+            headers: {
+                'X-CSRFToken': csrftoken
+            }
+        })
+    },
 }
 
 Utils = {
@@ -135,6 +146,7 @@ Vulnerability = {
         $('#vuln-details-dropdown').html(data?.state);
         $('#vuln-language').html(data?.snippet?.language);
         $('#vuln-details-file-size').html(data?.snippet?.file_size);
+        $('#vuln-id').attr('value', data.finding_id);
     },
 
     handleCode: function(data) {
@@ -154,7 +166,14 @@ Vulnerability = {
     },
 
     applyVulnerabilityState: function(element) {
+        findingId = Utils.getValue('vuln-id');
 
+        REST.patch("/api/v1/finding/vulnerability/" + findingId, JSON.stringify({
+            finding_id: findingId,
+            state: element.innerHTML
+        }), function(data) {
+            document.getElementById('vuln-details-dropdown').innerHTML = element.innerHTML;
+        })
     },
 
     onClose: function() {

@@ -335,6 +335,7 @@
                                             id="tabs-vulnerabilities">
                                             {% if active == "tabs-vulnerabilities" %}
                                             <div class="row" id="vuln-card" style="display: none;">
+                                                <input type="hidden" id="vuln-id" value="">
                                                 <div class="card">
                                                     <div class="progress card-progress">
                                                         <div class="progress-bar bg-red" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
@@ -989,12 +990,22 @@
                                                     <div class="col">
                                                         <div class="card">
                                                             <div class="card-body container-fluid">
-                                                                <div class="card-title">Identified and Scanned Hosts</div>
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-auto">
+                                                                        <div class="card-title">Identified and Scanned Hosts</div>
+                                                                    </div>
+                                                                    <div class="col-lg-auto ms-auto">
+                                                                        <a href="#" class="btn btn-outline-secondary ms-auto">Import</a>
+                                                                    </div>
+                                                                </div>
+
+
                                                                 <div class="row">
                                                                     <div class="col mt-2">
                                                                         <div class="table-responsive-xl">
                                                                             <table id="table-hosts" class="table card-table text-nowrap datatable"
                                                                                 style="width: 100%">
+                                                                                <input type="hidden" value="{{scan.scan_uuid}}" id="scan-id">
                                                                                 <thead>
                                                                                     <th class="w-1">Details</th>
                                                                                     <!-- URL State -->
@@ -1029,10 +1040,11 @@
                                                                                     {% comment %} All rows will be generated automatically {% endcomment %}
                                                                                 -->
                                                                                 <tbody>
-                                                                                    <tr>
+                                                                                    {% for host in data %}
+                                                                                    <tr id="tbl-row-id-{{forloop.counter}}">
                                                                                         <td>
                                                                                             <a href="#offcanvas-host" class="nav-link link-secondary" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvas-host"
-                                                                                                onclick="toggleHostOffcanvas(this);" host-id="<uuid:host>">
+                                                                                                onclick="toggleHostOffcanvas(this);" host-id="{{host.host_uuid}}">
                                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                                                     <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
@@ -1046,27 +1058,36 @@
                                                                                             </a>
                                                                                         </td>
                                                                                         <td>
+                                                                                            {% if host.classification == 'Ok' %}
                                                                                             <span class="badge badge-outline bg-green-lt">
                                                                                                 Ok
                                                                                             </span>
-                                                                                            OR
+
+                                                                                            {% elif host.classification == 'Tracker' %}
                                                                                             <span class="badge badge-outline bg-red-lt">
                                                                                                 Tracker
                                                                                             </span>
-                                                                                            OR
+
+                                                                                            {% else %}
                                                                                             <span class="badge badge-outline bg-orange-lt">
-                                                                                                Invalid
+                                                                                                {{ host.classification|default_if_none:"Undefined" }}
                                                                                             </span>
+                                                                                            {% endif %}
                                                                                         </td>
                                                                                         <td class="text-muted text-truncate">
-                                                                                            www.google.com
+                                                                                            {{ host.domain|default_if_none:"-" }}
                                                                                         </td>
                                                                                         <!-- The file-text should be truncated as it could be long -->
                                                                                         <td class="text-muted">
-                                                                                            /path/to/filename
+                                                                                            {% if host.snippet %}
+                                                                                            host.snippet.file_name
+                                                                                            {% else %}
+                                                                                            -
+                                                                                            {% endif %}
                                                                                         </td>
                                                                                         <td class="text-muted">
-                                                                                            <a href="#" target-id="#finding-id-row-{{ forloop.counter }}" id="finding-id-copy-{{ forloop.counter }}"
+                                                                                            <input type="hidden" value="{{host.url}}" id="url-row-{{forloop.counter}}">
+                                                                                            <a href="#" target-id="#url-row-{{ forloop.counter }}" id="url-copy-{{ forloop.counter }}"
                                                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy URL">
                                                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -1077,8 +1098,7 @@
                                                                                         </td>
 
                                                                                         <td class="text-end">
-                                                                                            <a href="#" target-id="#host-row-..." id="host-delete-row-..."
-                                                                                                onclick="verifyAction(this, handleHostDeletion)">
+                                                                                            <a href="#" row-id="tbl-row-id-{{forloop.counter}}" id="{{host.host_uuid}}" onclick="verifyAction(this, handleHostDeletion)">
                                                                                                 <span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete host result">
                                                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -1092,6 +1112,7 @@
                                                                                             </a>
                                                                                         </td>
                                                                                     </tr>
+                                                                                    {% endfor %}
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
@@ -1131,16 +1152,47 @@
         </div>
 
         {% if active == 'tabs-hosts' %}
-        <div class="offcanvas offcanvas-end" id="offcanvas-host" tabindex="-1" aria-labelledby="off-host-label">
+        <div class="offcanvas offcanvas-end" id="offcanvas-host" tabindex="-1" aria-labelledby="off-host-label"
+            style="width: 400px;">
             <div class="offcanvas-header">
                 <h2 id="off-host-label" class="offcanvas-title">Host Details</h2>
                 <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas"
                     aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
+                <div class="datagrid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">
+                                    Domain
+                                </div>
+                                <div class="datagrid-content">
+                                    <input type="text" class="form-control" placeholder="Host Domain" value=""
+                                        id="host-domain" name="domain">
+                                </div>
+                            </div>
+                            <div class="datagrid-item mt-1">
+                                <div class="datagrid-title">
+                                    URL
+                                </div>
+                                <div class="datagrid-content">
+                                    <input type="text" class="form-control" placeholder="Username" value="192.168.178.1"
+                                        id="host-url" name="url">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
                 <div>
                   Host information...
                 </div>
+            </div>
+            <div class="offcanvas-footer">
+                <a href="#" class="btn btn-primary">
+                    Update
+                </a>
             </div>
 
         </div>
@@ -1237,12 +1289,25 @@
         console.log($(element).parents('tr'));
         console.log(event);
 
-        HOSTS_TABLE.row()
+        // HOSTS_TABLE.row()
     }
 </script>
 
 <script>
  document.addEventListener("DOMContentLoaded", function() {
+
+    markers = [
+    {% for host in data %}
+        {% for connection in host.connections.all %}
+        {
+            coords: [{{connection.longitude}}, {{connection.latitude}}],
+            name: "{{connection.country}}",
+            domain: "{{host.domain}}"
+        },
+        {% endfor %}
+    {% endfor %}
+    ]
+
     const map = new jsVectorMap({
         selector: '#map-world',
         map: 'world_merc',
@@ -1257,44 +1322,7 @@
         zoomOnScroll: false,
         zoomButtons: true,
 
-        markers: [
-            {
-                coords: [61.524, 105.3188],
-                name: "Russia",
-            },
-            {
-                coords: [56.1304, -106.3468],
-                name: "Canada",
-            },
-            {
-                coords: [71.7069, -42.6043],
-                name: "Greenland",
-            },
-            {
-                coords: [26.8206, 30.8025],
-                name: "Egypt",
-            },
-            {
-                coords: [-14.235, -51.9253],
-                name: "Brazil",
-            },
-            {
-                coords: [35.8617, 104.1954],
-                name: "China",
-            },
-            {
-                coords: [37.0902, -95.7129],
-                name: "United States",
-            },
-            {
-                coords: [60.472024, 8.468946],
-                name: "Norway",
-            },
-            {
-                coords: [48.379433, 31.16558],
-                name: "Ukraine",
-            },
-        ],
+        markers: markers,
         markerStyle: {
             initial: {
                 r: 4,
@@ -1317,7 +1345,7 @@
         labels: {
             markers: {
                 render: function(marker) {
-                    return marker.name
+                    return marker.domain
                 },
             },
         },
@@ -1326,6 +1354,7 @@
     window.addEventListener("resize", () => {
         map.updateSize();
     });
+
 });
 </script>
 {% endif %}

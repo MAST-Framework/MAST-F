@@ -34,7 +34,7 @@ class ProjectsView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
         view = rest_project.ProjectCreationView.as_view()
         result = view(request)
 
-        if result.status_code != 200:
+        if result.status_code > 400:
             messages.error(request, "Could not create project!")
 
         return redirect('Projects')

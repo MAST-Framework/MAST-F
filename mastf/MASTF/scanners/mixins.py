@@ -11,8 +11,11 @@ from mastf.MASTF.models import (
     Vulnerability,
     Finding,
     Scanner,
-    FindingTemplate
+    FindingTemplate,
+    Host
 )
+
+from mastf.MASTF.serializers import HostSerializer
 
 
 class DetailsMixin:
@@ -129,3 +132,20 @@ class FindingsMixins:
         return data
 
 
+class HostsMixin:
+
+    def ctx_hosts(self, scan: Scan, file: File, scanner: Scanner) -> list:
+        """Returns all host that have been identified within the scan target.
+
+        :param project: the project instance
+        :type project: Project
+        :param file: the scan target
+        :type file: File
+        :return: a list of vulnerabilities
+        :rtype: list
+        """
+        return Host.objects.filter(scan=scan, scanner=scanner)
+
+    def res_hosts(self, scan: Scan, scanner: Scanner) -> list:
+        data = Host.objects.filter(scan=scan, scanner=scanner)
+        return HostSerializer(data, many=True).data

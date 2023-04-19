@@ -65,9 +65,11 @@ class ScannerPlugin(metaclass=ABCMeta):
         return {}
 
     def results(self, extension: str, scan: Scan) -> dict:
+        scanner = Scanner.objects.filter(scan=scan, name=self.internal_name).first()
+
         func_name = f"res_{extension}"
         if hasattr(self, func_name):
-            return getattr(self, func_name)(scan)
+            return getattr(self, func_name)(scan, scanner)
 
         return {}
 
@@ -96,7 +98,8 @@ class ScannerPlugin(metaclass=ABCMeta):
 from mastf.MASTF.scanners.mixins import *
 
 TextScannerMixins = (DetailsMixin, VulnerabilitiesMixin,
-                     PermissionsMixin, FindingsMixins)
+                     PermissionsMixin, FindingsMixins,
+                     HostsMixin)
 
 @Plugin
 class TestScanner(*TextScannerMixins, ScannerPlugin):
