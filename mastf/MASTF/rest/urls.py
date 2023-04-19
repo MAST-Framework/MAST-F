@@ -39,10 +39,10 @@ urlpatterns = [
     path(r"scan/", include([
         path(r"all", views.ScanListView.as_view()),
         path(r"create", views.ScanCreationView.as_view()),
-        path(r"filetree", views.FiletreeView.as_view()),
         path(r"<uuid:scan_uuid>/", include([
             path(r"", views.ScanView.as_view()),
 
+            path(r"filetree", views.FiletreeView.as_view()),
             path(r"findings",  views.FindingListView.as_view()),
             path(r"vulnerabilities", views.VulnerabilityListView.as_view()),
             path(r"permissions", views.AppPermissionListView.as_view()),

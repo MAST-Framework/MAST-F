@@ -1,0 +1,66 @@
+{
+    "manifest": {
+        "is_dir": false,
+        "suffix": "AndroidManifest\\.xml"
+    },
+    "xml": {
+        "is_dir": false,
+        "suffix": ".*\\.xml$"
+    },
+    "json": {
+        "is_dir": false,
+        "suffix": ".*\\.json$"
+    },
+    "css": {
+        "is_dir": false,
+        "suffix": ".*\\.css$"
+    },
+    "js": {
+        "is_dir": false,
+        "suffix": ".*\\.js$"
+    },
+    "properties": {
+        "is_dir": false,
+        "suffix": ".*\\.properties$"
+    },
+    "yaml": {
+        "is_dir": false,
+        "suffix": ".*\\.(yaml|yml)$"
+    },
+    "zip": {
+        "is_dir": false,
+        "suffix": ".*\\.(zip|7z|tar|gz|tar\\.gz)$"
+    },
+    "html": {
+        "is_dir": false,
+        "suffix": ".*\\.html$"
+    },
+    "csv": {
+        "is_dir": false,
+        "suffix": ".*\\.csv$"
+    },
+    "cfg": {
+        "is_dir": false,
+        "suffix": ".*\\.(cfg|conf|ini)$"
+    },
+    "class": {
+        "is_dir": false,
+        "suffix": ".*\\.(class|java)$"
+    },
+    "classsmali": {
+        "is_dir": false,
+        "suffix": ".*\\.smali$"
+    },
+    "sourceroot": {
+        "is_dir": true,
+        "suffix": "src"
+    },
+    "pplibfolder": {
+        "is_dir": true,
+        "suffix": "lib"
+    },
+    "classkotlin": {
+        "is_dir": false,
+        "suffix": ".*\\.(kt|kts|ktm)$"
+    }
+}

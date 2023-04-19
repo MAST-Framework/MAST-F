@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from mastf.MASTF import settings
-from mastf.MASTF.rest.permissions import CanEditProject
-from mastf.MASTF.models import Finding, Vulnerability, Project, File
+from mastf.MASTF.rest.permissions import CanEditProject, CanEditScan
+from mastf.MASTF.models import Finding, Vulnerability, Project, File, Scan
 from mastf.MASTF.serializers import SnippetSerializer
+from mastf.MASTF.utils import filetree
+
 
 from .base import GetObjectMixin
 
@@ -82,14 +84,22 @@ class FiletreeView(GetObjectMixin, views.APIView):
     ]
 
     permission_classes = [
-        permissions.IsAuthenticated & CanEditProject
+        permissions.IsAuthenticated & CanEditScan
     ]
 
-    model = Project
-    lookup_field = 'project_uuid'
+    model = Scan
+    lookup_field = 'scan_uuid'
 
     def get(self, request, *args, **kwargs):
-        project: Project = self.get_object()
+        scan: Scan = self.get_object()
+        target = scan.project.dir(scan.file.internal_name)
+
+        # The root node's name must be changed as it would display
+        # the md5 hash value
+        tree = filetree.apply_rules(target)
+        tree['type'] = 'projectstructure'
+        tree['text'] = scan.file.file_name
+        return Response(tree)
 
 
 

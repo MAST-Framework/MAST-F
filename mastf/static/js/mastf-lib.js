@@ -24,11 +24,12 @@ REST = {
         })
     },
 
-    patch: function(url, data, onsuccess) {
+    patch: function(url, data, onsuccess, contentType = "application/json", ) {
         $.ajax(url, {
             method: 'PATCH',
             success: onsuccess,
             data: data,
+            contentType: contentType,
             headers: {
                 'X-CSRFToken': csrftoken
             }
@@ -44,7 +45,7 @@ Utils = {
             console.error("Could not locate Element: " + selector);
             return null;
         }
-        return element.attr('value')
+        return element.attr('value');
     },
 
     /**
@@ -134,9 +135,9 @@ Vulnerability = {
     },
 
     handleTemplateData: function(data) {
-        document.getElementById('vuln-info-text').innerHTML = data.description
+        document.getElementById('vuln-info-text').innerHTML = data.description;
 
-        title = $('#vuln-title')
+        title = $('#vuln-title');
         title.html(data.title);
         title.attr('href', "/web/details/" + data.article);
     },
@@ -146,6 +147,8 @@ Vulnerability = {
         $('#vuln-details-dropdown').html(data?.state);
         $('#vuln-language').html(data?.snippet?.language);
         $('#vuln-details-file-size').html(data?.snippet?.file_size);
+        $('#vuln-details-language').html(data?.snippet?.language);
+        $('#vuln-details-lines').html(data?.snippet?.lines);
         $('#vuln-id').attr('value', data.finding_id);
     },
 
@@ -157,22 +160,32 @@ Vulnerability = {
             theme_name = 'dracula';
         }
 
-        EnlighterJS.init('pre', 'code.vuln_code', {
-            language : data.language.toLowerCase(),
-            theme: theme_name,
-            indent : 2,
-            textOverflow: 'scroll'
-        });
+        if (data != null) {
+            EnlighterJS.init('pre', 'code.vuln_code', {
+                language : data?.language.toLowerCase(),
+                theme: theme_name,
+                indent : 2,
+                textOverflow: 'scroll'
+            });
+        }
     },
 
     applyVulnerabilityState: function(element) {
         findingId = Utils.getValue('vuln-id');
+        target = document.getElementById('vuln-details-dropdown');
+
+        if (target.innerHTML == element.innerHTML) {
+            return;
+        }
 
         REST.patch("/api/v1/finding/vulnerability/" + findingId, JSON.stringify({
             finding_id: findingId,
             state: element.innerHTML
         }), function(data) {
-            document.getElementById('vuln-details-dropdown').innerHTML = element.innerHTML;
+            if (data.success) {
+                target.innerHTML = element.innerHTML;
+                document.getElementById("vuln-state-row-" + findingId).innerHTML = element.innerHTML;
+            } // TODO: add logging
         })
     },
 

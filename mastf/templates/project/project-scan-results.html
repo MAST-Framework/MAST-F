@@ -412,17 +412,13 @@
                                                                             <div class="card-body">
                                                                                 <dl class="row">
                                                                                     <dt class="col-5">Size:</dt>
-                                                                                    <dd class="col-7" id="vuln-details-file-size">##</dd>
+                                                                                    <dd class="col-7"><span id="vuln-details-file-size">##</span> Bytes</dd>
                                                                                     <dt class="col-5">Language:</dt>
-                                                                                    <dd class="col-7" id="vuln-details-language"></dd>
+                                                                                    <dd class="col-7" id="vuln-details-language">##</dd>
                                                                                     <dt class="col-5">File Name:</dt>
-                                                                                    <dd class="col-7" id="vuln-details-file-name"></dd>
+                                                                                    <dd class="col-7" id="vuln-details-file-name">##</dd>
                                                                                     <dt class="col-5">Lines:</dt>
-                                                                                    <dd class="col-7" id="vuln-details-lines">46.113.11.3</dd>
-                                                                                    <dt class="col-5">Operating system:</dt>
-                                                                                    <dd class="col-7">OS X 10.15.2 64-bit</dd>
-                                                                                    <dt class="col-5">Browser:</dt>
-                                                                                    <dd class="col-7">Chrome</dd>
+                                                                                    <dd class="col-7" id="vuln-details-lines">##</dd>
                                                                                 </dl>
                                                                                 </div>
                                                                         </div>
@@ -547,7 +543,7 @@
                                                                                                             </span>
                                                                                                         </td>
                                                                                                         <td class="text-muted">{{ vulnerability.status }}</td>
-                                                                                                        <td class="text-muted">{{ vulnerability.state }}</td>
+                                                                                                        <td class="text-muted" id="vuln-state-row-{{ vulnerability.finding_id }}">{{ vulnerability.state }}</td>
                                                                                                         <td class="text-muted nav-link link-secondary">{{ vulnerability.snippet.file_name }}</td>
                                                                                                         <td>
                                                                                                             <a href="#" class="nav-link px-0 link-secondary" onclick="FindingView.load(this, Vulnerability);" counter="{{ vulnerability.finding_id }}"
@@ -1131,10 +1127,16 @@
                                             id="tabs-explorer">
                                             {% if active == "tabs-explorer" %}
                                             <div class="row">
-                                                <div class="col">
-                                                    <div id="filetree-view">
+                                                <div class="col-4 border-end scrollable scroll-x scroll-y">
+                                                    <div id="filetree-view" class="transparent-effect">
                                                         <!-- Will be filled up with JSON data -->
-                                                        <i class="text-azure ti ti-activity-heartbeat"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="highlight">
+                                                        <pre>
+                                                            <code>Some code</code>
+                                                        </pre>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1233,15 +1235,15 @@
 </style>
 
 {% if active == "tabs-explorer" %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<link rel="stylesheet" href="{% static 'libs/jstree/style.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}" />
+<link rel="stylesheet" href="{% static 'libs/jstree/themes/default/style.min.css' %}" />
+
 {% endif %}
 
 {% endblock css_extended %}
 
 {% block js_extended %}
 <script type="text/javascript" src="{% static 'libs/enlighterjs/enlighterjs.min.js' %}"></script>
-
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 
 
@@ -1249,7 +1251,25 @@
 <script src="{% static 'libs/jstree/jstree.min.js' %}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        $('#jstree_demo_div').jstree();
+
+        theme_name = document.body.getAttribute("class") == "theme-dark" ? "default-dark" : "default-dark";
+        $('#filetree-view').jstree({
+            "animation" : 0,
+            "check_callback" : true,
+            "themes" : {
+                "name": theme_name,
+                "stripes" : true,
+                "dots": true,
+                "icons": true
+            },
+            "core": {
+                "data": {
+                    "url": "/api/v1/scan/{{scan.scan_uuid}}/filetree"
+                }
+            },
+            "types": {% autoescape off %}{{ FILE_TYPES }}{% endautoescape %},
+            "plugins": ["types", "wholerow"]
+        });
     });
 </script>
 {% endif %}

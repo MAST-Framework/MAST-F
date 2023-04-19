@@ -73,6 +73,50 @@ class DataProtectionLevel(StringEnum):
     PRIVATE = "Private"
     PUBLIC = "Public"
 
+
+class ProtectionLevel(StringEnum):
+    APP_PREDICTOR = "AppPredictor"
+    APPOP = "Appop"
+    COMPANION =  "Companion"
+    CONFIGURATOR =  "Configurator"
+    DANGEROUS =  "Dangerous"
+    DEVELOPMENT =  "Development"
+    INCIDENTREPORTAPPROVER =  "IncidentReportApprover"
+    INSTALLER =  "Installer"
+    INSTANT =  "Instant"
+    INTERNAL =  "Internal"
+    KNOWNSIGNER =  "KnownSigner"
+    MODULE =  "Module"
+    NORMAL =  "Normal"
+    OEM =  "OEM"
+    PRE23 =  "Pre23"
+    PREINSTALLED =  "Preinstalled"
+    PRIVILEGED =  "Privileged"
+    RECENTS =  "Recents"
+    RETAILDEMO =  "RetailDemo"
+    ROLE =  "Role"
+    RUNTIME =  "Runtime"
+    SETUP =  "Setup"
+    SIGNATURE =  "Signature"
+    SIGNATUREORSYSTEM =  "SignatureOrSystem"
+    SYSTEM =  "System"
+    TEXTCLASSIFIER =  "TextClassifier"
+    VENDORPRIVILEGED =  "VendorPrivileged"
+    VERIFIER =  "Verifier"
+
+
+    @staticmethod
+    def colors() -> dict:
+        return {
+            'green': (ProtectionLevel.SIGNATURE, ProtectionLevel.SIGNATUREORSYSTEM,
+                      ProtectionLevel.KNOWNSIGNER, ProtectionLevel.RUNTIME,
+                      ProtectionLevel.DEVELOPMENT, ProtectionLevel.PREINSTALLED),
+            'red': (ProtectionLevel.DANGEROUS, ProtectionLevel.SYSTEM, ProtectionLevel.OEM,
+                    ProtectionLevel.PRIVILEGED, ProtectionLevel.VENDORPRIVILEGED),
+            'azure': (ProtectionLevel.NORMAL, ProtectionLevel.COMPANION, ProtectionLevel.CONFIGURATOR,
+                      ProtectionLevel.PRE23)
+        }
+
 mod = sys.modules[__name__]
 # Small workaround to set an additional static attribute for Django
 # models

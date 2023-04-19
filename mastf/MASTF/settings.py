@@ -7,6 +7,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import json
 import logging
 
 from pathlib import Path
@@ -14,9 +15,9 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-DETAILS_DIR = BASE_DIR / 'static' / 'json'
+DETAILS_DIR = BASE_DIR / 'json' / 'templates'
 
-MASTF_PROJECTS_DIR = BASE_DIR
+MASTF_PROJECTS_DIR = BASE_DIR / 'projects'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -263,3 +264,23 @@ for platform in DETAILS_DIR.iterdir():
         for file in platform.iterdir():
             data.append({'internal_name': file.stem.lower().replace(' ', '-'), 'name': file.stem})
         ARTICLES[platform.name.capitalize()] = data
+
+logger.info(f"INIT - Collected and imported {len(ARTICLES)} article templates.")
+
+###############################################################################
+# FileTypes
+###############################################################################
+FILE_ICONS_DIR = BASE_DIR / 'static' / 'static' / 'filetypes'
+FILE_TYPES = {}
+for x in FILE_ICONS_DIR.iterdir():
+    name = x.stem.lower()
+    path = x.as_posix()
+    FILE_TYPES[name] = {"icon": path[path.find("/static/"):]}
+
+logger.info(f"INIT - Collected {len(FILE_TYPES)} different file types.")
+ICON_RULES_PATH = (BASE_DIR / 'json' / 'filetypes_rules.json')
+if not ICON_RULES_PATH.exists():
+    raise FileNotFoundError("Could not find file tree rules!")
+
+with open(str(ICON_RULES_PATH), encoding='utf-8') as fp:
+    FILE_RULES = json.load(fp)

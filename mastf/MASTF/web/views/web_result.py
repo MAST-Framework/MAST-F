@@ -4,6 +4,7 @@ from mastf.MASTF.mixins import ContextMixinBase, UserProjectMixin, TemplateAPIVi
 from mastf.MASTF.rest.permissions import CanEditProject
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.models import File, Scan
+from mastf.MASTF.settings import FILE_TYPES
 
 __all__ = [
     'ScannerResultsView', 'ScanIndexView'
@@ -58,5 +59,8 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
         context['scanner_name'] = name
         context['active'] = f"tabs-{extension}"
         context['data'] = plugin.context(extension, context['scan'], active_file)
+
+        if extension == 'explorer':
+            context['FILE_TYPES'] = FILE_TYPES
         return context
 
