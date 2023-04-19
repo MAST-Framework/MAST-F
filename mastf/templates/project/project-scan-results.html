@@ -1235,7 +1235,6 @@
 </style>
 
 {% if active == "tabs-explorer" %}
-<link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}" />
 <link rel="stylesheet" href="{% static 'libs/jstree/themes/default/style.min.css' %}" />
 
 {% endif %}
@@ -1252,15 +1251,14 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        theme_name = document.body.getAttribute("class") == "theme-dark" ? "default-dark" : "default-dark";
+        theme_name = document.body.getAttribute("class") == "theme-dark" ? "default-dark" : "default";
         $('#filetree-view').jstree({
             "animation" : 0,
             "check_callback" : true,
             "themes" : {
-                "name": theme_name,
-                "stripes" : true,
-                "dots": true,
-                "icons": true
+                name: theme_name,
+                stripes: true,
+                icons: true
             },
             "core": {
                 "data": {
