@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from mastf.MASTF.models import (
     Host,
-    ConnectionInfo,
     DataCollectionGroup,
     CipherSuite,
     TLS
@@ -11,20 +10,11 @@ from mastf.MASTF.models import (
 from .base import ManyToManyField, ManyToManySerializer
 
 __all__ = [
-    'ConnectionSerializer',
     'DataCollectionGroupSerializer',
     'TLSSerializer',
     'CipherSuiteSerializer',
     'HostSerializer',
 ]
-
-class ConnectionSerializer(ManyToManySerializer):
-    rel_fields = ['hosts']
-    hosts = ManyToManyField(Host)
-
-    class Meta:
-        model = ConnectionInfo
-        fields = '__all__'
 
 class DataCollectionGroupSerializer(ManyToManySerializer):
     rel_fields = ['hosts']
@@ -54,7 +44,6 @@ class HostSerializer(ManyToManySerializer):
     tlsversions = ManyToManyField(TLS)
     suites = ManyToManyField(CipherSuite)
     collected_data = ManyToManyField(DataCollectionGroup)
-    connections = ManyToManyField(ConnectionInfo)
 
     class Meta:
         model = Host

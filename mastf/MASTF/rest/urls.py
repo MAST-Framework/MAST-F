@@ -92,19 +92,13 @@ urlpatterns = [
             path(r"", views.HostView.as_view()),
 
             path(r"tls", views.TLSListView.as_view()),
-            path(r"ciphersuites", views.ConnectionInfoListView.as_view()),
-            path(r"connections", views.TLSListView.as_view()),
+            path(r"ciphersuites", views.CipherSuiteListView.as_view()),
             path(r"datacollection", views.DataCollectionGroupListView.as_view()),
         ])),
 
         path(r"tls/", include([
             path(r"create", views.TLSCreationView.as_view()),
             path(r"<uuid:pk>", views.TLSView.as_view()),
-        ])),
-
-        path(r"conn/", include([
-            path(r"create", views.ConnectionInfoCreationView.as_view()),
-            path(r"<str:pk>", views.ConnectionInfoView.as_view()),
         ])),
 
         path(r"cipher/", include([

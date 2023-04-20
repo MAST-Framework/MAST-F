@@ -1,14 +1,18 @@
+import logging
+
 from django.contrib import messages
 
 from mastf.MASTF.mixins import ContextMixinBase, UserProjectMixin, TemplateAPIView
 from mastf.MASTF.rest.permissions import CanEditProject
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.models import File, Scan
-from mastf.MASTF.settings import FILE_TYPES
+from mastf.MASTF.settings import FILE_TYPES, BASE_DIR
 
 __all__ = [
     'ScannerResultsView', 'ScanIndexView'
 ]
+
+logger = logging.getLogger(__name__)
 
 class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = 'project/project-scan-results.html'
@@ -23,13 +27,15 @@ class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
         context['scan_files'] = Scan.files(project=project)
         return context
 
+RESULTS_BASE = "project/results/results-base.html"
+
 class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-scan-results.html'
     permission_classes = [CanEditProject]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
+        self.template_name = RESULTS_BASE
 
         file_md5 = self.kwargs.get('file_md5', None)
         active_file = File.objects.filter(md5=file_md5).first()
@@ -62,5 +68,11 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
 
         if extension == 'explorer':
             context['FILE_TYPES'] = FILE_TYPES
+
+        self.template_name = f"project/results/results-{extension}.html"
+        if not (BASE_DIR / 'templates' / self.template_name).exists():
+            self.template_name = RESULTS_BASE
+
+        logger.debug(f"Using result template '{self.template_name}' to display results")
         return context
 

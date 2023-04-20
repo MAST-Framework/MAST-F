@@ -18,14 +18,6 @@ class DataCollectionGroup(models.Model):
     group = models.CharField(max_length=256, null=False)
     protection_level = models.CharField(default=DataProtectionLevel.PUBLIC, choices=DataProtectionLevel.choices, max_length=256)
 
-class ConnectionInfo(models.Model):
-    ci_uuid = models.UUIDField(primary_key=True)
-    ip = models.CharField(max_length=32, null=True)
-    port = models.IntegerField(default=0)
-    protocol = models.CharField(max_length=256, null=True)
-    country = models.CharField(max_length=256, null=True)
-    longitude = models.FloatField(null=True)
-    latitude = models.FloatField(null=True)
 
 class Host(models.Model):
     host_id = models.CharField(max_length=256, primary_key=True)
@@ -36,9 +28,14 @@ class Host(models.Model):
     snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
     url = models.URLField(max_length=2048, null=True)
     domain = models.CharField(max_length=2048, null=True)
+    ip = models.CharField(max_length=32, null=True)
+    port = models.IntegerField(default=0)
+    protocol = models.CharField(max_length=256, null=True)
+    country = models.CharField(max_length=256, null=True)
+    longitude = models.FloatField(null=True)
+    latitude = models.FloatField(null=True)
 
     tlsversions = models.ManyToManyField(TLS, related_name='hosts')
     suites = models.ManyToManyField(CipherSuite, related_name='hosts')
     collected_data = models.ManyToManyField(DataCollectionGroup, related_name='hosts')
-    connections = models.ManyToManyField(ConnectionInfo, related_name='hosts')
 

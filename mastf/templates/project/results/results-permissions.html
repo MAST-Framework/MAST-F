@@ -1,0 +1,153 @@
+{% extends 'project/results/results-base.html' %}
+{% load static %}
+
+{% block css_extended %}
+<link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
+{% endblock css_extended %}
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+{% endblock js_extended %}
+
+{% block content %}
+{% if 'permissions' in extensions %}
+<div class="tab-pane {% if active == "tabs-permissions" %}active show{% endif %}"
+    id="tabs-permissions">
+
+    {% if active == "tabs-permissions" %}
+    <div class="accordion" id="acc-parent">
+        <div class="list-group list-group-flush list-group-hoverable">
+        {% for permission_finding in data %}
+            {% with permission_finding.permission as permission %}
+            <div class="list-group-item accordion-item" id="list-acc-{{ forloop.counter0 }}">
+                <div class="accordion-header">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <span class="status-dot {% if permission.dangerous %}status-dot-animated status-red{% else %}status-green{% endif %}"></span>
+                        </div>
+                        <div class="col-auto">
+                            <a href="#">
+                            <span class="avatar">
+                                {% if permission.group %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-{{ permission.group }}" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M12 18l.01 0"></path>
+                                    <path d="M9.172 15.172a4 4 0 0 1 5.656 0"></path>
+                                    <path d="M6.343 12.343a8 8 0 0 1 11.314 0"></path>
+                                    <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0"></path>
+                                    </svg>
+                                    {% endif %}
+                            </span>
+                            </a>
+                        </div>
+                        <div class="col text-truncate">
+                            <span class="text-muted">
+                                <b>{{ permission.identifier }}</b>
+                            </span>
+                            <div class="d-block text-muted text-truncate mt-n1">
+                                {{ permission.short_description }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <a href="#" class="accordion-button collapsed" style="width: min-content;" data-bs-toggle="collapse"
+                                data-bs-target="#collapse-{{ permission.name.strip|lower }}-acc" aria-expanded="false"
+                                onclick="openPermission(this);" permission="{{ permission.permission_uuid }}">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="collapse-{{ permission.name.strip|lower }}-acc" class="accordion-collapse collapse"
+                    data-bs-parent="#acc-parent">
+                    <div class="accordion-body container-fluid">
+                        <div class="datagrid">
+                            <div class="row row-cols-3">
+                                <div class="col-md-4">
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">
+                                            Name
+                                        </div>
+                                        <div class="datagrid-content">
+                                            {{ permission.name }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <!-- Permission protection level -->
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">
+                                            Protection Level
+                                        </div>
+                                        <div class="datagrid-status">
+                                            {% for level, color in permission.plevel_status.items %}
+                                            <span class="status status-{{ color }} mb-1">
+                                                {{ level }}
+                                            </span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">
+                                            Source
+                                        </div>
+                                        <div class="datagrid-content">
+                                            <a href="#" class="nav-link link-sec">
+                                                {{ permission_finding.source_file }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-auto mt-2 mb-2">
+                                    <!-- Permission description -->
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">
+                                            Description
+                                        </div>
+                                        <div class="datagrid-content">
+                                            {{ permission.description }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if permission.risk %}
+                                <div class="col-auto mt-2 mb-2">
+                                    <!-- Permission risk -->
+                                    <div class="datagrid-item">
+                                        <div class="datagrid-title">
+                                            Risk
+                                        </div>
+                                        <div class="datagrid-content">
+                                            {{ permission.risk }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+        {% empty %}
+        <div class="container-fluid d-flex flex-column justify-content-center">
+            <div class="empty">
+                <p class="empty-title">No permissions found</p>
+                <p class="empty-subtitle text-muted">
+                There might be no finding for this type of result.
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+
+
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}

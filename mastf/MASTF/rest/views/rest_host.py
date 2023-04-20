@@ -2,7 +2,6 @@ from rest_framework import permissions
 
 from mastf.MASTF.models import (
     Host,
-    ConnectionInfo,
     DataCollectionGroup,
     CipherSuite,
     TLS,
@@ -10,14 +9,12 @@ from mastf.MASTF.models import (
 )
 from mastf.MASTF.serializers import (
     HostSerializer,
-    ConnectionSerializer,
     DataCollectionGroupSerializer,
     CipherSuiteSerializer,
     TLSSerializer
 )
 from mastf.MASTF.forms import (
     HostForm,
-    ConnectionForm,
     DataCollectionGroupForm,
     CipherSuiteForm,
     TLSForm
@@ -30,9 +27,6 @@ __all__ = [
     'HostView',
     'HostCreationView',
     'HostListView',
-    'ConnectionInfoView',
-    'ConnectionInfoCreationView',
-    'ConnectionInfoListView',
     'TLSView',
     'TLSCreationView',
     'TLSListView',
@@ -75,23 +69,6 @@ class HostRelListView(GetObjectMixin, ListAPIViewBase):
 
     def filter_queryset(self, queryset):
         return queryset.filter(hosts__scan=self.get_object())
-
-########################################################################
-# Connection
-########################################################################
-class ConnectionInfoView(APIViewBase):
-    permission_classes = [permissions.IsAuthenticated]
-    model = ConnectionInfo
-    serializer_class = ConnectionSerializer
-
-class ConnectionInfoCreationView(CreationAPIViewBase):
-    permission_classes = [permissions.IsAuthenticated]
-    model = ConnectionInfo
-    form_class = ConnectionForm
-
-class ConnectionInfoListView(HostRelListView):
-    serializer_class = ConnectionSerializer
-    queryset = ConnectionInfo.objects.all()
 
 ########################################################################
 # TLS

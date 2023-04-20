@@ -1,0 +1,151 @@
+{% extends 'project/results/results-base.html' %}
+{% load static %}
+
+{% block css_extended %}
+<link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
+<style>
+.enlighter-default{
+    overflow-y: scroll;
+    height: 500px;
+    resize: vertical;
+}
+.enlighter-btn-raw{
+    display: none !important;
+}
+
+.enlighter-btn-window{
+    display: none !important;
+}
+
+.enlighter-btn-website{
+    display: none !important;
+}
+
+</style>
+
+<link rel="stylesheet" href="{% static 'libs/jstree/themes/default/style.min.css' %}" />
+
+{% endblock css_extended %}
+
+{% block js_extended %}
+<script type="text/javascript" src="{% static 'libs/enlighterjs/enlighterjs.min.js' %}"></script>
+
+<script src="{% static 'libs/jstree/jstree.min.js' %}"></script>
+<script>
+    showCode = function() {
+        $('#file-content').removeClass('visually-hidden');
+        $('#no-file').addClass('visually-hidden');
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        theme_name = document.body.getAttribute("class") == "theme-dark" ? "default-dark" : "default";
+        jstree = $('#filetree-view').jstree({
+            "animation" : 0,
+            "check_callback" : true,
+            "themes" : {
+                name: theme_name,
+                stripes: true,
+                icons: true
+            },
+            "core": {
+                "data": {
+                    "url": "/api/v1/scan/{{scan.scan_uuid}}/filetree"
+                }
+            },
+            "types": {% autoescape off %}{{ FILE_TYPES }}{% endautoescape %},
+            "plugins": ["types", "wholerow", "search", "sort"]
+        });
+
+        jstree.bind("dblclick.jstree", function (e) {
+            var node = $(e.target).closest("li")[0];
+            if (node.getAttribute("is-dir") == "true") {
+                // We don't want to show directories as they don't contain
+                // useful information.
+                return;
+            }
+
+            var path = node.getAttribute("path");
+            var url = "/api/v1/files/" + path.split("/")[0] + "/?file=" + path;
+            REST.doGet(url, function(data) {
+                let theme_name = 'enlighter';
+                if (params.theme == 'dark') {
+                    theme_name = 'dracula';
+                }
+                // We have to use the textContent property here as
+                // wildcard generics '?' in Java would be displayed
+                // wrong.
+                element = document.getElementById('file-code');
+
+                element.textContent = data.join("").replaceAll("<br>", "\n");
+                EnlighterJS.enlight(element, false);
+                EnlighterJS.enlight(element, {
+                    language : node.getAttribute('language'),
+                    theme: theme_name,
+                    indent : 2,
+                    textOverflow: 'scroll'
+                });
+                showCode();
+            });
+        });
+
+        var to = false;
+        $('#search-file').keyup(function() {
+            if (to) {
+                clearTimeout(to);
+            }
+            to = setTimeout(function() {
+                var value = $('#search-file').val();
+                console.log(value);
+                $('#filetree-view').jstree(true).search(value);
+            }, 250);
+        });
+    });
+</script>
+
+{% endblock js_extended %}
+
+{% block content %}
+{% if 'explorer' in extensions %}
+<div class="tab-pane {% if active == "tabs-explorer" %}active show{% endif %}"
+    id="tabs-explorer">
+    {% if active == "tabs-explorer" %}
+    <div class="row">
+        <div class="col-md-4 border-bottom align-content-center">
+            <!-- Some action elements should be placed here -->
+        </div>
+        <div class="col border-bottom"></div>
+        <div class="col-md-4 border-bottom align-content-center">
+            <div class="input-icon mb-1">
+                <span class="input-icon-addon">
+                    <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path d="M21 21l-6 -6"></path></svg>
+                </span>
+                <input type="text" value="" class="form-control" placeholder="Search…" id="search-file">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4 border-end scrollable scroll-x scroll-y mt-1">
+            <div id="filetree-view">
+                <!-- Will be filled up with JSON data -->
+            </div>
+        </div>
+        <div class="col mt-1">
+            <div class="container-fluid d-flex flex-column justify-content-center" id="no-file">
+                <div class="empty">
+                    <p class="empty-title">No file selected</p>
+                    <p class="empty-subtitle text-muted">
+                    Double click on a file within the file tree view to open it.
+                    </p>
+                </div>
+            </div>
+            <div id="file-content" class="visually-hidden">
+                <pre class="file_code" style="resize: vertical; margin-bottom: 0px;" id="file-code">##</pre>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}
