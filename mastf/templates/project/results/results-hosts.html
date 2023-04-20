@@ -288,13 +288,11 @@
 
     markers = [
     {% for host in data %}
-        {% for connection in host.connections.all %}
         {
-            coords: [{{connection.longitude}}, {{connection.latitude}}],
+            coords: [{{host.longitude}}, {{host.latitude}}],
             name: "{{connection.country}}",
             domain: "{{host.domain}}"
         },
-        {% endfor %}
     {% endfor %}
     ]
 

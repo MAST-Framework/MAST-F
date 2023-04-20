@@ -1,0 +1,43 @@
+{% extends 'project/results/results-base.html' %}
+{% load static %}
+
+
+{% block css_extended %}
+<link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
+{% endblock css_extended %}
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+{% endblock js_extended %}
+
+{% block content %}
+{% if 'components' in extensions %}
+<div class="tab-pane {% if active == "tabs-components" %}active show{% endif %}"
+    id="tabs-components">
+    {% if active == "tabs-components" %}
+    <div class="row row-cards">
+        {% for category in data.categories %}
+        <div class="col-sm-auto mb-1">
+            <div class="card">
+                <div class="card-body">
+                    <p class="mb-3">{{category.name}} <strong> {% if data.vuln_count %}{{data.vuln_count}}{% else %}0{% endif %} </strong></p>
+                    <div class="progress progress-separated mb-3">
+                        <div class="progress-bar bg-secondary-lt" role="progressbar" style="width: 45%" aria-label="{{category.name}}"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto d-flex align-items-center pe-2">
+                            <span class="legend me-2 bg-secondary-lt"></span>
+                            <span>Protected</span>
+                            <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}

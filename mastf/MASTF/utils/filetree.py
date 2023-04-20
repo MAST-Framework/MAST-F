@@ -1,5 +1,6 @@
 import pathlib
 import re
+import os
 
 from mastf.MASTF import settings
 
@@ -26,21 +27,23 @@ class _Visitor:
     clb = None
     """The callback function with the following structure:
 
+
     >>> def function(file: pathlib.Path, children: list, root_name: str):
     ...     pass
     >>> clb = function
     """
 
-    def __init__(self, is_dir: bool, suffix: re.Pattern, clb) -> None:
-        self.suffix = suffix
+    common_path = None
+
+    def __init__(self, is_dir: bool, suffix: str, clb) -> None:
+        self.suffix = re.compile(suffix) if suffix else None
         self.is_dir = is_dir
         self.clb = clb
 
 class _FileDesc(dict):
     """Internal wrapper class to create JSTree JSON data."""
 
-    def __init__(self, file: pathlib.Path, file_type: str, root_name: str,
-                 language: str = "text"):
+    def __init__(self, file: pathlib.Path, file_type: str, root_name: str, language: str=None):
         super().__init__()
         path = file.as_posix()
 
@@ -51,9 +54,10 @@ class _FileDesc(dict):
             # and the directory indicator is used within the JavaScript
             # code.
             "path": path[path.find(root_name):],
-            "is-dir": file.is_dir(),
-            "language": language
+            "is-dir": file.is_dir()
         }
+        if language:
+            self['language'] = language
 
 __visitors__ = []
 
@@ -67,12 +71,26 @@ def visitor(is_dir=False, suffix: str = r".*"):
 def _do_visit(file: pathlib.Path, directory_list: list, root_name: str) -> None:
     for visitor in __visitors__:
         matches = visitor.suffix and visitor.suffix.match(file.name)
-        if ((visitor.is_dir and file.is_dir() and matches)
-                or (not file.is_dir() and not visitor.is_dir and matches)):
+        path = file.as_posix()
+
+        idx = path.find(root_name)+len(root_name)+1
+        common = visitor.common_path and visitor.common_path.match(path[idx:])
+        if visitor.is_dir and file.is_dir() and (matches or common):
+                visitor.clb(file, directory_list, root_name)
+                return
+
+        if matches or common and (not file.is_dir() and not visitor.is_dir):
             visitor.clb(file, directory_list, root_name)
             return
 
-    directory_list.append(_FileDesc(file, "any_type" if not file.is_dir() else "folder", root_name))
+    file_type = "any_type" if not file.is_dir() else "folder"
+    path = file.as_posix()
+    package_prefix = f"{root_name}/src"
+    common = os.path.commonprefix([path[path.find(root_name):], package_prefix])
+    if common.startswith(package_prefix) and file.is_dir():
+        file_type = "package"
+
+    directory_list.append(_FileDesc(file, file_type, root_name))
 
 def apply_rules(root: pathlib.Path, root_name: str) -> dict:
     data = []
@@ -104,7 +122,11 @@ class _DefaultVisitor(_Visitor):
         children.append(_FileDesc(file, self.filetype, root_name, self.language))
 
 for filetype, obj in settings.FILE_RULES.items():
-    is_dir = obj['is_dir']
-    suffix = re.compile(obj['suffix'])
+    is_dir = obj.get('is_dir', False)
+    suffix = obj.get('suffix', None)
+    common_path = obj.get('common_path', None)
     lang = obj.get('language', None)
-    __visitors__.append(_DefaultVisitor(filetype, is_dir, suffix, lang))
+
+    v = _DefaultVisitor(filetype, is_dir, suffix, lang)
+    v.common_path = re.compile(common_path) if common_path else None
+    __visitors__.append(v)

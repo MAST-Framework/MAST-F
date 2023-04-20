@@ -14,8 +14,10 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
+RESULTS_BASE = "project/results/results-base.html"
+
 class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-scan-results.html'
+    template_name = RESULTS_BASE
     permission_classes = [CanEditProject]
 
     def get_context_data(self, **kwargs):
@@ -27,7 +29,6 @@ class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
         context['scan_files'] = Scan.files(project=project)
         return context
 
-RESULTS_BASE = "project/results/results-base.html"
 
 class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     permission_classes = [CanEditProject]

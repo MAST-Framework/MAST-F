@@ -36,7 +36,7 @@
     },
     "zip": {
         "is_dir": false,
-        "suffix": ".*\\.(zip|7z|tar|gz|tar\\.gz)$",
+        "suffix": ".*\\.(zip|7z|tar|gz|tar\\.gz|apk)$",
         "language": "zip"
     },
     "html": {
@@ -76,5 +76,9 @@
         "is_dir": false,
         "suffix": ".*\\.(kt|kts|ktm)$",
         "language": "kotlin"
+    },
+    "package": {
+        "is_dir": true,
+        "common_path": ".*[/]?src/.*"
     }
 }

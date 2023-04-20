@@ -65,6 +65,12 @@
                 return;
             }
 
+            if (node.getAttribute('language') == null) {
+                // No language indicates we don't want to show the file
+                // REVISIT: maybe add warning to screen
+                return;
+            }
+
             var path = node.getAttribute("path");
             var url = "/api/v1/files/" + path.split("/")[0] + "/?file=" + path;
             REST.doGet(url, function(data) {
