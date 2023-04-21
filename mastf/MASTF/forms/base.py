@@ -5,7 +5,7 @@ from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 
 __all__ = [
     'ModelField', 'RegistrationForm', 'ProjectCreationForm', 
-    'AppPermissionForm', 'TeamForm', 
+    'AppPermissionForm', 'TeamForm', 'HostForm'
 ]
 
 class ModelField(forms.CharField):
@@ -85,3 +85,9 @@ class TeamForm(forms.Form):
     owner = ModelField(User, field_name='username', max_length=256)
     users = forms.CharField()
     
+class HostForm(forms.Form):
+    #Form to create and update hosts
+    domain_name = forms.CharField(max_length=256, required=False)
+    owner = forms.CharField(max_length=255, required=False)
+    ip_adress = forms.CharField(max_length=32, required=False)
+    description = forms.CharField(required=False)

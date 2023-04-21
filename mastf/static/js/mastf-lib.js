@@ -11,9 +11,9 @@ REST = {
         })
     },
 
-    post: function(url, data, onsuccess, contentType = "application/json", error = null) {
+    postOrpatch: function(url, method, data, onsuccess, contentType = "application/json", error = null) {
         $.ajax(url, {
-            method: 'POST',
+            method: method,
             success: onsuccess,
             data: data,
             contentType: contentType,

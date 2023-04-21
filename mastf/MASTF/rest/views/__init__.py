@@ -8,3 +8,4 @@ from .rest_code import *
 from .rest_finding import *
 from .rest_team import *
 from .rest_package import *
+from .rest_hosts import *

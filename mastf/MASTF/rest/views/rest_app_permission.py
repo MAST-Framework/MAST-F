@@ -1,4 +1,9 @@
 from uuid import uuid4
+import json
+
+from django.core import serializers
+from django.http import HttpResponse
+from django.http import Http404
 
 from rest_framework import permissions, views
 
@@ -9,7 +14,7 @@ from mastf.MASTF.forms import AppPermissionForm
 from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase
 
 __all__ = [
-    'AppPermissionView', 'AppPermissionCreationView', 'AppPermissionListView'
+    'AppPermissionView', 'AppPermissionCreationView', 'AppPermissionListView',
 ]
 
 class AppPermissionView(APIViewBase):
@@ -34,3 +39,17 @@ class AppPermissionListView(ListAPIViewBase):
     serializer_class = AppPermissionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
+"""def AppPermissionListRangeView(request):
+    get = request.GET
+    if "start" not in get or "end" not in get:
+        raise Http404
+    queryset = AppPermission.objects.all().order_by("name")
+    start = int(get["start"])
+    end = int(get["end"])
+    if end >= len(queryset):
+        end = len(queryset)
+    if start >= end:
+        raise Http404
+    re = serializers.serialize("json", queryset[start:end])
+    return HttpResponse(re, content_type='application/json')"""

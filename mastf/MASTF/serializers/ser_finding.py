@@ -9,6 +9,7 @@ from mastf.MASTF.models import (
     Finding,
     Vulnerability,
     Snippet,
+    Hosts,
 )
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     'PackageSerializer',
     'PackageVulnerabilitySerializer',
     'DependencySerializer',
+    'HostsSerializer',
 ]
 
 
@@ -33,7 +35,11 @@ class AppPermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppPermission
         fields = '__all__'
-
+    
+class HostsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hosts
+        fields = '__all__'
 
 class SnippetSerializer(serializers.ModelSerializer):
 

@@ -35,9 +35,14 @@ urlpatterns = [
         path(r"template/<ftid:template_id>", views.FindingTemplateView.as_view()),
     ])),
 
-    path(r"app-permission/all", views.AppPermissionListView.as_view()),
-    path(r"app-permission/create", views.AppPermissionCreationView.as_view()),
-    path(r"app-permission/<uuid:permission_uuid>", views.AppPermissionView.as_view()),
+    path(r"app-permission/all", views.AppPermissionListView.as_view(), name="AppPermissionListView"),
+    path(r"app-permission/create", views.AppPermissionCreationView.as_view(), name="AppPermissionCreate"),
+    path(r"app-permission/<uuid:permission_uuid>", views.AppPermissionView.as_view(), name="AppPermissionView"),
+
+    path(r"hosts/create", views.HostCreationView.as_view(), name="HostCreate"),
+    path(r"hosts/all", views.HostsListView.as_view(), name="HostListView"),
+    path(r"hosts/<uuid:host_uuid>", views.HostView.as_view(), name="HostView"),
+
 
     path(r"scan/", include([
         path(r"all", views.ScanListView.as_view()),
@@ -62,9 +67,9 @@ urlpatterns = [
     path(r"package/", include([
         # We have to use 'pk' here as the name, because we haven't specified
         # a custom lookup field in the PackageView class
-        path(r"<uuid:pk>", views.PackageView.as_view()),
-        path(r"all", views.PackageListView.as_view()),
-        path(r"create", views.PackageCreationView.as_view()),
+        path(r"<uuid:pk>", views.PackageView.as_view(), name="PackageView"),
+        path(r"all", views.PackageListView.as_view(), name="PackageListView"),
+        path(r"create", views.PackageCreationView.as_view(), name="PackageCreationView"),
 
         path(r"vulnerability/", include([
             path(r"<uuid:pk>", views.PackageVulnerabilityView.as_view()),
