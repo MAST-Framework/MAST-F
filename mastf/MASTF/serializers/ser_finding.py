@@ -9,6 +9,7 @@ from mastf.MASTF.models import (
     Finding,
     Vulnerability,
     Snippet,
+    Component
 )
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     'PackageSerializer',
     'PackageVulnerabilitySerializer',
     'DependencySerializer',
+    'ComponentSerializer'
 ]
 
 
@@ -79,4 +81,10 @@ class DependencySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dependency
+        fields = '__all__'
+
+
+class ComponentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Component
         fields = '__all__'

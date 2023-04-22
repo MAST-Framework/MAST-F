@@ -99,7 +99,7 @@ from mastf.MASTF.scanners.mixins import *
 
 TextScannerMixins = (DetailsMixin, VulnerabilitiesMixin,
                      PermissionsMixin, FindingsMixins,
-                     HostsMixin)
+                     HostsMixin, ComponentsMixin)
 
 @Plugin
 class TestScanner(*TextScannerMixins, ScannerPlugin):

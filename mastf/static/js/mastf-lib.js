@@ -48,6 +48,14 @@ Utils = {
         return element.attr('value');
     },
 
+    isDarkLaf: function() {
+        classAttr = document.body.getAttribute("class");
+        if (classAttr == null) {
+            return false;
+        }
+        return classAttr.includes("theme-dark");
+    },
+
     /**
      * Applies a progress bar color and width according to the
      * provided severity.
@@ -156,7 +164,7 @@ Vulnerability = {
         $('#vuln-code').html(data?.code || "Not Found");
 
         let theme_name = 'enlighter';
-        if (params.theme == 'dark') {
+        if (Utils.isDarkLaf()) {
             theme_name = 'dracula';
         }
 
@@ -229,7 +237,7 @@ Finding = {
         $('#finding-code').html(data?.code || "Not Found");
 
         let theme_name = 'enlighter';
-        if (params.theme == 'dark') {
+        if (Utils.isDarkLaf()) {
             theme_name = 'dracula';
         }
 

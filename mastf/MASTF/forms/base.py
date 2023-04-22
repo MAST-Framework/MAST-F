@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 
+from rest_framework.permissions import BasePermission, exceptions
+
 from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 
 __all__ = [
@@ -24,10 +26,11 @@ class ModelField(forms.CharField):
 
     """
 
-    def __init__(self, model, field_name='pk', **kwargs) -> None:
+    def __init__(self, model, field_name='pk', permissions: list = None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.model = model
         self.field_name = field_name
+        self.permission_classes = permissions or []
 
     def clean(self, value) -> object:
         value = super().clean(value)
@@ -37,7 +40,17 @@ class ModelField(forms.CharField):
             raise forms.ValidationError(
                 "This field must be a reference to an existing model", code="required")
 
-        return queryset.first()
+        instance = queryset.first()
+        if len(self.permission_classes) == 0:
+            return instance
+
+        for permission_class in self.permission_classes:
+            if issubclass(permission_class, BasePermission):
+                permission = permission_class()
+                if not permission.has_object_permission(None, None, instance):
+                    raise exceptions.ValidationError("Insufficient permission rights")
+
+        return instance
 
 
 class ManyToManyField(forms.CharField):

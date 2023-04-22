@@ -2,6 +2,7 @@ from django import template
 
 from mastf.MASTF.models import AbstractBaseFinding, Vulnerability
 from mastf.MASTF.mixins import VulnContextMixin
+from mastf.MASTF.utils.enum import ComponentCategory
 
 register = template.Library()
 
@@ -21,3 +22,16 @@ def vuln_stats(value):
     mixin.apply_vuln_context(data, AbstractBaseFinding.stats(Vulnerability, base=value))
     return data
 
+
+@register.filter(name='component_color')
+def component_color(category) -> str:
+    if category == ComponentCategory.ACTIVITY:
+        return 'green'
+    elif category == ComponentCategory.PROVIDER:
+        return 'red'
+    elif category == ComponentCategory.SERVICE:
+        return 'yellow'
+    elif category == ComponentCategory.RECEIVER:
+        return 'orange'
+
+    return 'secondary'

@@ -9,7 +9,6 @@ django.setup()
 
 from mastf.MASTF.models import *
 
-
 def setup_vuln():
     s = Scan.objects.first()
     sn = Scanner.objects.first()

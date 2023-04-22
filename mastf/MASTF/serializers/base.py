@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import User
 from django.db.models import Manager
 from rest_framework import serializers
@@ -8,10 +10,14 @@ from mastf.MASTF.models import (
 )
 
 __all__ = [
-    'UserSerializer', 'TeamSerializer', 'ProjectSerializer',
+    'UserSerializer',
+    'TeamSerializer',
+    'ProjectSerializer',
     'ManyToManyField',
     'ManyToManySerializer',
 ]
+
+logger = logging.getLogger(__name__)
 
 class ManyToManyField(serializers.Field):
     def __init__(self, to, field_name: str = 'pk', **kwargs):
@@ -31,6 +37,8 @@ class ManyToManyField(serializers.Field):
             query = self.model.objects.filter(**{self.field_name: objid})
             if query.exists():
                 elements.append(query.first())
+            else:
+                logger.debug(f'Could not resolve objID: "{objid}" and name: "{self.field_name}"')
 
         return elements
 
@@ -42,6 +50,7 @@ class ManyToManyField(serializers.Field):
             value = value.all()
 
         return [str(x.pk) for x in value]
+
 
 class ManyToManySerializer(serializers.ModelSerializer):
     rel_fields = None
@@ -55,7 +64,6 @@ class ManyToManySerializer(serializers.ModelSerializer):
                 manager.add(validated_data.pop(field_name))
 
         return super().update(instance, validated_data)
-
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -57,7 +57,7 @@ class _FileDesc(dict):
             "is-dir": file.is_dir()
         }
         if language:
-            self['language'] = language
+            self['li_attr']['language'] = language
 
 __visitors__ = []
 

@@ -61,3 +61,10 @@ class CanEditScanAsField(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return self.ref.has_object_permission(request, view, obj.scan)
+
+class CanEditScanFromScanner(BasePermission):
+    ref = CanEditScanAsField()
+
+    def has_object_permission(self, request, view, obj):
+        return self.ref.has_object_permission(request, view, obj.scanner)
+

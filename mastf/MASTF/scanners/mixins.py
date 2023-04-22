@@ -12,7 +12,8 @@ from mastf.MASTF.models import (
     Finding,
     Scanner,
     FindingTemplate,
-    Host
+    Host,
+    Component
 )
 
 from mastf.MASTF.serializers import HostSerializer
@@ -149,3 +150,11 @@ class HostsMixin:
     def res_hosts(self, scan: Scan, scanner: Scanner) -> list:
         data = Host.objects.filter(scan=scan, scanner=scanner)
         return HostSerializer(data, many=True).data
+
+
+class ComponentsMixin:
+
+    def ctx_components(self, scan: Scan, file: File, scanner: Scanner):
+        data = namespace(stats=Component.stats(scan))
+        data.elements = Component.objects.filter(scanner=scanner)
+        return data

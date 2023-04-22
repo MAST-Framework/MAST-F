@@ -52,6 +52,9 @@ class HostCreationView(CreationAPIViewBase):
     form_class = HostForm
     permission_classes = [permissions.IsAuthenticated & CanEditScanAsField]
 
+    def make_uuid(self):
+        return f"hst_{super().make_uuid()}"
+
 # route /scan/..../hosts
 class HostListView(GetObjectMixin, ListAPIViewBase):
     queryset = Host.objects.all()

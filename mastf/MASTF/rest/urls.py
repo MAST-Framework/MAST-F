@@ -42,11 +42,16 @@ urlpatterns = [
         path(r"<uuid:scan_uuid>/", include([
             path(r"", views.ScanView.as_view()),
 
+            # Note that all path elements below will return results according
+            # to the selected scan - mapping the results of all scanners
+            # together. To get accurate results for each scanner, you should
+            # address the extension of each scanner directly.
             path(r"filetree", views.FiletreeView.as_view()),
             path(r"findings",  views.FindingListView.as_view()),
             path(r"vulnerabilities", views.VulnerabilityListView.as_view()),
             path(r"permissions", views.AppPermissionListView.as_view()),
             path(r"hosts", views.HostListView.as_view()),
+            path(r"components", views.ComponentListView.as_view()),
 
             path(r"<str:name>/<str:extension>", views.ScannerView.as_view()),
         ])),
@@ -110,7 +115,12 @@ urlpatterns = [
             path(r"create", views.DataCollectionGroupCreationView.as_view()),
             path(r"<uuid:pk>", views.DataCollectionGroupView.as_view()),
         ]))
-    ]))
+    ])),
+
+    path(r"component/", include([
+        path(r"create", views.ComponentCreationView.as_view()),
+        path(r"<componentid:pk>", views.ComponentView.as_view()),
+    ])),
 
 ]
 

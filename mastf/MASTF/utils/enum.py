@@ -117,6 +117,13 @@ class ProtectionLevel(StringEnum):
                       ProtectionLevel.PRE23)
         }
 
+
+class ComponentCategory(StringEnum):
+    ACTIVITY = "Activity"
+    SERVICE = "Service"
+    RECEIVER = "Receiver"
+    PROVIDER = "Provider"
+
 mod = sys.modules[__name__]
 # Small workaround to set an additional static attribute for Django
 # models

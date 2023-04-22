@@ -21,8 +21,10 @@ class MD5Converter(StringConverter):
     regex = r"[0-9a-fA-F]{32}"
 
 class HostIDConverter(StringConverter):
-    regex = r"host_[\dA-Za-z-]{36}"
+    regex = r"hst_[\dA-Za-z-]{36}"
 
+class ComponentIdConverter(StringConverter):
+    regex = r"cpt_[\dA-Za-z-]{36}"
 
 def listconverters() -> dict:
     mod = sys.modules[__name__]

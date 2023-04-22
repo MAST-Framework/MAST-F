@@ -38,13 +38,25 @@
     };
 
     document.addEventListener("DOMContentLoaded", function() {
+        if (Utils.isDarkLaf()) {
+            // Small backup script to ensure the right selection colors
+            // on the JSTree. By default, the selection and hover color
+            // make the text invisible.
+            for (let sheet of document.styleSheets) {
+                if (sheet.href?.includes("jstree/themes/default")) {
+                    sheet.insertRule(".jstree-default .jstree-wholerow-hovered{background: #48a4f0 !important}");
+                    sheet.insertRule(".jstree-default .jstree-wholerow-clicked{background: #4299e1 !important;background: -webkit-linear-gradient(top, #4299e1 0%, #4299e1 100%) !important;background: linear-gradient(to bottom, #4299e1 0%, #4299e1 100%) !important;}");
+                    sheet.insertRule(".jstree-default .jstree-clicked {background: #4299e1 !important}");
+                }
+            }
+        }
 
-        theme_name = document.body.getAttribute("class") == "theme-dark" ? "default-dark" : "default";
+        var theme_name_tree = "default";
         jstree = $('#filetree-view').jstree({
             "animation" : 0,
             "check_callback" : true,
             "themes" : {
-                name: theme_name,
+                name: theme_name_tree,
                 stripes: true,
                 icons: true
             },
@@ -66,6 +78,7 @@
             }
 
             if (node.getAttribute('language') == null) {
+                console.log("WARNING: null-language: ", node);
                 // No language indicates we don't want to show the file
                 // REVISIT: maybe add warning to screen
                 return;
@@ -75,7 +88,7 @@
             var url = "/api/v1/files/" + path.split("/")[0] + "/?file=" + path;
             REST.doGet(url, function(data) {
                 let theme_name = 'enlighter';
-                if (params.theme == 'dark') {
+                if (Utils.isDarkLaf()) {
                     theme_name = 'dracula';
                 }
                 // We have to use the textContent property here as
@@ -84,6 +97,7 @@
                 element = document.getElementById('file-code');
 
                 element.textContent = data.join("").replaceAll("<br>", "\n");
+                console.log(theme_name);
                 EnlighterJS.enlight(element, false);
                 EnlighterJS.enlight(element, {
                     language : node.getAttribute('language'),
