@@ -1,35 +1,28 @@
 
 REST = {
     doGet: function(url, onsuccess, error = null) {
-        $.ajax(url, {
-            method: 'GET',
-            success: onsuccess,
-            error: error,
-            headers: {
-                'X-CSRFToken': csrftoken
-            }
-        })
+        REST.ajax(url, 'GET', null, onsuccess, null, error);
     },
 
     post: function(url, data, onsuccess, contentType = "application/json", error = null) {
+        REST.ajax(url, 'POST', data, onsuccess, contentType, error);
+    },
+
+    patch: function(url, data, onsuccess, contentType = "application/json", ) {
+        REST.ajax(url, 'PATCH', data, onsuccess, contentType);
+    },
+
+    delete: function(url, onsuccess, contentType = "application/json", ) {
+        REST.ajax(url, 'DELETE', null, onsuccess, contentType);
+    },
+
+    ajax: function(url, method, data = null, onsuccess = null, contentType = "application/json", error = null) {
         $.ajax(url, {
-            method: 'POST',
+            method: method,
             success: onsuccess,
             data: data,
             contentType: contentType,
             error: error,
-            headers: {
-                'X-CSRFToken': csrftoken
-            }
-        })
-    },
-
-    patch: function(url, data, onsuccess, contentType = "application/json", ) {
-        $.ajax(url, {
-            method: 'PATCH',
-            success: onsuccess,
-            data: data,
-            contentType: contentType,
             headers: {
                 'X-CSRFToken': csrftoken
             }

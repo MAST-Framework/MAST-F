@@ -26,7 +26,7 @@ class Host(models.Model):
 
     classification = models.CharField(default=HostType.NOT_SET, choices=HostType.choices, max_length=256)
     snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
-    url = models.URLField(max_length=2048, null=True)
+    url = models.CharField(max_length=2048, null=True, blank=True)
     domain = models.CharField(max_length=2048, null=True)
     ip = models.CharField(max_length=32, null=True)
     port = models.IntegerField(default=0)

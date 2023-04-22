@@ -31,11 +31,9 @@ class Component(models.Model):
             category = element['category']
             data = namespace(count=element['ccount'], category=category)
 
-            data.protected = len(components.filter(category=category, is_protected=True, is_exported=False))
+            data.protected = len(components.filter(category=category, is_protected=True))
             data.protected_rel = (data.protected / rel_count) * 100
-            data.exported = len(components.filter(category=category, is_exported=True, is_protected=False))
+            data.exported = len(components.filter(category=category, is_exported=True))
             data.exported_rel = (data.exported / rel_count) * 100
-            data.other = len(components.filter(category=category, is_exported=False, is_protected=False))
-            data.other_rel = (data.other / rel_count) * 100
             values.append(data)
         return values

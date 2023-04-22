@@ -35,6 +35,7 @@
                                         <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
                                         <path d="M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3"></path>
                                      </svg>
+                                     Import URLs
                                 </a>
                             </div>
                         </div>
@@ -60,18 +61,11 @@
                                                     </svg>
                                             </th>
 
-                                            <th >
-                                                Name
-                                            </th>
-                                            <th class="w-1">
-                                                Source File
-                                            </th>
-                                            <th class="text-end w-1">
-                                                URL
-                                            </th>
-                                            <th class="text-end w-1">
-                                                Manage
-                                            </th>
+                                            <th class="w-1">Name</th>
+                                            <th class="w-1">Protocol</th>
+                                            <th class="w-1">Source File</th>
+                                            <th class="text-end w-1">URL</th>
+                                            <th class="text-end w-1">Manage</th>
 
                                         </thead>
 
@@ -80,11 +74,11 @@
                                             {% comment %} All rows will be generated automatically {% endcomment %}
                                         -->
                                         <tbody>
-                                            {% for host in data %}
+                                            {% for host in data.hosts %}
                                             <tr id="tbl-row-id-{{forloop.counter}}">
                                                 <td>
                                                     <a href="#offcanvas-host" class="nav-link link-secondary" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvas-host"
-                                                        onclick="toggleHostOffcanvas(this);" host-id="{{host.host_uuid}}">
+                                                        onclick="toggleHostOffcanvas(this);" host-id="{{host.host_id}}">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                             <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
@@ -109,17 +103,20 @@
                                                     </span>
 
                                                     {% else %}
-                                                    <span class="badge badge-outline bg-orange-lt">
+                                                    <span class="badge badge-outline bg-secondary-lt">
                                                         {{ host.classification|default_if_none:"Undefined" }}
                                                     </span>
                                                     {% endif %}
                                                 </td>
-                                                <td class="text-muted text-truncate">
+                                                <td class="text-muted text-truncate" id="host-domain-{{host.host_id}}">
                                                     {{ host.domain|default_if_none:"-" }}
+                                                </td>
+                                                <td class="text-muted" id="host-protocol-{{host.host_id}}">
+                                                    {{ host.protocol|default_if_none:"Not specified" }}
                                                 </td>
                                                 <!-- The file-text should be truncated as it could be long -->
                                                 <td class="text-muted">
-                                                    {% if host.snippet %}
+                                                    {% if host.snippet and host.snippet.file_name %}
                                                     host.snippet.file_name
                                                     {% else %}
                                                     -
@@ -127,8 +124,9 @@
                                                 </td>
                                                 <td class="text-muted">
                                                     <input type="hidden" value="{{host.url}}" id="url-row-{{forloop.counter}}">
-                                                    <a href="#" target-id="#url-row-{{ forloop.counter }}" id="url-copy-{{ forloop.counter }}"
-                                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy URL">
+                                                    <a href="#" target-id="url-row-{{ forloop.counter }}" id="url-copy-{{ forloop.counter }}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy URL"
+                                                            onclick="copyTargetToClipboard(this);">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                             <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
@@ -138,7 +136,7 @@
                                                 </td>
 
                                                 <td class="text-end">
-                                                    <a href="#" row-id="tbl-row-id-{{forloop.counter}}" id="{{host.host_uuid}}" onclick="verifyAction(this, handleHostDeletion)">
+                                                    <a href="#" row-id="tbl-row-id-{{forloop.counter}}" host-id="{{host.host_id}}" onclick="verifyAction(this, handleHostDeletion)">
                                                         <span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete host result">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -171,9 +169,34 @@
 <div class="offcanvas offcanvas-end" id="offcanvas-host" tabindex="-1" aria-labelledby="off-host-label"
     style="width: 500px;">
     <div class="offcanvas-header">
-        <h2 id="off-host-label" class="offcanvas-title">Host Details</h2>
-        <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas"
-            aria-label="Close"></button>
+        <div class="row text-center align-items-center flex-row">
+            <div class="col-auto">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item">
+                        <h2 id="off-host-label" class="offcanvas-title">Host Details</h2>
+                    </li>
+                    <li class="list-inline-item">
+                        <span class="dropdown">
+                            <button class="badge bg-secondary-lt dropdown-toggle" type="button" id="host-types-dropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false" >
+                                ##
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="host-type-dropdown"
+                                id="list-host-type">
+                                <span class="dropdown-header">Choose Host Classification</span>
+                                {% for htype in data.host_types %}
+                                <li><a href="#" class="dropdown-item" id="host-type-{{htype}}">{{htype}}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </span>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+
+
     </div>
     <div class="offcanvas-body">
         <div class="datagrid">
@@ -206,7 +229,7 @@
                             URL
                         </div>
                         <div class="datagrid-content">
-                            <input type="text" class="form-control" placeholder="Username" value="192.168.178.1"
+                            <input type="text" class="form-control" placeholder="URL" value="192.168.178.1"
                                 id="host-url" name="url">
                         </div>
                     </div>
@@ -231,8 +254,7 @@
                     </div>
                     <div class="datagrid-content">
                         <div class="table-responsive">
-                            <table id="table-host-dc" class="table text-nowrap datatable"
-                                style="width: 100%">
+                            <table id="table-host-dc" class="table text-nowrap datatable">
                                 <thead>
                                     <th>Group Name</th>
                                     <th class="w-1">Protection Level</th>
@@ -247,9 +269,11 @@
         </div>
     </div>
     <div class="offcanvas-footer">
-        <a href="#" class="btn btn-primary">
+        <hr class="mt-3 mb-4">
+        <a href="#" class="btn btn-primary" host-id="" id="host-update">
             Update
         </a>
+
     </div>
 
 </div>
@@ -258,91 +282,156 @@
 {% block js_extended %}
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 <script>
-    var HOSTS_TABLE = null;
-    document.addEventListener("DOMContentLoaded", function() {
-        HOSTS_TABLE = $('#table-hosts').DataTable();
-
-        $('#table-hosts_wrapper').addClass("mt-1 mr-1 ml-1 mb-1");
-    });
-
-
     toggleHostOffcanvas = function(element) {
-        console.log(element);
+        var hostId = element.getAttribute('host-id');
+        REST.doGet("/api/v1/host/" + hostId, function(data) {
+            $('#host-domain').val(data.domain);
+            $('#host-protocol').val(data.protocol);
+            $('#host-url').val(data.url);
+            $('#host-port').val(data.port);
+            $('#host-update').attr('host-id', data.host_id);
+            document.getElementById('host-types-dropdown').innerHTML = data.classification;
+
+            var table = $('#table-host-dc').DataTable();
+            table.rows().remove().draw();
+            for (let groupId of data.collected_data) {
+                REST.doGet("/api/v1/host/datacoll/" + groupId, function(data) {
+                    table.row.add([
+                        data.group, data.protection_level
+                    ]).draw(false);
+                })
+            }
+        });
+    };
+
+    updateHost = function(element) {
+        var hostId = element.attr('host-id');
+
+        REST.patch("/api/v1/host/" + hostId + "/", JSON.stringify({
+            domain: $('#host-domain').attr('value'),
+            protocol: $('#host-protocol').attr('value'),
+            url: $('#host-url').attr('value'),
+            port: $('#host-port').attr('value'),
+        }), function(data) {
+            if (data.success) {
+                $('#host-domain-' + hostId).html($('#host-domain').val());
+                $('#host-protocol-' + hostId).html($('#host-protocol').val());
+            }
+        });
     };
 
     handleHostDeletion = function(element, event) {
         // remove row from datatable
-        console.log($(element).parents('tr'));
-        console.log(event);
+        table = $("#table-hosts").DataTable();
 
-        // HOSTS_TABLE.row()
-    }
+        REST.delete("/api/v1/host/" + element.getAttribute("host-id"), function(data) {
+            if (data.success) {
+                table.row('#' + $(element).parents('tr').attr('id'))
+                    .remove()
+                    .draw();
+            } else {
+                console.warn("(Frontend) Could not delete host: " + data.detail);
+            }
+        });
+
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#table-hosts').DataTable();
+        $('#table-hosts_wrapper').addClass("mt-1 mr-1 ml-1 mb-1");
+
+        $('#host-update').on("click", function(event) {
+            event.preventDefault();
+            updateHost($(this));
+        });
+
+        for (let element of $('[id^=host-type-]')) {
+            $(element).on('click', function(event) {
+                event.preventDefault();
+                hostId = $('#host-update').attr('host-id');
+                target = document.getElementById('host-types-dropdown');
+                if (target.innerHTML == element.innerHTML) {
+                    return;
+                }
+
+                REST.patch("/api/v1/host/" + hostId + '/', JSON.stringify({
+                    classification: element.innerHTML
+                }), function(data) {
+                    if (data.success) {
+                        target.innerHTML = element.innerHTML;
+                    } // TODO: add logging
+                })
+            });
+        }
+    });
 </script>
 
 <script>
- document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {
 
-    $('#table-host-dc').DataTable();
-    $('#table-host-cipher-suites').DataTable();
-    $('#table-host-tls').DataTable();
+        $('#table-host-dc').DataTable();
+        $('#table-host-cipher-suites').DataTable();
+        $('#table-host-tls').DataTable();
 
-    markers = [
-    {% for host in data %}
-        {
-            coords: [{{host.longitude}}, {{host.latitude}}],
-            name: "{{connection.country}}",
-            domain: "{{host.domain}}"
-        },
-    {% endfor %}
-    ]
-
-    const map = new jsVectorMap({
-        selector: '#map-world',
-        map: 'world_merc',
-        backgroundColor: 'transparent',
-        regionStyle: {
-            initial: {
-                fill: tabler.getColor('body-bg'),
-                stroke: tabler.getColor('border-color'),
-                strokeWidth: .5,
-            }
-        },
-        zoomOnScroll: false,
-        zoomButtons: true,
-
-        markers: markers,
-        markerStyle: {
-            initial: {
-                r: 4,
-                stroke: '#fff',
-                opacity: 1,
-                strokeWidth: 3,
-                stokeOpacity: .5,
-                fill: tabler.getColor('red')
+        markers = [
+        {% for host in data %}
+            {% if host.longitude and host.latitude %}
+            {
+                coords: [{{host.longitude}}, {{host.latitude}}],
+                name: "{{connection.country}}",
+                domain: "{{host.domain}}"
             },
-            hover: {
-                fill: tabler.getColor('red'),
-                stroke: tabler.getColor('red')
-            }
-        },
-        markerLabelStyle: {
-            initial: {
-                fontSize: 10
+            {% endif %}
+        {% endfor %}
+        ]
+
+        const map = new jsVectorMap({
+            selector: '#map-world',
+            map: 'world_merc',
+            backgroundColor: 'transparent',
+            regionStyle: {
+                initial: {
+                    fill: tabler.getColor('body-bg'),
+                    stroke: tabler.getColor('border-color'),
+                    strokeWidth: .5,
+                }
             },
-        },
-        labels: {
-            markers: {
-                render: function(marker) {
-                    return marker.domain
+            zoomOnScroll: false,
+            zoomButtons: true,
+
+            markers: markers,
+            markerStyle: {
+                initial: {
+                    r: 4,
+                    stroke: '#fff',
+                    opacity: 1,
+                    strokeWidth: 3,
+                    stokeOpacity: .5,
+                    fill: tabler.getColor('red')
+                },
+                hover: {
+                    fill: tabler.getColor('red'),
+                    stroke: tabler.getColor('red')
+                }
+            },
+            markerLabelStyle: {
+                initial: {
+                    fontSize: 10
                 },
             },
-        },
-    });
+            labels: {
+                markers: {
+                    render: function(marker) {
+                        return marker.domain
+                    },
+                },
+            },
+        });
 
-    window.addEventListener("resize", () => {
-        map.updateSize();
-    });
+        window.addEventListener("resize", () => {
+            map.updateSize();
+        });
 
-});
+    });
 </script>
 {% endblock js_extended %}

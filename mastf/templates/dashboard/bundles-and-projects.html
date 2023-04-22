@@ -217,9 +217,10 @@ Bundles and Projects
                                                                 - "project-id-row-" <ROW_NUMBER>
                                                         -->
                                                         <input type="hidden" value="{{ row.project.project_uuid }}" id="project-id-row-{{ forloop.counter }}">
-                                                        <a href="#" target-id="#project-id-row-{{ forloop.counter }}"
+                                                        <a href="#" target-id="project-id-row-{{ forloop.counter }}"
                                                             id="project-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip"
-                                                            data-bs-placement="bottom" title="Copy Project-ID">
+                                                            data-bs-placement="bottom" title="Copy Project-ID"
+                                                            onclick="copyTargetToClipboard(this);">
 
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -343,7 +344,8 @@ Bundles and Projects
                                                              </svg>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
-                                                            <a class="dropdown-item" href="#" project_id_element="#project-id-row-{{ forloop.counter }}" id="delete-project-action-{{ forloop.counter }}">
+                                                            <a class="dropdown-item" href="#" project_id_element="#project-id-row-{{ forloop.counter }}" id="delete-project-action-{{ forloop.counter }}"
+                                                                onclick="verifyAction(this, deleteProject);">
                                                                 <span class="dropdown-item-icon text-red">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -767,10 +769,8 @@ Bundles and Projects
 <script>
 
     // <!> DELETE PROJECT <!>
-    deleteProject = function(event) {
-        var selector = $(this).attr("project_id_element");
-        console.error($(this))
-        console.log(selector)
+    deleteProject = function(element, event) {
+        var selector = $(element).attr("project_id_element");
         $.ajax({
             type: 'DELETE',
             url: '/api/v1/project/' + $(selector).attr('value'),
@@ -834,22 +834,6 @@ Bundles and Projects
          * bundles
          */
         for (const index of Array({{ project_table_data|length }}).keys()) {
-            // DELETE PROJECT
-            element = $("#delete-project-action-" + (index+1));
-            element.on("click", deleteProject);
-
-            {% if debug %}
-            console.debug("[DEBUG] Added TableRowListener(DeleteProject): " + "#delete-project-action-" + (index+1));
-            {% endif %}
-
-            // COPY PROJECT ID
-            copyElement = $("#project-id-copy-" + (index+1));
-            copyElement.on('click', copyProjectID);
-
-            {% if debug %}
-            console.debug("[DEBUG] Added CopyIDListener(CopyProjectID): " + "#project-id-copy-" + (index+1));
-            {% endif %}
-
             // VIEW PROJECT
             linkActionElement = $("#project-view-action-" + (index+1));
             linkElement = $("#project-view-link-" + (index+1));

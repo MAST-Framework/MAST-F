@@ -1,6 +1,7 @@
 import django
 import os
 import sys
+import random
 
 from uuid import uuid4
 
@@ -8,6 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mastf.MASTF.settings')
 django.setup()
 
 from mastf.MASTF.models import *
+from mastf.MASTF.utils.enum import HostType, DataProtectionLevel
 
 def setup_vuln():
     s = Scan.objects.first()
@@ -35,6 +37,37 @@ def setup_finding():
     pf.save()
 
     f.save()
+
+def setup_host_data():
+    for i in range(5):
+        TLS(pk=uuid4(), version=f"TLS{i}.0", recommended=i>3).save()
+
+    for i in range(5):
+        CipherSuite(pk=uuid4(), name=f"RSA{i}.0", recommended=i>3).save()
+
+    DataCollectionGroup(pk=uuid4(), group="Authentication",
+                        protection_level=DataProtectionLevel.PRIVATE).save()
+
+def setup_hosts():
+    s = Scan.objects.first()
+    sn = Scanner.objects.first()
+
+    for i in range(5):
+        htype = random.choice(list(HostType))
+        domain = f"db{i}-srv.domain.com"
+        protocol = "HTTPS"
+        longitude = 5.6 + i
+        latitude = 20.5 + i
+
+        host = Host(pk=f"hst_{uuid4()}", scan=s, scanner=sn, classification=htype,
+                    domain=domain, protocol=protocol, longitude=longitude,
+                    latitude=latitude)
+
+        host.save()
+        host.tlsversions.add(TLS.objects.first())
+        host.suites.add(CipherSuite.objects.first())
+        host.collected_data.add(DataCollectionGroup.objects.first())
+        host.save()
 
 if __name__ == '__main__':
     mod = sys.modules[__name__]

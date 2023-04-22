@@ -17,7 +17,7 @@ from mastf.MASTF.models import (
 )
 
 from mastf.MASTF.serializers import HostSerializer
-
+from mastf.MASTF.utils.enum import HostType
 
 class DetailsMixin:
     """Add-on to generate app details
@@ -145,7 +145,10 @@ class HostsMixin:
         :return: a list of vulnerabilities
         :rtype: list
         """
-        return Host.objects.filter(scan=scan, scanner=scanner)
+        data = namespace()
+        data.hosts = Host.objects.filter(scan=scan, scanner=scanner)
+        data.host_types = [str(x) for x in HostType]
+        return data
 
     def res_hosts(self, scan: Scan, scanner: Scanner) -> list:
         data = Host.objects.filter(scan=scan, scanner=scanner)

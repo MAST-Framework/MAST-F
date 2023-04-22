@@ -362,7 +362,6 @@
         {% endblock %}
 
 
-
         <!-- Libs JS -->
         <script src="{% static "libs/apexcharts/apexcharts.min.js"%}" defer></script>
         <script src="{% static "libs/jsvectormap/js/jsvectormap.min.js"%}" defer></script>
@@ -450,6 +449,17 @@
               EventHandler(element, event);
             });
             modal.modal('toggle');
+          };
+
+          copyTargetToClipboard = function(element) {
+            let selector = $(element).attr('target-id');
+            let value = Utils.getValue(selector);
+
+            if (!navigator.clipboard) {
+                return;
+            }
+
+            navigator.clipboard.writeText(value);
           };
 
         </script>

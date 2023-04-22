@@ -12,6 +12,33 @@
     document.addEventListener("DOMContentLoaded", function() {
         $('#table-components').DataTable();
     })
+
+    handleComponentDeletion = function(element, event) {
+        var componentsTable = $('#table-components').DataTable();;
+        row = element.getAttribute("row-id");
+        if (row == null) {
+            console.warn("Invalid row pointer at:", element);
+            return;
+        }
+
+        cid = element.getAttribute('cid');
+        if (cid == null) {
+            console.warn("Invalid component ID at: #cid-row-" + row);
+            return;
+        }
+
+        REST.delete("/api/v1/component/" + cid, function(data) {
+            if (data.success) {
+                componentsTable.row('#' + row)
+                    .remove()
+                    .draw();
+                console.debug('(Frontent) removed component: ' + row);
+            }
+            else {
+                console.warn('(Frontend) Could not delete component');
+            }
+        });
+    };
 </script>
 {% endblock js_extended %}
 
@@ -95,7 +122,7 @@
                         <tr id="tbl-row-id-{{forloop.counter}}">
                             <td>
                                 <input type="hidden" value="{{ component.cid }}" id="cid-row-{{ forloop.counter }}">
-                                <a href="#" target-id="#cid-row-{{ forloop.counter }}" id="cid-copy-{{ forloop.counter }}"
+                                <a href="#" row="{{ forloop.counter }}" id="cid-copy-{{ forloop.counter }}"
                                     data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Component-ID">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -135,7 +162,7 @@
                             </td>
 
                             <td class="text-end">
-                                <a href="#" row-id="tbl-row-id-{{forloop.counter}}" id="{{component.cid}}" onclick="verifyAction(this, handleComponenteletion)">
+                                <a href="#" row-id="tbl-row-id-{{forloop.counter}}" cid="{{component.cid}}" onclick="verifyAction(this, handleComponentDeletion);">
                                     <span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete host result">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

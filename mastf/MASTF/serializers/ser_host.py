@@ -41,6 +41,7 @@ class CipherSuiteSerializer(ManyToManySerializer):
         fields = '__all__'
 
 class HostSerializer(ManyToManySerializer):
+    rel_fields = ['tlsversions', 'suites', 'collected_data']
     tlsversions = ManyToManyField(TLS)
     suites = ManyToManyField(CipherSuite)
     collected_data = ManyToManyField(DataCollectionGroup)
