@@ -20,6 +20,7 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
+#TODO(important): Documentation
 class ManyToManyField(serializers.Field):
     def __init__(self, to, field_name: str = 'pk', **kwargs):
         super().__init__(**kwargs)
@@ -52,7 +53,7 @@ class ManyToManyField(serializers.Field):
 
         return [str(x.pk) for x in value]
 
-
+#TODO(important): Documentation
 class ManyToManySerializer(serializers.ModelSerializer):
     rel_fields = None
 

@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.uxf
+generator.py
 
 # uploaded files
 mastf/projects/

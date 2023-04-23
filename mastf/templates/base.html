@@ -47,6 +47,7 @@
     <!-- HTML-Body -->
     <body>
         <script src="{% static "js/tabler-addon-theme.min.js"%}"></script>
+        <script src="{% static "js/jquery-3.6.4.min.js"%}"></script>
 
         <!--
             The main content will be split into several parts:
@@ -317,6 +318,9 @@
 
         {% endblock modals %}
 
+        {% block modal_scripts %}
+        {% endblock modal_scripts %}
+
 
         {% block alerts %}
         <div class="toast-container bottom-0 end-0">
@@ -371,7 +375,7 @@
         <!-- Tabler Core -->
         <script src="{% static "js/tabler.min.js"%}" defer></script>
         <script src="{% static "js/tabler-addon.min.js"%}" defer></script>
-        <script src="{% static "js/jquery-3.6.4.min.js"%}"></script>
+
 
         <script>
           /**

@@ -4,7 +4,8 @@ from mastf.MASTF.models import (
     Host,
     DataCollectionGroup,
     CipherSuite,
-    TLS
+    TLS,
+    HostTemplate
 )
 
 from .base import ManyToManyField, ManyToManySerializer
@@ -14,6 +15,7 @@ __all__ = [
     'TLSSerializer',
     'CipherSuiteSerializer',
     'HostSerializer',
+    'HostTemplateSerializer'
 ]
 
 class DataCollectionGroupSerializer(ManyToManySerializer):
@@ -40,11 +42,18 @@ class CipherSuiteSerializer(ManyToManySerializer):
         model = CipherSuite
         fields = '__all__'
 
+class HostTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HostTemplate
+        fields = '__all__'
+
+
 class HostSerializer(ManyToManySerializer):
     rel_fields = ['tlsversions', 'suites', 'collected_data']
     tlsversions = ManyToManyField(TLS)
     suites = ManyToManyField(CipherSuite)
     collected_data = ManyToManyField(DataCollectionGroup)
+    template = HostTemplateSerializer(many=False)
 
     class Meta:
         model = Host

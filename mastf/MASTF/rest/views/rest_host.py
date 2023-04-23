@@ -5,19 +5,22 @@ from mastf.MASTF.models import (
     DataCollectionGroup,
     CipherSuite,
     TLS,
-    Scan
+    Scan,
+    HostTemplate
 )
 from mastf.MASTF.serializers import (
     HostSerializer,
     DataCollectionGroupSerializer,
     CipherSuiteSerializer,
-    TLSSerializer
+    TLSSerializer,
+    HostTemplateSerializer
 )
 from mastf.MASTF.forms import (
     HostForm,
     DataCollectionGroupForm,
     CipherSuiteForm,
-    TLSForm
+    TLSForm,
+    HostTemplateForm
 )
 from mastf.MASTF.rest.permissions import CanEditScanAsField, CanEditScan
 
@@ -36,6 +39,9 @@ __all__ = [
     'DataCollectionGroupView',
     'DataCollectionGroupCreationView',
     'DataCollectionGroupListView',
+    'HostTemplateView',
+    'HostTemplateCreationView',
+    'HostTemplateListView',
 ]
 
 ## Implementation
@@ -72,6 +78,24 @@ class HostRelListView(GetObjectMixin, ListAPIViewBase):
 
     def filter_queryset(self, queryset):
         return queryset.filter(hosts__scan=self.get_object())
+
+########################################################################
+# HOST-TEMPLATE
+########################################################################
+class HostTemplateView(APIViewBase):
+    model = HostTemplate
+    serializer_class = HostTemplateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class HostTemplateCreationView(CreationAPIViewBase):
+    model = HostTemplate
+    form_class = HostTemplateForm
+    permission_classes = [permissions.IsAuthenticated]
+
+class HostTemplateListView(ListAPIViewBase):
+    queryset = HostTemplate.objects.all()
+    serializer_class = HostTemplateSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 ########################################################################
 # TLS
