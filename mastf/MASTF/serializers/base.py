@@ -7,6 +7,7 @@ from rest_framework import serializers
 from mastf.MASTF.models import (
     Project,
     Team,
+    AppPermission,
 )
 
 __all__ = [
