@@ -280,6 +280,9 @@
 {% endblock post_body_container %}
 
 {% block js_extended %}
+<script src="{% static "libs/jsvectormap/js/jsvectormap.min.js"%}" defer></script>
+<script src="{% static "libs/jsvectormap/maps/world.js"%}" defer></script>
+<script src="{% static "libs/jsvectormap/maps/world-merc.js"%}" defer></script>
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 <script>
     toggleHostOffcanvas = function(element) {
@@ -293,7 +296,7 @@
             document.getElementById('host-types-dropdown').innerHTML = data.classification;
 
             var table = $('#table-host-dc').DataTable();
-            table.rows().remove().draw();
+            table.rows().remove().draw(); // remove all rows first
             for (let groupId of data.collected_data) {
                 REST.doGet("/api/v1/host/datacoll/" + groupId, function(data) {
                     table.row.add([

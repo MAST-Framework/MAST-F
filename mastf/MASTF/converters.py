@@ -27,6 +27,14 @@ class ComponentIdConverter(StringConverter):
     regex = r"cpt_[\dA-Za-z-]{36}"
 
 def listconverters() -> dict:
+    """Returns all converters of this module.
+
+    The mapped name will be the class name transformed to lower
+    case and with the ``"converter"`` extra removed.
+
+    :return: a dictionary storing all registered converter classes
+    :rtype: dict
+    """
     mod = sys.modules[__name__]
     members = inspect.getmembers(mod, inspect.isclass)
 

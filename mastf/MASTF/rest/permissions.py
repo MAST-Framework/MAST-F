@@ -1,5 +1,9 @@
 from rest_framework.request import HttpRequest
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import (
+    BasePermission,
+    SAFE_METHODS,
+    exceptions
+)
 
 from mastf.MASTF.utils.enum import Visibility
 
@@ -68,3 +72,12 @@ class CanEditScanFromScanner(BasePermission):
     def has_object_permission(self, request, view, obj):
         return self.ref.has_object_permission(request, view, obj.scanner)
 
+class IsBundleMember(BasePermission):
+    ref = CanEditProject()
+
+    def has_object_permission(self, request, view, obj):
+        for project in obj.projects:
+            if not self.ref.has_object_permission(request, view, project):
+                return False
+
+        return True

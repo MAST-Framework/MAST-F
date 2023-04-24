@@ -10,7 +10,7 @@ urlpatterns = [
     # URLs for the main navigation bar - Currently, there are only four options
     # (five with dashboard):
     path(r"projects/", views.ProjectsView.as_view(), name='Projects'),
-    path(r"bundles/", views.DashboardView.as_view(), name='Bundles'),
+    path(r"bundles/", views.BundlesView.as_view(), name='Bundles'),
     path(r"scans/", views.DashboardView.as_view(), name='Scans'),
     path(r"plug-ins/", views.PluginsView.as_view(), name='Plug-Ins'),
 

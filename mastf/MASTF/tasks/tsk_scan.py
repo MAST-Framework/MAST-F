@@ -20,6 +20,12 @@ from mastf.MASTF.scanners.plugin import ScannerPlugin
 
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    'schedule_scan',
+    'prepare_scan',
+    'execute_scan',
+]
+
 def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     """Schedules the given scan.
 

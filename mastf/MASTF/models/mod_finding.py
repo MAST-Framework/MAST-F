@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from mastf.MASTF.utils.enum import Severity, State, Visibility, HostType
 
-from .base import Project, namespace, Team
+from .base import Project, namespace, Team, Bundle
 from .mod_scan import Scan, Scanner
 
 __all__ = [
@@ -69,7 +69,7 @@ class AbstractBaseFinding(models.Model):
 
     @staticmethod
     def stats(model, member: User = None, project: Project = None, scan: Scan = None,
-              team: Team = None, base=None) -> namespace:
+              team: Team = None, base=None, bundle: Bundle = None) -> namespace:
         data = namespace(count=0, high=0, critical=0, medium=0, low=0)
         if member:
             base = (base or model.objects).filter(
@@ -79,12 +79,12 @@ class AbstractBaseFinding(models.Model):
 
         if project:
             base = (base or model.objects).filter(scan__project=project)
-
         if scan:
             base = (base or model.objects).filter(scan=scan)
-
         if team:
             base = (base or model.objects).filter(scan__project__team=team)
+        if bundle:
+            base = (base or model.objects).filter(scan__project__in=bundle.projects.all())
 
         if not base:
             return data

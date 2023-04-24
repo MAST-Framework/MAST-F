@@ -1,0 +1,294 @@
+{% extends 'dashboard/bundles-and-projects-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+
+{% block tab_content %}
+<!-- Bundles:
+
+Bundles are groups of projects (aggregation of projects). They summarize scan results
+for different components of each project.
+-->
+<div class="tab-pane {% if active == "tabs-bundles" %}active show{% endif %}" id="tabs-bundles">
+{% if active == "tabs-bundles" %}
+    <!-- Row with risk counters -->
+    <div class="row row-deck">
+
+        <div class="col-md-4">
+            <!-- Card with application count -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Managed Bundles</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted"><b>{{ count }}</b></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Card with high risk count -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">High Risk Bundles</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted"><b>
+                        {% if risk_high and risk_high > 0 %}
+                        <span class="text-red">
+                            {{risk_high}}
+                        </span>
+                        {% else %}
+                        None
+                        {% endif %}
+                    </b></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Card with medium risk count -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Medium Risk Bundles</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted"><b>
+                        {% if risk_medium and risk_medium > 0 %}
+                        <span class="text-orange">
+                            {{risk_medium}}
+                        </span>
+                        {% else %}
+                        None
+                        {% endif %}
+                    </b></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col mt-2">
+            <!-- Card with projects per risk level count -->
+            <div class="card">
+                <div class="card-body">
+                    <p class="mb-3">Projects per Risk Level</p>
+                    <div class="progress progress-separated mb-3">
+                        {% if vuln_data %}
+                            {% for category in vuln_data %}
+                            <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        {% for category in vuln_data %}
+                        <div class="col-auto d-flex align-items-center pe-2">
+                            <span class="legend me-2 {{ category.color }}"></span>
+                            <span>{{ category.name }}</span>
+                            <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">{{ category.count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Row with main table data -->
+    <div class="row mt-2">
+
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title"><b>
+                        {% with bundle_table_data|length as bundle_count %}
+                        {{ bundle_count }} Application{% if bundle_count != 1 %}s{% endif %}
+                        {% endwith %}
+                    </b></h3>
+                </div>
+                <!-- Body -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="bundles-table" class="table card-table table-vcenter text-nowrap datatable">
+                            <thead>
+                                <th class="w-1">
+                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all">
+                                </th>
+
+                                <th class="w-1">ID</th>
+                                <th class="w-1">Name</th>
+                                <th class="w-1">Tags</th>
+                                <th class="w-1">Risk Level</th>
+                                <th class="w-1">Projects</th>
+                                <th class="w-1">
+                                    <span class="text-red">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path></svg>
+                                    </span>
+                                </th>
+                                <th class="w-1">
+                                    <span class="text-orange">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path></svg>
+                                    </span>
+                                </th>
+                                <th class="w-1">
+                                    <span class="text-secondary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path></svg>
+                                    </span>
+                                </th>
+
+                                <!-- As well as the 'view' action which should trigger an offcanvas. -->
+                                <th class="w-1 text-end"></th>
+                                <th class="w-1 text-end"></th>
+                            </thead>
+                            <tbody>
+                                {% for row in bundle_table_data %}
+                                <tr>
+                                    <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
+                                    <td>
+                                        <!-- The bundle id can be queried using a jQuery selector
+                                                that has the following structure:
+                                                    - "bundle-id-row-" <ROW_NUMBER>
+                                            -->
+                                            <input type="hidden" value="{{ row.bundle.bundle_id }}" id="bundle-id-row-{{ forloop.counter }}">
+                                            <a href="#" target-id="bundle-id-row-{{ forloop.counter }}"
+                                                id="bundle-id-copy-{{ forloop.counter }}"  onclick="copyTargetToClipboard(this);"
+                                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Bundle-ID">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+                                        </a>
+                                    </td>
+
+                                    <!-- Bundle Name + Page link-->
+                                    <td class="text-muted">
+                                        <a href="#" class="nav-link link-secondary" target-id="bundle-id-row-{{ forloop.counter }}"
+                                            id="bundle-view-link-{{ forloop.counter }}">
+                                            {{ row.bundle.name }}
+                                        </a>
+                                    </td>
+
+                                    <!-- tags -->
+                                    <td class="text-truncate">
+                                        {# Split can be used when importing mastf_tags #}
+                                        {% with row.bundle.tags|split:"," as names %}
+
+                                        {% if names|length > 1 %}
+                                        <span class="badge bg-secondary-lt text-truncate">{{ names|first }}</span>,
+                                        <span class="badge bg-secondary-lt text-truncate">+{{ names|slice:"1:"|length }}</span>
+                                        {% elif names|length == 0 %}
+                                        -
+                                        {% else %}
+                                        <span class="badge bg-secondary-lt text-truncate">{{ names|first }}</span>
+                                        {% endif %}
+                                        {% endwith %}
+                                    </td>
+
+                                    <!-- Risk level -->
+                                    <td>
+                                        {% with row.bundle.risk_level|lower as level %}
+                                        <span class="badge bg-{% if level == 'critical' %}pink
+                                            {% elif level == 'high'%}red{% elif level == 'medium' %}orange
+                                            {% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"
+                                        >
+                                            {% if level %}
+                                            {{ level|capfirst }}
+                                            {% else %}
+                                            Undefined
+                                            {% endif %}
+                                        </span>
+                                        {% endwith %}
+                                    </td>
+
+                                    <td class="text-muted">
+                                        {{ row.bundle.projects|length }}
+                                    </td>
+
+
+                                    <!-- High -->
+                                    <td class="text-muted">
+                                        {{ row.high }}
+                                    </td>
+
+                                    <!-- Medium -->
+                                    <td class="text-muted">
+                                        {{ row.medium }}
+                                    </td>
+
+                                    <!-- High -->
+                                    <td class="text-muted">
+                                        {{ row.low }}
+                                    </td>
+
+                                    <td>
+                                        <a href="#" class="nav-link px-0 link-secondary" target-id="bundle-id-row-{{ forloop.counter }}"
+                                            id="bundle-view-action-{{ forloop.counter }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path></svg>
+                                        </a>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="dropdown">
+                                        <a href="#" class="nav-link px-0 link-secondary text-align-right"  tabindex="-1" data-bs-toggle="dropdown">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path><path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path><path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path></svg>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
+                                            <a class="dropdown-item" href="#" target-id="bundle-id-row-{{ forloop.counter }}" id="delete-bundle-action-{{ forloop.counter }}"
+                                                onclick="verifyAction(this, deleteBundle);">
+                                                <span class="dropdown-item-icon text-red">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                                                </span>
+                                                Delete
+                                            </a>
+                                        </div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endif %}
+</div>
+{% endblock tab_content %}
+
+{% block js_extended %}
+{{ block.super }}
+
+<script>
+    deleteBundle = function(element, event) {
+        bundleId = Utils.getValue(element.getAttribute("target-id"));
+        if (bundleId == null) {
+            console.log("Could not query Bundle-ID: " + element.getAttribute("target-id"))
+            return;
+        }
+
+        REST.delete("/api/v1/bundle/" + bundleId, function(data) {
+            if (data.success) {
+                // Reload should be done because all statistic values will change if
+                // a bundle has been removed.
+                location.reload();
+            }
+        });
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $("#bundles-table").DataTable();
+        $("#bundles-table_wrapper").addClass("mt-1 mr-1 ml-1 mb-1");
+
+        for (const index of Array({{ bundle_table_data|length }}).keys()) {
+            // VIEW PROJECT
+            linkActionElement = $("#bundle-view-action-" + (index+1));
+            linkElement = $("#bundle-view-link-" + (index+1));
+            selector = linkElement.attr('target-id');
+
+            var bundle_id = Utils.getValue(selector);
+            var bundle_link = "/web/bundle/" + bundle_id + "/overview";
+            linkActionElement.attr('href', bundle_link);
+            linkElement.attr('href', bundle_link);
+        }
+    });
+</script>
+
+{% endblock js_extended %}

@@ -15,8 +15,13 @@ from mastf.MASTF.models import (
     Host,
     Component
 )
-
-from mastf.MASTF.serializers import HostSerializer
+from mastf.MASTF.serializers import (
+    HostSerializer,
+    PermissionFindingSerializer,
+    VulnerabilitySerializer,
+    FindingSerializer,
+    ComponentSerializer
+)
 from mastf.MASTF.utils.enum import HostType
 
 class DetailsMixin:
@@ -56,6 +61,10 @@ class PermissionsMixin:
         """Returns all permissions mapped to a specific file."""
         return PermissionFinding.objects.filter(scan=scan, scan__file=file, scanner=scanner)
 
+    def res_permissions(self, scan: Scan, scanner: Scanner) -> list:
+        data = self.ctx_permissions(scan, scan.file, scanner)
+        return PermissionFindingSerializer(data, many=True).data
+
 
 class VulnerabilitiesMixin:
     """Add-on to generate vulnerabilites according to the selected file.
@@ -91,12 +100,16 @@ class VulnerabilitiesMixin:
                 template = FindingTemplate.objects.get(pk=template_pk)
                 cat = {'name': template.title if template else 'Untitled', 'count': category['tcount']}
 
-                cat['vuln_data'] = vuln.filter(snippet__language=lang['name'], template=template)
+                data = vuln.filter(snippet__language=lang['name'], template=template)
+                cat['vuln_data'] = VulnerabilitySerializer(data, many=True).data
                 categories.append(cat)
 
             lang['categories'] = categories
             data.append(lang)
         return data
+
+    def res_vulnerabilities(self, scan: Scan, scanner: Scanner) -> list:
+        return self.ctx_vulnerabilities(scan, scan.file, scanner)
 
 
 class FindingsMixins:
@@ -124,13 +137,17 @@ class FindingsMixins:
         for category in templates:
             pk = category['template']
             template = FindingTemplate.objects.get(pk=pk)
+            filtered = findings.filter(template=template)
             data.append({
                 'name': template.title if template else 'Untitled',
                 'count': category['tcount'],
-                'finding_data': findings.filter(template=template)
+                'finding_data': FindingSerializer(filtered, many=True).data
             })
 
         return data
+
+    def res_findings(self, scan: Scan, scanner: Scanner) -> list:
+        return self.ctx_findings(scan, scan.file, scanner)
 
 
 class HostsMixin:
@@ -161,3 +178,8 @@ class ComponentsMixin:
         data = namespace(stats=Component.stats(scan))
         data.elements = Component.objects.filter(scanner=scanner)
         return data
+
+    def res_hosts(self, scan: Scan, scanner: Scanner) -> list:
+        data = Component.objects.filter(scanner=scanner)
+        return ComponentSerializer(data, many=True).data
+

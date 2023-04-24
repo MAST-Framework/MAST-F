@@ -31,7 +31,7 @@ from mastf.MASTF.forms import ScanForm
 from mastf.MASTF.rest.permissions import ReadOnly, CanEditScan
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.utils.upload import handle_scan_file_upload
-from mastf.MASTF.workers import tasks
+from mastf.MASTF import tasks
 
 from .base import (
     APIViewBase,

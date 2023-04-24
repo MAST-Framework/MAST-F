@@ -14,6 +14,7 @@ __all__ = [
     'Project',
     'File',
     'Account',
+    'Bundle'
 ]
 
 class namespace(dict):
@@ -26,7 +27,12 @@ class namespace(dict):
     >>> var.foo
     'bar'
 
-    Variables can still be defined after the object has been created.
+    Variables can still be defined after the object has been created:
+
+    >>> var = namespace()
+    >>> var.bar = 2
+    >>> var
+    {"bar": 2}
     """
 
     def __init__(self, **kwargs):
@@ -75,6 +81,7 @@ class Team(models.Model):
     def get(owner: User, name: str) -> 'Team':
         query = models.Q(owner=owner, name=name) | models.Q(visibility=Visibility.PUBLIC, name=name)
         return Team.objects.filter(query).first()
+
 
 class Project(models.Model):
     """Database model for mobile application projects.
@@ -204,3 +211,40 @@ class File(models.Model):
 class Account(models.Model): # unused
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, null=True)
+
+
+class Bundle(models.Model):
+    bundle_id = models.UUIDField(primary_key=True)
+    name = models.CharField(max_length=256, null=False)
+    tags = models.TextField(blank=True)
+    risk_level = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=32)
+
+    projects = models.ManyToManyField(Project, related_name='bundles')
+
+    @staticmethod
+    def stats(owner: User) -> namespace:
+        bundles = Bundle.get_by_owner(owner)
+
+        data = namespace(count=len(bundles))
+        data.count = len(bundles)
+        data.risk_high = len(bundles.filter(risk_level=Severity.HIGH))
+        data.risk_medium = len(bundles.filter(risk_level=Severity.MEDIUM))
+        data.ids = [x.bundle_id for x in bundles]
+        return data
+
+    @staticmethod
+    def get_by_owner(owner: User, queryset: models.QuerySet = None) -> models.QuerySet:
+        # This query attempts to collect all bundles that can be modified by
+        # the given owner. That includes bundles that are assigned to a team
+        # of which the provided user is a member; bundles that are public and
+        # bundles that are maintained by the provided owner.
+        # @ImplNote: Projects which are invisible by default may be included
+        # within this query. As bundles try to visualize data of the assigned
+        # projects, private projects may be shared throughout a team.
+        query = (models.Q(projects__owner=owner) | models.Q(projects__team__users__pk=owner.pk)
+            | models.Q(projects__visibility=Visibility.PUBLIC, projects__team=None)
+        )
+        if not queryset:
+            queryset = Bundle.objects.all()
+
+        return queryset.filter(query)

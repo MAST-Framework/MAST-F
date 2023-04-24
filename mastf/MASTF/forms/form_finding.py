@@ -50,7 +50,7 @@ class VulnerabilityForm(AbstractFindingForm):
     state = forms.CharField(max_length=256, required=True)
 
 class ComponentForm(forms.Form):
-    scanner = ModelField(Scanner, required=True, permissions=[CanEditScanAsField])
+    scanner = ModelField(Scanner, required=True)
     name = forms.CharField(max_length=2048, required=True)
     is_protected = forms.BooleanField(required=False)
     is_exported = forms.BooleanField(required=False)

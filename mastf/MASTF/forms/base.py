@@ -1,18 +1,17 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from rest_framework.permissions import BasePermission, exceptions
-
+from mastf.MASTF.models import Project
 from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 
 __all__ = [
     'ModelField', 'RegistrationForm', 'ProjectCreationForm',
-    'AppPermissionForm', 'TeamForm', 'ManyToManyField'
+    'AppPermissionForm', 'TeamForm', 'ManyToManyField', 'BundleForm'
 ]
 
+
 class ModelField(forms.CharField):
-    """To apply foreign-key references, just use the ``ModelField`` declared in ``base.py`` in the *forms*
-    directory:
+    """To apply foreign-key references, just use the ``ModelField``.
 
     >>> class ExampleForm(forms.Form):
     ...    user = ModelField(User)
@@ -24,50 +23,106 @@ class ModelField(forms.CharField):
     ...     user = cleaned['user']
     ...     print(user.username)
 
+    :param model: The Django model class
+    :type model: class<? extends ``Model``>
+    :param field_name: The field name to query
+    :type field_name: str
+    :param mapper: A conversion function to optionally convert input key
+    :type mapper: Callable[T, [str]]
     """
 
-    def __init__(self, model, field_name='pk', permissions: list = None, **kwargs) -> None:
+    def __init__(self, model, field_name='pk', mapper=None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.model = model
         self.field_name = field_name
-        self.permission_classes = permissions or []
+        self.converter = mapper
 
     def clean(self, value) -> object:
-        value = super().clean(value)
+        raw_value = super().clean(value)
+        value = self.converter(raw_value) if self.converter else raw_value
         queryset = self.model.objects.filter(**{self.field_name: value})
 
         if not queryset.exists():
             raise forms.ValidationError(
                 "This field must be a reference to an existing model", code="required")
 
-        instance = queryset.first()
-        if len(self.permission_classes) == 0:
-            return instance
-
-        for permission_class in self.permission_classes:
-            if issubclass(permission_class, BasePermission):
-                permission = permission_class()
-                if not permission.has_object_permission(None, None, instance):
-                    raise exceptions.ValidationError("Insufficient permission rights")
-
-        return instance
+        return queryset.first()
 
 
 class ManyToManyField(forms.CharField):
-    def __init__(self, model, field_name='pk', **kwargs) -> None:
+    """Implementation of a Many-To-Many relation for Django forms.
+
+    This class aims to enhance the capabilities of Django forms by
+    providing a way to include Many-To-Many relationships. This
+    field is represented by a string that cancatenates the primary
+    keys of the referenced objects.
+
+    This field may be used within a form class to specify a Many-To-Many
+    relationship:
+
+    .. code-block:: python
+        :linenos:
+
+        class AuthorForm(forms.Form):
+            books = ManyToManyField(Book, mapper=int, required=False)
+            name = forms.CharField(max_length=50, required=True)
+
+    The cleaned data of the previously defined form would contain all
+    ``Book`` objects that have been referenced in the request. Note that
+    we have to provide a mapping function to convert the string values
+    to integer primary keys.
+
+    For instance, the following code uses the form to retrieve all
+    ``Book`` objects that are needed:
+
+    .. code-block:: python
+        :linenos:
+
+        POST = {"name": "Foo", "books": "1,2,3,4"}
+        form = AuthorForm(data=POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            # The returned value is a list storing all referenced
+            # Book objects.
+            books = data.pop('books')
+
+
+    :param model: The Django model class
+    :type model: class<? extends ``Model``>
+    :param delimiter: The string delimiter to use when splitting the
+                      input string
+    :type delimiter: str
+    :param field_name: The field name to query
+    :type field_name: str
+    :param mapper: A conversion function to optionally convert input keys
+    :type mapper: Callable[T, [str]]
+    """
+
+    def __init__(self, model, field_name='pk', delimiter: str = ',',
+                 mapper=None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.model = model
+        self.delimiter = delimiter or ','
         self.field_name = field_name
+        self.converter = mapper
 
     def clean(self, value: str) -> list:
-        values = value.split(',')
+        values = value.split(self.delimiter)
         elements = []
-        for objid in values:
+        for raw_id in values:
+            objid = self.convert_id(raw_id)
             query = self.model.objects.filter(**{self.field_name: objid})
             if query.exists():
-                elements.append(query.first())
+                instance = query.first()
+                elements.append(instance)
 
         return elements
+
+    def convert_id(self, raw_id):
+        """Converts the given raw id - by default, it returns the raw id"""
+        if not self.converter:
+            return raw_id
+        return self.converter(raw_id)
 
 
 class RegistrationForm(forms.Form):
@@ -114,3 +169,9 @@ class TeamForm(forms.Form):
     owner = ModelField(User, field_name='username', max_length=256)
     users = forms.CharField()
 
+
+class BundleForm(forms.Form):
+    name = forms.CharField(max_length=256, required=True)
+    tags = forms.CharField(required=False)
+    risk_level = forms.CharField(max_length=32, required=False)
+    projects = ManyToManyField(Project, required=False)

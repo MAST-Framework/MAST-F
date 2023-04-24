@@ -9,7 +9,8 @@ from mastf.MASTF.models import (
     Finding,
     Vulnerability,
     Snippet,
-    Component
+    Component,
+    PermissionFinding
 )
 
 __all__ = [
@@ -21,7 +22,8 @@ __all__ = [
     'PackageSerializer',
     'PackageVulnerabilitySerializer',
     'DependencySerializer',
-    'ComponentSerializer'
+    'ComponentSerializer',
+    'PermissionFindingSerializer'
 ]
 
 
@@ -34,6 +36,14 @@ class TemplateSerializer(serializers.ModelSerializer):
 class AppPermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppPermission
+        fields = '__all__'
+
+
+class PermissionFindingSerializer(serializers.Serializer):
+    permission = AppPermissionSerializer(many=False)
+
+    class Meta:
+        model = PermissionFinding
         fields = '__all__'
 
 

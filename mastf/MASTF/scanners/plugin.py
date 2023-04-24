@@ -17,23 +17,22 @@ class Extension(StringEnum):
     HOSTS = "hosts"
     VULNERABILITIES = "vulnerabilities"
     FINDINGS = "findings"
-
-    # Proposed:
     COMPONENTS = "components"
     EXPLORER = "explorer"
 
 class ScannerPlugin(metaclass=ABCMeta):
 
-    name: str = None
+    name = None
     """The name (slug) of this scanner type (should contain no whitespace characters)"""
 
-    help: str = None
+    help = None
     """The help that will be displayed on the WebUI"""
 
-    title: str = None
+    title = None
     """Actual name (more details than ``name``)"""
 
     extensions: list = []
+    """The list of extensions this scanner supports"""
 
     task = None
     """The task to perform asynchronously"""

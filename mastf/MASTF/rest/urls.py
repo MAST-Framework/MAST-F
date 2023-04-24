@@ -18,8 +18,16 @@ urlpatterns = [
         path(r"<uuid:project_uuid>/chart/<str:name>", views.ProjectChartView.as_view()),
     ])),
 
+    path(r"bundle/", include([
+        path(r"<uuid:pk>", views.BundleView.as_view()),
+        path(r"create", views.BundleCreationView.as_view()),
+        path(r"all", views.BundleListView.as_view()),
+    ])),
+
+
     # Note that we're using the custom converter defined in
-    # mastf/MASTF/converters.py
+    # mastf/MASTF/converters.py. The naming can be taken
+    # from converters#listconverters().
     path(r"finding/", include([
         path(r"create", views.FindingCreationView.as_view()),
         path(r"<findingid:finding_id>", views.FindingView.as_view()),

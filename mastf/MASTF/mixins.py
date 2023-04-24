@@ -84,7 +84,8 @@ class VulnContextMixin:
             self.get_vuln_context(vuln, "High", "red"),
             self.get_vuln_context(vuln, "Medium", "orange"),
             self.get_vuln_context(vuln, "Low", "yellow"),
-            self.get_vuln_context(vuln, "Other", "secondary")
+            self.get_vuln_context(vuln, "Other", "secondary"),
+            self.get_vuln_context(vuln, "None", "secondary-lt")
         ]
 
     def get_vuln_context(self, stats: dict, name: str, bg: str) -> dict:
