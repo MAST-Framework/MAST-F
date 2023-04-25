@@ -14,6 +14,8 @@ from mastf.MASTF.models import (
     Bundle
 )
 from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
+
+from mastf.MASTF.utils.enum import Platform, PackageType, ProtectionLevel
 # This file stores additional views that will be used to
 # display the web frontend
 
@@ -123,9 +125,14 @@ class PluginsView(ContextMixinBase, TemplateAPIView):
             subpage = self.request.GET["subpage"]
             if subpage == "packages":
                 context['active'] = 'tabs-packages'
+                context['platforms'] = list(Platform)
+                context['type'] = list(PackageType)
             elif subpage == "hosts":
                 context['active'] = 'tabs-hosts'
             else:
                 context['active'] = 'tabs-permissions'
-        else: context['active'] = 'tabs-permissions'
+                context['protection_levels'] = list(ProtectionLevel)
+        else:
+            context['active'] = 'tabs-permissions'
+            context['protection_levels'] = list(ProtectionLevel)
         return context

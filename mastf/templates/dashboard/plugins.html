@@ -63,7 +63,7 @@ MASTF | Plugins
                 </svg>
                 Report Templates
               </a>
-              <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+              <a href="{% url 'Plug-Ins'%}?subpage=packages" class="list-group-item list-group-item-action d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-report-analytics me-2"
                   width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -191,22 +191,6 @@ MASTF | Plugins
 {% if active == 'tabs-permissions' %}
 <!--JS for permisson modals-->
 <script>
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-
 
   async function createPermission() {
     const name = document.getElementById("add-permission-name").value;
@@ -259,7 +243,7 @@ MASTF | Plugins
       data[this.name] = this.value;
     });
     console.log(data);
-    REST.postOrpatch(url, "patch", JSON.stringify(data), console.log("200 Ok"));
+    REST.patch(url, JSON.stringify(data), console.log("200 Ok"));
     location.reload();
   }
 </script>
@@ -276,7 +260,7 @@ MASTF | Plugins
     const description = document.getElementById("add-host-description").value;
 
     const data = { "domain_name": domainName, "ip_adress": ip, "owner": owner, "description": description };
-    REST.postOrpatch("{% url 'HostCreate' %}", "POST", JSON.stringify(data), location.reload());
+    REST.post("{% url 'HostCreate' %}", JSON.stringify(data), location.reload());
   }
   async function loadHostToEditModal(uuid) {
     const host = await getHost(uuid);
@@ -295,7 +279,7 @@ MASTF | Plugins
       data[this.name] = this.value;
     });
     console.log(data);
-    REST.postOrpatch(url, "patch", JSON.stringify(data), console.log("200 Ok"));
+    REST.patch(url, JSON.stringify(data), console.log("200 Ok"));
     location.reload();
   }
 
@@ -315,7 +299,7 @@ MASTF | Plugins
     const platform = document.getElementById("add-package-platform").value;
 
     const data = { "name": name, "artifact_id": artifact_id, "group_id": group_id, "type": type, "platform": platform };
-    REST.postOrpatch("{% url 'PackageCreationView' %}", "POST", JSON.stringify(data), location.reload());
+    REST.post("{% url 'PackageCreationView' %}", JSON.stringify(data), location.reload());
   }
   async function loadPackageToEditModal(uuid) {
     const pk = await getPackage(uuid);
@@ -335,7 +319,7 @@ MASTF | Plugins
       data[this.name] = this.value;
     });
     console.log(data);
-    REST.postOrpatch(url, "patch", JSON.stringify(data), console.log("200 Ok"));
+    REST.patch(url, JSON.stringify(data), console.log("200 Ok"));
     location.reload();
   }
 </script>
@@ -587,8 +571,11 @@ MASTF | Plugins
           </div>
           <div class="mb-3">
             <label class="form-label required">Protection Level</label>
-            <input id="add-permission-protection_level" type="text" class="form-control" name="protection_level"
-              placeholder="protection_level" minlength="3" maxlength="256" required>
+              <select class="form-select" id="add-permission-protection_level">
+                {% for pl in protection_levels %}
+                <option value="{{ pl }}">{{ pl }}</option>
+                {% endfor %}
+              </select>
           </div>
           <div class="mb-3">
             <label class="form-label required">Group</label>
@@ -664,13 +651,19 @@ MASTF | Plugins
         </div>
         <div class="mb-4">
           <label class="form-label required">Type/Source</label>
-          <input id="add-package-type" class="form-content" placeholder="Github, Cordova,..." required minlength="3"
-            maxlength="256" type="text">
+          <select class="form-select" id="add-package-type">
+            {% for t in type %}
+            <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="mb-4">
           <label class="form-label required">Platform</label>
-          <input id="add-package-platform" class="form-content" placeholder="android, ios" required minlength="3"
-            maxlength="256" type="text">
+            <select class="form-select" id="add-package-platform">
+              {% for p in platforms %}
+              <option value="{{ p }}">{{ p }}</option>
+              {% endfor %}
+            </select>
         </div>
       </div>
       <div class="modal-footer">
@@ -822,19 +815,11 @@ MASTF | Plugins
     const uuid = document.getElementById("edit-permission-permission_uuid").value;
     const url = "{% url 'AppPermissionView' '04a6cad2-59b0-4a11-9694-9d3288ba55ed' %}".replace('04a6cad2-59b0-4a11-9694-9d3288ba55ed', uuid);
 
-    // REST.delete("/api/v1/app-permission/" + uuid, function(data) {
-    //    if (data.success) {
-    //        location.reload();
-    //    }
-    // });
-    await fetch(url, {
-      method: "DELETE",
-      credentials: "same-origin",
-      headers: {
-        'X-CSRFToken': getCookie("csrftoken")
-      }
-    });
-    location.reload();
+     REST.delete(url, function(data) {
+        if (data.success) {
+            location.reload();
+        }
+     });
   }
 
 </script>
@@ -890,31 +875,11 @@ MASTF | Plugins
   async function deleteHost() {
     const uuid = document.getElementById("edit-host-host_uuid").value;
     const url = "{% url 'HostView' '840d47d7-2c1c-4cfc-bc9a-8020633a23b3' %}".replace('840d47d7-2c1c-4cfc-bc9a-8020633a23b3', uuid);
-    await fetch(url, {
-      method: "DELETE",
-      credentials: "same-origin",
-      headers: {
-        'X-CSRFToken': getCookie("csrftoken")
+    REST.delete(url, function(data) {
+      if (data.success) {
+          location.reload();
       }
-    });
-    location.reload();
-  }
-</script>
-<script>
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
+   });
   }
 </script>
 
@@ -972,31 +937,12 @@ MASTF | Plugins
   async function deletePackage() {
     const uuid = document.getElementById("edit-package-package_uuid").value;
     const url = "{% url 'PackageView' '75874668-6dbd-4266-af33-2df8c3a1e5dc' %}".replace('75874668-6dbd-4266-af33-2df8c3a1e5dc', uuid);
-    await fetch(url, {
-      method: "DELETE",
-      credentials: "same-origin",
-      headers: {
-        'X-CSRFToken': getCookie("csrftoken")
+    REST.delete(url, function(data) {
+      if (data.success) {
+          location.reload();
       }
-    });
+   });
     location.reload();
-  }
-</script>
-<script>
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
   }
 </script>
 
