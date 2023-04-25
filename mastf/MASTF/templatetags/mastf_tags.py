@@ -1,4 +1,5 @@
 from django import template
+from django.urls import get_resolver
 
 from mastf.MASTF.models import AbstractBaseFinding, Vulnerability
 from mastf.MASTF.mixins import VulnContextMixin

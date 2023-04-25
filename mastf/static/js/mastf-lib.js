@@ -385,6 +385,73 @@ Steps = {
 
 }
 
+class Tags {
+
+    constructor(prefix, areaElement, inputElement, options) {
+        this.prefix = prefix
+        this.inputElement = inputElement
+        this.areaElement = areaElement
+        this.count = 0
+
+        var options = options || {}
+        this.keys = options.keys || [13, 32, 44]
+        this.buildKBD = options.onCreateKbd || this.onCreateKbd
+
+        var ref = this;
+        $(inputElement).keydown(function(event) {
+            if (ref.keys.includes(event.keyCode)) {
+                event.preventDefault();
+                ref.create();
+            }
+            else if (event.keyCode == 8) {
+                let input = $(ref.inputElement)
+                var text = input.val();
+
+                if (text.trim().length == 0) {
+                    event.preventDefault();
+                    let id = `${ref.prefix}-${ref.count}`
+                    let element = $('#' + id);
+
+                    if (element != null) {
+                        ref.count--;
+                        element.remove();
+                    }
+                }
+            }
+        })
+    }
+
+    onCreateKbd(text) {
+        console.log(this);
+        this.count++;
+        const kbd = document.createElement("kbd");
+        kbd.id = `${this.prefix}-${this.count}`;
+        kbd.innerHTML = text;
+        kbd.style.marginRight = "3px";
+        kbd.style.cursor = "no-drop";
+        return kbd;
+    }
+
+    create() {
+        let input = $(this.inputElement)
+        var text = input.val().trim();
+        if (text.length == 0) {
+            return
+        }
+
+        var kbdHTML = this.buildKBD(text);
+        this.areaElement.appendChild(kbdHTML);
+        input.val("");
+
+        let self = this;
+        $(kbdHTML).on("click", function(event) {
+            self.count--;
+            $(event.target).remove();
+        });
+    }
+
+}
+
 class ScanTaskProgressBar {
 
     static create(backendUrl, options) {

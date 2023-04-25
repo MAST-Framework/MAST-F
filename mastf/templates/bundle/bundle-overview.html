@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+<!-- Title -->
+{% block title %}
+MAST-F Bundle | {{ bundle.name }}
+{% endblock title %}
+
+{% block css_extended %}
+<link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
+{% endblock css_extended %}
+
+{% block page_header %}
+<div class="page-header">
+<div class="container-fluid">
+    <div class="row align-items-center">
+        <div class="row align-items-center">
+            <div class="col">
+              <h2 class="page-title">
+                  {{ bundle.name }}
+                </h2>
+                <div class="text-muted">
+                  <ul class="list-inline list-inline-dots mb-0" >
+                      <li class="list-inline-item">
+                          Bundle
+                      </li>
+                      <li class="list-inline-item">
+                          {{ bundle.bundle_id }}
+                      </li>
+                      <li class="list-inline-item">
+                          <span class="badge {% if not bundle.risk_level %}bg-secondary-lt \
+                              {% elif bundle.risk_level|lower == "high" %}bg-red-lt \
+                              {% elif bundle.risk_level|lower == "medium"%}bg-orange-lt\
+                              {% elif bundle.risk_level|lower == "low" %}bg-yellow-lt
+                              {% else %}bg-secondary-lt{% endif %}">
+                          {{ bundle.risk_level }}
+                          </span>
+                      </li>
+                  </ul>
+                </div>
+            </div>
+            <div class="col-auto ms-auto">
+              <div class="btn-list">
+                <a href="#" class="nav-link text-reset d-none d-sm-inline-block"
+                    style="align-self: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-settings aligh-center" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+                        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
+                     </svg>
+                  </a>
+                <a href="#" class="btn btn-primary d-none d-sm-inline-block">
+                  Assign Projects
+                </a>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <ul class="nav nav-bordered mt-3" data-bs-toggle="tabs">
+                <li class="nav-item">
+                    <a href="{% url 'Bundle-Overview' bundle_id=bundle.bundle_id %}" class="nav-link {% if active == "tabs-overview" %}active{% endif %}">
+                        Overview
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Bundle-Projects' bundle_id=bundle.bundle_id  %}" class="nav-link {% if active == "tabs-projects" %}active{% endif %}">
+                        Projects
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock page_header %}
+
+{% block page_body %}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="tab-content">
+            <div class="tab-pane {% if active == "tabs-overview" %}active show{% endif %}" id="tabs-overview">
+                {% if active == "tabs-overview" %}
+                <div class="row row-deck">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="subheader mb-3">Projects per Risk Level</p>
+                                <div class="progress progress-separated mb-3">
+                                    {% if vuln_data %}
+                                        {% for category in vuln_data %}
+                                        <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="row">
+                                    {% for category in vuln_data %}
+                                    <div class="col-auto d-flex align-items-center pe-2">
+                                        <span class="legend me-2 {{ category.color }}"></span>
+                                        <span>{{ category.name }}</span>
+                                        <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">{{ category.count }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="subheader mb-3">Identified Vulnerabilities</p>
+                                <div class="progress progress-separated mb-3">
+                                    {% if vuln_data %}
+                                        {% for category in vuln_data %}
+                                        <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="row">
+                                    {% for category in vuln_data %}
+                                    <div class="col-auto d-flex align-items-center pe-2">
+                                        <span class="legend me-2 {{ category.color }}"></span>
+                                        <span>{{ category.name }}</span>
+                                        <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">{{ category.count }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="subheader mb-3">top vulnerable projects</p>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="text-red">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-1-filled" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm.994 5.886c-.083 -.777 -1.008 -1.16 -1.617 -.67l-.084 .077l-2 2l-.083 .094a1 1 0 0 0 0 1.226l.083 .094l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l.293 -.293v5.586l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-8l-.006 -.114z" stroke-width="0" fill="currentColor"></path>
+                                                </svg>
+                                        </span>
+                                        Project#1
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="text-red">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-2-filled" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm1 5h-3l-.117 .007a1 1 0 0 0 0 1.986l.117 .007h3v2h-2l-.15 .005a2 2 0 0 0 -1.844 1.838l-.006 .157v2l.005 .15a2 2 0 0 0 1.838 1.844l.157 .006h3l.117 -.007a1 1 0 0 0 0 -1.986l-.117 -.007h-3v-2h2l.15 -.005a2 2 0 0 0 1.844 -1.838l.006 -.157v-2l-.005 -.15a2 2 0 0 0 -1.838 -1.844l-.157 -.006z" stroke-width="0" fill="currentColor"></path>
+                                             </svg>
+                                        </span>
+                                        Project#2
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="text-orange">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-3-filled" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm1 5h-2l-.15 .005a2 2 0 0 0 -1.85 1.995a1 1 0 0 0 1.974 .23l.02 -.113l.006 -.117h2v2h-2l-.133 .007c-1.111 .12 -1.154 1.73 -.128 1.965l.128 .021l.133 .007h2v2h-2l-.007 -.117a1 1 0 0 0 -1.993 .117a2 2 0 0 0 1.85 1.995l.15 .005h2l.15 -.005a2 2 0 0 0 1.844 -1.838l.006 -.157v-2l-.005 -.15a1.988 1.988 0 0 0 -.17 -.667l-.075 -.152l-.019 -.032l.02 -.03a2.01 2.01 0 0 0 .242 -.795l.007 -.174v-2l-.005 -.15a2 2 0 0 0 -1.838 -1.844l-.157 -.006z" stroke-width="0" fill="currentColor"></path>
+                                             </svg>
+                                        </span>
+                                        Project#3
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <div id="chart-aging-report"></div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+{% block js_extended %}
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        {% if active == 'tabs-overview' %}
+        REST.doGet("{% url 'Bundle-Chart' pk=bundle.bundle_id name='aging-report' %}", function(data) {
+            if (data.success) {
+                var chart = new ApexCharts(document.querySelector("#chart-aging-report"), {
+                    chart: {
+                      type: 'bar',
+                      height: 400
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '55%',
+                            endingShape: 'rounded'
+                        }
+                    },
+                    stroke: {
+                        show: true,
+                        width: 2,
+                        colors: ['transparent']
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    series: data.series,
+                    colors: [
+                        "#d63939", "#f76707", "#f59f00"
+                    ],
+                    xaxis: {
+                      categories: data.categories,
+                    }
+                  });
+                  chart.render();
+            }
+        });
+        {% endif %}
+
+
+    });
+
+  </script>
+{% endblock %}

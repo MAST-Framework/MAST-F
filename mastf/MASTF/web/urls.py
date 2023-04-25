@@ -33,7 +33,11 @@ urlpatterns = [
         path(r"packages", views.UserProjectPackagesView.as_view(), name='Project-Packages'),
         path(r"export", views.UserProjectDetailsView.as_view(), name='Project-Export'),
         path(r"settings", views.UserProjectDetailsView.as_view(), name='Project-Settings'),
+    ])),
 
+    path("bundles/<uuid:bundle_id>/", include([
+        path(r"overview", views.BundleDetailsView.as_view(), name='Bundle-Overview'),
+        path(r"projects", views.BundleDetailsView.as_view(), name='Bundle-Projects'),
     ])),
 
     path(r"results/<uuid:project_uuid>/<str:name>/", include([

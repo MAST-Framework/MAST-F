@@ -19,10 +19,10 @@
       {% if messages %}
         {% for message in messages %}
         <p class="text-center">
-          <span class="badge {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-lt{% else %}bg-azure-lt{% endif %}">
+          <span class="badge text-wrap {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-lt{% else %}bg-azure-lt{% endif %}">
           {{ message }}
           </span>
-        </p>   
+        </p>
         {% endfor %}
       {% endif %}
       <form action="{% url 'User-Login' %}" method="POST" id="login-form">
@@ -86,7 +86,7 @@
             else {
                 element.attr('type', 'text');
             }
-            
+
         });
     });
 

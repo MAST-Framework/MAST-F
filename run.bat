@@ -9,7 +9,7 @@ SET conf=127.0.0.1:8000
 set venv=.\venv\Scripts\activate
 set server=.\venv\Scripts\waitress-serve.exe
 if exist %server% (
-  echo Running MobSF on %conf%
+  echo Running MASTF on %conf%
   %venv%
   %server% --listen=%conf% --threads=10 --channel-timeout=3600 mastf.MASTF.wsgi:application
 ) else (

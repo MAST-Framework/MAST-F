@@ -100,8 +100,8 @@ class VulnerabilitiesMixin:
                 template = FindingTemplate.objects.get(pk=template_pk)
                 cat = {'name': template.title if template else 'Untitled', 'count': category['tcount']}
 
-                data = vuln.filter(snippet__language=lang['name'], template=template)
-                cat['vuln_data'] = VulnerabilitySerializer(data, many=True).data
+                vuln_data = vuln.filter(snippet__language=lang['name'], template=template)
+                cat['vuln_data'] = VulnerabilitySerializer(vuln_data, many=True).data
                 categories.append(cat)
 
             lang['categories'] = categories

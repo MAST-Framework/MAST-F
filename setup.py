@@ -60,7 +60,7 @@ def setup_hosts():
         latitude = 20.5 + i
 
         host = Host(pk=f"hst_{uuid4()}", scan=s, scanner=sn, classification=htype,
-                    domain=domain, protocol=protocol, longitude=longitude,
+                    protocol=protocol, longitude=longitude,
                     latitude=latitude)
 
         host.save()

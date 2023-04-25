@@ -76,8 +76,12 @@ class IsBundleMember(BasePermission):
     ref = CanEditProject()
 
     def has_object_permission(self, request, view, obj):
-        for project in obj.projects:
+        projects = obj.projects.all()
+        for project in projects:
             if not self.ref.has_object_permission(request, view, project):
                 return False
+
+        if len(projects) == 0:
+            return request.user == obj.owner
 
         return True

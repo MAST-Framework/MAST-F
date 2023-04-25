@@ -50,6 +50,7 @@ class Platform(StringEnum):
     IOS = "iOS"
     UNKNOWN = "Undefined"
 
+
 class PackageType(StringEnum):
     GITHUB = "Github"
     DART = "Dart"

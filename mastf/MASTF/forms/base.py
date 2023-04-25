@@ -107,6 +107,9 @@ class ManyToManyField(forms.CharField):
         self.converter = mapper
 
     def clean(self, value: str) -> list:
+        if not value:
+            return []
+
         values = value.split(self.delimiter)
         elements = []
         for raw_id in values:

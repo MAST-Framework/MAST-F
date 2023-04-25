@@ -101,7 +101,7 @@ class BundlesView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
         level_data = namespace(count=0)
         for data in levels:
             level_data.count = level_data.count + data['count']
-            level_data[data['projects__risk_level'].lower()] = data['count']
+            level_data[str(data['projects__risk_level']).lower()] = data['count']
         return level_data
 
     def _get_bundle_context(self, bundle: Bundle) -> namespace:

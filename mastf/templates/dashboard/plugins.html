@@ -821,12 +821,7 @@ MASTF | Plugins
   async function deletePermission() {
     const uuid = document.getElementById("edit-permission-permission_uuid").value;
     const url = "{% url 'AppPermissionView' '04a6cad2-59b0-4a11-9694-9d3288ba55ed' %}".replace('04a6cad2-59b0-4a11-9694-9d3288ba55ed', uuid);
-
-    // REST.delete("/api/v1/app-permission/" + uuid, function(data) {
-    //    if (data.success) {
-    //        location.reload();
-    //    }
-    // });
+    // {% urlplain 'AppPermissionView' %}
     await fetch(url, {
       method: "DELETE",
       credentials: "same-origin",

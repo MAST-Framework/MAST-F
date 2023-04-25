@@ -39,7 +39,11 @@ MAST-F Project | {{ project.name }}
                 <div class="text-muted">
                   <ul class="list-inline list-inline-dots mb-0" >
                       <li class="list-inline-item">
+                          {% if project.team %}
+                          Team-Project
+                          {% else %}
                           Project
+                          {% endif %}
                       </li>
                       <li class="list-inline-item">
                           {{ project.project_uuid }}
@@ -126,7 +130,7 @@ MAST-F Project | {{ project.name }}
                         <!-- Note that each tab content will be loaded on the right URL-->
                         <div class="tab-pane {% if active == "tabs-overview" %}active show{% endif %}" id="tabs-overview">
                             {% if active == "tabs-overview" %}
-                            <div class="row row-cards">
+                            <div class="row row-deck">
                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="card-body">
@@ -182,7 +186,7 @@ MAST-F Project | {{ project.name }}
 
                             </div>
 
-                            <div class="row row-cards">
+                            <div class="row row-deck">
                                 {% if is_active %}
                                 <div class="hr-text mb-3">Progress</div>
 
@@ -1152,9 +1156,6 @@ MAST-F Project | {{ project.name }}
                 animations: {
                     enabled: false
                 },
-            },
-            fill: {
-                opacity: 1,
             },
             series: series,
             labels: labels,

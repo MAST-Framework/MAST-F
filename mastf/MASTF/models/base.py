@@ -217,6 +217,7 @@ class Bundle(models.Model):
     bundle_id = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=256, null=False)
     tags = models.TextField(blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     risk_level = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=32)
 
     projects = models.ManyToManyField(Project, related_name='bundles')
@@ -243,6 +244,7 @@ class Bundle(models.Model):
         # projects, private projects may be shared throughout a team.
         query = (models.Q(projects__owner=owner) | models.Q(projects__team__users__pk=owner.pk)
             | models.Q(projects__visibility=Visibility.PUBLIC, projects__team=None)
+            | models.Q(owner=owner)
         )
         if not queryset:
             queryset = Bundle.objects.all()
