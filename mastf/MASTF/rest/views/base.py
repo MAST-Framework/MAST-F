@@ -24,28 +24,32 @@ class GetObjectMixin:
     lookup_field: str = 'pk'
     """The field that should be used within object lookup"""
 
-    def get_object(self):
+    def get_object(self, model=None, field=None, check=True):
         """Returns a project mapped to a given primary key
 
         :return: the instance of the desired model
         :rtype: ? extends Model
         """
-        assert self.model is not None, (
+        model = model or self.model
+        field = field or self.lookup_field
+
+        assert model is not None, (
             "The stored model must not be null"
         )
 
-        assert self.lookup_field is not None, (
+        assert field is not None, (
             "The field used for lookup must not be null"
         )
 
-        assert self.lookup_field in self.kwargs, (
+        assert field in self.kwargs, (
             "Invalid lookup field - not included in args"
         )
 
         instance = get_object_or_404(
-            self.model.objects.all(), **{self.lookup_field: self.kwargs[self.lookup_field]}
+            model.objects.all(), **{field: self.kwargs[field]}
         )
-        self.check_object_permissions(self.request, instance)
+        if check:
+            self.check_object_permissions(self.request, instance)
         return instance
 
 
@@ -113,6 +117,7 @@ class APIViewBase(GetObjectMixin, APIView):
 
         except Exception as err:
             messages.error(self.request, str(err), str(err.__class__.__name__))
+            logger.exception(f"({self.__class__.__name__}): {err.__class__.__name__}")
             return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
 
         logger.debug('(%s) Instance-Update: %s', self.__class__.__name__, instance)

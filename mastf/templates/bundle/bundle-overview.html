@@ -29,10 +29,12 @@ MAST-F Bundle | {{ bundle.name }}
                           {{ bundle.bundle_id }}
                       </li>
                       <li class="list-inline-item">
-                          <span class="badge {% if not bundle.risk_level %}bg-secondary-lt \
-                              {% elif bundle.risk_level|lower == "high" %}bg-red-lt \
-                              {% elif bundle.risk_level|lower == "medium"%}bg-orange-lt\
+                          <span class="badge {% if not bundle.risk_level %}bg-secondary-lt
+                              {% elif bundle.risk_level|lower == "critical" %}bg-pink-lt
+                              {% elif bundle.risk_level|lower == "high" %}bg-red-lt
+                              {% elif bundle.risk_level|lower == "medium"%}bg-orange-lt
                               {% elif bundle.risk_level|lower == "low" %}bg-yellow-lt
+                              {% elif bundle.risk_level|lower == "secure" %}bg-green-lt
                               {% else %}bg-secondary-lt{% endif %}">
                           {{ bundle.risk_level }}
                           </span>
@@ -43,14 +45,15 @@ MAST-F Bundle | {{ bundle.name }}
             <div class="col-auto ms-auto">
               <div class="btn-list">
                 <a href="#" class="nav-link text-reset d-none d-sm-inline-block"
-                    style="align-self: center;">
+                    style="align-self: center;" data-bs-toggle="modal" data-bs-target="#modal-edit-bundle">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-settings aligh-center" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
                         <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"></path>
                      </svg>
                   </a>
-                <a href="#" class="btn btn-primary d-none d-sm-inline-block">
+                <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
+                    data-bs-target="#modal-assign-projects">
                   Assign Projects
                 </a>
               </div>
@@ -89,7 +92,7 @@ MAST-F Bundle | {{ bundle.name }}
                             <div class="card-body">
                                 <p class="subheader mb-3">Projects per Risk Level</p>
                                 <div class="progress progress-separated mb-3">
-                                    {% if vuln_data %}
+                                    {% if risk_data %}
                                         {% for category in vuln_data %}
                                         <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
                                         {% endfor %}
@@ -134,6 +137,7 @@ MAST-F Bundle | {{ bundle.name }}
                         <div class="card">
                             <div class="card-body">
                                 <p class="subheader mb-3">top vulnerable projects</p>
+                                {% if top_vuln_first %}
                                 <div class="row">
                                     <div class="col">
                                         <span class="text-red">
@@ -142,9 +146,25 @@ MAST-F Bundle | {{ bundle.name }}
                                                 <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm.994 5.886c-.083 -.777 -1.008 -1.16 -1.617 -.67l-.084 .077l-2 2l-.083 .094a1 1 0 0 0 0 1.226l.083 .094l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l.293 -.293v5.586l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-8l-.006 -.114z" stroke-width="0" fill="currentColor"></path>
                                                 </svg>
                                         </span>
-                                        Project#1
+                                        {{top_vuln_first.name}}
                                     </div>
                                 </div>
+                                {% else %}
+                                <div class="row">
+                                    <div class="col">
+                                        <span class="text-secondary">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                                                <path d="M12 8v4"></path>
+                                                <path d="M12 16h.01"></path>
+                                             </svg>
+                                        </span>
+                                        No projects assigned
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if top_vuln_second %}
                                 <div class="row">
                                     <div class="col">
                                         <span class="text-red">
@@ -153,9 +173,11 @@ MAST-F Bundle | {{ bundle.name }}
                                                 <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm1 5h-3l-.117 .007a1 1 0 0 0 0 1.986l.117 .007h3v2h-2l-.15 .005a2 2 0 0 0 -1.844 1.838l-.006 .157v2l.005 .15a2 2 0 0 0 1.838 1.844l.157 .006h3l.117 -.007a1 1 0 0 0 0 -1.986l-.117 -.007h-3v-2h2l.15 -.005a2 2 0 0 0 1.844 -1.838l.006 -.157v-2l-.005 -.15a2 2 0 0 0 -1.838 -1.844l-.157 -.006z" stroke-width="0" fill="currentColor"></path>
                                              </svg>
                                         </span>
-                                        Project#2
+                                        {{top_vuln_second.name}}
                                     </div>
                                 </div>
+                                {% endif %}
+                                {% if top_vuln_third %}
                                 <div class="row">
                                     <div class="col">
                                         <span class="text-orange">
@@ -164,9 +186,10 @@ MAST-F Bundle | {{ bundle.name }}
                                                 <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm1 5h-2l-.15 .005a2 2 0 0 0 -1.85 1.995a1 1 0 0 0 1.974 .23l.02 -.113l.006 -.117h2v2h-2l-.133 .007c-1.111 .12 -1.154 1.73 -.128 1.965l.128 .021l.133 .007h2v2h-2l-.007 -.117a1 1 0 0 0 -1.993 .117a2 2 0 0 0 1.85 1.995l.15 .005h2l.15 -.005a2 2 0 0 0 1.844 -1.838l.006 -.157v-2l-.005 -.15a1.988 1.988 0 0 0 -.17 -.667l-.075 -.152l-.019 -.032l.02 -.03a2.01 2.01 0 0 0 .242 -.795l.007 -.174v-2l-.005 -.15a2 2 0 0 0 -1.838 -1.844l-.157 -.006z" stroke-width="0" fill="currentColor"></path>
                                              </svg>
                                         </span>
-                                        Project#3
+                                        {{top_vuln_third.name}}
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -178,15 +201,181 @@ MAST-F Bundle | {{ bundle.name }}
                 </div>
                 {% endif %}
             </div>
+
+            <div class="tab-pane {% if active == "tabs-projects" %}active show{% endif %}" id="tabs-projects">
+                {% if active == "tabs-projects" %}
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="table-responsive">
+                                    <table class="table card-table table-vcenter text-nowrap datatable" id="table-projects">
+                                        <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Project Name</th>
+                                            <th>Owner</th>
+                                            <th>Tags</th>
+                                            <th>Risk Level</th>
+                                            <th class="w-1">
+                                                <span class="text-red">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path></svg>
+                                                </span>
+                                            </th>
+                                            <th class="w-1">
+                                                <span class="text-orange">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path></svg>
+                                                </span>
+                                            </th>
+                                            <th class="w-1">
+                                                <span class="text-secondary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M11.998 2l.118 .007l.059 .008l.061 .013l.111 .034a.993 .993 0 0 1 .217 .112l.104 .082l.255 .218a11 11 0 0 0 7.189 2.537l.342 -.01a1 1 0 0 1 1.005 .717a13 13 0 0 1 -9.208 16.25a1 1 0 0 1 -.502 0a13 13 0 0 1 -9.209 -16.25a1 1 0 0 1 1.005 -.717a11 11 0 0 0 7.531 -2.527l.263 -.225l.096 -.075a.993 .993 0 0 1 .217 -.112l.112 -.034a.97 .97 0 0 1 .119 -.021l.115 -.007zm3.71 7.293a1 1 0 0 0 -1.415 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path></svg>
+                                                </span>
+                                            </th>
+
+                                            <!-- As well as the 'view' action which should trigger an offcanvas. -->
+                                            <th class="w-1 text-end">View</th>
+                                            <th class="w-1 text-end">Manage</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for row in project_table_data %}
+                                            <tr>
+                                                <td>
+                                                    <input type="hidden" value="{{ row.project.project_uuid }}" id="project-id-row-{{ forloop.counter }}">
+                                                    <a href="#" target-id="project-id-row-{{ forloop.counter }}"
+                                                        id="project-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip"
+                                                        data-bs-placement="bottom" title="Copy Project-ID"
+                                                        onclick="copyTargetToClipboard(this);">
+
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                                                            <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                                <td class="text-muted">
+                                                    <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
+                                                        id="project-view-link-{{ forloop.counter }}">
+                                                        {{ row.project.name }}
+                                                    </a>
+                                                </td>
+
+                                                <!-- Owner -->
+                                                <td class="text-truncate">
+                                                    <span class="badge bg-secondary-lt">
+                                                        {% if row.project.team %}
+                                                        {{ row.project.team.name }}
+                                                        {% else %}
+                                                            {% if row.project.owner == request.user %}
+                                                            You
+                                                            {% else %}
+                                                            {{ row.project.owner.username }}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </span>
+                                                </td>
+
+                                                <!-- tags -->
+                                                <td class="text-truncate">
+                                                    {# Split can be used when importing mastf_tags #}
+                                                    {% with row.project.tags|split:"," as names %}
+
+                                                    {% if names|length > 1 %}
+                                                    <span class="badge bg-secondary-lt text-truncate">{{ names|first }}</span>,
+                                                    <span class="badge bg-secondary-lt text-truncate">+{{ names|slice:"1:"|length }}</span>
+                                                    {% elif names|length == 0 %}
+                                                    -
+                                                    {% else %}
+                                                    <span class="badge bg-secondary-lt text-truncate">{{ names|first }}</span>
+                                                    {% endif %}
+                                                    {% endwith %}
+                                                </td>
+
+                                                <!-- Risk level -->
+                                                <td>
+                                                    {% with row.project.risk_level|lower as level %}
+                                                    <span class="badge bg-{% if level == 'critical' %}pink
+                                                        {% elif level == 'high'%}red{% elif level == 'medium' %}orange
+                                                        {% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"
+                                                    >
+                                                        {% if level %}
+                                                        {{ level|capfirst }}
+                                                        {% else %}
+                                                        Undefined
+                                                        {% endif %}
+                                                    </span>
+                                                    {% endwith %}
+                                                </td>
+
+                                                <!-- High -->
+                                                <td class="text-muted">
+                                                    {{ row.high }}
+                                                </td>
+
+                                                <!-- Medium -->
+                                                <td class="text-muted">
+                                                    {{ row.medium }}
+                                                </td>
+
+                                                <!-- High -->
+                                                <td class="text-muted">
+                                                    {{ row.low }}
+                                                </td>
+
+                                                <td class="text-end">
+                                                    <a href="#" class="nav-link px-0 link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
+                                                        id="project-view-action-{{ forloop.counter }}">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                            <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"></path>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="nav-link px-0 link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
+                                                        id="project-remove-action-{{ forloop.counter }}" onclick="verifyAction(this, removeProject);">
+                                                        <span class="dropdown-item-icon text-red">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M4 7l16 0"></path>
+                                                                <path d="M10 11l0 6"></path>
+                                                                <path d="M14 11l0 6"></path>
+                                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                                </svg>
+                                                        </span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
 {% endblock page_body %}
 
+
 {% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 <script>
 
     document.addEventListener("DOMContentLoaded", function() {
+        $('#table-modal-projects').DataTable();
+
         {% if active == 'tabs-overview' %}
         REST.doGet("{% url 'Bundle-Chart' pk=bundle.bundle_id name='aging-report' %}", function(data) {
             if (data.success) {
@@ -223,8 +412,223 @@ MAST-F Bundle | {{ bundle.name }}
         });
         {% endif %}
 
-
+        {% if active == 'tabs-projects' %}
+        $('#table-projects').DataTable();
+        $('#table-projects_wrapper').addClass("m-1");
+        {% endif %}
     });
 
-  </script>
+    let area = document.getElementById("bundle-edit-tags-area");
+    let input = document.getElementById("bundle-edit-tags-input");
+    const modalEditTags = new Tags("bundle-edit-element", area, input);
+    modalEditTags.count = {{bundle.tags|split:","|length}};
+
+    updateBundle = function() {
+        var table = $('#table-modal-projects').DataTable();
+        var projects = []
+
+        table.rows().every(function(index) {
+            var row = $(table.row(index).node());
+            var projectId = row.attr('project-id');
+
+            if (document.getElementById(`chbx-project-${projectId}`).checked) {
+                projects.push(projectId);
+            }
+        });
+
+        if (projects.length > 0) {
+            REST.patch("/api/v1/bundle/{{bundle.bundle_id}}/", JSON.stringify({
+                projects: projects,
+            }), function(data) {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+    };
+
+    removeProject = function(element, event) {
+        event.preventDefault();
+
+        let projectId = Utils.getValue(element.getAttribute("target-id"));
+        REST.delete("/api/v1/bundle/{{bundle.bundle_id}}/" + projectId, function(data) {
+            if (data.success) {
+                location.reload();
+            }
+        })
+    };
+
+    editBundle = function() {
+        tags = []
+        for (let step = 1; step <= modalEditTags.count; step++) {
+            tags.push($(`#${modalEditTags.prefix}-${step}`).text());
+        }
+
+        var strTags = tags.join(",");
+        var name = $("#bundle-input-name").val();
+        if (name === undefined || name.length < 4) {
+            return;
+        }
+        REST.patch("/api/v1/bundle/{{bundle.bundle_id}}/", JSON.stringify({
+            name: name,
+            tags: strTags,
+            risk_level: $("#vuln-types-dropdown").text().trim(),
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    };
+
+    applyRiskLevel = function(element) {
+        target = document.getElementById('vuln-types-dropdown');
+
+        if (target.innerHTML == element.innerHTML) {
+            return;
+        }
+        target.innerHTML = element.innerHTML;
+    };
+
+</script>
 {% endblock %}
+
+{% block modals %}
+<div class="modal modal-xl modal-blur fade" id="modal-assign-projects" tabindex="-1"
+    role="dialog" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-status bg-primary"></div>
+
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-3 border-end m-1 bg-secondary-lt">
+                            <div class="mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-stack-2" width="64" height="64" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M12 4l-8 4l8 4l8 -4l-8 -4"></path>
+                                    <path d="M4 12l8 4l8 -4"></path>
+                                    <path d="M4 16l8 4l8 -4"></path>
+                                 </svg>
+                                <span class="h3">
+                                    Assign Projects
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row row-cols-1">
+                                <div class="col">
+                                    <h4 class="subheader">Select Available Projects
+                                        <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
+                                            data-bs-content="<p>Select the projects you want to assign to this bundle. Note that there might be no
+                                                projects to select if there are no publicly available projects.
+                                            </p>">
+                                            ?
+                                        </span>
+                                    </h4>
+                                </div>
+                                <div class="col">
+                                    <div class="table-responsive">
+                                        <table class="table table-group-divider" id="table-modal-projects">
+                                            <thead>
+                                                <th class="w-1"><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all"></th>
+                                                <th>Name</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for project in available %}
+                                                <tr project-id="{{project.project_uuid}}">
+                                                    <td><input type="checkbox" class="form-check-input m-0 align-middle"
+                                                        aria-label="Select one" id="chbx-project-{{project.project_uuid}}"></td>
+                                                    <td>
+                                                        {{ project.name }}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col text-end mt-2">
+                                    <hr class="mt-3 mb-2">
+                                    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                                        Cancel
+                                    </a>
+                                    <input type="submit" class="btn btn-primary" value="Assign" id="bundle-submit"
+                                        onclick="updateBundle();">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal modal-blur fade" id="modal-edit-bundle" tabindex="-1"
+    role="dialog" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-status bg-primary"></div>
+            <div class="modal-header">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item">
+                        <h5 class="modal-title">Edit Bundle</h5>
+                    </li>
+                    <li class="list-inline-item">
+                        <span class="dropdown">
+                            <button class="badge bg-secondary-lt dropdown-toggle" type="button" id="vuln-types-dropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false" >
+                                {{ bundle.risk_level }}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="host-type-dropdown"
+                                id="list-host-type">
+                                <span class="dropdown-header">Choose Risk Level</span>
+                                {% for severity in vuln_types %}
+                                <li><a href="#" class="dropdown-item" onclick="applyRiskLevel(this);">{{severity}}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </span>
+                    </li>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                    <div class="col mb-2">
+                        <label class="form-label">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="name" id="bundle-input-name" minlength="5"
+                            value="{{bundle.name}}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label">Tags</label>
+                        <div class="input-group input-group-flat">
+                            <span class="input-group-text" id="bundle-edit-tags-area">
+                                {% for tag in bundle.tags|split:"," %}
+                                <kbd id="bundle-edit-element-{{forloop.counter}}" style="margin-right: 3px; cursor: no-drop;">{{tag}}</kbd>
+                                {% endfor %}
+                            </span>
+                            <input id="bundle-edit-tags-input" type="text" class="form-control" value="">
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editBundle();">Save changes</button>
+              </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock modals %}

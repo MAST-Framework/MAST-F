@@ -36,3 +36,8 @@ def component_color(category) -> str:
         return 'orange'
 
     return 'secondary'
+
+
+@register.filter(name="allobjects")
+def allobjects(manager):
+    return list(manager.all())

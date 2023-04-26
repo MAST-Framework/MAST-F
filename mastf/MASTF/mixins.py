@@ -77,6 +77,15 @@ class ContextMixinBase(LoginRequiredMixin):
 
 class VulnContextMixin:
 
+    colors = {
+        "critical": "pink",
+        "high": "red",
+        "medium": "orange",
+        "low": "yellow",
+        "other": "secondary",
+        "none": "secondary-lt",
+    }
+
     def apply_vuln_context(self, context: dict, vuln: dict) -> None:
         context['vuln_count'] = vuln.get("count", 0)
         context['vuln_data'] = [
@@ -84,7 +93,6 @@ class VulnContextMixin:
             self.get_vuln_context(vuln, "High", "red"),
             self.get_vuln_context(vuln, "Medium", "orange"),
             self.get_vuln_context(vuln, "Low", "yellow"),
-            self.get_vuln_context(vuln, "Other", "secondary"),
             self.get_vuln_context(vuln, "None", "secondary-lt")
         ]
 
@@ -96,6 +104,8 @@ class VulnContextMixin:
             'percent': (stats.get(field, 0) / stats.get('rel_count', 1)) * 100,
             'count': stats.get(field, 0)
         }
+
+
 
 class UserProjectMixin:
     def apply_project_context(self, context: dict) -> None:

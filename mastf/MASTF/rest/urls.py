@@ -19,11 +19,14 @@ urlpatterns = [
     ])),
 
     path(r"bundle/", include([
-        path(r"<uuid:pk>", views.BundleView.as_view()),
+
+        path(r"<uuid:pk>/", include([
+            path(r"", views.BundleView.as_view()),
+            path(r"<uuid:project_uuid>/", views.BundleProjectDeletionView.as_view()),
+            path(r"chart/<str:name>", views.BundleChartView.as_view(), name="Bundle-Chart"),
+        ])),
         path(r"create", views.BundleCreationView.as_view()),
         path(r"all", views.BundleListView.as_view()),
-
-        path(r"<uuid:pk>/chart/<str:name>", views.BundleChartView.as_view(), name="Bundle-Chart"),
     ])),
 
 

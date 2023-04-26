@@ -54,14 +54,14 @@ class ManyToManyField(serializers.Field):
         super().__init__(**kwargs)
         self.model = model
         self.delimiter = delimiter or ','
-        self.field_name = field_name
+        self.pk_name = field_name or 'pk'
         self.converter = mapper or str
 
     def to_internal_value(self, data: str):
         """Transform the *incoming* primitive data into a native value."""
         values = (str(data).split(self.delimiter)
             if not isinstance(data, (list, tuple))
-            else values
+            else data
         )
 
         elements = []
@@ -71,7 +71,7 @@ class ManyToManyField(serializers.Field):
                 continue
 
             element_id = objid if not self.converter else self.converter(objid)
-            query = self.model.objects.filter(**{self.field_name: element_id})
+            query = self.model.objects.filter(**{self.pk_name: element_id})
             if query.exists():
                 elements.append(query.first())
             else:
@@ -87,7 +87,7 @@ class ManyToManyField(serializers.Field):
         if isinstance(value, Manager):
             value = value.all()
 
-        key = self.field_name or 'pk'
+        key = self.pk_name or 'pk'
         return [str(getattr(x, key)) for x in value]
 
 
@@ -122,7 +122,7 @@ class ManyToManySerializer(serializers.ModelSerializer):
                 # Many-To-Many relationships are represented by a Manager
                 # instance internally.
                 manager = getattr(instance, field_name)
-                manager.add(validated_data.pop(field_name))
+                manager.set(validated_data.pop(field_name))
 
         return super().update(instance, validated_data)
 

@@ -44,7 +44,6 @@
             - 'private': Only you can see and manage your project
             - 'internal': Only you and users in your organisation can see and manage the project
         -->
-        <form id="new-project-form" method="post" action="{% url 'Projects' %}">
             <div class="modal-body">
 
                 {% csrf_token %}
@@ -52,7 +51,7 @@
                 <div class="mb-3">
                     <label class="form-label required">Name</label>
                     <input type="text" class="form-control" name="name" placeholder="Your project name"
-                            minlength="5" maxlength="256" required>
+                            minlength="5" maxlength="256" required id="project-model-name">
                   </div>
                   <label class="form-label required">Report type</label>
                   <!-- Two options: 'simple' and 'advanced' -->
@@ -88,25 +87,22 @@
                   </div>
                   <div class="row">
                     <div class="col-lg-8">
-                      <div class="mb-3">
-                        <label class="form-label">Tags</label>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text">@</span>
+                        <div class="mb-3">
+                            <label class="form-label">Tags</label>
+                            <div class="input-group input-group-flat">
+                                <span class="input-group-text" id="project-modal-tags-area">
+                                </span>
+                                <input id="project-modal-tags-input" type="text" class="form-control" value="">
                             </div>
-                            <input type="text" class="form-control" placeholder="Tags..." aria-label="Tags" name="tags"
-                                    minlength="5", maxlength="2048">
-                          </div>
-                      </div>
+                        </div>
                     </div>
                     <div class="col-lg-4">
                       <div class="mb-3">
                         <label class="form-label required">Visibility</label>
                         <select class="form-select" name="visibility">
-
                             <option value="PRIVATE" selected>Private</option>
-                          <option value="PUBLIC">Public</option>
-                          <option value="INTERNAL">Internal</option>
+                            <option value="PUBLIC">Public</option>
+                            <option value="INTERNAL">Internal</option>
                         </select>
                       </div>
                     </div>
@@ -117,9 +113,9 @@
                 <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                     Cancel
                 </a>
-                <input type="submit" class="btn btn-primary" value="Create Project" id="project-submit">
+                <input type="submit" class="btn btn-primary" value="Create Project" id="project-submit"
+                    onclick="createProject(this);" data-bs-dismiss="modal">
             </div>
-        </form>
       </div>
     </div>
 </div>
@@ -144,6 +140,22 @@
             }
         });
         return true;
+    };
+
+
+    let area = document.getElementById("project-modal-tags-area");
+    let input = document.getElementById("project-modal-tags-input");
+    const modalTags = new Tags("project-tags", area, input);
+
+    createProject = function(element) {
+        tags = []
+        console.log(modalTags);
+        for (let step = 1; step <= modalTags.count; step++) {
+            tags.push($(`#${modalTags.prefix}-${step}`).text());
+        }
+
+        var strTags = tags.join(",");
+        $('#project-modal-tags-input').val(strTags);
     };
 
 

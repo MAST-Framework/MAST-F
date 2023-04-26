@@ -133,7 +133,18 @@ class Project(models.Model):
         :return: a dictionary covering general stats (count, risk levels)
         :rtype: namespace
         """
+        projects = Project.get_by_user(owner)
+        data = namespace(count=len(projects))
 
+        data.risk_high = len(projects.filter(risk_level=Severity.HIGH))
+        data.risk_medium = len(projects.filter(risk_level=Severity.MEDIUM))
+        # The project IDs can be used later on in order to prevent a user to
+        # create the previous query again.
+        data.ids = [x.project_uuid for x in projects]
+        return data
+
+    @staticmethod
+    def get_by_user(owner: User, queryset: models.QuerySet = None) -> models.QuerySet:
         # This query attempts to collect all projects that can be modified by
         # the given owner. That includes projects that are assigned to a team
         # of which the provided user is a member; projects that are public and
@@ -143,15 +154,7 @@ class Project(models.Model):
         query = (models.Q(owner=owner) | models.Q(team__users__pk=owner.pk)
             | models.Q(visibility=Visibility.PUBLIC, team=None)
         )
-        projects = Project.objects.filter(query)
-        data = namespace(count=len(projects))
-
-        data.risk_high = len(projects.filter(risk_level=Severity.HIGH))
-        data.risk_medium = len(projects.filter(risk_level=Severity.MEDIUM))
-        # The project IDs can be used later on in order to prevent a user to
-        # create the previous query again.
-        data.ids = [x.project_uuid for x in projects]
-        return data
+        return (queryset or Project.objects).filter(query)
 
     @property
     def directory(self) -> pathlib.Path:

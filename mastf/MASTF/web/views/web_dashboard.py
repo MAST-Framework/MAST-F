@@ -119,13 +119,10 @@ class PluginsView(ContextMixinBase, TemplateAPIView):
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-        if "subpage" in self.request.GET:
-            subpage = self.request.GET["subpage"]
-            if subpage == "packages":
-                context['active'] = 'tabs-packages'
-            elif subpage == "hosts":
-                context['active'] = 'tabs-hosts'
-            else:
-                context['active'] = 'tabs-permissions'
-        else: context['active'] = 'tabs-permissions'
+
+        page = self.request.GET.get("subpage", None)
+        if page in ("packages", "hosts", "permissions"):
+            context['active'] = f"tabs-{page}"
+        else:
+            context['active'] = 'tabs-permissions'
         return context

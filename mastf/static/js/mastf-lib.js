@@ -32,7 +32,11 @@ REST = {
 
 Utils = {
     getValue: function(selector) {
-        element = $('#' + selector);
+        if (!selector.startsWith("#")) {
+            selector = '#' + selector;
+        }
+
+        element = $(selector);
         if (selector === undefined) {
             // Display error messages (NOT IMPLEMENTED)
             console.error("Could not locate Element: " + selector);

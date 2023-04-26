@@ -4,11 +4,11 @@ from rest_framework.response import Response
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 
-from mastf.MASTF.serializers import BundleSerializer, VulnerabilitySerializer
-from mastf.MASTF.models import Bundle, Scanner, Vulnerability
+from mastf.MASTF.serializers import BundleSerializer
+from mastf.MASTF.models import Bundle, Scanner, Vulnerability, Project
 from mastf.MASTF.forms import BundleForm
 from mastf.MASTF.utils.enum import Severity
-from mastf.MASTF.rest.permissions import IsBundleMember
+from mastf.MASTF.rest.permissions import IsBundleMember, CanEditProject
 
 from .base import (
     CreationAPIViewBase,
@@ -23,6 +23,7 @@ __all__ = [
     'BundleCreationView',
     'BundleListView',
     'BundleChartView',
+    'BundleProjectDeletionView'
 ]
 
 class BundleView(APIViewBase):
@@ -45,6 +46,24 @@ class BundleListView(ListAPIViewBase):
 
     def filter_queryset(self, queryset):
         return Bundle.get_by_owner(self.request.user, queryset)
+
+class BundleProjectDeletionView(GetObjectMixin, APIView):
+    model = Bundle
+    authentication_classes = [
+        authentication.BasicAuthentication,
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication
+    ]
+    permission_classes = [
+        permissions.IsAuthenticated & IsBundleMember
+    ]
+
+    def delete(self, request, *args, **kwargs) -> Response:
+        bundle: Bundle = self.get_object()
+        project = self.get_object(Project, 'project_uuid', check=False)
+
+        bundle.projects.remove(project)
+        return Response({'success': True})
 
 
 class BundleChartView(GetObjectMixin, APIView):

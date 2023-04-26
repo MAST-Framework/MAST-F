@@ -85,7 +85,7 @@ class AbstractBaseFinding(models.Model):
             base = (base or model.objects).filter(scan__project__team=team)
         if bundle:
             pks = [x.pk for x in bundle.projects.all()]
-            base = (base or model.objects).filter(scan__project__ok__in=pks)
+            base = (base or model.objects).filter(scan__project__pk__in=pks)
 
         if not base:
             return data
