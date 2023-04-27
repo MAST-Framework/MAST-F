@@ -24,7 +24,7 @@ from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.rest.views import ScanCreationView
 from mastf.MASTF.rest.permissions import CanEditProject
-from mastf.MASTF.utils.enum import State
+from mastf.MASTF.utils.enum import State, Severity
 
 __all__ = [
     'UserProjectDetailsView', 'UserProjectScanHistoryView',
@@ -150,6 +150,7 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
         self.apply_project_context(context)
 
         context['active'] = 'tabs-packages'
+        context['Severity'] = [str(x) for x in Severity]
         context['dependencies'] = Dependency.objects.filter(project=context['project'])
         return context
 

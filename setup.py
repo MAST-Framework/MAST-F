@@ -69,6 +69,11 @@ def setup_hosts():
         host.collected_data.add(DataCollectionGroup.objects.first())
         host.save()
 
+def setup_package():
+    for i in range(10):
+        Package(pk=uuid4(), name=f"Package{i}", artifact_id=f"example-{i}",
+                group_id=f"com.example.dev{i}", type="None", platform="Android").save()
+
 if __name__ == '__main__':
     mod = sys.modules[__name__]
     func = getattr(mod, sys.argv[1])

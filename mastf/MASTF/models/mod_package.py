@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from mastf.MASTF.utils.enum import Platform, PackageType, Relation
+from mastf.MASTF.utils.enum import Platform, PackageType, Relation, Severity
 
 from .base import Project
 from .mod_scan import Scanner
@@ -25,6 +25,7 @@ class PackageVulnerability(models.Model):
     cve_id = models.CharField(max_length=256, null=True)
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     version = models.CharField(max_length=512, null=True)
+    severity = models.CharField(max_length=32, choices=Severity.choices, default=Severity.NONE)
 
 class Dependency(models.Model):
     dependency_uuid = models.CharField(max_length=72, primary_key=True) # UUID*2
@@ -32,9 +33,9 @@ class Dependency(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     relation = models.CharField(default=Relation.DIRECT, choices=Relation.choices, max_length=256)
     scanner = models.ForeignKey(Scanner, models.CASCADE)
-    outdated = models.CharField(max_length=512, null=True)
+    outdated = models.CharField(max_length=512, null=True, blank=True)
     version = models.CharField(max_length=512, blank=True)
-    license = models.CharField(max_length=256, null=True)
+    license = models.CharField(max_length=256, null=True, blank=True)
 
     @property
     def vulnerabilities(self) -> models.QuerySet:

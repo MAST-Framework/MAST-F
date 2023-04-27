@@ -88,19 +88,19 @@ urlpatterns = [
         # We have to use 'pk' here as the name, because we haven't specified
         # a custom lookup field in the PackageView class
         path(r"<uuid:pk>", views.PackageView.as_view(), name="PackageView"),
+        path(r"<uuid:pk>/vulnerabilities", views.PackageVulnerabilityListView.as_view()),
         path(r"all", views.PackageListView.as_view(), name="PackageListView"),
         path(r"create", views.PackageCreationView.as_view(), name="PackageCreationView"),
 
         path(r"vulnerability/", include([
             path(r"<uuid:pk>", views.PackageVulnerabilityView.as_view()),
-            path(r"all", views.PackageVulnerabilityListView.as_view()),
             path(r"create", views.PackageVulnerabilityCreationView.as_view()),
         ]))
     ])),
 
     path(r"dependency/", include([
         path(r"create", views.DependencyCreationView.as_view()),
-        path(r"<str:pk>", views.DependencyView.as_view()),
+        path(r"<str:pk>/", views.DependencyView.as_view()),
     ])),
 
     path(r"host/", include([

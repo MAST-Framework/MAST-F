@@ -82,7 +82,7 @@
                                                      <path d="M10 14l10 -10"></path>
                                                      <path d="M15 4l5 0l0 5"></path>
                                                   </svg>
-                                                </a> 
+                                                </a>
                                             </td>
                                             <td class="text-truncate">
                                              {{platform|capfirst}}
@@ -92,8 +92,8 @@
                                             </td>
                                          </tr>
                                         {% endfor %}
-                                        
-                                        
+
+
                                         {% endfor %}
                                     </tbody>
                                 </table>
@@ -116,9 +116,9 @@
                             <li>{{ element }}</li>
                             {% endfor %}
                         </{{line.type}}>
-                        
+
                         {% elif line.type == "code" %}
-                        <pre class="example_code_{{forloop.counter}}" style="resize: vertical; margin-bottom: 0px;" 
+                        <pre class="example_code_{{forloop.counter}}" style="resize: vertical; margin-bottom: 0px;"
                             id="example-code-{{forloop.counter}}">{{line.content}}</pre>
 
                         {% elif line.type == 'html' %}
@@ -128,7 +128,7 @@
 
 
                         {% else %}
-                        
+
                         <p>{{ line }}</p>
                         {% endif %}
                         {% endfor %}
@@ -174,7 +174,7 @@
         $('#table-pages_wrapper').addClass("mt-1 ms-1 me-1 mb-1");
 
         let theme_name = 'enlighter';
-        if (params.theme == 'dark') {
+        if (Utils.isDarkLaf()) {
             theme_name = 'dracula';
         }
 

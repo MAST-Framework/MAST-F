@@ -184,9 +184,7 @@ for different components of each project.
                                     <!-- Risk level -->
                                     <td>
                                         {% with row.bundle.risk_level|lower as level %}
-                                        <span class="badge bg-{% if level == 'critical' %}pink
-                                            {% elif level == 'high'%}red{% elif level == 'medium' %}orange
-                                            {% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"
+                                        <span class="badge bg-{% if level == 'critical' %}pink{% elif level == 'high'%}red{% elif level == 'medium' %}orange{% elif level == 'low' %}yellow{% else %}secondary{% endif %}-lt"
                                         >
                                             {% if level %}
                                             {{ level|capfirst }}

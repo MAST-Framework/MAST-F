@@ -1,5 +1,4 @@
-from rest_framework import permissions
-from django.shortcuts import get_object_or_404
+from rest_framework import permissions, authentication, response
 
 from mastf.MASTF.serializers import (
     PackageSerializer,
@@ -19,7 +18,7 @@ from mastf.MASTF.forms import (
 )
 from mastf.MASTF.rest.permissions import IsScanProjectMember, CanEditProject
 
-from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase, GetObjectMixin
+from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase, GetObjectMixin, APIView
 
 __all__ = [
     'PackageView',
@@ -62,10 +61,19 @@ class PackageVulnerabilityCreationView(CreationAPIViewBase):
     form_class = PackageVulnerabilityForm
     permission_classes = [permissions.IsAuthenticated]
 
-class PackageVulnerabilityListView(ListAPIViewBase):
+class PackageVulnerabilityListView(GetObjectMixin, ListAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
     queryset = PackageVulnerability.objects.all()
     serializer_class = PackageVulnerabilitySerializer
+    model = Package
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.filter(package=self.get_object())
+        version = self.request.GET.get("version", None)
+
+        if version:
+            queryset = queryset.filter(version=version)
+        return queryset
 
 # Dependencies
 class DependencyView(APIViewBase):

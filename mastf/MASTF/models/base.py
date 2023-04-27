@@ -49,7 +49,6 @@ class namespace(dict):
         # methods are not stored in our dictionary.
         return super().__getattribute__(__name)
 
-
 ############################################################
 # Django Models
 ############################################################

@@ -26,6 +26,9 @@ class HostIDConverter(StringConverter):
 class ComponentIdConverter(StringConverter):
     regex = r"cpt_[\dA-Za-z-]{36}"
 
+class DependencyIdConverter(StringConverter):
+    regex = r"([0-9a-fA-F]{32}){2}"
+
 def listconverters() -> dict:
     """Returns all converters of this module.
 

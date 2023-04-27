@@ -38,6 +38,23 @@ class ManyToManyField(serializers.Field):
     list of ``Book`` objects into JSON and vice versa. Note that mapper argument
     that is necessary if the primary key is of type ``int``.
 
+    .. warning::
+        The validated data returned by this field is a tuple that stores the
+        retrieved elements and whether they should be replaced with the current
+        database values or should be added. Therefore you can add a special
+        keyword to the start of the transmitted data:
+
+        .. code-block:: json
+            :linenos:
+
+            {
+                "data": [
+                    "$set", # Indicates the following values will replace any existing values
+                    "pk1",
+                    "pk2", ...
+                ]
+            }
+
     :param model: The Django model class
     :type model: class<? extends ``Model``>
     :param delimiter: The string delimiter to use when splitting the
@@ -57,7 +74,7 @@ class ManyToManyField(serializers.Field):
         self.pk_name = field_name or 'pk'
         self.converter = mapper or str
 
-    def to_internal_value(self, data: str):
+    def to_internal_value(self, data: str) -> tuple:
         """Transform the *incoming* primitive data into a native value."""
         values = (str(data).split(self.delimiter)
             if not isinstance(data, (list, tuple))
@@ -65,10 +82,14 @@ class ManyToManyField(serializers.Field):
         )
 
         elements = []
+        append = True
         for objid in values:
             if isinstance(objid, self.model):
                 elements.append(objid)
                 continue
+
+            if objid == '$set':
+                append = False
 
             element_id = objid if not self.converter else self.converter(objid)
             query = self.model.objects.filter(**{self.pk_name: element_id})
@@ -77,7 +98,7 @@ class ManyToManyField(serializers.Field):
             else:
                 logger.debug(f'Could not resolve objID: "{objid}" and name: "{self.field_name}"')
 
-        return elements
+        return elements, append
 
     def to_representation(self, value: list):
         """Transform the *outgoing* native value into primitive data."""
@@ -122,7 +143,11 @@ class ManyToManySerializer(serializers.ModelSerializer):
                 # Many-To-Many relationships are represented by a Manager
                 # instance internally.
                 manager = getattr(instance, field_name)
-                manager.set(validated_data.pop(field_name))
+                elements, append = validated_data.pop(field_name)
+                if append:
+                    manager.add(elements)
+                else:
+                    manager.set(elements)
 
         return super().update(instance, validated_data)
 

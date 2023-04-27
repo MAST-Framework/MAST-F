@@ -606,7 +606,7 @@ MAST-F Project | {{ project.name }}
                                                     <td>
                                                         <a href="#offcanvas-package" class="nav-link link-secondary" data-bs-toggle="offcanvas"
                                                             role="button" aria-controls="offcanvas-package" onclick="togglePackageInfo(this);"
-                                                            package-id="{{ dependency.package.package_uuid }}">
+                                                            package-id="{{ dependency.dependency_uuid }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                 <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
@@ -641,16 +641,18 @@ MAST-F Project | {{ project.name }}
 
                                                     {# OUTDATED #}
                                                     <td class="text-muted">
-                                                        {% if not dependency.package or not dependency.package.outdated %}
+                                                        {% if not dependency.outdated %}
                                                         -
                                                         {% else %}
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-exclamation" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                            <path d="M20.986 12.502a9 9 0 1 0 -5.973 7.98"></path>
-                                                            <path d="M12 7v5l3 3"></path>
-                                                            <path d="M19 16v3"></path>
-                                                            <path d="M19 22v.01"></path>
-                                                         </svg>
+                                                        <span data-bs-toggle="tooltip" title="New Version: {{dependency.outdated}}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-exclamation" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                <path d="M20.986 12.502a9 9 0 1 0 -5.973 7.98"></path>
+                                                                <path d="M12 7v5l3 3"></path>
+                                                                <path d="M19 16v3"></path>
+                                                                <path d="M19 22v.01"></path>
+                                                            </svg>
+                                                        </span>
                                                         {% endif %}
                                                     </td>
 
@@ -658,8 +660,10 @@ MAST-F Project | {{ project.name }}
                                                     <td class="text-muted">
                                                         {% with dependency.license|split:"," as licenses %}
                                                         {% if licenses|length > 1 %}
-                                                        <span class="text-muted">{{ licenses|first }}</span>
+                                                        <span class="badge bg-secondary-lt">{{ licenses|first }}</span>,
                                                         <span class="badge bg-secondary-lt">+{{ licenses|length }}</span>
+                                                        {% elif licenses|length == 1%}
+                                                        <span class="badge bg-secondary-lt">{{ licenses|first }}</span>
                                                         {% else %}
                                                         Undefined
                                                         {% endif %}
@@ -670,8 +674,7 @@ MAST-F Project | {{ project.name }}
                                                     <td class="text-muted">
                                                         <div class="progress progress-separated" style="height: 20px;">
                                                             {% with dependency.vulnerabilities|vuln_stats as vuln_data %}
-                                                            {% if vuln_data %}
-                                                                {% for category in data.vuln_data %}
+                                                                {% for category in vuln_data.vuln_data %}
                                                                 <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}">
                                                                     {{ category.count }}
                                                                 </div>
@@ -681,7 +684,6 @@ MAST-F Project | {{ project.name }}
                                                                     0
                                                                 </div>
                                                                 {% endif %}
-                                                            {% endif %}
                                                             {% endwith %}
 
                                                         </div>
@@ -719,25 +721,79 @@ MAST-F Project | {{ project.name }}
                     </div>
 
                     {% if active == "tabs-packages" %}
-                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas-package">
+                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas-package" data-bs-scroll="true" data-bs-backdrop="false"
+                        style="height: 350px;">
+                        <input type="hidden" value="" id="package-id">
                         <div class="offcanvas-header">
                             <span class="offcanvas-title">
                                 <ul class="list-inline list-inline-dots mb-0">
                                     <li class="list-inline-item">Package Details</li>
-                                    <li class="list-inline-item" id="package-name">##</li>
+                                    <li class="list-inline-item">
+                                        <span class="badge bg-secondary-lt" id="package-type">
+                                            None
+                                        </span>
+                                    </li>
                                 </ul>
                             </span>
-                            <button type="button" class="btn btn-outline-primary ms-auto">Update</button>
+                            <button id="btn-update-dep" type="button" class="btn btn-outline-primary ms-auto" dep-id="" onclick="updateDependency(this);">Update</button>
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                           </div>
                           <div class="offcanvas-body">
-                            <div>
-                                TODO: Add package details here
-                            </div>
-                            <div class="mt-3">
-                              <button class="btn btn-primary" type="button" data-bs-dismiss="offcanvas">
-                                Close offcanvas
-                              </button>
+                            <div class="row">
+                                <div class="col-md-4 border-end">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="package-name" class="form-label">Package Name</label>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">
+                                                    <kbd id="package-group">group::artifact</kbd>
+                                                </span>
+                                                <input class="form-control" type="text" value="Name" id="package-name" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="package-name" class="form-label">Package Version</label>
+                                            <input type="text" class="form-control" id="dep-version" value="">
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="dep-is-outdated" onclick="toggleOutdated(this);">
+                                                <label class="form-check-label" for="dep-is-outdated">Outdated</label>
+                                            </div>
+                                            <input type="text" class="form-control" value="" id="dep-outdated" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="table-responsive-md">
+                                        <ul class="list-inline list-inline-dots mb-0">
+                                            <li class="list-inline-item">
+                                                <label class="form-label">Vulnerabilities</label>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#modal-new-vuln">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-playlist-add" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M19 8h-14"></path><path d="M5 12h9"></path><path d="M11 16h-6"></path><path d="M15 16h6"></path><path d="M18 13v6"></path></svg>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <table class="table table-bordered" id="package-vulnerabilities">
+                                            <thead>
+                                                <th class="w-1">ID</th>
+                                                <th>CVE</th>
+                                                <th>Severity</th>
+                                                <th class="w-1">Manage</th>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
                           </div>
                     </div>
@@ -754,7 +810,7 @@ MAST-F Project | {{ project.name }}
 
 
 {% block modals %}
-<!-- Modal for creating new projects -->
+<!-- Modal for creating new scans -->
 <div class="modal modal-blur fade" id="modal-new-scan" tabindex="-1" role="dialog" aria-hidden="true">
     <!--
         The project dialog will consume a lot of screen space, so
@@ -936,6 +992,47 @@ MAST-F Project | {{ project.name }}
       </div>
     </div>
 </div>
+
+{% if active == "tabs-packages" %}
+<div class="modal modal-blur fade" id="modal-new-vuln" tabindex="-1" role="dialog" aria-hidden="true">
+    <!--
+        The project dialog will consume a lot of screen space, so
+        it should be placed in the center of it.
+    -->
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    Add Package Vulnerability
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label">CVE-ID</label>
+                        <input type="text" class="form-control" id="vuln-cve-id" placeholder="CVE-XXX">
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label">Severity</label>
+                        <select class="form-select" id="vuln-severity">
+                            {% for severity in Severity %}
+                            <option value="{{severity}}">{{severity}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Add"
+                        onclick="createPackageVulnerability(this);">Add</button>
+                </div>
+            </div>
+      </div>
+    </div>
+</div>
+{% endif %}
 {% endblock modals %}
 
 
@@ -969,7 +1066,6 @@ MAST-F Project | {{ project.name }}
             $("#div-input-url").addClass("visually-hidden");
             $("#div-input-file").removeClass("visually-hidden");
         }
-        console.log(element);
     };
 </script>
 
@@ -983,10 +1079,126 @@ MAST-F Project | {{ project.name }}
         $('#table-packages').DataTable();
 
         // add margin to table element
-        $("#table-packages_wrapper").addClass("mt-1 me-1 ms-1 mb-1")
+        $("#table-packages_wrapper").addClass("mt-1 me-1 ms-1 mb-1");
+
+        $('#package-vulnerabilities').DataTable();
     });
+
+    const createRow = function(rowData, pk, packageId) {
+        var table = $('#package-vulnerabilities').DataTable();
+        let step = table.rows().indexes().length + 1;
+        let row = [
+                `<a href="#" onclick="copyTargetToClipboard(this);" target-id="${pk}"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg></a>`,
+                `<a href="https://nvd.nist.gov/vuln/detail/${rowData.cve_id}" target="_blank" class="nav-link link-secondary">${rowData.cve_id}</a>`,
+                `<span class="badge bg-secondary-lt">${rowData.severity}</span>`,
+                `<a href="#" row-id="row-vuln-${step}" vuln-id="${pk}" onclick="verifyAction(this, deletePackageVulnerability)"><span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete vulnerability"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path>path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg></span></a>`,
+        ]
+
+        table.row.add(row).draw();
+        $(table.row(step-1).node()).attr('target-id', packageId);
+        $(table.row(step-1).node()).attr('id', `row-vuln-${step}`);
+    }
+
+    const togglePackageInfo = function(element) {
+        REST.doGet("/api/v1/dependency/" + element.getAttribute("package-id") + "/", function(data) {
+            var table = $('#package-vulnerabilities').DataTable();
+
+            table.rows().remove().draw();
+            $('#dep-outdated').val(data.outdated);
+            if (data.outdated.length == 0) {
+                document.getElementById("dep-outdated").setAttribute("disabled", "");
+            } else {
+                document.getElementById("dep-outdated").removeAttribute("disabled");
+            }
+
+            $('#package-group').text(`${data.package.artifact_id}::${data.package.group_id}`);
+            $('#package-name').val(data.package.name);
+            $('#package-type').text(data.package.type);
+            $('#dep-version').val(data.version);
+            $('#package-id').val(data.package.package_uuid);
+            $('#btn-update-dep').attr("dep-id", data.dependency_uuid);
+
+            REST.doGet(`/api/v1/package/${data.package.package_uuid}/vulnerabilities?version=${data.version}`, function(data) {
+                for (let step = 1; step <= data.results.length; step++) {
+                    var vuln = data.results[step-1];
+                    createRow(vuln, vuln.identifier, vuln.package.package_uuid);
+                }
+                table.draw();
+            })
+        });
+    };
+
+    const deletePackageVulnerability = function(element, event) {
+        var vulnId = element.getAttribute("vuln-id");
+        var rowId = element.getAttribute("row-id");
+        REST.delete(`/api/v1/package/vulnerability/${vulnId}`, function(data) {
+            if (data.success) {
+                $('#package-vulnerabilities').DataTable()
+                    .row('#' + rowId)
+                    .remove()
+                    .draw();
+            }
+        })
+    };
+
+    const toggleOutdated = function(element) {
+        var target = document.getElementById("dep-outdated")
+
+        if (!element.selected) {
+            target.removeAttribute("disabled");
+        } else {
+            target.setAttribute("disabled", "");
+        }
+    };
+
+    const updateDependency = function(element) {
+        var depId = element.getAttribute("dep-id");
+        var table = $('#package-vulnerabilities').DataTable();
+
+        let outdated = $('#dep-outdated').val().trim();
+        var vulnerabilities = ["$set"];
+        let version = $('#dep-version').val().trim();
+
+
+        table.rows().every(function(index) {
+            var row = $(table.row(index).node());
+            vulnerabilities.push(row.attr('target-id'));
+        });
+
+        REST.patch(`/api/v1/dependency/${depId}/`, JSON.stringify({
+            outdated: outdated,
+            vulnerabilities: vulnerabilities,
+            version: version
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    };
+
+    const createPackageVulnerability = function(element) {
+        var depId = element.getAttribute("dep-id");
+        var depVersion = $('#dep-version').val();
+        if (depVersion.trim().length == 0) {
+            return;
+        }
+
+        var rowData = {
+            cve_id: $("#vuln-cve-id").val().trim(),
+            package: $('#package-id').val(),
+            severity: $('#vuln-severity').val(),
+            version: depVersion,
+        };
+
+        REST.post("/api/v1/package/vulnerability/create", JSON.stringify(rowData), function(data) {
+            if (data.success) {
+                createRow(rowData, data.pk, $('#package-id').val());
+            }
+        })
+    };
 </script>
 {% endif %}
+
 
 {% if active == "tabs-scan-history" %}
 <script>

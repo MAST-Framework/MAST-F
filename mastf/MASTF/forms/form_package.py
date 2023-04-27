@@ -20,6 +20,7 @@ class PackageVulnerabilityForm(forms.Form):
     cve_id = forms.CharField(max_length=256, required=True)
     package = ModelField(Package, max_length=72, required=True)
     version = forms.CharField(max_length=512, required=True)
+    severity = forms.CharField(max_length=32, required=False)
 
 class DependencyForm(forms.Form):
     package = ModelField(Package, max_length=36, required=True)

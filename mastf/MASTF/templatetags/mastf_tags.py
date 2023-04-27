@@ -1,7 +1,7 @@
 from django import template
 from django.urls import get_resolver
 
-from mastf.MASTF.models import AbstractBaseFinding, Vulnerability
+from mastf.MASTF.models import AbstractBaseFinding, PackageVulnerability
 from mastf.MASTF.mixins import VulnContextMixin
 from mastf.MASTF.utils.enum import ComponentCategory
 
@@ -20,7 +20,7 @@ def vuln_stats(value):
     mixin = VulnContextMixin()
     data = {}
 
-    mixin.apply_vuln_context(data, AbstractBaseFinding.stats(Vulnerability, base=value))
+    mixin.apply_vuln_context(data, AbstractBaseFinding.stats(PackageVulnerability, base=value))
     return data
 
 
