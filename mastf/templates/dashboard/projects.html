@@ -302,9 +302,6 @@
                 <table id="projects-table" class="table card-table text-nowrap datatable"
                     style="width:100%">
                     <thead>
-                        <th class="w-1">
-                            <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all">
-                        </th>
                         {% for column in columns %}
                             {% if column in "HighMediumLowSecure"  %}
                             <th class="w-1">
@@ -350,8 +347,6 @@
                     <tbody>
                         {% for row in project_table_data %}
                         <tr>
-                            <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
-
                             <td>
                                <!-- The project id can be queried using a jQuery selector
                                     that has the following structure:
@@ -476,30 +471,30 @@
                             </td>
                             <td class="text-end">
                                 <span class="dropdown">
-                                <a href="#" class="nav-link px-0 link-secondary text-align-right"  tabindex="-1" data-bs-toggle="dropdown">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                        <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                        <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                     </svg>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
-                                    <a class="dropdown-item" href="#" project_id_element="#project-id-row-{{ forloop.counter }}" id="delete-project-action-{{ forloop.counter }}"
-                                        onclick="verifyAction(this, deleteProject);">
-                                        <span class="dropdown-item-icon text-red">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                <path d="M4 7l16 0"></path>
-                                                <path d="M10 11l0 6"></path>
-                                                <path d="M14 11l0 6"></path>
-                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                                </svg>
-                                        </span>
-                                        Delete
+                                    <a href="#" class="nav-link px-0 link-secondary text-align-right"  tabindex="-1" data-bs-toggle="dropdown">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                        </svg>
                                     </a>
-                                </div>
+                                    <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end">
+                                        <a class="dropdown-item" href="#" project_id_element="#project-id-row-{{ forloop.counter }}" id="delete-project-action-{{ forloop.counter }}"
+                                            onclick="verifyAction(this, deleteProject);">
+                                            <span class="dropdown-item-icon text-red">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M4 7l16 0"></path>
+                                                    <path d="M10 11l0 6"></path>
+                                                    <path d="M14 11l0 6"></path>
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                    </svg>
+                                            </span>
+                                            Delete
+                                        </a>
+                                    </div>
                                 </span>
                             </td>
                         </tr>

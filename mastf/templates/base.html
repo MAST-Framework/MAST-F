@@ -431,8 +431,20 @@
         </div>
 
         <script>
-          verifyAction = function(element, EventHandler) {
-            modal = $('#modal-verify');
+          /**
+            * Displays a confirmation modal to the user and executes the given
+            * event handler if the user chooses to proceed.
+            *
+            * @param {HTMLElement} element - The element that triggered the
+            *                                confirmation modal.
+            * @param {Function} EventHandler - The event handler to be executed
+            *                                  if the user confirms the action.
+            *
+            * @returns {void}
+            */
+          function verifyAction(element, EventHandler) {
+            // Displays a modal to the user to confirm the action
+            const modal = $('#modal-verify');
 
             $('#modal-verify-title').html(
               element.getAttribute('modal-title') || "Are you sure?"
@@ -441,11 +453,13 @@
               element.getAttribute('modal-text') || "If you proceed, you will delete the selected data"
             );
 
-            submit = $('#modal-verify-submit')
+            const submit = $('#modal-verify-submit')
             submit.html(
               element.getAttribute('modal-submit-text') || "Proceed"
             );
 
+            // Attaches an event listener to the confirmation button to execute
+            // the given event handler when clicked
             submit.on("click", function(event) {
               EventHandler(element, event);
             });
@@ -461,6 +475,11 @@
             }
 
             navigator.clipboard.writeText(value);
+
+            var tooltip = $(element).tooltip();
+            tooltip.attr('data-bs-original-title', 'Copied!');
+            tooltip.tooltip('show');
+            setTimeout(function() { tooltip.tooltip('hide'); }, 2000);
           };
 
         </script>

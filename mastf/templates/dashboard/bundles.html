@@ -110,10 +110,6 @@ for different components of each project.
                     <div class="table-responsive">
                         <table id="bundles-table" class="table card-table table-vcenter text-nowrap datatable">
                             <thead>
-                                <th class="w-1">
-                                    <input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all">
-                                </th>
-
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Tags</th>
@@ -142,7 +138,6 @@ for different components of each project.
                             <tbody>
                                 {% for row in bundle_table_data %}
                                 <tr>
-                                    <td><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select one"></td>
                                     <td>
                                         <!-- The bundle id can be queried using a jQuery selector
                                                 that has the following structure:

@@ -38,6 +38,9 @@ class ModelField(forms.CharField):
         self.converter = mapper
 
     def clean(self, value) -> object:
+        if not value:
+            return None
+
         raw_value = super().clean(value)
         value = self.converter(raw_value) if self.converter else raw_value
         queryset = self.model.objects.filter(**{self.field_name: value})

@@ -80,5 +80,9 @@
     "package": {
         "is_dir": true,
         "common_path": ".*[/]?src/.*"
+    },
+    "native": {
+        "is_dir": false,
+        "suffix": ".*\\.(so)$"
     }
 }

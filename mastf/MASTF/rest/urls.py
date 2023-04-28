@@ -51,6 +51,7 @@ urlpatterns = [
 
     path(r"scan/", include([
         path(r"all", views.ScanListView.as_view()),
+        path(r"multiple", views.MultipleScanCreationView.as_view()),
         path(r"create", views.ScanCreationView.as_view()),
         path(r"<uuid:scan_uuid>/", include([
             path(r"", views.ScanView.as_view()),

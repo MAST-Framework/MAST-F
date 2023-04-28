@@ -11,7 +11,7 @@ urlpatterns = [
     # (five with dashboard):
     path(r"projects/", views.ProjectsView.as_view(), name='Projects'),
     path(r"bundles/", views.BundlesView.as_view(), name='Bundles'),
-    path(r"scans/", views.DashboardView.as_view(), name='Scans'),
+    path(r"scans/", views.ScansView.as_view(), name='Scans'),
     path(r"plug-ins/", views.PluginsView.as_view(), name='Plug-Ins'),
 
     # Top navigation bar links, that can be used to view the user's profile,

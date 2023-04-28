@@ -207,6 +207,7 @@ class CreationAPIViewBase(APIView):
         form = self.form_class(data=form_data)
         if not form.is_valid():
             logger.warning('Form-Invalid at %s:\n%s', self.request.path, form.errors)
+            messages.warning(self.request, "Invalid form data: " + form.errors, "FormValidationError")
             return Response(form.errors, status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -216,25 +217,7 @@ class CreationAPIViewBase(APIView):
             data['pk'] = instance_id
             self.set_defaults(request, data)
 
-            m2m_fields = []
-            for name, descriptor in vars(self.model).items():
-                # The following error would be thrown if we don't pop many-to-many
-                # fields' data from the transferred form data:
-                #
-                # TypeError: Direct assignment to the forward side of a many-to-many
-                # set is prohibited. Use <>.set() instead.
-                #
-                # Is is important to add m2m relationships afterwards as the foreign
-                # key to the created instance must be present.
-                if isinstance(descriptor, ManyToManyDescriptor):
-                    m2m_fields.append((name, data.pop(name, [])))
-
-            instance = self.model.objects.create(**data)
-            for name, values in m2m_fields:
-                if len(values) > 0:
-                    getattr(instance, name).add(values)
-
-            instance.save()
+            instance = self.create(data)
             self.on_create(request, instance)
             logger.debug('(%s) New-Instance: %s', self.__class__.__name__, instance)
         except Exception as err:
@@ -245,6 +228,28 @@ class CreationAPIViewBase(APIView):
         return Response(
             {'success': True, 'pk': str(instance_id)}, status.HTTP_201_CREATED
         )
+
+    def create(self, data) -> object:
+        m2m_fields = []
+        for name, descriptor in vars(self.model).items():
+            # The following error would be thrown if we don't pop many-to-many
+            # fields' data from the transferred form data:
+            #
+            # TypeError: Direct assignment to the forward side of a many-to-many
+            # set is prohibited. Use <>.set() instead.
+            #
+            # Is is important to add m2m relationships afterwards as the foreign
+            # key to the created instance must be present.
+            if isinstance(descriptor, ManyToManyDescriptor):
+                m2m_fields.append((name, data.pop(name, [])))
+
+        instance = self.model.objects.create(**data)
+        for name, values in m2m_fields:
+            if len(values) > 0:
+                getattr(instance, name).add(values)
+
+        instance.save()
+        return instance
 
     def set_defaults(self, request: Request, data: dict) -> None:
         """Sets default values within the final data that creates the intance.

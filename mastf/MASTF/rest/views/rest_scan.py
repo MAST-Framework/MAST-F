@@ -7,7 +7,7 @@ from uuid import UUID
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import status, views
+from rest_framework import status, views, exceptions
 from rest_framework.authentication import (
     TokenAuthentication,
     BasicAuthentication,
@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     'ScanView', 'ScanCreationView', 'ScanListView',
-    'ScannerView', 'ScanTaskView'
+    'ScannerView', 'ScanTaskView', 'MultipleScanCreationView'
 ]
 
 class ScanView(APIViewBase):
@@ -62,13 +62,12 @@ class ScanView(APIViewBase):
             messages.error(request, str(err), err.__class__.__name__)
 
 
-class ScanCreationView(CreationAPIViewBase):
-    form_class = ScanForm
-    model = Scan
 
-    permission_classes = [IsAuthenticated]
-
+class ScanCreationMixin:
     def set_defaults(self, request, data: dict) -> None:
+        if not data.get("project", None) and not data.get("projects", None):
+            raise exceptions.ValidationError("Project must not be null")
+
         data['initiator'] = request.user
         data['risk_level'] = 'None'
         data['status'] = 'Scheduled'
@@ -110,11 +109,38 @@ class ScanCreationView(CreationAPIViewBase):
         else:
             raise NotImplementedError('URL not implemented!')
 
+
+class ScanCreationView(ScanCreationMixin, CreationAPIViewBase):
+    form_class = ScanForm
+    model = Scan
+
+    permission_classes = [IsAuthenticated]
+
     def on_create(self, request: Request, instance: Scan) -> None:
         tasks.schedule_scan(
             instance, request.POST['File'],
             request.POST['selected_scanners']
         )
+
+class MultipleScanCreationView(ScanCreationMixin, CreationAPIViewBase):
+    form_class = ScanForm
+    model = Scan
+    permission_classes = [IsAuthenticated]
+
+    def create(self, data: dict) -> object:
+        projects = data.pop("projects", None)
+        if not projects:
+            raise exceptions.ValidationError("Projects must not be null")
+
+        for project in projects:
+            data['project'] = project
+            instance = super().create(data)
+            tasks.schedule_scan(
+                instance, self.request.POST['File'],
+                self.request.POST['selected_scanners']
+            )
+
+
 
 
 class ScanListView(ListAPIViewBase):

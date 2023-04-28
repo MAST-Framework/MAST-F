@@ -3,14 +3,17 @@ from django.contrib import messages
 from django.db import models
 
 from mastf.MASTF import settings
+from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.mixins import ContextMixinBase, VulnContextMixin, TemplateAPIView
-from mastf.MASTF.rest.views import rest_project
+from mastf.MASTF.rest.views import rest_project, rest_scan
+from mastf.MASTF.utils.enum import Visibility
 from mastf.MASTF.models import (
     Project,
     Vulnerability,
     namespace,
     Scan,
     AbstractBaseFinding,
+    Finding,
     Bundle
 )
 from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
@@ -19,7 +22,7 @@ from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
 
 __all__ = [
     'DashboardView', 'ProjectsView', 'LicenseView', 'PluginsView',
-    'BundlesView'
+    'BundlesView', 'ScansView'
 ]
 
 class DashboardView(ContextMixinBase, TemplateAPIView):
@@ -126,3 +129,52 @@ class PluginsView(ContextMixinBase, TemplateAPIView):
         else:
             context['active'] = 'tabs-permissions'
         return context
+
+
+class ScansView(ContextMixinBase, TemplateAPIView):
+    template_name = "dashboard/scans.html"
+
+    def get_context_data(self, **kwargs: dict) -> dict:
+        context = super().get_context_data(**kwargs)
+
+        visibility_level = [str(x).upper() for x in Visibility]
+        for name in visibility_level:
+            if self.request.GET.get(name.lower(), "true").lower() != "true":
+                visibility_level.remove(name)
+
+        projects = Project.get_by_user(self.request.user)
+        print(visibility_level)
+        scans = (Scan.objects.filter(project__visibility__in=visibility_level)
+            .filter(project__in=projects)
+            .order_by("start_date")
+        )
+
+        scan_table_data = []
+        for scan in scans:
+            vuln_stats = AbstractBaseFinding.stats(Vulnerability, scan=scan)
+            finding_stats = AbstractBaseFinding.stats(Finding, scan=scan)
+
+            data = namespace(scan=scan)
+            data.findings = vuln_stats.count + finding_stats.count
+            data.high_risks = vuln_stats.high + finding_stats.high
+            data.medium_risks = vuln_stats.medium + finding_stats.medium
+            data.low_risks = vuln_stats.low + finding_stats.low
+            scan_table_data.append(data)
+
+        context['scan_table_data'] = scan_table_data
+        context['scanners'] = ScannerPlugin.all()
+        context['available'] = projects
+        return context
+
+    def post(self, request, *args, **kwargs):
+        view = rest_scan.MultipleScanCreationView.as_view()
+        view(request)
+        return redirect('Scans', **self.kwargs)
+
+
+
+
+
+
+
+

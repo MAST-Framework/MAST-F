@@ -54,7 +54,8 @@ class _FileDesc(dict):
             # and the directory indicator is used within the JavaScript
             # code.
             "path": path[path.find(root_name):],
-            "is-dir": file.is_dir()
+            "is-dir": file.is_dir(),
+            "file-type": file_type
         }
         if language:
             self['li_attr']['language'] = language

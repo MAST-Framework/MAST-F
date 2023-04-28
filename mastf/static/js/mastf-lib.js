@@ -53,6 +53,18 @@ Utils = {
         return classAttr.includes("theme-dark");
     },
 
+    convertParams: function(params) {
+        var result = {};
+        if (!params) return result;
+
+        params = params.split('&');
+        for (var i = 0; i < params.length; i++) {
+          var parts = params[i].split('=');
+          result[parts[0]] = decodeURIComponent(parts[1]).replace(/\+/g, ' ');
+        }
+        return result;
+    },
+
     /**
      * Applies a progress bar color and width according to the
      * provided severity.

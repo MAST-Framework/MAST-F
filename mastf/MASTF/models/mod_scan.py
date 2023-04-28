@@ -18,7 +18,7 @@ class Scan(models.Model):
 
     origin = models.CharField(null=True, max_length=32)
     """Stores the scan origin of the scan.
-    
+
     The origin can point to the following values:
     - Play-Store
     - iOS-App-Store
@@ -28,7 +28,7 @@ class Scan(models.Model):
 
     source = models.CharField(null=True, max_length=256)
     """Stores the file source.
-    
+
     The source of an uploaded file can be one of the following:
     - URL: An URL was given from where the file was downloaded
     - File: Simple file upload
@@ -60,7 +60,7 @@ class Scan(models.Model):
 
     is_active = models.BooleanField(default=False)
     """Simple property used to indicate whether the scan is stil busy."""
-    
+
     finished = models.BooleanField(default=False)
     """Property to determine whether this scan has finished."""
 
@@ -81,12 +81,12 @@ class Scan(models.Model):
 
         if initiator:
             scans = scans.filter(initiator=initiator)
-            
+
         if not project and not initiator:
             scans = [] # !important: we don't want users to access unknown scans
 
         return scans[0] if len(scans) > 0 else None
-    
+
     @staticmethod
     def files(project: Project = None, initiator: User = None,
               team: Team = None) -> list:
@@ -102,28 +102,28 @@ class Scan(models.Model):
         scans = Scan.objects.all()
         if project:
             scans = scans.filter(project=project)
-            
+
         if initiator:
             scans = scans.filter(initiator=initiator)
-        
+
         if team:
             scans = scans.filter(project__team=team)
 
         if not project and not team and not initiator:
             return [] # !important: we don't want users to access unknown files
-        
+
         return [x.file for x in scans]
 
 
 class Scanner(models.Model):
     """Simple model to map selected scanners to a scan."""
-    
+
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
     """Stores a relation to the scan this scanner is used in."""
-    
+
     name = models.CharField(max_length=256, null=False)
     """Stores a name of the plugin to use."""
-    
+
     @staticmethod
     def names(project: Project) -> list:
         """Returns a list of names of scanners that are assigned to a project.
@@ -158,7 +158,7 @@ class ScanTask(models.Model):
 
         return []
 
- 
+
 class Details(models.Model):
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
 

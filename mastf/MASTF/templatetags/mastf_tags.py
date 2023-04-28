@@ -1,5 +1,6 @@
 from django import template
-from django.urls import get_resolver
+from datetime import date
+from time import mktime
 
 from mastf.MASTF.models import AbstractBaseFinding, PackageVulnerability
 from mastf.MASTF.mixins import VulnContextMixin
@@ -38,6 +39,6 @@ def component_color(category) -> str:
     return 'secondary'
 
 
-@register.filter(name="allobjects")
-def allobjects(manager):
-    return list(manager.all())
+@register.filter(name="timestamp")
+def timestamp(obj: date):
+    return mktime(obj.timetuple()) * 1000
