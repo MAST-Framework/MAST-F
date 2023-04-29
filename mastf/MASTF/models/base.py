@@ -213,6 +213,7 @@ class File(models.Model):
 class Account(models.Model): # unused
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, null=True)
+    # description = models.CharField(max_length=256, )
 
 
 class Bundle(models.Model):

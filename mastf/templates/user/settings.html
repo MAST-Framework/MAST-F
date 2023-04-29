@@ -4,114 +4,125 @@
 {% block page_header %}
 <!-- Page header -->
 <div class="page-header d-print-none">
-  <div class="container-fluid">
-    <div class="row g-2 align-items-center">
-      <div class="col">
-        <h2 class="page-title">
-          Account Settings
-        </h2>
-      </div>
+    <div class="container-fluid">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Account Settings
+                </h2>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 {% endblock page_header %}
 
 <!-- Page body -->
 {% block page_body %}
 <div class="page-body">
-  <div class="container-fluid">
-    <div class="card">
-      <div class="row g-0">
-        <div class="col-3 d-none d-md-block border-end">
-          <div class="card-body">
-            <h4 class="subheader">Business settings</h4>
-            <div class="list-group list-group-transparent">
-              <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center active">My Account</a>
-              <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">My Notifications</a>
-              <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">Connected Apps</a>
-              <a href="./settings-plan.html" class="list-group-item list-group-item-action d-flex align-items-center">Plans</a>
-              <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">Billing & Invoices</a>
-            </div>
-            <h4 class="subheader mt-4">Experience</h4>
-            <div class="list-group list-group-transparent">
-              <a href="#" class="list-group-item list-group-item-action">Give Feedback</a>
-            </div>
-          </div>
-        </div>
-        <div class="col d-flex flex-column">
-          <div class="card-body">
-            <h2 class="mb-4">My Account</h2>
-            <h3 class="card-title">Profile Details</h3>
-            <div class="row align-items-center">
-              <div class="col-auto"><span class="avatar avatar-xl" style="background-image: url(./static/avatars/000m.jpg)"></span>
-              </div>
-              <div class="col-auto"><a href="#" class="btn">
-                  Change avatar
-                </a></div>
-              <div class="col-auto"><a href="#" class="btn btn-ghost-danger">
-                  Delete avatar
-                </a></div>
-            </div>
-            <h3 class="card-title mt-4">Business Profile</h3>
-            <div class="row g-3">
-              <div class="col-md">
-                <div class="form-label">Business Name</div>
-                <input type="text" class="form-control" value="Tabler">
-              </div>
-              <div class="col-md">
-                <div class="form-label">Business ID</div>
-                <input type="text" class="form-control" value="560afc32">
-              </div>
-              <div class="col-md">
-                <div class="form-label">Location</div>
-                <input type="text" class="form-control"
-     value="Peimei, China">
-              </div>
-            </div>
-            <h3 class="card-title mt-4">Email</h3>
-            <p class="card-subtitle">This contact will be shown to others publicly, so choose it carefully.</p>
-            <div>
-              <div class="row g-2">
-                <div class="col-auto">
-                  <input type="text" class="form-control w-auto" value="paweluna@howstuffworks.com">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-3 d-none d-md-block border-end">
+                    <div class="card-body">
+                        <h4 class="subheader">Business settings</h4>
+                        <div class="list-group list-group-transparent">
+                            <a href="./settings.html" class="list-group-item list-group-item-action d-flex align-items-center active">My Account</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">My Notifications</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">Connected Apps</a>
+                            <a href="./settings-plan.html" class="list-group-item list-group-item-action d-flex align-items-center">Plans</a>
+                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">Billing & Invoices</a>
+                        </div>
+                        <h4 class="subheader mt-4">Experience</h4>
+                        <div class="list-group list-group-transparent">
+                            <a href="#" class="list-group-item list-group-item-action">Give Feedback</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-auto"><a href="#" class="btn">
-                    Change
-                  </a></div>
-              </div>
+                <div class="col d-flex flex-column">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="subheader">Account Data</p>
+                           <div class="row align-items-center m-1 mt-2">
+                               <div class="col-auto">
+                                   <span class="avatar avatar-lg rounded">T</span>
+                               </div>
+                               <div class="col">
+                                    <input type="text" class="form-control form-control-flush fw-bold h1" name="username" placeholder="Username"
+                                        value="{{request.user.username}}" minlength="5">
+                                    <input type="text" class="form-control form-control-flush my-2" name="description" placeholder="Description of your job" value="">
+                                   <div class="list-inline list-inline-dots text-muted">
+                                       <div class="list-inline-item">
+                                           <!-- Download SVG icon from http://tabler-icons.io/i/map -->
+                                           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path><path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855"></path></svg>
+                                           <span class="badge bg-azure-lt">Admin</span>
+                                       </div>
+                                       <div class="list-inline-item">
+                                           <!-- Download SVG icon from http://tabler-icons.io/i/mail -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M3 7l9 6l9 -6" /></svg>
+                                            <a href="#" class="text-reset">
+                                                email
+                                            </a>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="card mt-2 ms-4 border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-1">
+                                    <label class="from-label h3">E-Mail</label>
+                                    <input type="text" class="form-control" id="" placeholder="foo@example.com" value="{{request.user.email}}">
+                                    <span class="form-check-description mb-1">The email can be used as an additional field in generated reports. Use ${user.email} in report templates to reference this value.</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="from-label h3">User ID</label>
+                                    <input type="text" class="form-control" id="" value="{{request.user.pk}}" disabled>
+                                    <span class="form-check-description mb-1">The user id is unique and can be used to identify your account.</span>
+                                </div>
+                                <div class="col">
+                                    <div class="btn-list justify-content-end">
+                                        <a href="#" class="btn btn-primary">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                                            Save Changes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card m-4 border-danger">
+                        <div class="card-header">
+                            <span class="fw-bold">Danger Zone</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row border-bottom mb-3">
+                                <div class="col mb-1">Delete Account
+                                    <span class="form-check-description">
+                                        Delete this account and all data related to it.
+                                    </span>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-outline-danger">Delete Account</button>
+                                </div>
+                            </div>
+                            <div class="row border-bottom mb-3">
+                                <div class="col mb-1">Change Password
+                                    <span class="form-check-description">
+                                        Change the current password for this account. Make sure to save your password, otherwise your data may be lost.
+                                    </span>
+                                </div>
+                                <div class="col-auto justify-content-center">
+                                    <button class="btn btn-outline-danger">Change Password</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <h3 class="card-title mt-4">Password</h3>
-            <p class="card-subtitle">You can set a permanent password if you don't want to use temporary login codes.</p>
-            <div>
-              <a href="#" class="btn">
-                Set new password
-              </a>
-            </div>
-            <h3 class="card-title mt-4">Public profile</h3>
-            <p class="card-subtitle">Making your profile public means that anyone on the Dashkit network will be able to find
-              you.</p>
-            <div>
-              <label class="form-check form-switch form-switch-lg">
-                <input class="form-check-input" type="checkbox" >
-                <span class="form-check-label form-check-label-on">You're currently visible</span>
-                <span class="form-check-label form-check-label-off">You're
-                  currently invisible</span>
-              </label>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent mt-auto">
-            <div class="btn-list justify-content-end">
-              <a href="#" class="btn">
-                Cancel
-              </a>
-              <a href="#" class="btn btn-primary">
-                Submit
-              </a>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 {% endblock page_body %}

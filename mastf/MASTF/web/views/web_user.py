@@ -6,9 +6,10 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, View
 
 from mastf.MASTF.rest.views import rest_user
+from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
 
 __all__ = [
-    'LoginView', 'RegstrationView', 'LogoutView'
+    'LoginView', 'RegstrationView', 'LogoutView', 'UserProfileView'
 ]
 
 class LoginView(TemplateView):
@@ -90,3 +91,7 @@ class LogoutView(View):
 
         messages.error(request, 'Could not logout user!')
         return redirect('Index')
+
+
+class UserProfileView(ContextMixinBase, TemplateAPIView):
+    template_name = "user/settings.html"

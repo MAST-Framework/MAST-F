@@ -16,8 +16,8 @@ urlpatterns = [
 
     # Top navigation bar links, that can be used to view the user's profile,
     # logout or to navigate to the global settings.
-    path(r"settings/", views.DashboardView.as_view(), name='Settings'),
-    path(r"logout", views.LogoutView.as_view(), name='Settings'),
+    path(r"settings/", views.UserProfileView.as_view(), name='Settings'),
+    path(r"logout", views.LogoutView.as_view(), name='User-Logout'),
 
     # Both views will be treated special as they don't need any authorization.
     # Note that each view implements GET requests to render the HTML page and
