@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from mastf.MASTF import settings
 from mastf.MASTF.utils.enum import Visibility
-from mastf.MASTF.rest.permissions import CanEditProject
+from mastf.MASTF.permissions import CanEditProject, CanDeleteProject
 from mastf.MASTF.serializers import ProjectSerializer
 from mastf.MASTF.models import (
     Project,
@@ -44,7 +44,7 @@ class ProjectView(APIViewBase):
 
     permission_classes = [
         # The user has to be authenticated
-        permissions.IsAuthenticated & CanEditProject
+        permissions.IsAuthenticated & (CanEditProject | CanDeleteProject)
     ]
 
     model = Project

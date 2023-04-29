@@ -13,7 +13,7 @@ from mastf.MASTF.models import (
 )
 from mastf.MASTF.utils.enum import Severity
 
-from mastf.MASTF.rest.permissions import IsBundleMember
+from mastf.MASTF.permissions import CanViewBundle
 
 __all__ = [
     'BundleDetailsView'
@@ -21,7 +21,7 @@ __all__ = [
 
 class BundleDetailsView(ContextMixinBase, VulnContextMixin, TemplateAPIView):
     template_name = "bundle/bundle-overview.html"
-    permission_classes = [IsBundleMember]
+    permission_classes = [CanViewBundle]
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)

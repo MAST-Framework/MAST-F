@@ -9,6 +9,9 @@ from rest_framework.request import Request
 from mastf.MASTF.rest.permissions import IsUser, ReadOnly
 from mastf.MASTF.serializers import UserSerializer
 from mastf.MASTF.forms import RegistrationForm
+from mastf.MASTF.permissions import (
+    CanEditUser, CanDeleteUser, Delete, Patch, Get
+)
 
 from .base import APIViewBase
 
@@ -22,9 +25,13 @@ class UserView(APIViewBase):
     # Only an admin or the user itself can push changes to
     # the user account.
     permission_classes = [
-        permissions.IsAuthenticated & (IsUser | ReadOnly | permissions.IsAdminUser)
+        permissions.IsAuthenticated & (
+            # Note that CanDeleteUser will only check if the request's
+            # method is DELETE.
+            CanDeleteUser | CanEditUser
+        )
     ]
-
+    bound_permissions = [CanEditUser, CanDeleteUser]
     model = User
     lookup_field = 'pk'
     serializer_class = UserSerializer
@@ -61,7 +68,7 @@ class LoginView(APIView):
         login(request, user)
         return Response({'success': True}, status.HTTP_200_OK)
 
-
+# TODO: manage access for creation of users
 class RegistrationView(APIView):
     """Endpoint for creating new users."""
 
@@ -85,7 +92,9 @@ class RegistrationView(APIView):
             return Response(data={'message': 'User already present'},
                             status=status.HTTP_409_CONFLICT)
 
-        User.objects.create_user(username=username, password=form.cleaned_data['password'])
+        user = User.objects.create_user(username=username, password=form.cleaned_data['password'])
+        CanDeleteUser.assign_to(user, user.pk)
+        CanEditUser.assign_to(user, user.pk)
         return Response({'success': True}, status.HTTP_200_OK)
 
 

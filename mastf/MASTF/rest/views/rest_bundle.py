@@ -8,7 +8,11 @@ from mastf.MASTF.serializers import BundleSerializer
 from mastf.MASTF.models import Bundle, Scanner, Vulnerability, Project
 from mastf.MASTF.forms import BundleForm
 from mastf.MASTF.utils.enum import Severity
-from mastf.MASTF.rest.permissions import IsBundleMember, CanEditProject
+from mastf.MASTF.permissions import (
+    CanEditBundle,
+    CanDeleteBundle,
+    CanViewBundle
+)
 
 from .base import (
     CreationAPIViewBase,
@@ -29,12 +33,14 @@ __all__ = [
 class BundleView(APIViewBase):
     model = Bundle
     serializer_class = BundleSerializer
-    permission_classes = [permissions.IsAuthenticated & IsBundleMember]
+    permission_classes = [permissions.IsAuthenticated & (
+        CanDeleteBundle | CanEditBundle
+    )]
 
 class BundleCreationView(CreationAPIViewBase):
     model = Bundle
     form_class = BundleForm
-    permission_classes = [permissions.IsAuthenticated & IsBundleMember]
+    permission_classes = [permissions.IsAuthenticated]
 
     def set_defaults(self, request, data: dict) -> None:
         data['owner'] = request.user
@@ -55,7 +61,7 @@ class BundleProjectDeletionView(GetObjectMixin, APIView):
         authentication.TokenAuthentication
     ]
     permission_classes = [
-        permissions.IsAuthenticated & IsBundleMember
+        permissions.IsAuthenticated & CanEditBundle
     ]
 
     def delete(self, request, *args, **kwargs) -> Response:
@@ -74,7 +80,7 @@ class BundleChartView(GetObjectMixin, APIView):
         authentication.TokenAuthentication
     ]
     permission_classes = [
-        permissions.IsAuthenticated & IsBundleMember
+        permissions.IsAuthenticated & CanViewBundle
     ]
 
     def get(self, request, pk, name: str) -> Response:

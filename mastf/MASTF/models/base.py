@@ -1,7 +1,8 @@
 import pathlib
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
+from django.contrib.contenttypes.models import ContentType
 
 from mastf.MASTF import settings
 from mastf.MASTF.utils.enum import Visibility, Severity, InspectionType

@@ -2,8 +2,10 @@ import logging
 
 from django.contrib.auth.models import User
 from django.db.models import Manager
+
 from rest_framework import serializers
 
+from mastf.MASTF.permissions import BoundPermission, CanEditTeam
 from mastf.MASTF.models import (
     Project,
     Team,
@@ -133,6 +135,8 @@ class ManyToManySerializer(serializers.ModelSerializer):
     rel_fields = None
     """The fields related to a many-to-many relationship."""
 
+    bound_permissions = None
+
     def update(self, instance, validated_data):
         if self.rel_fields and isinstance(self.rel_fields, (list, tuple)):
             for field_name in self.rel_fields:
@@ -147,9 +151,23 @@ class ManyToManySerializer(serializers.ModelSerializer):
                 if append:
                     manager.add(elements)
                 else:
+                    self._remove_permissions(instance, manager, elements)
                     manager.set(elements)
 
         return super().update(instance, validated_data)
+
+    def _remove_permissions(self, instance, manager, elements):
+        current = manager.all()
+        diff = set(current) - set(elements)
+
+        for permission in (self.bound_permissions or []):
+            assert isinstance(permission, BoundPermission), (
+                f"The given permission object must be a BoundPermission! (Got: {permission})"
+            )
+            for element in diff:
+                # Currently only user elements will be affected from this change
+                if isinstance(element, User):
+                    permission.remove_from(element, instance)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -161,7 +179,10 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamSerializer(ManyToManySerializer):
+    rel_fields = ['users']
+    users = ManyToManyField(User)
+
     class Meta:
         model = Team
         fields = '__all__'
@@ -179,6 +200,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 class BundleSerializer(ManyToManySerializer):
     rel_fields = ['projects']
     projects = ManyToManyField(Project)
+    bound_permissions = [CanEditTeam]
 
     class Meta:
         model = Bundle

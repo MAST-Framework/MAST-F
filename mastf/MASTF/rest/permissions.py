@@ -5,6 +5,7 @@ from rest_framework.permissions import (
     exceptions
 )
 
+from mastf.MASTF.permissions import CanEditProject
 from mastf.MASTF.utils.enum import Visibility
 
 class ReadOnly(BasePermission):
@@ -12,24 +13,9 @@ class ReadOnly(BasePermission):
     def has_permission(self, request: HttpRequest, view):
         return request.method in SAFE_METHODS
 
-class IsUser(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user == obj
-
-
-class IsProjectOwner(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
-
 class IsProjectPublic(BasePermission):
     def has_object_permission(self, request, view, obj):
         return not obj.team and obj.visibility == Visibility.PUBLIC
-
-class IsProjectMember(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user in obj.team.users
-
-CanEditProject = (IsProjectOwner | IsProjectMember | IsProjectPublic)
 
 
 class IsScanInitiator(BasePermission):
@@ -38,7 +24,7 @@ class IsScanInitiator(BasePermission):
 
 class IsScanProjectMember(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return CanEditProject().has_object_permission(request, view, obj.project)
+        return CanEditProject.has_object_permission(request, view, obj.project)
 
 CanEditScan = (IsScanInitiator | IsScanProjectMember)
 
@@ -48,17 +34,9 @@ class IsScanTaskInitiator(BasePermission):
 
 class IsScanTaskMember(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return CanEditProject().has_object_permission(request, view, obj.project)
+        return CanEditProject.has_object_permission(request, view, obj.project)
 
 CanEditScanTask = (IsScanTaskInitiator | IsScanTaskMember)
-
-class IsTeamOwner(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
-
-class IsTeamMember(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return request.user in obj.users
 
 class CanEditScanAsField(BasePermission):
     ref = CanEditScan()
@@ -72,16 +50,3 @@ class CanEditScanFromScanner(BasePermission):
     def has_object_permission(self, request, view, obj):
         return self.ref.has_object_permission(request, view, obj.scanner)
 
-class IsBundleMember(BasePermission):
-    ref = CanEditProject()
-
-    def has_object_permission(self, request, view, obj):
-        projects = obj.projects.all()
-        for project in projects:
-            if not self.ref.has_object_permission(request, view, project):
-                return False
-
-        if len(projects) == 0:
-            return request.user == obj.owner
-
-        return True

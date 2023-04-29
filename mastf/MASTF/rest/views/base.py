@@ -12,8 +12,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import (
-    authentication, status, permissions, pagination
+    authentication, status, permissions
 )
+
+from mastf.MASTF.permissions import BoundPermission
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +55,21 @@ class GetObjectMixin:
         return instance
 
 
-class APIViewBase(GetObjectMixin, APIView):
+class BoundPermissionsMixin:
+
+    bound_permissions = None
+    """Any user permissions that should be removed on DELETE requests"""
+
+    def get_bound_permissions(self, request: Request) -> list:
+        if not self.bound_permissions:
+            return []
+
+        elements = filter(lambda x: request.method in x, self.bound_permissions)
+        return list(elements)
+
+
+
+class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
     """Base class for default implementations of an APIView.
 
     This class implements the behaviour for retrieving, updating
@@ -73,7 +89,6 @@ class APIViewBase(GetObjectMixin, APIView):
 
     serializer_class = None
     """The serializer used to parse, validate and update data"""
-
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Returns information about a single object
@@ -133,15 +148,21 @@ class APIViewBase(GetObjectMixin, APIView):
         :rtype: Response
         """
         instance = self.get_object()
+
         try:
             self.on_delete(request, instance)
-            instance.delete()
+            # bound permissions should be removed as well
+            for permission in self.get_bound_permissions(request):
+                self.check_object_permissions
+                permission.remove_from(request.user, instance)
+
+            # instance.delete()
         except Exception as err:
             logger.exception("(%s) Delete-Instance: ", self.__class__.__name__)
             messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
 
-        logger.debug('Delete-Instance (success): id=%s', instance.pk)
+        logger.debug('Delete-Instance (success): id=%s', instance)
         return Response({'success': True}, status.HTTP_200_OK)
 
     def on_delete(self, request: Request, obj) -> None:
@@ -176,7 +197,7 @@ class ListAPIViewBase(ListAPIView):
         return queryset
 
 
-class CreationAPIViewBase(APIView):
+class CreationAPIViewBase(BoundPermissionsMixin, APIView):
     """Basic API-Endpoint to create a new database objects."""
 
     authentication_classes = [
@@ -247,6 +268,10 @@ class CreationAPIViewBase(APIView):
         for name, values in m2m_fields:
             if len(values) > 0:
                 getattr(instance, name).add(values)
+
+        for permission in (self.bound_permissions or []):
+            # Permissions should be created
+            permission.create(instance.pk)
 
         instance.save()
         return instance
