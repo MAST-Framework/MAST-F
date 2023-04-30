@@ -181,3 +181,4 @@ class BundleForm(forms.Form):
     tags = forms.CharField(required=False)
     risk_level = forms.CharField(max_length=32, required=False)
     projects = ManyToManyField(Project, required=False)
+

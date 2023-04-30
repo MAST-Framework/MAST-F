@@ -20,6 +20,13 @@ class StringEnum(Enum):
     def __hash__(self) -> int:
         return hash(self.value)
 
+
+class Role(StringEnum):
+    ADMIN = "Admin"
+    REGULAR = "Regular"
+    EXTERNAL = "External"
+
+
 class Severity(StringEnum):
     CRITICAL = "Critical"
     HIGH = "High"
@@ -29,6 +36,7 @@ class Severity(StringEnum):
     SECURE = "Secure"
     NONE = "None"
 
+
 class State(StringEnum):
     TO_VERIFY = "To Verify"
     CONFIRMED = "Confirmed"
@@ -36,14 +44,17 @@ class State(StringEnum):
     NOT_EXPLOITABLE = "Not Exploitable"
     PROPOSED_NOT_EXPLOITABLE = "Proposed not exploitable"
 
+
 class Visibility(StringEnum):
     PUBLIC = "Public"
     PRIVATE = "Private"
     INTERNAL = "Internal"
 
+
 class InspectionType(StringEnum):
     SIMPLE = "Simple"
     ADVANCED = "Advanced"
+
 
 class Platform(StringEnum):
     ANDROID = "Android"
@@ -64,11 +75,13 @@ class Relation(StringEnum):
     TRANSITIVE = 'Transitive'
     DIRECT = 'Direct'
 
+
 class HostType(StringEnum):
     INVALID = "Invalid"
     TRACKER = "Tracker"
     OK = "Ok"
     NOT_SET = "Not Set"
+
 
 class DataProtectionLevel(StringEnum):
     PRIVATE = "Private"

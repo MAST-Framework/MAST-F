@@ -3,7 +3,8 @@ from django.urls import path, include
 from mastf.MASTF.rest import views
 
 urlpatterns = [
-    path(r"user/<int:pk>", views.UserView.as_view()),
+    path(r"user/<int:pk>", views.UserView.as_view(), name="User-View"),
+    path(r"user/account/<int:pk>", views.AccountView.as_view(), name="Account-View"),
 
     path(r"login", views.LoginView.as_view()),
     path(r"logout", views.LogoutView.as_view()),

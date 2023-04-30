@@ -90,6 +90,9 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
     serializer_class = None
     """The serializer used to parse, validate and update data"""
 
+    def check_object_permissions(self, request, obj):
+        return super().check_object_permissions(request, obj)
+
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Returns information about a single object
 
@@ -156,7 +159,7 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
                 self.check_object_permissions
                 permission.remove_from(request.user, instance)
 
-            # instance.delete()
+            instance.delete()
         except Exception as err:
             logger.exception("(%s) Delete-Instance: ", self.__class__.__name__)
             messages.error(self.request, str(err), str(err.__class__.__name__))
@@ -271,7 +274,7 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
 
         for permission in (self.bound_permissions or []):
             # Permissions should be created
-            permission.create(instance.pk)
+            permission.assign_to(self.request.user, instance.pk)
 
         instance.save()
         return instance

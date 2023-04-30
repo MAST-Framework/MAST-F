@@ -7,6 +7,7 @@ from django.views.generic import TemplateView, View
 
 from mastf.MASTF.rest.views import rest_user
 from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
+from mastf.MASTF.models import Account
 
 __all__ = [
     'LoginView', 'RegstrationView', 'LogoutView', 'UserProfileView'
@@ -94,4 +95,10 @@ class LogoutView(View):
 
 
 class UserProfileView(ContextMixinBase, TemplateAPIView):
-    template_name = "user/settings.html"
+    template_name = "user/settings/settings-account.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["account"] = Account.objects.get(user=self.request.user)
+        return context
+

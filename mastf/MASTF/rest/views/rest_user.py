@@ -6,17 +6,21 @@ from rest_framework import permissions, authentication, status
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from mastf.MASTF.rest.permissions import IsUser, ReadOnly
-from mastf.MASTF.serializers import UserSerializer
+from mastf.MASTF.serializers import UserSerializer, AccountSerializer
 from mastf.MASTF.forms import RegistrationForm
+from mastf.MASTF.models import Account
 from mastf.MASTF.permissions import (
-    CanEditUser, CanDeleteUser, Delete, Patch, Get
+    CanEditUser,
+    CanDeleteUser,
+    CanViewAccount,
+    CanEditAccount
 )
 
 from .base import APIViewBase
 
 __all__ = [
-    'UserView', 'LoginView', 'RegistrationView', 'LogoutView'
+    'UserView', 'LoginView', 'RegistrationView', 'LogoutView',
+    'AccountView'
 ]
 
 class UserView(APIViewBase):
@@ -93,8 +97,11 @@ class RegistrationView(APIView):
                             status=status.HTTP_409_CONFLICT)
 
         user = User.objects.create_user(username=username, password=form.cleaned_data['password'])
+        acc = Account.objects.create(user=user)
+
         CanDeleteUser.assign_to(user, user.pk)
         CanEditUser.assign_to(user, user.pk)
+        CanViewAccount.assign_to(user, acc.pk)
         return Response({'success': True}, status.HTTP_200_OK)
 
 
@@ -117,3 +124,11 @@ class LogoutView(APIView):
         """
         logout(request)
         return Response({'success': True}, status=status.HTTP_200_OK)
+
+
+class AccountView(APIViewBase):
+    serializer_class = AccountSerializer
+    model = Account
+    permission_classes = [permissions.IsAuthenticated & (CanViewAccount | CanEditAccount)]
+    bound_permissions = [CanViewAccount]
+

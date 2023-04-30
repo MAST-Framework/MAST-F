@@ -2,7 +2,6 @@ from rest_framework.request import HttpRequest
 from rest_framework.permissions import (
     BasePermission,
     SAFE_METHODS,
-    exceptions
 )
 
 from mastf.MASTF.permissions import CanEditProject

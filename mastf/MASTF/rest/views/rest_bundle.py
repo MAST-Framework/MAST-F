@@ -1,4 +1,5 @@
 from rest_framework import permissions, authentication, status
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from django.db.models.functions import ExtractMonth
@@ -33,17 +34,22 @@ __all__ = [
 class BundleView(APIViewBase):
     model = Bundle
     serializer_class = BundleSerializer
-    permission_classes = [permissions.IsAuthenticated & (
-        CanDeleteBundle | CanEditBundle
-    )]
+    permission_classes = [
+        permissions.IsAuthenticated & (
+            CanDeleteBundle | CanEditBundle | CanViewBundle
+        )
+    ]
+    bound_permissions = [CanDeleteBundle, CanEditBundle, CanViewBundle]
 
 class BundleCreationView(CreationAPIViewBase):
     model = Bundle
     form_class = BundleForm
     permission_classes = [permissions.IsAuthenticated]
+    bound_permissions = [CanDeleteBundle, CanEditBundle, CanViewBundle]
 
     def set_defaults(self, request, data: dict) -> None:
         data['owner'] = request.user
+
 
 class BundleListView(ListAPIViewBase):
     queryset = Bundle.objects.all()

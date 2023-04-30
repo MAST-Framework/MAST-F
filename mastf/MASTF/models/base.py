@@ -1,11 +1,15 @@
 import pathlib
 
 from django.db import models
-from django.contrib.auth.models import User, Permission
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 
 from mastf.MASTF import settings
-from mastf.MASTF.utils.enum import Visibility, Severity, InspectionType
+from mastf.MASTF.utils.enum import (
+    Visibility,
+    Severity,
+    InspectionType,
+    Role
+)
 
 # As we're importing all classes and variables within the '__init__'
 # file, this statement is needed to cleanup accessabe members.
@@ -213,8 +217,8 @@ class File(models.Model):
 
 class Account(models.Model): # unused
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=256, null=True)
-    # description = models.CharField(max_length=256, )
+    role = models.CharField(max_length=256, choices=Role.choices, default=Role.REGULAR)
+    description = models.CharField(max_length=256, blank=True, null=True)
 
 
 class Bundle(models.Model):

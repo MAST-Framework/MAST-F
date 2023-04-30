@@ -37,6 +37,7 @@ class TeamCreationView(CreationAPIViewBase):
     model = TeamSerializer
     form_class = TeamForm
     permission_classes = [permissions.IsAuthenticated]
+    bound_permissions = [CanEditTeam]
 
     def on_create(self, request: Request, instance: Team) -> None:
         CanEditTeam.assign_to(request.user, instance.pk)
