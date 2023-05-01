@@ -5,6 +5,7 @@ from uuid import uuid4
 from django.shortcuts import get_object_or_404
 from django.db.models import QuerySet
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.db.models.fields.related import ManyToManyDescriptor
 
 from rest_framework.views import APIView
@@ -68,7 +69,6 @@ class BoundPermissionsMixin:
         return list(elements)
 
 
-
 class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
     """Base class for default implementations of an APIView.
 
@@ -89,9 +89,6 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
 
     serializer_class = None
     """The serializer used to parse, validate and update data"""
-
-    def check_object_permissions(self, request, obj):
-        return super().check_object_permissions(request, obj)
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         """Returns information about a single object
@@ -181,6 +178,7 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
 
     def prepare_patch(self, data: dict):
         pass
+
 
 class ListAPIViewBase(ListAPIView):
 
@@ -273,7 +271,7 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
         instance = self.model.objects.create(**data)
         for name, values in m2m_fields:
             if len(values) > 0:
-                getattr(instance, name).add(values)
+                getattr(instance, name).add(*values)
 
         for permission in (self.bound_permissions or []):
             # Permissions should be created

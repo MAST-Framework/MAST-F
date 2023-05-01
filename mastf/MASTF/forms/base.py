@@ -7,7 +7,7 @@ from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 __all__ = [
     'ModelField', 'RegistrationForm', 'ProjectCreationForm',
     'AppPermissionForm', 'TeamForm', 'ManyToManyField', 'BundleForm',
-    'ChangePasswordForm'
+    'ChangePasswordForm', 'EditTeamMembersForm'
 ]
 
 
@@ -15,9 +15,9 @@ class ModelField(forms.CharField):
     """To apply foreign-key references, just use the ``ModelField``.
 
     >>> class ExampleForm(forms.Form):
-    ...    user = ModelField(User)
+    ...    user = ModelField(User, mapper=int)
     >>> # The cleaned data will store the referenced User instance
-    >>> POST = {'user': 1}
+    >>> POST = {'user': "1"}
     >>> form = ExampleForm(POST)
     >>> if form.is_valid():
     ...     cleaned = form.cleaned_data
@@ -177,8 +177,11 @@ class AppPermissionForm(forms.Form):
 
 class TeamForm(forms.Form):
     name = forms.CharField(max_length=256, required=True)
-    owner = ModelField(User, field_name='username', max_length=256)
-    users = forms.CharField()
+    owner = ModelField(User, max_length=256, mapper=int)
+    users = ManyToManyField(User, mapper=int, required=False)
+
+class EditTeamMembersForm(forms.Form):
+    users = ManyToManyField(User, mapper=int)
 
 
 class BundleForm(forms.Form):

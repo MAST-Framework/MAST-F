@@ -74,7 +74,7 @@ class Team(models.Model):
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     """The owner of this team (the user that created the team)"""
 
-    visibility = models.CharField(default=Visibility.PUBLIC, choices=Visibility.choices, max_length=256)
+    visibility = models.CharField(default=Visibility.PRIVATE, choices=Visibility.choices, max_length=256)
     """The team's visibility.
 
     Note that internal should not be applied to teams as this state

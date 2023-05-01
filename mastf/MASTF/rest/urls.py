@@ -84,6 +84,7 @@ urlpatterns = [
 
     path(r"team/", include([
         path("<int:pk>", views.TeamView.as_view()),
+        path("<int:pk>/members", views.TeamMemberView.as_view()),
         path("all", views.TeamListView.as_view()),
         path("create", views.TeamCreationView.as_view()),
     ])),

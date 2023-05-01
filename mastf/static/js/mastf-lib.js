@@ -12,8 +12,12 @@ REST = {
         REST.ajax(url, 'PATCH', data, onsuccess, contentType);
     },
 
-    delete: function(url, onsuccess, contentType = "application/json", ) {
+    delete: function(url, onsuccess, contentType = "application/json") {
         REST.ajax(url, 'DELETE', null, onsuccess, contentType);
+    },
+
+    del: function(url, onsuccess, data, contentType = "application/json") {
+        REST.ajax(url, 'DELETE', data, onsuccess, contentType);
     },
 
     ajax: function(url, method, data = null, onsuccess = null, contentType = "application/json", error = null) {

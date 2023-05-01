@@ -19,6 +19,7 @@ urlpatterns = [
     path(r"settings/", include([
         path(r"", views.UserProfileView.as_view(), name='Settings'),
         path(r"teams", views.UserTeamsView.as_view(), name='Teams'),
+        path(r"team/<int:pk>", views.UserTeamView.as_view(), name='Team-Overview')
     ])),
 
     path(r"logout", views.LogoutView.as_view(), name='User-Logout'),

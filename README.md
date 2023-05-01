@@ -40,7 +40,7 @@ projects/
 ## ScanTask design
 
 After a new scan has been requested, it will be executed on the target scan date. Before each
-scanner is exeuted, there is a preparation task, that is called asynchronously:
+scanner is executed, there is a preparation task, that is called asynchronously:
 
     1. Preparation: create directories, extract ZIP Files, decompile binaries
     2. Call Plugins: each scanner comes with a ``task`` field that should be
@@ -57,5 +57,5 @@ scanner is exeuted, there is a preparation task, that is called asynchronously:
 6. `page_body`: contains the main content of the page. This can include text, images, videos, or any other type of content that is relevant to the page.
 7. `footer`: stores information that is common across all pages of the site, such as copyright information, contact details, and links to social media accounts.
 8. `modals`: used to display any pop-up windows or different forms, that need to be displayed on the page.
-9. `alerts`: The alerts section is used to display any notifications or alerts to the user. This can include messages about errors, success messages, or any other type of notification that the user needs to be aware of.
+9. `alerts`: used to display any notifications or alerts to the user. This can include messages about errors, success messages, or any other type of notification that the user needs to be aware of.
 10. `js_extended`: used to include any additional JavaScript code beyond the basic scripts included in the base template. This can include custom scripts for the current page or any dependencies that are required.

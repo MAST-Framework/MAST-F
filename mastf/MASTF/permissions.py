@@ -181,14 +181,15 @@ class BoundPermission(OperationHolderMixin, BasePermission):
             return self._permission
 
         codename = self.codename % args
+        name = self.name % args
         permission = Permission.objects.filter(codename=codename)
         if permission.exists():
-            self._permission = permission
+            self._permission = permission.first()
         else:
             content_type = ContentType.objects.get_for_model(self.model)
             self._permission = Permission.objects.create(
                 codename=codename,
-                name=self.name,
+                name=name,
                 content_type=content_type
             )
         return self._permission
@@ -247,7 +248,7 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         :type usr: User
         """
         permission = self.create(*args)
-        logging.debug(f"Granting permission '{permission.codename}' to {usr.username}")
+        logger.debug(f"Granting permission '{permission.codename}' to {usr.username}")
         usr.user_permissions.add(permission)
 
     def remove_from(self, usr: User, instance):
@@ -263,28 +264,30 @@ class BoundPermission(OperationHolderMixin, BasePermission):
 
         permission = self.get(instance)
         if permission is not None:
-            logging.debug(f"Removing permission '{permission.codename}' from {usr.username}")
+            logger.debug(f"Removing permission '{permission.codename}' from {usr.username}")
             usr.user_permissions.remove(permission)
 
 
-CanEditTeam = BoundPermission("can_edit_team_%s", "Can modify teams", Team, runtime=True, methods=[Get, Patch])
+CanEditTeam = BoundPermission("can_edit_team_%s", "Can modify team (%s)", Team, runtime=True, methods=[Patch, Put])
+CanViewTeam = BoundPermission("can_view_team_%s", "Can view team (%s)", Team, runtime=True, methods=[Get])
+CanDeleteTeam = BoundPermission("can_delete_team_%s", "Can delete team (%s)", Team, runtime=True, methods=[Delete])
 
 # We have to split up both permissions as projects can only be
 # removed by their owners or at least users that have a delete
 # permission.
-CanEditProject = BoundPermission("can_edit_project_%s", "Can modify project", Project, runtime=True, methods=[Get, Patch])
-CanDeleteProject = BoundPermission("can_delete_project_%s", "Can delete project", Project, runtime=True, methods=[Delete])
+CanEditProject = BoundPermission("can_edit_project_%s", "Can modify project (%s)", Project, runtime=True, methods=[Get, Patch])
+CanDeleteProject = BoundPermission("can_delete_project_%s", "Can delete project (%s)", Project, runtime=True, methods=[Delete])
 
 # The same applies to user permissions. Note that super-users and
 # admin users will gain permissions immediately.
-CanEditUser = BoundPermission("can_edit_user_%s", "Can modify user", User, runtime=True, methods=[Get, Patch])
-CanDeleteUser = BoundPermission("can_delete_user_%s", "Can delete user", User, runtime=True, methods=[Delete])
+CanEditUser = BoundPermission("can_edit_user_%s", "Can modify user (%s)", User, runtime=True, methods=[Get, Patch])
+CanDeleteUser = BoundPermission("can_delete_user_%s", "Can delete user (%s)", User, runtime=True, methods=[Delete])
 CanCreateUser = BoundPermission("can_create_user", "Can create users", User, methods=[Post])
 
-CanViewAccount = BoundPermission("can_view_acc_%s", "Can view specific account", Account, runtime=True, methods=[Get])
-CanEditAccount = BoundPermission("can_edit_acc_%s", "Can modify specific account", Account, runtime=True, methods=[Patch])
+CanViewAccount = BoundPermission("can_view_acc_%s", "Can view account (%s)", Account, runtime=True, methods=[Get])
+CanEditAccount = BoundPermission("can_edit_acc_%s", "Can modify account (%s)", Account, runtime=True, methods=[Patch])
 
-CanEditBundle = BoundPermission("can_edit_bundle_%s", "Can edit bundles", Bundle, runtime=True, methods=[Patch, Delete])
-CanDeleteBundle = BoundPermission("can_delete_bundle_%s", "Can delete bundles", Bundle, runtime=True, methods=[Delete])
-CanViewBundle = BoundPermission("can_view_bundle_%s", "Can view bundles", Bundle, runtime=True, methods=[Get])
+CanEditBundle = BoundPermission("can_edit_bundle_%s", "Can edit bundle (%s)", Bundle, runtime=True, methods=[Patch, Delete])
+CanDeleteBundle = BoundPermission("can_delete_bundle_%s", "Can delete bundle (%s)", Bundle, runtime=True, methods=[Delete])
+CanViewBundle = BoundPermission("can_view_bundle_%s", "Can view bundle (%s)", Bundle, runtime=True, methods=[Get])
 

@@ -142,19 +142,22 @@ class ManyToManySerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if self.rel_fields and isinstance(self.rel_fields, (list, tuple)):
             for field_name in self.rel_fields:
-                if not hasattr(instance, field_name) or field_name not in validated_data:
-                    logger.debug('[SER] Could not find field ("%s") in class: "%s"',
-                                 field_name, self.__class__)
+                if field_name not in validated_data:
                     continue
-                # Many-To-Many relationships are represented by a Manager
-                # instance internally.
-                manager = getattr(instance, field_name)
-                elements, append = validated_data.pop(field_name)
-                if append:
-                    manager.add(*elements)
-                else:
-                    self._remove_permissions(instance, manager, elements)
-                    manager.set(*elements)
+
+                try:
+                    # Many-To-Many relationships are represented by a Manager
+                    # instance internally.
+                    manager = getattr(instance, field_name)
+                    elements, append = validated_data.pop(field_name)
+                    if append:
+                        manager.add(*elements)
+                    else:
+                        self._remove_permissions(instance, manager, elements)
+                        manager.set(*elements)
+                except KeyError:
+                    logger.debug('(%s) Could not find field ("%s") in class: "%s"',
+                        self.__class__, field_name, instance.__class__)
 
         return super().update(instance, validated_data)
 

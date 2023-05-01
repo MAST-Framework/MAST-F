@@ -105,8 +105,8 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                 <a href="{% url 'Settings' %}" class="dropdown-item">Profile</a>
+                                <a href="{% url 'Teams' %}" class="dropdown-item">Teams</a>
                                 <div class="dropdown-divider"></div>
-                                <a href="{% url 'Settings' %}" class="dropdown-item">Settings</a>
                                 <form action="/web/logout" method="post">
                                     {% csrf_token %}
                                     <input type="submit" class="dropdown-item" value="Logout" id="project-submit">
@@ -575,7 +575,7 @@
                 console.log(element.disabled, value, VerifyText.text);
             });
 
-            const submit2 = $('#modal-verify-with-txt-submit')
+            const submit2 = $('#modal-verify-submit')
             submit2.on("click", function(event) {
                 if (_VerifyAction.callback != null) {
                     _VerifyAction.callback(_VerifyAction.element, event);

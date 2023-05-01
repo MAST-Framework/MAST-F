@@ -11,12 +11,13 @@
     <div class="card-body">
         <div class="row">
             <div class="col-auto">
-                <h1 class="card-title">Groups</h1>
+                <h1 class="card-title">Teams</h1>
             </div>
             <div class="col ms-auto text-end">
                 <div class="list-inline list-inline-dots text-muted">
                     <div class="list-inline-item">
-                        <a href="#" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-new-team">
+                        <a href="#" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-new-team"
+                            onclick="Steps.reset('new-team');">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M12 5l0 14"></path>
@@ -43,7 +44,7 @@
                 </thead>
                 <tbody>
                     {% for team in teams %}
-                    <tr>
+                    <tr id="team-row-{{team.pk}}">
                         <td>
                             <input type="hidden" value="{{ team.pk }}" id="team-id-row-{{ forloop.counter }}">
                             <a href="#" target-id="team-id-row-{{ forloop.counter }}"
@@ -60,7 +61,7 @@
                         </td>
 
                         <td class="text-muted">
-                            <a href="{# url 'Team-Overview' team.pk #}" class="link-secondary">
+                            <a href="{% url 'Team-Overview' team.pk %}" class="link-secondary">
                                 {{ team.name }}
                             </a>
                         </td>
@@ -71,7 +72,7 @@
 
                         <td class="align-center">
                             {% with team.visibility|lower as level %}
-                            <span class="badge bg-{% if level == 'private' %}green{% elif level == 'internal'%}azure{% elif level == 'public' %}orange{% else %}secondary{% endif %}-lt">
+                            <span class="badge bg-{% if level == 'private' %}green{% elif level == 'public'%}azure{% else %}secondary{% endif %}-lt">
 
                                 {% if level %}
                                 {{ level|capfirst }}
@@ -104,6 +105,8 @@
                                         Delete
                                     </a>
                                     {% endif %}
+
+                                    {% if team.owner != request.user %}
                                     <a class="dropdown-item" href="#" target-id="{{team.pk}}" onclick="verifyAction(this, leaveTeam);"
                                         modal-title="Leave Team?" modal-submit-text="Leave"
                                         modal-text="<p>You are about to leave the selected team. All shared resources will be lost and
@@ -111,6 +114,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-door-exit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M13 12v.01"></path><path d="M3 21h18"></path><path d="M5 21v-16a2 2 0 0 1 2 -2h7.5m2.5 10.5v7.5"></path><path d="M14 7h7m-3 -3l3 3l-3 3"></path></svg>
                                         Leave
                                     </a>
+                                    {% endif %}
                                 </div>
 
 
@@ -134,23 +138,34 @@
     document.addEventListener("DOMContentLoaded", function() {
         $('#table-teams').DataTable();
         $('#table-modal-users').DataTable();
-
-        $('#new-team-form').on("submit", function(event) {
-            prepareCreateTeam();
-        });
     });
 
-    function deleteTeam(element) {
-
+    function deleteTeam(element, event) {
+        var teamid = element.getAttribute("target-id");
+        REST.delete(`/api/v1/team/${teamid}`, function(data) {
+            if (data.success) {
+                var table = $('#table-teams').DataTable();
+                table.row(`#team-row-${teamid}`).remove().draw();
+            }
+        })
     };
 
 
-    function leaveTeam(element) {
-
+    function leaveTeam(element, event) {
+        var teamid = element.getAttribute("target-id");
+        console.log(teamid);
+        REST.patch(`/api/v1/team/${teamid}/members`, JSON.stringify({
+            users: "{{request.user.pk}}"
+        }), function(data) {
+            if (data.success) {
+                var table = $('#table-teams').DataTable();
+                table.row(`#team-row-${teamid}`).remove().draw();
+            }
+        })
     };
 
     function prepareCreateTeam() {
-        $('#table-modal-users_length').attr("disabled", "");
+        document.querySelector('select[name="table-modal-users_length"]').disabled = true;
         var table = $('#table-modal-users').DataTable();
         var users = ["{{request.user.pk}}"];
 
@@ -164,7 +179,12 @@
         });
 
         $('#team-users').val(users.join(","));
+        console.log(users.join(","));
     }
+
+    $('#new-team-form').on("submit", function(event) {
+        prepareCreateTeam();
+    });
 
 
 </script>
@@ -195,8 +215,8 @@
                 <div class="row" id="new-team-content-step-0">
                     <div class="row">
                         <div class="col mb-2">
-                            <label class="form-label">
-                                Name
+                            <label class="form-label required">
+                                Name (min. 5 Characters)
                             </label>
                             <input class="form-control" type="text" name="name" id="team-input-name" minlength="5"
                                 value="">
@@ -207,9 +227,8 @@
                             <div class="mb-3">
                                 <label class="form-label required">Visibility</label>
                                 <select class="form-select" name="visibility">
-                                    <option value="PRIVATE" selected>Private</option>
-                                    <option value="PUBLIC">Public</option>
-                                    <option value="INTERNAL">Internal</option>
+                                    <option value="Private" selected>Private</option>
+                                    <option value="Public">Public</option>
                                 </select>
                               </div>
                         </div>
@@ -256,15 +275,7 @@
                                                                   <div class="font-weight-medium">{{ user.username }}</div>
                                                                   <div class="text-muted"><a href="#" class="text-reset">
                                                                     {% if user.email %}{{user.email}}{%else%}
-                                                                        {% if account.role == 'Admin' %}
-                                                                        <span class="badge bg-purple-lt">Admin</span>
-                                                                        {% elif  account.role == 'Regular' %}
-                                                                        <span class="badge bg-teal-lt">Regular</span>
-                                                                        {% elif account.role == 'External' %}
-                                                                        <span class="badge bg-azure-lt">External</span>
-                                                                        {% else %}
-                                                                        <span class="badge bg-secondary-lt">{{account.role}}</span>
-                                                                        {% endif %}
+                                                                        No email set
                                                                     {% endif %}
                                                                   </a></div>
                                                                 </div>
