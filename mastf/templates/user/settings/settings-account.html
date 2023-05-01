@@ -33,7 +33,7 @@
                        <!-- Download SVG icon from http://tabler-icons.io/i/mail -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M3 7l9 6l9 -6" /></svg>
                         <a href="#" class="text-reset">
-                            {{user.email|default:"no email provided"}}
+                            {{request.user.email|default:"no email provided"}}
                         </a>
                    </div>
                </div>
@@ -46,7 +46,7 @@
         <div class="row">
             <div class="col-md-4 mb-1">
                 <label class="from-label h3">E-Mail</label>
-                <input type="text" class="form-control" id="" placeholder="foo@example.com" value="{{request.user.email}}"
+                <input type="text" class="form-control" placeholder="foo@example.com" value="{{request.user.email}}"
                     id="user-email">
                 <span class="form-check-description mb-1">The email can be used as an additional field in generated reports. Use
                     <code class="highlight highlight-inline"><span class="mi">${</span>user.email<span class="mi">}</span></code> in report templates to reference this value.</span>
@@ -84,7 +84,11 @@
                 </span>
             </div>
             <div class="col-auto">
-                <button class="btn btn-outline-danger">Delete Account</button>
+                <button class="btn btn-outline-danger" onclick="verifyActionWithText(this, deleteUser, 'User/{{user.username}}');"
+                    modal-title="Delete User-Account" modal-input-text="I understand what I am doing"
+                    modal-text="<ul><li>All account related data will be lost,</li><li>All projects, scans and bundles will be deleted.</li></ul>">
+                    Delete Account
+                </button>
             </div>
         </div>
         <div class="row border-bottom mb-3">
@@ -94,7 +98,8 @@
                 </span>
             </div>
             <div class="col-auto justify-content-center">
-                <button class="btn btn-outline-danger">Change Password</button>
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" id="btn-change-pwd"
+                    data-bs-target="#modal-edit-pwd">Change Password</button>
             </div>
         </div>
     </div>
@@ -102,15 +107,23 @@
 {% endblock content %}
 
 
+
 {% block js_extended %}
 <script>
+
+    function deleteUser(element, event) {
+        REST.delete("/api/v1/user/{{user.pk}}", function(data) {
+            location.reload();
+        });
+    };
+
     function updateUser() {
         $('#icon-btn').addClass('visually-hidden');
         $('#spinner-status').removeClass('visually-hidden');
-        let email = Utils.getValue('user-email');
-        let username = Utils.getValue('user-name');
+        let email = $('#user-email').val();
+        let username = $('#user-name').val();
 
-        data = {}
+        let data = {}
         if (email != null) {
             data['email'] = email;
         }
@@ -126,9 +139,78 @@
 
                     $('#icon-btn').removeClass('visually-hidden');
                     $('#spinner-status').addClass('visually-hidden');
+                    location.reload();
                 });
             }
         });
     };
+
+    function changePassword() {
+        REST.patch("{% url 'User-ChangePassword' request.user.pk %}", JSON.stringify({
+            password: $('#pwd-input-2').val()
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            }
+        })
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#pwd-input-2').keyup(function(event) {
+            const pw1 = $('#pwd-input-1').val();
+            const pw2 = $('#pwd-input-2').val();
+
+            const confirm = document.getElementById("btn-submit-change-pwd");
+            confirm.disabled = !(pw1 == pw2 && pw1 && pw2 && (
+                pw1.length > 5
+            ));
+        });
+    });
 </script>
 {% endblock js_extended %}
+
+{% block modals %}
+<div class="modal modal-blur fade" id="modal-edit-pwd" tabindex="-1"
+    role="dialog" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-header">
+                <ul class="list-inline list-inline-dots mb-0">
+                    <li class="list-inline-item">
+                        <h5 class="modal-title">Edit Password</h5>
+                    </li>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                    <div class="col mb-2">
+                        <label class="form-label">
+                            Password
+                        </label>
+                        <input class="form-control" type="password" name="name" id="pwd-input-1" minlength="5">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label">
+                            Repeat Password
+                        </label>
+                        <input class="form-control" type="password" name="name" id="pwd-input-2" minlength="5">
+                    </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" onclick="changePassword();"
+                    id="btn-submit-change-pwd" disabled>Change</button>
+              </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock modals %}

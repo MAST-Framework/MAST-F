@@ -61,6 +61,7 @@ class ProjectCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
     form_class = ProjectCreationForm
     model = Project
+    bound_permissions = [CanDeleteProject, CanEditProject]
 
     def on_create(self, request: Request, instance: Project) -> None:
         path = settings.PROJECTS_ROOT / str(instance.project_uuid)

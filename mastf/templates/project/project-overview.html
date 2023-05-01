@@ -603,7 +603,7 @@ MAST-F Project | {{ project.name }}
                                                 <tr>
                                                     {# The package name will be displayed when a package defined within the dependency #}
                                                     <td>
-                                                        <a href="#offcanvas-package" class="nav-link link-secondary" data-bs-toggle="offcanvas"
+                                                        <a href="#offcanvas-package" class="link-secondary" data-bs-toggle="offcanvas"
                                                             role="button" aria-controls="offcanvas-package" onclick="togglePackageInfo(this);"
                                                             package-id="{{ dependency.dependency_uuid }}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-scan-eye" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -1088,7 +1088,7 @@ MAST-F Project | {{ project.name }}
         let step = table.rows().indexes().length + 1;
         let row = [
                 `<a href="#" onclick="copyTargetToClipboard(this);" target-id="${pk}"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg></a>`,
-                `<a href="https://nvd.nist.gov/vuln/detail/${rowData.cve_id}" target="_blank" class="nav-link link-secondary">${rowData.cve_id}</a>`,
+                `<a href="https://nvd.nist.gov/vuln/detail/${rowData.cve_id}" target="_blank" class="link-secondary">${rowData.cve_id}</a>`,
                 `<span class="badge bg-secondary-lt">${rowData.severity}</span>`,
                 `<a href="#" row-id="row-vuln-${step}" vuln-id="${pk}" onclick="verifyAction(this, deletePackageVulnerability)"><span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete vulnerability"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path>path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg></span></a>`,
         ]

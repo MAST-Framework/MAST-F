@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 from mastf.MASTF.serializers import UserSerializer, AccountSerializer
-from mastf.MASTF.forms import RegistrationForm
+from mastf.MASTF.forms import RegistrationForm, ChangePasswordForm
 from mastf.MASTF.models import Account
 from mastf.MASTF.permissions import (
     CanEditUser,
@@ -16,11 +16,11 @@ from mastf.MASTF.permissions import (
     CanEditAccount
 )
 
-from .base import APIViewBase
+from .base import APIViewBase, GetObjectMixin
 
 __all__ = [
     'UserView', 'LoginView', 'RegistrationView', 'LogoutView',
-    'AccountView'
+    'AccountView', 'ChangePasswordView'
 ]
 
 class UserView(APIViewBase):
@@ -102,6 +102,7 @@ class RegistrationView(APIView):
         CanDeleteUser.assign_to(user, user.pk)
         CanEditUser.assign_to(user, user.pk)
         CanViewAccount.assign_to(user, acc.pk)
+        CanEditAccount.assign_to(user, acc.pk)
         return Response({'success': True}, status.HTTP_200_OK)
 
 
@@ -125,6 +126,28 @@ class LogoutView(APIView):
         logout(request)
         return Response({'success': True}, status=status.HTTP_200_OK)
 
+class ChangePasswordView(GetObjectMixin, APIView):
+    authentication_classes = [
+        authentication.BasicAuthentication,
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication
+    ]
+    model = User
+    permission_classes = [permissions.IsAuthenticated & CanEditUser]
+
+    def patch(self, *args, **kwargs):
+        user: User = self.get_object()
+
+        form = ChangePasswordForm(self.request.data)
+        success = False
+        if form.is_valid():
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+
+            logout(self.request)
+            success = True
+
+        return Response({'success': success})
 
 class AccountView(APIViewBase):
     serializer_class = AccountSerializer
@@ -132,3 +155,8 @@ class AccountView(APIViewBase):
     permission_classes = [permissions.IsAuthenticated & (CanViewAccount | CanEditAccount)]
     bound_permissions = [CanViewAccount]
 
+    def prepare_patch(self, data: dict):
+        # The role should be updated by admins only
+        if not bool(self.request.user and self.request.user.is_staff):
+            if "role" in data:
+                data.pop("role")

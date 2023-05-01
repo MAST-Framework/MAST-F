@@ -44,6 +44,8 @@
             - 'private': Only you can see and manage your project
             - 'internal': Only you and users in your organisation can see and manage the project
         -->
+        <form id="new-project-form" method="POST" action="."
+                    enctype="multipart/form-data" >
             <div class="modal-body">
 
                 {% csrf_token %}
@@ -92,7 +94,8 @@
                             <div class="input-group input-group-flat">
                                 <span class="input-group-text" id="project-modal-tags-area">
                                 </span>
-                                <input id="project-modal-tags-input" type="text" class="form-control" value="">
+                                <input id="project-modal-tags-input" type="text" class="form-control" value=""
+                                    name="tags">
                             </div>
                         </div>
                     </div>
@@ -114,8 +117,10 @@
                     Cancel
                 </a>
                 <input type="submit" class="btn btn-primary" value="Create Project" id="project-submit"
-                    onclick="createProject(this);" data-bs-dismiss="modal">
+                    data-bs-dismiss="modal">
             </div>
+        </form>
+
       </div>
     </div>
 </div>
@@ -147,7 +152,7 @@
     let input = document.getElementById("project-modal-tags-input");
     const modalTags = new Tags("project-tags", area, input);
 
-    createProject = function(element) {
+    createProject = function() {
         tags = []
         console.log(modalTags);
         for (let step = 1; step <= modalTags.count; step++) {
@@ -175,6 +180,9 @@
         // add margin to table element
         $("#projects-table_wrapper").addClass("mt-1 mr-1 ml-1 mb-1")
 
+        $('#new-project-form').on("submit", function(event) {
+            createProject();
+        });
 
         /**
          * Adding the 'deleteProject' handler when the document content has
@@ -368,7 +376,7 @@
 
                             <!-- Project Name -->
                             <td class="text-muted">
-                                <a href="#" class="nav-link link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
+                                <a href="#" class="link-secondary" target-id="#project-id-row-{{ forloop.counter }}"
                                     id="project-view-link-{{ forloop.counter }}">
                                     {{ row.project.name }}
                                 </a>

@@ -124,6 +124,7 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         )
         try:
             data = request.data
+            self.prepare_patch(data)
             serializer = self.serializer_class(instance, data=data, partial=True)
 
             if len(data) != 0:
@@ -178,6 +179,8 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         """
         pass
 
+    def prepare_patch(self, data: dict):
+        pass
 
 class ListAPIViewBase(ListAPIView):
 
@@ -231,7 +234,7 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
         form = self.form_class(data=form_data)
         if not form.is_valid():
             logger.warning('Form-Invalid at %s:\n%s', self.request.path, form.errors)
-            messages.warning(self.request, "Invalid form data: " + form.errors, "FormValidationError")
+            messages.warning(self.request, f"Invalid form data: {form.errors}", "FormValidationError")
             return Response(form.errors, status.HTTP_400_BAD_REQUEST)
 
         try:

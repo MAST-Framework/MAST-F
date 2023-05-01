@@ -113,8 +113,11 @@ class ScanCreationMixin:
 class ScanCreationView(ScanCreationMixin, CreationAPIViewBase):
     form_class = ScanForm
     model = Scan
-
     permission_classes = [IsAuthenticated]
+
+    def set_defaults(self, request, data: dict) -> None:
+        data.pop("projects")
+        super().set_defaults(request, data)
 
     def on_create(self, request: Request, instance: Scan) -> None:
         tasks.schedule_scan(

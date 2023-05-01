@@ -4,15 +4,17 @@ from mastf.MASTF.rest import views
 
 urlpatterns = [
     path(r"user/<int:pk>", views.UserView.as_view(), name="User-View"),
+    path(r"user/<int:pk>/changepwd", views.ChangePasswordView.as_view(), name="User-ChangePassword"),
     path(r"user/account/<int:pk>", views.AccountView.as_view(), name="Account-View"),
 
     path(r"login", views.LoginView.as_view()),
     path(r"logout", views.LogoutView.as_view()),
     path(r"register", views.RegistrationView.as_view()),
 
+
     path(r"project/", include([
         path(r"<uuid:project_uuid>", views.ProjectView.as_view()),
-        path(r"create", views.ProjectCreationView.as_view()),
+        path(r"create", views.ProjectCreationView.as_view(), name='Project-Create'),
         path(r"all", views.ProjectListView.as_view()),
         path(r"dependencies", views.DependencyListView.as_view()),
 

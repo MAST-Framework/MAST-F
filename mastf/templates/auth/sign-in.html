@@ -21,7 +21,7 @@
           {% for message in messages %}
           <p class="text-center">
             <span class="badge text-wrap {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-lt{% else %}bg-azure-lt{% endif %}">
-            {{ message }}
+              {% autoescape off %}{{ message }}{% endautoescape %}
             </span>
           </p>
           {% endfor %}

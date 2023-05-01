@@ -6,7 +6,8 @@ from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 
 __all__ = [
     'ModelField', 'RegistrationForm', 'ProjectCreationForm',
-    'AppPermissionForm', 'TeamForm', 'ManyToManyField', 'BundleForm'
+    'AppPermissionForm', 'TeamForm', 'ManyToManyField', 'BundleForm',
+    'ChangePasswordForm'
 ]
 
 
@@ -144,6 +145,10 @@ class RegistrationForm(forms.Form):
         required=True
     )
     """The minimum password length will be defined by ``MASTF_PASSWD_MIN_LEN``."""
+
+
+class ChangePasswordForm(forms.Form):
+    password = forms.CharField(required=True)
 
 
 class ProjectCreationForm(forms.Form):

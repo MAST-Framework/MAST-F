@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, exceptions
 
 from mastf.MASTF import settings
 from mastf.MASTF.scanners.plugin import ScannerPlugin
@@ -23,7 +23,7 @@ class TemplateAPIView(TemplateView):
                 # Rather use an additional instance check here instead of
                 # throwing an exception
                 if isinstance(permission, BasePermission):
-                    if not permission.has_object_permission(request, obj, self):
+                    if not permission.has_object_permission(request, self, obj):
                         return False
         # Return Ture by default
         return True
@@ -50,7 +50,7 @@ class TemplateAPIView(TemplateView):
             model.objects.all(), **{pk_field: self.kwargs[pk_field]}
         )
         if not self.check_object_permissions(self.request, instance):
-            raise Http404
+            raise exceptions.ValidationError("Insufficient permissions", 500)
 
         return instance
 

@@ -2,58 +2,58 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <!--
+<!--
     The header contains important configuration options of each site
     such as name and meta-data.
 
     Note that stylesheet configurations and JavaScript files are defined
     here, so that they mustn't be defined in all HTML files.
+-->
+<head>
+
+    <meta charset="utf-8">
+    <!-- Required as this option sets the global width behaviour-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
+    <!--
+        The title in each page can be set via the 'title' attribute like this:
+
+        .code: example.html
+
+        {{ "Hello World"|title }}
     -->
-    <head>
+    <title>{% block title %}{% endblock title %}</title>
 
-        <meta charset="utf-8">
-        <!-- Required as this option sets the global width behaviour-->
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-        <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-
-        <!--
-            The title in each page can be set via the 'title' attribute like this:
-
-            .code: example.html
-
-                {{ "Hello World"|title }}
-        -->
-        <title>{% block title %}{% endblock title %}</title>
-
-        <!-- CSS files -->
-        <link href="{% static "css/tabler.min.css"%}" rel="stylesheet"/>
-        <link href="{% static "css/tabler-vendors.min.css"%}" rel="stylesheet"/>
-        <link href="{% static "css/tabler-addon.min.css"%}" rel="stylesheet"/>
-        <style>
-            @import url('https://rsms.me/inter/inter.css');
-            :root {
-                --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
-            }
-            body {
-                font-feature-settings: "cv03", "cv04", "cv11";
-            }</style>
+    <!-- CSS files -->
+    <link href="{% static "css/tabler.min.css"%}" rel="stylesheet"/>
+    <link href="{% static "css/tabler-vendors.min.css"%}" rel="stylesheet"/>
+    <link href="{% static "css/tabler-addon.min.css"%}" rel="stylesheet"/>
+    <style>
+        @import url('https://rsms.me/inter/inter.css');
+        :root {
+            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+        }
+        body {
+            font-feature-settings: "cv03", "cv04", "cv11";
+        }</style>
 
         {% block css_extended %}
         {% endblock css_extended %}
-    </head>
+</head>
 
 
     <!-- HTML-Body -->
-    <body>
+<body>
         <script src="{% static "js/tabler-addon-theme.min.js"%}"></script>
         <script src="{% static "js/jquery-3.6.4.min.js"%}"></script>
 
         <!--
             The main content will be split into several parts:
-                - NavBar
-                - Header
-                - Layout specific components
+            - NavBar
+            - Header
+            - Layout specific components
         -->
         <div class="page">
 
@@ -64,165 +64,166 @@
             {% block navbar %}
             <header class="navbar navbar-expand-md navbar-dark d-print-none">
                 <div class="container-fluid">
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                    <a href="{% url 'Index' %}">
-                      <img src="{% static "static/new-logo-base.svg"%}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-                    </a>
-                  </h1>
-                  <div class="navbar-nav flex-row order-md-last">
-                    <div class="nav-item d-none d-md-flex me-3">
-                      <div class="btn-list">
-                        <a href="https://github.com/MAST-Framework/MAST-F" class="btn btn-dark" target="_blank" rel="noreferrer">
-                          <!-- Download SVG icon from http://tabler-icons.io/i/brand-github -->
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" /></svg>
-                          Source code
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                        <a href="{% url 'Index' %}">
+                            <img src="{% static "static/new-logo-base.svg"%}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
                         </a>
-                      </div>
-                    </div>
-                    <div class="d-none d-md-flex">
-                      <a href="?theme=dark" class="nav-link px-0 hide-theme-dark me-2" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
-                      </a>
-                      <a href="?theme=light" class="nav-link px-0 hide-theme-light me-2" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
-                      </a>
-                    </div>
-                    <div class="nav-item dropdown">
-                      <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-                        <span class="avatar avatar-sm">
-                          {{ request.user.username|make_list|first }}
-                        </span>
-                        <div class="d-none d-xl-block ps-2">
-                          <div>{{ request.user.username }}</div>
-                          <div class="mt-1 small text-muted">{{ user_role }}</div>
+                    </h1>
+                    <div class="navbar-nav flex-row order-md-last">
+                        <div class="nav-item d-none d-md-flex me-3">
+                            <div class="btn-list">
+                                <a href="https://github.com/MAST-Framework/MAST-F" class="btn btn-dark" target="_blank" rel="noreferrer">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/brand-github -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" /></svg>
+                                    Source code
+                                </a>
+                            </div>
                         </div>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                        <a href="{% url 'Settings' %}" class="dropdown-item">Profile</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{% url 'Settings' %}" class="dropdown-item">Settings</a>
-                        <form action="/web/logout" method="post">
-                          {% csrf_token %}
-                          <input type="submit" class="dropdown-item" value="Logout" id="project-submit">
-                        </form>
+                        <div class="d-none d-md-flex">
+                            <a href="?theme=dark" class="nav-link px-0 hide-theme-dark me-2" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
+                            </a>
+                            <a href="?theme=light" class="nav-link px-0 hide-theme-light me-2" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
+                            </a>
+                        </div>
 
-                      </div>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                                <span class="avatar avatar-sm">
+                                    {{ request.user.username|make_list|first }}
+                                </span>
+                                <div class="d-none d-xl-block ps-2">
+                                    <div>{{ request.user.username }}</div>
+                                    <div class="mt-1 small text-muted">{{ user_role }}</div>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                <a href="{% url 'Settings' %}" class="dropdown-item">Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url 'Settings' %}" class="dropdown-item">Settings</a>
+                                <form action="/web/logout" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" class="dropdown-item" value="Logout" id="project-submit">
+                                </form>
+
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </header>
+            </header>
 
-              <!-- Main navigation bar -->
-              <header class="navbar-expand-md">
+            <!-- Main navigation bar -->
+            <header class="navbar-expand-md">
                 <div class="collapse navbar-collapse" id="navbar-menu">
-                  <div class="navbar navbar-light">
-                    <div class="container-fluid">
-                      <ul class="navbar-nav">
-                        <li class="nav-item ">
-                          <a class="nav-link" href="{% url 'Dashboard' %}" >
-                            <span class="nav-link-icon d-md-none d-lg-inline-block">
-                              <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
-                                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
-                                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
-                                 </svg>
-                            </span>
-                            <span class="nav-link-title">
-                              Dashboard
-                            </span>
-                          </a>
-                        </li>
-                        <li class="nav-item ">
-                          <a class="nav-link" href="{% url 'Projects' %}" >
-                            <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-stack-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M12 4l-8 4l8 4l8 -4l-8 -4"></path>
-                                    <path d="M4 12l8 4l8 -4"></path>
-                                    <path d="M4 16l8 4l8 -4"></path>
-                                 </svg>
-                            </span>
-                            <span class="nav-link-title">
-                              Projects
-                            </span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="{% url 'Bundles' %}" >
-                            <span class="nav-link-icon d-md-none d-lg-inline-block">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-box" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path>
-                                <path d="M12 12l8 -4.5"></path>
-                                <path d="M12 12l0 9"></path>
-                                <path d="M12 12l-8 -4.5"></path>
-                             </svg>
-                            </span>
-                            <span class="nav-link-title">
-                              Bundles
-                            </span>
-                          </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="{% url 'Scans' %}" >
-                              <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                                        <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
-                                        <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
-                                        <path d="M12 12v9"></path>
-                                    </svg>
-                              </span>
-                              <span class="nav-link-title">
-                                Scans
-                              </span>
-                              {% if active_scans and active_scans > 0 %}
-                              <span class="badge bg-red-lt ms-2">{{active_scans}}</span>
-                              {% endif %}
-                            </a>
-                        </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="{% url 'Plug-Ins' %}" >
-                              <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plug" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M9.785 6l8.215 8.215l-2.054 2.054a5.81 5.81 0 1 1 -8.215 -8.215l2.054 -2.054z"></path>
-                                    <path d="M4 20l3.5 -3.5"></path>
-                                    <path d="M15 4l-3.5 3.5"></path>
-                                    <path d="M20 9l-3.5 3.5"></path>
-                                 </svg>
-                              </span>
-                              <span class="nav-link-title">
-                                Plugins
-                              </span>
-                            </a>
-                          </li>
-                      </ul>
+                    <div class="navbar navbar-light">
+                        <div class="container-fluid">
+                            <ul class="navbar-nav">
+                                <li class="nav-item ">
+                                    <a class="nav-link" href="{% url 'Dashboard' %}" >
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                                                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                                                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Dashboard
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link" href="{% url 'Projects' %}" >
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-stack-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 4l-8 4l8 4l8 -4l-8 -4"></path>
+                                                <path d="M4 12l8 4l8 -4"></path>
+                                                <path d="M4 16l8 4l8 -4"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Projects
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'Bundles' %}" >
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-box" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path>
+                                                <path d="M12 12l8 -4.5"></path>
+                                                <path d="M12 12l0 9"></path>
+                                                <path d="M12 12l-8 -4.5"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Bundles
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link" href="{% url 'Scans' %}" >
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-radar-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                                <path d="M15.51 15.56a5 5 0 1 0 -3.51 1.44"></path>
+                                                <path d="M18.832 17.86a9 9 0 1 0 -6.832 3.14"></path>
+                                                <path d="M12 12v9"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Scans
+                                        </span>
+                                        {% if active_scans and active_scans > 0 %}
+                                        <span class="badge bg-red-lt ms-2">{{active_scans}}</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                <li class="nav-item ">
+                                    <a class="nav-link" href="{% url 'Plug-Ins' %}" >
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plug" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M9.785 6l8.215 8.215l-2.054 2.054a5.81 5.81 0 1 1 -8.215 -8.215l2.054 -2.054z"></path>
+                                                <path d="M4 20l3.5 -3.5"></path>
+                                                <path d="M15 4l-3.5 3.5"></path>
+                                                <path d="M20 9l-3.5 3.5"></path>
+                                            </svg>
+                                        </span>
+                                        <span class="nav-link-title">
+                                            Plugins
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
 
-                      <!-- Search modal -->
-                      <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-                        <form action="./" method="get" autocomplete="off" novalidate>
-                          <div class="input-icon">
-                            <span class="input-icon-addon">
-                              <!-- Download SVG icon from http://tabler-icons.io/i/search -->
-                              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
-                            </span>
-                            <input type="text" value="" class="form-control" placeholder="Search…" aria-label="Search in website">
-                          </div>
-                        </form>
-                      </div>
+                            <!-- Search modal -->
+                            <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+                                <form action="./" method="get" autocomplete="off" novalidate>
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                                        </span>
+                                        <input type="text" value="" class="form-control" placeholder="Search…" aria-label="Search in website">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </header>
+            </header>
 
             {% endblock navbar %}
 
@@ -239,9 +240,9 @@
                 be divided into several parts, such as 'page_header' or 'page_body'.
 
                 Sections can be summarized to the following:
-                    - 'page_header': Stores an optional page header
-                    - 'page_body': Stores the main content
-                    - 'page_footer': Stores the default footer for each page by default
+                - 'page_header': Stores an optional page header
+                - 'page_body': Stores the main content
+                - 'page_footer': Stores the default footer for each page by default
             -->
             <div class="page-wrapper">
 
@@ -255,9 +256,9 @@
                 <!-- Stores the actual content of this frame. -->
                 {% block page_body %}
                 <div class="page-body">
-                  <div class="container-xl">
-                    <!-- Content here -->
-                  </div>
+                    <div class="container-xl">
+                        <!-- Content here -->
+                    </div>
                 </div>
                 {% endblock page_body %}
 
@@ -268,40 +269,40 @@
                 {% block footer %}
                 <footer class="footer footer-transparent d-print-none">
                     <div class="container-fluid">
-                      <div class="row text-center align-items-center flex-row-reverse">
-                        <div class="col-lg-auto ms-lg-auto">
-                          <ul class="list-inline list-inline-dots mb-0">
-                            <li class="list-inline-item">
-                              <a href="?theme=dark" class="hide-theme-dark link-secondary" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
-                                <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
-                              </a>
-                              <a href="?theme=light" class="hide-theme-light link-secondary" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
-                                <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
-                              </a>
-                            </li>
-                            <li class="list-inline-item"><a href="/docs/" class="link-secondary">Documentation</a></li>
-                            <li class="list-inline-item"><a href="{% url 'License' %}" class="link-secondary">License</a></li>
-                            <li class="list-inline-item"><a href="https://github.com/MAST-Framework/MAST-F" target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
+                        <div class="row text-center align-items-center flex-row-reverse">
+                            <div class="col-lg-auto ms-lg-auto">
+                                <ul class="list-inline list-inline-dots mb-0">
+                                    <li class="list-inline-item">
+                                        <a href="?theme=dark" class="hide-theme-dark link-secondary" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
+                                        </a>
+                                        <a href="?theme=light" class="hide-theme-light link-secondary" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item"><a href="/docs/" class="link-secondary">Documentation</a></li>
+                                    <li class="list-inline-item"><a href="{% url 'License' %}" class="link-secondary">License</a></li>
+                                    <li class="list-inline-item"><a href="https://github.com/MAST-Framework/MAST-F" target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
 
-                          </ul>
+                                </ul>
+                            </div>
+                            <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                                <ul class="list-inline list-inline-dots mb-0">
+                                    <li class="list-inline-item">
+                                        Copyright &copy; 2023
+                                        <a href="https://github.com/MatrixEditor" class="link-secondary">MatrixEditor</a>,
+                                        <a href="https://github.com/Janbehere1" class="link-secondary">Janbehere1</a>.
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="./changelog.html" class="link-secondary" rel="noopener">
+                                            v1.0.0-alpha1
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
-                          <ul class="list-inline list-inline-dots mb-0">
-                            <li class="list-inline-item">
-                              Copyright &copy; 2023
-                              <a href="https://github.com/MatrixEditor" class="link-secondary">MatrixEditor</a>,
-                              <a href="https://github.com/Janbehere1" class="link-secondary">Janbehere1</a>.
-                            </li>
-                            <li class="list-inline-item">
-                              <a href="./changelog.html" class="link-secondary" rel="noopener">
-                                v1.0.0-alpha1
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
                     </div>
                 </footer>
                 {% endblock footer %}
@@ -322,8 +323,8 @@
 
         {% block alerts %}
         <div class="toast-container bottom-0 end-0">
-          {% for message in messages %}
-          <div class="alert
+            {% for message in messages %}
+            <div class="alert
             {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}alert-danger
             {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}alert-success
             {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}alert-info
@@ -331,140 +332,258 @@
             {% else %}alert-secondary
             {% endif %}alert-dismissible mb-2" role="alert">
             <div class="d-flex">
-              <div>
-                {# Icon #}
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l0 4" /><path d="M12 16l.01 0" /></svg>
-                {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l.01 0" /><path d="M11 12l1 0l0 4l1 0" /></svg>
-                {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
-                {% else %}
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-accessible" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-                  <path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1"></path>
-                  <circle cx="12" cy="7.5" r=".5" fill="currentColor"></circle>
-               </svg>
-                {% endif %}
+                <div>
+                    {# Icon #}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l0 4" /><path d="M12 16l.01 0" /></svg>
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 8l.01 0" /><path d="M11 12l1 0l0 4l1 0" /></svg>
+                    {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9v2m0 4v.01" /><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" /></svg>
+                    {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-accessible" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                        <path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1"></path>
+                        <circle cx="12" cy="7.5" r=".5" fill="currentColor"></circle>
+                    </svg>
+                    {% endif %}
 
-              </div>
-              <div>
-                {# Use extra_tags here instead of tags, because we don't want the level tag #}
-                <h4 class="alert-title">{{ message.extra_tags }}</h4>
-                <div class="text-muted">{{ message }}</div>
-              </div>
+                </div>
+                <div>
+                    {# Use extra_tags here instead of tags, because we don't want the level tag #}
+                    <h4 class="alert-title">{{ message.extra_tags }}</h4>
+                    <div class="text-muted">
+                        {% autoescape off %}
+                        {{ message }}
+                        {% endautoescape %}
+                    </div>
+                </div>
             </div>
-          </div>
-          {% endfor %}
-
         </div>
-        {% endblock %}
+        {% endfor %}
+
+    </div>
+    {% endblock %}
 
 
-        <!-- Libs JS -->
-        <script src="{% static "libs/apexcharts/apexcharts.min.js"%}" defer></script>
-        <script src="{% static "js/mastf-lib.js"%}"></script>
-        <!-- Tabler Core -->
-        <script src="{% static "js/tabler.min.js"%}" defer></script>
-        <script src="{% static "js/tabler-addon.min.js"%}" defer></script>
+    <!-- Libs JS -->
+    <script src="{% static "libs/apexcharts/apexcharts.min.js"%}" defer></script>
+    <script src="{% static "js/mastf-lib.js"%}"></script>
+    <!-- Tabler Core -->
+    <script src="{% static "js/tabler.min.js"%}" defer></script>
+    <script src="{% static "js/tabler-addon.min.js"%}" defer></script>
 
 
-        <script>
-          /**
-           * See https://docs.djangoproject.com/en/4.1/howto/csrf/
-           */
-          const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    <script>
+        /**
+        * See https://docs.djangoproject.com/en/4.1/howto/csrf/
+        */
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-          // fade out all error messages
-          fadeOutMessages = function() {
+        // fade out all error messages
+        fadeOutMessages = function() {
             alerts = document.getElementsByClassName("alert");
             var i = alerts.length;
             for (let alertElement of alerts) {
-              i--;
-              time = 6000+(2000*i);
-              setTimeout(function() {
-                $(alertElement).fadeOut("slow");
-              }, time);
+                i--;
+                time = 6000+(2000*i);
+                setTimeout(function() {
+                    $(alertElement).fadeOut("slow");
+                }, time);
             }
-          };
+        };
 
-          document.addEventListener("DOMContentLoaded", fadeOutMessages);
-        </script>
+        document.addEventListener("DOMContentLoaded", fadeOutMessages);
+    </script>
 
-        <script type="text/javascript">
-          const params = new Proxy(new URLSearchParams(window.location.search), {
-              get: (searchParams, prop) => searchParams.get(prop),
-          });
-        </script>
+    <script type="text/javascript">
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+    </script>
 
-        {% block js_extended %}
-        <!--
-            Put extra JavaScript references in this block rather than specifying
-            them directly.
-        -->
-        {% endblock js_extended %}
+    {% block js_extended %}
+    <!--
+        Put extra JavaScript references in this block rather than specifying
+        them directly.
+    -->
+    {% endblock js_extended %}
 
-        {% block verify_modal %}
-        <!-- This block should be removed of no validation action is implemented -->
-        <div class="modal modal-blur fade" id="modal-verify" tabindex="-1" role="dialog"
-            aria-modal="true" aria-hidden="true">
-          <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    {% block verify_modal %}
+    <!-- This block should be removed of no validation action is implemented -->
+    <div class="modal modal-blur fade" id="modal-verify" tabindex="-1" role="dialog"
+        aria-modal="true" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
             <div class="modal-content">
-              <div class="modal-body">
-                <div class="modal-title" id="modal-verify-title">Are you sure?</div>
-                <div id="modal-verify-description">If you proceed, you will delete the selected data.</div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
-                  id="modal-verify-submit">
-                  Proceed
+                <div class="modal-status bg-red"></div>
+                <div class="modal-body">
+                    <div class="modal-title" id="modal-verify-title">Are you sure?</div>
+                    <div class="container">
+                        <div class="d-block" id="modal-verify-description">If you proceed, you will delete the selected data.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                    id="modal-verify-submit">
+                    Proceed
                 </button>
-              </div>
             </div>
-          </div>
         </div>
+        </div>
+    </div>
 
-        <script>
-          /**
-            * Displays a confirmation modal to the user and executes the given
-            * event handler if the user chooses to proceed.
-            *
-            * @param {HTMLElement} element - The element that triggered the
-            *                                confirmation modal.
-            * @param {Function} EventHandler - The event handler to be executed
-            *                                  if the user confirms the action.
-            *
-            * @returns {void}
-            */
-          function verifyAction(element, EventHandler) {
+    <div class="modal modal-blur fade" id="modal-verify-with-txt" tabindex="-1" role="dialog"
+        aria-modal="true" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-status bg-red"></div>
+                    <div class="modal-body">
+                        <div class="modal-title" id="modal-verify-with-txt-title">Are you sure?</div>
+                        <div class="row bg-red-lt">
+                            <div class="col-auto m-3 justify-content-center">
+                                <span class="text-red">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-triangle" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z"></path>
+                                        <path d="M12 9v4"></path>
+                                        <path d="M12 17h.01"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="col mt-2">
+                                Unexpected bad things will happen if you don’t read this!
+                            </div>
+                        </div>
+                        <div class="row mb-1 mt-2">
+                            <div class="col">
+                                <div class="container">
+                                    <div id="modal-verify-with-txt-description" class="d-block">Some description...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label class="form-label">
+                                    Enter <code id="modal-verify-with-txt-input-label" class="highlight highlight-inline">##</code> to confirm
+                                </label>
+                                <input type="text" name="modal_verify_input" id="modal-verify-with-txt-input" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-grid">
+                                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"
+                                    id="modal-verify-with-txt-submit" disabled>
+                                Proceed
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        const _VerifyAction = {
+            callback: null,
+            element: null
+        };
+
+        const VerifyText = {
+            callback: null,
+            element: null,
+            text: null
+        };
+
+        /**
+        * Displays a confirmation modal to the user and executes the given
+        * event handler if the user chooses to proceed.
+        *
+        * @param {HTMLElement} element - The element that triggered the
+        *                                confirmation modal.
+        * @param {Function} EventHandler - The event handler to be executed
+        *                                  if the user confirms the action.
+        *
+        * @returns {void}
+        */
+        function verifyAction(element, EventHandler) {
             // Displays a modal to the user to confirm the action
             const modal = $('#modal-verify');
+            _VerifyAction.callback = EventHandler;
+            _VerifyAction.element = element;
 
             $('#modal-verify-title').html(
-              element.getAttribute('modal-title') || "Are you sure?"
+            element.getAttribute('modal-title') || "Are you sure?"
             );
             $('#modal-verify-description').html(
-              element.getAttribute('modal-text') || "If you proceed, you will delete the selected data"
+            element.getAttribute('modal-text') || "If you proceed, you will delete the selected data"
             );
 
             const submit = $('#modal-verify-submit')
             submit.html(
-              element.getAttribute('modal-submit-text') || "Proceed"
+                element.getAttribute('modal-submit-text') || "Proceed"
             );
 
+            modal.modal('toggle');
+        };
+
+
+        function verifyActionWithText(element, EventHandler, text) {
+            const prefix = "modal-verify-with-txt";
+            const modal = $(`#${prefix}`);
+
+            VerifyText.text = text;
+            VerifyText.callback = EventHandler;
+            VerifyText.element = element;
+
+            const submit = $(`#${prefix}-submit`);
+            submit.html(
+                element.getAttribute('modal-submit-text') || "Proceed"
+            );
+
+            $(`#${prefix}-title`).html(
+            element.getAttribute('modal-title') || "Are you sure?"
+            );
+            $(`#${prefix}-description`).html(
+            element.getAttribute('modal-text') || "If you proceed, you will delete the selected data"
+            );
+
+            $(`#${prefix}-input-label`).html(text);
+
+            modal.modal('toggle');
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const submit = $('#modal-verify-with-txt-submit')
             // Attaches an event listener to the confirmation button to execute
             // the given event handler when clicked
             submit.on("click", function(event) {
-              EventHandler(element, event);
+                if (VerifyText.callback != null) {
+                    VerifyText.callback(VerifyText.element, event);
+                }
             });
-            modal.modal('toggle');
-          };
 
-          copyTargetToClipboard = function(element) {
+            $('#modal-verify-with-txt-input').keyup(function(event) {
+                element = document.getElementById("modal-verify-with-txt-submit");
+                let value = $('#modal-verify-with-txt-input').val();
+
+                element.disabled = !((value) == VerifyText.text);
+                console.log(element.disabled, value, VerifyText.text);
+            });
+
+            const submit2 = $('#modal-verify-with-txt-submit')
+            submit2.on("click", function(event) {
+                if (_VerifyAction.callback != null) {
+                    _VerifyAction.callback(_VerifyAction.element, event);
+                }
+            });
+        })
+
+        copyTargetToClipboard = function(element) {
             let selector = $(element).attr('target-id');
             let value = Utils.getValue(selector);
 
@@ -478,10 +597,10 @@
             tooltip.attr('data-bs-original-title', 'Copied!');
             tooltip.tooltip('show');
             setTimeout(function() { tooltip.tooltip('hide'); }, 2000);
-          };
+        };
 
-        </script>
-        {% endblock verify_modal %}
+    </script>
+{% endblock verify_modal %}
 
-    </body>
+</body>
 </html>

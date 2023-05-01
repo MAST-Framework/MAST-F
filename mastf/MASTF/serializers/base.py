@@ -151,10 +151,10 @@ class ManyToManySerializer(serializers.ModelSerializer):
                 manager = getattr(instance, field_name)
                 elements, append = validated_data.pop(field_name)
                 if append:
-                    manager.add(elements)
+                    manager.add(*elements)
                 else:
                     self._remove_permissions(instance, manager, elements)
-                    manager.set(elements)
+                    manager.set(*elements)
 
         return super().update(instance, validated_data)
 

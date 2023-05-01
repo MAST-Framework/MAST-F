@@ -143,7 +143,6 @@ class ScansView(ContextMixinBase, TemplateAPIView):
                 visibility_level.remove(name)
 
         projects = Project.get_by_user(self.request.user)
-        print(visibility_level)
         scans = (Scan.objects.filter(project__visibility__in=visibility_level)
             .filter(project__in=projects)
             .order_by("start_date")

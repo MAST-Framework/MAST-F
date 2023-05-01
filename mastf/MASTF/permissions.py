@@ -284,7 +284,7 @@ CanCreateUser = BoundPermission("can_create_user", "Can create users", User, met
 CanViewAccount = BoundPermission("can_view_acc_%s", "Can view specific account", Account, runtime=True, methods=[Get])
 CanEditAccount = BoundPermission("can_edit_acc_%s", "Can modify specific account", Account, runtime=True, methods=[Patch])
 
-CanEditBundle = BoundPermission("can_edit_bundle_%s", "Can edit bundles", Bundle, runtime=True, methods=[Patch])
+CanEditBundle = BoundPermission("can_edit_bundle_%s", "Can edit bundles", Bundle, runtime=True, methods=[Patch, Delete])
 CanDeleteBundle = BoundPermission("can_delete_bundle_%s", "Can delete bundles", Bundle, runtime=True, methods=[Delete])
 CanViewBundle = BoundPermission("can_view_bundle_%s", "Can view bundles", Bundle, runtime=True, methods=[Get])
 

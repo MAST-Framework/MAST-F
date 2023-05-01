@@ -6,11 +6,9 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, View
 
 from mastf.MASTF.rest.views import rest_user
-from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
-from mastf.MASTF.models import Account
 
 __all__ = [
-    'LoginView', 'RegstrationView', 'LogoutView', 'UserProfileView'
+    'LoginView', 'RegstrationView', 'LogoutView'
 ]
 
 class LoginView(TemplateView):
@@ -94,11 +92,4 @@ class LogoutView(View):
         return redirect('Index')
 
 
-class UserProfileView(ContextMixinBase, TemplateAPIView):
-    template_name = "user/settings/settings-account.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["account"] = Account.objects.get(user=self.request.user)
-        return context
 
