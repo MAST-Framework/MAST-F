@@ -5,7 +5,8 @@ from rest_framework.permissions import (
 )
 
 from mastf.MASTF.permissions import CanEditProject
-from mastf.MASTF.utils.enum import Visibility
+from mastf.MASTF.utils.enum import Visibility, Role
+from mastf.MASTF.models import Account
 
 class ReadOnly(BasePermission):
     '''Checks whether the request is read-only'''
@@ -49,3 +50,6 @@ class CanEditScanFromScanner(BasePermission):
     def has_object_permission(self, request, view, obj):
         return self.ref.has_object_permission(request, view, obj.scanner)
 
+class IsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return Account.objects.get(user=request.user).role == Role.ADMIN

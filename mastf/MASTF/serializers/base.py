@@ -11,6 +11,7 @@ from mastf.MASTF.models import (
     Team,
     Bundle,
     Account,
+    Environment
 )
 
 __all__ = [
@@ -20,7 +21,8 @@ __all__ = [
     'ManyToManyField',
     'ManyToManySerializer',
     'BundleSerializer',
-    'AccountSerializer'
+    'AccountSerializer',
+    'EnvironmentSerializer'
 ]
 
 logger = logging.getLogger(__name__)
@@ -224,3 +226,9 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
+
+
+class EnvironmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Environment

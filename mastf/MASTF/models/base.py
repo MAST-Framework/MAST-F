@@ -1,5 +1,6 @@
 import pathlib
 
+from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -19,7 +20,8 @@ __all__ = [
     'Project',
     'File',
     'Account',
-    'Bundle'
+    'Bundle',
+    'Environment'
 ]
 
 class namespace(dict):
@@ -258,3 +260,21 @@ class Bundle(models.Model):
             queryset = Bundle.objects.all()
 
         return queryset.filter(query)
+
+
+class Environment(models.Model):
+    env_id = models.UUIDField(primary_key=True)
+    allow_registration = models.BooleanField(default=True)
+    allow_teams = models.BooleanField(default=True)
+    max_projects = models.IntegerField(default=10000)
+    max_teams = models.IntegerField(default=10000)
+    max_bundles = models.IntegerField(default=10000)
+
+    @staticmethod
+    def env() -> 'Environment':
+        queryset = Environment.objects.first()
+        if not queryset:
+            return Environment.objects.create(env_id=uuid4())
+
+        return queryset
+

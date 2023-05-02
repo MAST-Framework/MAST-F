@@ -128,7 +128,37 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         $('#table-users').DataTable();
+
+        $('#pwd-input-2').keyup(function(event) {
+            const pw1 = $('#pwd-input-1').val();
+            const pw2 = $('#pwd-input-2').val();
+
+            const confirm = document.getElementById("btn-submit-user");
+            confirm.disabled = !(pw1 == pw2 && pw1 && pw2 && (
+                pw1.length > 5
+            ));
+        });
+
+        $("#show-password-1").on("click", function(event) {
+            event.preventDefault();
+            element = $("#pwd-input-1");
+            showPassword(element);
+        });
+        $("#show-password-2").on("click", function(event) {
+            event.preventDefault();
+            element = $("#pwd-input-2");
+            showPassword(element);
+        });
     });
+
+    function showPassword(element) {
+        if (element.attr('type') == "text") {
+            element.attr('type', 'password');
+        }
+        else {
+            element.attr('type', 'text');
+        }
+    }
 
     function deleteUser(element, event) {
         var userid = element.getAttribute("target-id");
@@ -168,133 +198,87 @@
 {% endblock %}
 
 {% block modals %}
-<div class="modal modal-blur fade" id="modal-new-team" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+<div class="modal modal-blur fade" id="modal-new-user" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">
                 <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M17 10h2a2 2 0 0 1 2 2v1"></path><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path></svg>
-                </span>New Team
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path d="M16 19h6"></path><path d="M19 16v6"></path><path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path></svg>
+                </span>New User
             </h5>
             <!-- Simple workaround to close this modal -->
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <form id="new-team-form" method="POST" action="{% url 'Teams' %}"
+        <form id="new-user-form" method="POST" action="{% url 'Admin-Users-Config' %}"
             enctype="multipart/form-data" >
             <div class="modal-body">
 
                 {% csrf_token %}
-                <input type="hidden" name="users" value="" id="team-users">
-                <input type="hidden" name="owner" value="{{user.pk}}">
-
                 <div class="row" id="new-team-content-step-0">
                     <div class="row">
                         <div class="col mb-2">
                             <label class="form-label required">
                                 Name (min. 5 Characters)
                             </label>
-                            <input class="form-control" type="text" name="name" id="team-input-name" minlength="5"
+                            <input class="form-control" type="text" name="username" id="user-input-name" minlength="5"
                                 value="">
+                        </div>
+                        <div class="col-auto mb-2">
+                            <label class="form-label required">
+                                Role
+                            </label>
+                            <select class="form-select" name="role">
+                                {% for role in user_roles %}
+                                <option value="{{role}}" selected>{{role}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-2">
+                            <label class="form-label">
+                                Password
+                            </label>
+                            <div class="input-group input-group-flat">
+                                <input class="form-control" type="password" name="password" id="pwd-input-1" minlength="5" autocomplete="off"
+                                    spellcheck="false" autocapitalize="off" autocorrect="off">
+                                <span class="input-group-text">
+                                  <a href="#" class="link-secondary" title="Show/Hide password" id="show-password-1" data-bs-toggle="tooltip">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+                                  </a>
+                                </span>
+                              </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <div class="mb-3">
-                                <label class="form-label required">Visibility</label>
-                                <select class="form-select" name="visibility">
-                                    <option value="Private" selected>Private</option>
-                                    <option value="Public">Public</option>
-                                </select>
-                              </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div id="new-team-content-step-1" style="display: none;">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-3 border-end m-1 bg-secondary-lt">
-                                <div class="mt-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path d="M16 19h6"></path><path d="M19 16v6"></path><path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path></svg>
-                                    <span class="h3">
-                                        Assign Users
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="row row-cols-1">
-                                    <div class="col">
-                                        <h4 class="subheader">Select Available Users</h4>
-                                    </div>
-                                    <div class="col">
-                                        <div class="table-responsive">
-                                            <table class="table datatable" id="table-modal-users">
-                                                <thead>
-                                                    <th class="w-1"><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all"></th>
-                                                    <th>Name</th>
-                                                </thead>
-                                                <tbody>
-                                                    {% for user in available %}
-                                                    <tr user-id="{{user.pk}}">
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <input type="checkbox" class="form-check-input m-0 align-middle"
-                                                            aria-label="Select one" id="chbx-team-{{user.pk}}">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <span class="avatar avatar-sm me-2">{{user.username|capfirst|first}}</span>
-                                                                <div class="flex-fill">
-                                                                  <div class="font-weight-medium">{{ user.username }}</div>
-                                                                  <div class="text-muted"><a href="#" class="text-reset">
-                                                                    {% if user.email %}{{user.email}}{%else%}
-                                                                        No email set
-                                                                    {% endif %}
-                                                                  </a></div>
-                                                                </div>
-                                                              </div>
-
-                                                        </td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                            <label class="form-label">
+                                Repeat Password
+                            </label>
+                            <div class="input-group input-group-flat">
+                                <input class="form-control" type="password" name="password" id="pwd-input-2" minlength="5" autocomplete="off"
+                                    spellcheck="false" autocapitalize="off" autocorrect="off">
+                                <span class="input-group-text">
+                                  <a href="#" class="link-secondary" title="Show/Hide password" id="show-password-2" data-bs-toggle="tooltip">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+                                  </a>
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
 
             </div>
 
             <div class="modal-footer">
-                    <div class="col">
-                        <div class="steps mt-1 align-items-start">
-                            <a  href="#" class="step-item active" id="new-team-step-0" step="0"
-                                onclick="Steps.showStep(this, 'new-team');">
-                            Team Configuration
-                            </a>
-                            <a href="#" class="step-item disabled" id="new-team-step-1" step="1"
-                                onclick="Steps.showStep(this, 'new-team');" step-end="true">
-                            Select Users
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-                            Cancel
-                        </a>
-                        <input type="submit" class="btn btn-primary" data-bs-dismiss="modal"
-                            id="team-submit" value="Create" style="display: none;">
-                        <a href="#" class="btn btn-primary" onclick="Steps.nextStep(this, 'new-team');"
-                            step-showonfinish="team-submit" id="new-team-next-step">Next</a>
-                    </div>
+                <input type="submit" class="btn btn-outline-primary"
+                id="btn-submit-user" value="Create" disabled></button>
 
             </div>
         </form>

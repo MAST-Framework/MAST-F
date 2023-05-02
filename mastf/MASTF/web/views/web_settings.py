@@ -2,13 +2,14 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import redirect
 
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, exceptions
 
 from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
 from mastf.MASTF.permissions import CanViewTeam, CanEditUser
-from mastf.MASTF.models import Account, Team
+from mastf.MASTF.models import Account, Team, Environment, namespace
 from mastf.MASTF.utils.enum import Role
 from mastf.MASTF.rest.views import TeamCreationView, RegistrationView
+from mastf.MASTF.rest.permissions import IsAdmin
 
 __all__ = [
     "UserProfileView",
@@ -16,7 +17,8 @@ __all__ = [
     "UserTeamView",
     "AdminUserConfig",
     "AdminUsersConfiguration",
-    "AdminTeamsConfiguration"
+    "AdminTeamsConfiguration",
+    "AdminEnvironmentConfig"
 ]
 
 
@@ -46,7 +48,7 @@ class UserTeamsView(ContextMixinBase, TemplateAPIView):
 
     def post(self, request, *args, **kwargs):
         view = TeamCreationView.as_view()
-        response = view(request)
+        response = view(request, **self.kwargs)
         if response.status_code != 201:
             messages.error(
                 request,
@@ -92,6 +94,7 @@ class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
 
         context["users"] = Account.objects.all()
         context["active"] = "admin-user-config"
+        context["user_roles"] = list(Role)
         return context
 
     def post(self, *args, **kwargs):
@@ -99,13 +102,13 @@ class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
         self.check_permissions(self.request)
         # Note that we can use this API view here as the user must be an
         # Admin-User.
-        view = RegistrationView()
-        response = view(**self.kwargs)
+        view = RegistrationView.as_view()
+        response = view(self.request, **self.kwargs)
 
         if response.status_code != 200:
             messages.warning(self.request, f"Could not create user: {response.data.get('detail', '')}",
                              "ValidationError")
-        return redirect
+        return redirect('Admin-Users-Config')
 
 
 class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
@@ -120,3 +123,42 @@ class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
         context["available"].remove(self.request.user)
         context["is_admin"] = True
         return context
+
+
+class AdminEnvironmentConfig(ContextMixinBase, TemplateAPIView):
+    template_name = "user/admin/env.html"
+    permission_classes = [IsAdminUser | IsAdmin]
+
+    user_elements = [
+        ("Allow Teams", "allow_teams", "Controls whether Teams can be created by users."),
+        ("Max Projects", "max_projects", "Controls the maximum amount of projects per user."),
+        ("Max Teams", "max_teams", "Controls the maximum amount of teams per user."),
+        ("Max Bundles", "max_bundles", "Controls the maximum amount of bundles per user."),
+    ]
+
+    def get_context_data(self, **kwargs: dict) -> dict:
+        context = super().get_context_data(**kwargs)
+        if not self.check_permissions(self.request):
+            raise exceptions.ValidationError('Insufficient Permissions')
+
+        context["active"] = "env"
+
+        env = Environment.env()
+        user_cat = namespace(name="User-Configuration")
+        user_cat.elements = []
+        for label, name, hint in self.user_elements:
+            user_cat.elements.append(self.get_element(env, label, name, hint))
+
+        auth_cat = namespace(name="Authentication")
+        auth_cat.elements = [self.get_element(
+            env, "Allow Registration", "allow_registration",
+            "Controls whether new users can be created by registration."
+        )]
+
+        context['environment'] = [user_cat, auth_cat]
+        return context
+
+    def get_element(self, env: Environment, label, name: str,
+                    hint: str, disabled=False):
+        return namespace(name=name, value=getattr(env, name),
+                         hint=hint, disabled=disabled, label=label)

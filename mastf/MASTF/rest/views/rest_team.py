@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib import messages
 from django.db.models import QuerySet, Q
 
 from rest_framework.views import APIView
@@ -8,7 +8,7 @@ from rest_framework.request import Request
 
 from mastf.MASTF.serializers import TeamSerializer
 from mastf.MASTF.forms import TeamForm, EditTeamMembersForm
-from mastf.MASTF.models import Team
+from mastf.MASTF.models import Team, Environment
 from mastf.MASTF.permissions import CanEditTeam, CanDeleteTeam, CanViewTeam, Patch
 
 from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase, GetObjectMixin
@@ -37,6 +37,12 @@ class TeamCreationView(CreationAPIViewBase):
     form_class = TeamForm
     permission_classes = [permissions.IsAuthenticated]
     bound_permissions = [CanEditTeam, CanDeleteTeam, CanViewTeam]
+
+    def post(self, request: Request) -> Response:
+        if not Environment.env().allow_teams:
+            messages.info(request, "Teams are disabled", "EnvironmentInfo")
+            return Response({'success': False}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().post(request)
 
     def set_defaults(self, request: Request, data: dict) -> None:
         # The primary key will be set automatically by Django

@@ -8,7 +8,8 @@ from rest_framework.request import Request
 
 from mastf.MASTF.serializers import UserSerializer, AccountSerializer
 from mastf.MASTF.forms import RegistrationForm, ChangePasswordForm
-from mastf.MASTF.models import Account
+from mastf.MASTF.models import Account, Environment
+from mastf.MASTF.rest.permissions import IsAdmin
 from mastf.MASTF.permissions import (
     CanEditUser,
     CanDeleteUser,
@@ -39,6 +40,7 @@ class UserView(APIViewBase):
     model = User
     lookup_field = 'pk'
     serializer_class = UserSerializer
+
 
 class LoginView(APIView):
     """View class that represents the login endpoint"""
@@ -91,6 +93,10 @@ class RegistrationView(APIView):
         if not form.is_valid():
             return Response(form.errors, status.HTTP_400_BAD_REQUEST)
 
+        if not Environment.env().allow_registration:
+            return Response(data={'message': 'Registration not allowed'},
+                            status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
         username = form.cleaned_data['username']
         if User.objects.filter(username=username).exists():
             return Response(data={'message': 'User already present'},
@@ -98,6 +104,11 @@ class RegistrationView(APIView):
 
         user = User.objects.create_user(username=username, password=form.cleaned_data['password'])
         acc = Account.objects.create(user=user)
+
+        role = form.cleaned_data['role']
+        if role and IsAdmin().has_permission(self.request, self):
+            acc.role = role
+            acc.save()
 
         CanDeleteUser.assign_to(user, user.pk)
         CanEditUser.assign_to(user, user.pk)

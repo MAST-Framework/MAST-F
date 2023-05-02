@@ -36,9 +36,8 @@ class TemplateAPIView(TemplateView):
     def check_permissions(self, request):
         if self.permission_classes:
             for permission in self.permission_classes:
-                if isinstance(permission, BasePermission):
-                    if not permission.has_permission(request, self):
-                        raise exceptions.ValidationError("Insufficient permisions")
+                if not permission().has_permission(request, self):
+                    raise exceptions.ValidationError("Insufficient permisions")
         # Return Ture by default
         return True
 

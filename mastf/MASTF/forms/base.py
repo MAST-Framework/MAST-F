@@ -146,6 +146,7 @@ class RegistrationForm(forms.Form):
     )
     """The minimum password length will be defined by ``MASTF_PASSWD_MIN_LEN``."""
 
+    role = forms.CharField(max_length=32, required=False)
 
 class ChangePasswordForm(forms.Form):
     password = forms.CharField(required=True)

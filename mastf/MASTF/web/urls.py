@@ -24,6 +24,7 @@ urlpatterns = [
         path(r"admin/user/<int:pk>", views.AdminUserConfig.as_view(), name="Admin-User-Config"),
         path(r"admin/teams", views.AdminTeamsConfiguration.as_view(), name="Admin-Teams-Config"),
         path(r"admin/team/<int:pk>", views.UserTeamView.as_view(), name="Admin-Team-Config"),
+        path(r"admin/environment", views.AdminEnvironmentConfig.as_view(), name="Admin-Environment"),
     ])),
 
     path(r"logout", views.LogoutView.as_view(), name='User-Logout'),

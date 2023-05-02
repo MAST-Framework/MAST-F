@@ -11,3 +11,4 @@ from .rest_team import *
 from .rest_package import *
 from .rest_host import *
 from .rest_component import *
+from .rest_env import *

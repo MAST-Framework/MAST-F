@@ -11,6 +11,7 @@ urlpatterns = [
     path(r"logout", views.LogoutView.as_view()),
     path(r"register", views.RegistrationView.as_view()),
 
+    path(r"env/<uuid:pk>", views.EnvironmentView.as_view(), name="Environment-View"),
 
     path(r"project/", include([
         path(r"<uuid:project_uuid>", views.ProjectView.as_view()),
