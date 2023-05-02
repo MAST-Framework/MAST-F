@@ -10,6 +10,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.exceptions import ValidationError
 
+from mastf.MASTF.utils.enum import Role
 from mastf.MASTF.models import (
     Team,
     Project,
@@ -210,6 +211,15 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         """
         if not isinstance(obj, self.model) or request.method not in self:
             return False
+
+        # Every admin should have access to all resources
+        user: User = request.user
+        if user.is_staff or user.is_superuser:
+            return True
+
+        acc = Account.objects.get(user=user)
+        if acc.role == Role.ADMIN:
+            return True
 
         permission = self.get(obj)
         if not permission:

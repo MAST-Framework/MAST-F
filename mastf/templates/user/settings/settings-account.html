@@ -12,8 +12,8 @@
            </div>
            <div class="col">
                 <input type="text" class="form-control form-control-flush fw-bold h1" name="username" placeholder="Username"
-                    value="{{request.user.username}}" minlength="5" id="user-name">
-                <input type="text" class="form-control form-control-flush my-2" name="description" placeholder="Description of your job" value="">
+                    value="{{user.username}}" minlength="5" id="user-name">
+                <input type="text" class="form-control form-control-flush my-2" name="description" placeholder="Job description" value="">
                <div class="list-inline list-inline-dots text-muted">
                    <div class="list-inline-item">
                        <!-- Download SVG icon from http://tabler-icons.io/i/map -->
@@ -33,7 +33,7 @@
                        <!-- Download SVG icon from http://tabler-icons.io/i/mail -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M3 7l9 6l9 -6" /></svg>
                         <a href="#" class="text-reset">
-                            {{request.user.email|default:"no email provided"}}
+                            {{user.email|default:"no email provided"}}
                         </a>
                    </div>
                </div>
@@ -46,14 +46,14 @@
         <div class="row">
             <div class="col-md-4 mb-1">
                 <label class="from-label h3">E-Mail</label>
-                <input type="text" class="form-control" placeholder="foo@example.com" value="{{request.user.email}}"
+                <input type="text" class="form-control" placeholder="foo@example.com" value="{{user.email}}"
                     id="user-email">
                 <span class="form-check-description mb-1">The email can be used as an additional field in generated reports. Use
                     <code class="highlight highlight-inline"><span class="mi">${</span>user.email<span class="mi">}</span></code> in report templates to reference this value.</span>
             </div>
             <div class="col-md-3">
                 <label class="from-label h3">User ID</label>
-                <input type="text" class="form-control" id="" value="{{request.user.pk}}" disabled>
+                <input type="text" class="form-control" id="" value="{{user.pk}}" disabled>
                 <span class="form-check-description mb-1">The user id is unique and can be used to identify your account.</span>
             </div>
             <div class="col">
@@ -113,7 +113,11 @@
 
     function deleteUser(element, event) {
         REST.delete("/api/v1/user/{{user.pk}}", function(data) {
-            location.reload();
+            if ({{user.pk}} == {{request.user.pk}}) {
+                location.reload();
+            } else {
+                window.location.href = "{% url 'Admin-Users-Config' %}";
+            }
         });
     };
 
@@ -146,7 +150,7 @@
     };
 
     function changePassword() {
-        REST.patch("{% url 'User-ChangePassword' request.user.pk %}", JSON.stringify({
+        REST.patch("{% url 'User-ChangePassword' user.pk %}", JSON.stringify({
             password: $('#pwd-input-2').val()
         }), function(data) {
             if (data.success) {

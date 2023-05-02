@@ -103,7 +103,7 @@ class RegistrationView(APIView):
         CanEditUser.assign_to(user, user.pk)
         CanViewAccount.assign_to(user, acc.pk)
         CanEditAccount.assign_to(user, acc.pk)
-        return Response({'success': True}, status.HTTP_200_OK)
+        return Response({'success': True, "pk": user.pk}, status.HTTP_200_OK)
 
 
 class LogoutView(APIView):

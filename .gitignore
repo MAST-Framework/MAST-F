@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.uxf
 generator.py
+.vscode/
 
 # uploaded files
 mastf/projects/

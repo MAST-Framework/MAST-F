@@ -1,6 +1,8 @@
 from datetime import datetime
+from typing import Any
+from django import http
 
-from django.http import HttpRequest, Http404
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,8 +16,11 @@ from mastf.MASTF.models import Account, Project, Scan
 LOGIN_URL = '/web/login'
 
 class TemplateAPIView(TemplateView):
-
     permission_classes = None
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        # TODO: catch validation errors
+        return super().dispatch(request, *args, **kwargs)
 
     def check_object_permissions(self, request, obj) -> bool:
         if self.permission_classes:
@@ -25,6 +30,15 @@ class TemplateAPIView(TemplateView):
                 if isinstance(permission, BasePermission):
                     if not permission.has_object_permission(request, self, obj):
                         return False
+        # Return Ture by default
+        return True
+
+    def check_permissions(self, request):
+        if self.permission_classes:
+            for permission in self.permission_classes:
+                if isinstance(permission, BasePermission):
+                    if not permission.has_permission(request, self):
+                        raise exceptions.ValidationError("Insufficient permisions")
         # Return Ture by default
         return True
 

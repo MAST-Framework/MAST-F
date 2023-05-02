@@ -19,7 +19,9 @@ urlpatterns = [
     path(r"settings/", include([
         path(r"", views.UserProfileView.as_view(), name='Settings'),
         path(r"teams", views.UserTeamsView.as_view(), name='Teams'),
-        path(r"team/<int:pk>", views.UserTeamView.as_view(), name='Team-Overview')
+        path(r"team/<int:pk>", views.UserTeamView.as_view(), name='Team-Overview'),
+        path(r"admin/users", views.AdminUsersConfiguration.as_view(), name="Admin-Users-Config"),
+        path(r"admin/user/<int:pk>", views.AdminUserConfig.as_view(), name="Admin-User-Config"),
     ])),
 
     path(r"logout", views.LogoutView.as_view(), name='User-Logout'),
@@ -37,7 +39,7 @@ urlpatterns = [
         path(r"scanners", views.UserScannersView.as_view(), name='Project-Scanners'),
         path(r"packages", views.UserProjectPackagesView.as_view(), name='Project-Packages'),
         path(r"export", views.UserProjectDetailsView.as_view(), name='Project-Export'),
-        path(r"settings", views.UserProjectDetailsView.as_view(), name='Project-Settings'),
+        path(r"settings", views.UserProjectConfigView.as_view(), name='Project-Settings'),
     ])),
 
     path("bundles/<uuid:bundle_id>/", include([

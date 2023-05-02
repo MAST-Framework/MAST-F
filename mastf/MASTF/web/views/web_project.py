@@ -27,7 +27,8 @@ from mastf.MASTF.utils.enum import State, Severity
 
 __all__ = [
     'UserProjectDetailsView', 'UserProjectScanHistoryView',
-    'UserScannersView', 'UserProjectPackagesView'
+    'UserScannersView', 'UserProjectPackagesView',
+    'UserProjectConfigView'
 ]
 
 OVERVIEW_PATH = 'project/project-overview.html'
@@ -153,3 +154,14 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
         context['dependencies'] = Dependency.objects.filter(project=context['project'])
         return context
 
+class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
+    template_name = OVERVIEW_PATH
+    permission_classes = [CanEditProject]
+
+    def get_context_data(self, **kwargs: dict) -> dict:
+        context = super().get_context_data(**kwargs)
+        self.apply_project_context(context)
+
+        context['active'] = 'tabs-settings'
+        context['Severity'] = [str(x) for x in Severity]
+        return context
