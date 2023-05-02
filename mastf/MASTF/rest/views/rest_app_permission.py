@@ -6,6 +6,10 @@ from django.http import HttpResponse
 from django.http import Http404
 
 from rest_framework import permissions, views
+from rest_framework.views import APIView
+
+from rest_framework.response import Response
+from rest_framework.request import Request
 
 from mastf.MASTF.serializers import AppPermissionSerializer
 from mastf.MASTF.models import AppPermission
@@ -14,7 +18,7 @@ from mastf.MASTF.forms import AppPermissionForm
 from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase
 
 __all__ = [
-    'AppPermissionView', 'AppPermissionCreationView', 'AppPermissionListView',
+    'AppPermissionView', 'AppPermissionCreationView', 'AppPermissionListView', 'AppPermissionFileUpload',
 ]
 
 class AppPermissionView(APIViewBase):
@@ -40,16 +44,10 @@ class AppPermissionListView(ListAPIViewBase):
     permission_classes = [permissions.IsAuthenticated]
 
 
-"""def AppPermissionListRangeView(request):
-    get = request.GET
-    if "start" not in get or "end" not in get:
-        raise Http404
-    queryset = AppPermission.objects.all().order_by("name")
-    start = int(get["start"])
-    end = int(get["end"])
-    if end >= len(queryset):
-        end = len(queryset)
-    if start >= end:
-        raise Http404
-    re = serializers.serialize("json", queryset[start:end])
-    return HttpResponse(re, content_type='application/json')"""
+class AppPermissionFileUpload(APIView):
+
+    model = AppPermission
+    def post(self, request: Request) -> Response:
+        if request.FILES != None:
+            HttpResponse("File received")
+        else: HttpResponse("File not received")

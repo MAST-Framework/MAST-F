@@ -43,6 +43,7 @@ urlpatterns = [
     path(r"app-permission/all", views.AppPermissionListView.as_view(), name="AppPermissionListView"),
     path(r"app-permission/create", views.AppPermissionCreationView.as_view(), name="AppPermissionCreate"),
     path(r"app-permission/<uuid:permission_uuid>", views.AppPermissionView.as_view(), name="AppPermissionView"),
+    path(r"app-permission/fileUpload", views.AppPermissionFileUpload.as_view(), name="AppPermissionFileUpload"),
 
     path(r"scan/", include([
         path(r"all", views.ScanListView.as_view()),

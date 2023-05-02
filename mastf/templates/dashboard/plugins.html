@@ -39,7 +39,7 @@ MASTF | Plugins
             <h4 class="subheader">Default Plugins</h4>
             <div class="list-group list-group-transparent">
               <a href="{% url 'Plug-Ins'%}?subpage=permissions"
-                class="list-group-item list-group-item-action d-flex align-items-center active">
+                class="list-group-item list-group-item-action d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-registered me-2" width="24"
                   height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -99,6 +99,7 @@ MASTF | Plugins
             <!-- Body -->
             <a class="btn float-end" href="#" data-bs-toggle="modal" data-bs-target="#modal-add-permission">Add
               Permission</a>
+              <a class="btn float-end" href="#" data-bs-toggle="modal" data-bs-target="#modal-upload-permission">Upload file</a>
             <br><br>
             <div class="table-responsive-xl">
               <table id="app-permissions" class="table card-table text-nowrap datatable">
@@ -535,12 +536,41 @@ MASTF | Plugins
       </div>
       <div class="modal-body">
         <label>Do you really want to delete this permission?</label>
+        <div class="modal-footer">
         <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
           Cancel
         </a>
         <input value="Delete" type="button" class="btn btn-danger" onclick="deletePermission();">
       </div>
     </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-upload-permission" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Upload File
+        </h5>
+        <!-- Simple workaround to close this modal -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'AppPermissionFileUpload' %}" method="post">
+           {% csrf_token %}
+        <label for="modal-upload-file" class="form-label">Choose JSON file.</label>
+        <input type="file" class="form-control" id="modal-upload-file">
+        <div class="modal-footer">
+        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+          Cancel
+        </a>
+        <input value="Submit" type="submit" class="btn btn-primary">
+      </div>
+    </form>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -636,17 +666,17 @@ MASTF | Plugins
       <div class="modal-body">
         <div class="mb-4">
           <label class="form-label required">Name</label>
-          <input id="add-package-name" class="form-content" placeholder="Name" required minlength="3" maxlength="256"
+          <input id="add-package-name" class="form-control" placeholder="Name" required minlength="3" maxlength="256"
             type="text">
         </div>
         <div class="mb-4">
           <label class="form-label required">Artifact ID</label>
-          <input id="add-package-artifact_id" class="form-content" placeholder="Artifact Id" required minlength="3"
+          <input id="add-package-artifact_id" class="form-control" placeholder="Artifact Id" required minlength="3"
             maxlength="256" type="text">
         </div>
         <div class="mb-4">
           <label class="form-label required">Group ID</label>
-          <input id="add-package-group_id" class="form-content" placeholder="Group Id" required minlength="3"
+          <input id="add-package-group_id" class="form-control" placeholder="Group Id" required minlength="3"
             maxlength="256" type="text">
         </div>
         <div class="mb-4">
@@ -673,7 +703,6 @@ MASTF | Plugins
         <input data-bs-dismiss="modal" onclick="createPackage()" type="button" class="btn btn-success"
           value="Create Package" id="package-submit">
       </div>
-
     </div>
   </div>
 </div>
@@ -773,6 +802,7 @@ MASTF | Plugins
     });
   }
 
+  // Build object for Datatable
   async function loadPermissionsForTable() {
     const permissions = await loadPermissions();
     const editTag = '<a onclick="console.log(loadPermissionToEditModal(\'permission_uuid\'))" class="btn float-end" href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-permission">Edit</a>';
@@ -839,6 +869,7 @@ MASTF | Plugins
       data: data
     });
   }
+    // Build object for Datatable
   async function loadHostsForTable() {
     const hosts = await loadHosts();
     const editTag = '<a onclick="loadHostToEditModal(\'host_uuid\')" class="btn float-end" href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-host">Edit</a>';
@@ -900,6 +931,7 @@ MASTF | Plugins
       data: data
     });
   }
+    // Build object for Datatable
   async function loadPackagesForTable() {
     const packages = await loadPackages();
     const editTag = '<a onclick="loadPackageToEditModal(\'package_uuid\')" class="btn float-end" href="#" data-bs-toggle="modal" data-bs-target="#modal-edit-package">Edit</a>';
