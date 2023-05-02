@@ -21,7 +21,7 @@ class DataCollectionGroup(models.Model):
 class HostTemplate(models.Model):
     template_id = models.UUIDField(primary_key=True)
     domain_name = models.CharField(max_length=256, null=False)
-    ip_adress = models.CharField(max_length=32, null=True)
+    ip_address = models.CharField(max_length=32, null=True)
     owner = models.CharField(max_length=255, null=True)
     description = models.TextField(null=False, blank=True)
 

@@ -61,7 +61,7 @@
                         </td>
 
                         <td class="text-muted">
-                            <a href="{% url 'Team-Overview' team.pk %}" class="link-secondary">
+                            <a href="{% if is_admin %}{% url 'Admin-Team-Config' team.pk %}{% else %}{% url 'Team-Overview' team.pk %}{% endif %}" class="link-secondary">
                                 {{ team.name }}
                             </a>
                         </td>

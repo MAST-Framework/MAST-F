@@ -244,8 +244,11 @@ MASTF | Plugins
       data[this.name] = this.value;
     });
     console.log(data);
-    REST.patch(url, JSON.stringify(data), console.log("200 Ok"));
-    location.reload();
+    REST.patch(url, JSON.stringify(data), function(data) {
+      if (data.success) {
+        location.reload();
+      }
+    });
   }
 </script>
 {% endif %}
@@ -260,8 +263,12 @@ MASTF | Plugins
     const owner = document.getElementById("add-host-owner").value;
     const description = document.getElementById("add-host-description").value;
 
-    const data = { "domain_name": domainName, "ip_adress": ip, "owner": owner, "description": description };
-    REST.post("{% url 'HostCreate' %}", JSON.stringify(data), location.reload());
+    const data = { "domain_name": domainName, "ip_address": ip, "owner": owner, "description": description };
+    REST.post("{% url 'HostCreate' %}", JSON.stringify(data), function(data) {
+      if (data.success) {
+        location.reload();
+      }
+    });
   }
   async function loadHostToEditModal(uuid) {
     const host = await getHost(uuid);
@@ -280,8 +287,11 @@ MASTF | Plugins
       data[this.name] = this.value;
     });
     console.log(data);
-    REST.patch(url, JSON.stringify(data), console.log("200 Ok"));
-    location.reload();
+    REST.patch(url, JSON.stringify(data), function(data) {
+      if (data.success) {
+        location.reload();
+      }
+    });
   }
 
 </script>
@@ -300,7 +310,11 @@ MASTF | Plugins
     const platform = document.getElementById("add-package-platform").value;
 
     const data = { "name": name, "artifact_id": artifact_id, "group_id": group_id, "type": type, "platform": platform };
-    REST.post("{% url 'PackageCreationView' %}", JSON.stringify(data), location.reload());
+    REST.post("{% url 'PackageCreationView' %}", JSON.stringify(data), function(data) {
+      if (data.success) {
+        location.reload();
+      }
+    });
   }
   async function loadPackageToEditModal(uuid) {
     const pk = await getPackage(uuid);
@@ -320,8 +334,11 @@ MASTF | Plugins
       data[this.name] = this.value;
     });
     console.log(data);
-    REST.patch(url, JSON.stringify(data), console.log("200 Ok"));
-    location.reload();
+    REST.patch(url, JSON.stringify(data), function(data) {
+      if (data.success) {
+        location.reload();
+      }
+    }));
   }
 </script>
 
@@ -877,7 +894,7 @@ MASTF | Plugins
     for (h of hosts) {
       var tmp = [];
       tmp.push(h.domain_name);
-      tmp.push(h.ip_adress);
+      tmp.push(h.ip_address);
       tmp.push(h.owner)
       tmp.push(h.description);
       tmp.push(editTag.replace("host_uuid", h.host_uuid));
@@ -974,7 +991,6 @@ MASTF | Plugins
           location.reload();
       }
    });
-    location.reload();
   }
 </script>
 

@@ -22,6 +22,8 @@ urlpatterns = [
         path(r"team/<int:pk>", views.UserTeamView.as_view(), name='Team-Overview'),
         path(r"admin/users", views.AdminUsersConfiguration.as_view(), name="Admin-Users-Config"),
         path(r"admin/user/<int:pk>", views.AdminUserConfig.as_view(), name="Admin-User-Config"),
+        path(r"admin/teams", views.AdminTeamsConfiguration.as_view(), name="Admin-Teams-Config"),
+        path(r"admin/team/<int:pk>", views.UserTeamView.as_view(), name="Admin-Team-Config"),
     ])),
 
     path(r"logout", views.LogoutView.as_view(), name='User-Logout'),

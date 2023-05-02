@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAdminUser
 from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
 from mastf.MASTF.permissions import CanViewTeam, CanEditUser
 from mastf.MASTF.models import Account, Team
+from mastf.MASTF.utils.enum import Role
 from mastf.MASTF.rest.views import TeamCreationView, RegistrationView
 
 __all__ = [
@@ -15,6 +16,7 @@ __all__ = [
     "UserTeamView",
     "AdminUserConfig",
     "AdminUsersConfiguration",
+    "AdminTeamsConfiguration"
 ]
 
 
@@ -75,6 +77,8 @@ class AdminUserConfig(ContextMixinBase, TemplateAPIView):
         context["user"] = user
         context["account"] = Account.objects.get(user=user)
         context["active"] = "admin-user-config"
+        context["is_admin"] = True
+        context["user_roles"] = list(Role)
         return context
 
 
@@ -102,3 +106,17 @@ class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
             messages.warning(self.request, f"Could not create user: {response.data.get('detail', '')}",
                              "ValidationError")
         return redirect
+
+
+class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
+    template_name = "user/settings/settings-teams.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["teams"] = Team.objects.all()
+        context["active"] = "admin-team-config"
+        context["account"] = Account.objects.get(user=self.request.user)
+        context["available"] = list(User.objects.all())
+        context["available"].remove(self.request.user)
+        context["is_admin"] = True
+        return context

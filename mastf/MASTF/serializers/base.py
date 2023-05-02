@@ -1,6 +1,6 @@
 import logging
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.db.models import Manager
 
 from rest_framework import serializers
@@ -173,6 +173,12 @@ class ManyToManySerializer(serializers.ModelSerializer):
                 # Currently only user elements will be affected from this change
                 if isinstance(element, User):
                     permission.remove_from(element, instance)
+
+
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):
