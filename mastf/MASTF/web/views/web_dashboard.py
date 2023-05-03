@@ -14,7 +14,6 @@ from mastf.MASTF.models import (
     Bundle
 )
 from mastf.MASTF.serializers import ProjectSerializer, ScanSerializer
-
 from mastf.MASTF.utils.enum import Platform, PackageType, ProtectionLevel
 # This file stores additional views that will be used to
 # display the web frontend
