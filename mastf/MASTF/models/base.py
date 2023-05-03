@@ -270,6 +270,8 @@ class Environment(models.Model):
     max_teams = models.IntegerField(default=10000)
     max_bundles = models.IntegerField(default=10000)
 
+    first_start = models.BooleanField(default=True)
+
     @staticmethod
     def env() -> 'Environment':
         queryset = Environment.objects.first()

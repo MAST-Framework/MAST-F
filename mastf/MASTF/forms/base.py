@@ -5,9 +5,16 @@ from mastf.MASTF.models import Project
 from mastf.MASTF.settings import MASTF_PASSWD_MIN_LEN, MASTF_USERNAME_MIN_LEN
 
 __all__ = [
-    'ModelField', 'RegistrationForm', 'ProjectCreationForm',
-    'AppPermissionForm', 'TeamForm', 'ManyToManyField', 'BundleForm',
-    'ChangePasswordForm', 'EditTeamMembersForm'
+    "ModelField",
+    "RegistrationForm",
+    "ProjectCreationForm",
+    "AppPermissionForm",
+    "TeamForm",
+    "ManyToManyField",
+    "BundleForm",
+    "ChangePasswordForm",
+    "EditTeamMembersForm",
+    "SetupForm",
 ]
 
 
@@ -32,7 +39,7 @@ class ModelField(forms.CharField):
     :type mapper: Callable[T, [str]]
     """
 
-    def __init__(self, model, field_name='pk', mapper=None, **kwargs) -> None:
+    def __init__(self, model, field_name="pk", mapper=None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.model = model
         self.field_name = field_name
@@ -48,7 +55,8 @@ class ModelField(forms.CharField):
 
         if not queryset.exists():
             raise forms.ValidationError(
-                "This field must be a reference to an existing model", code="required")
+                "This field must be a reference to an existing model", code="required"
+            )
 
         return queryset.first()
 
@@ -102,11 +110,12 @@ class ManyToManyField(forms.CharField):
     :type mapper: Callable[T, [str]]
     """
 
-    def __init__(self, model, field_name='pk', delimiter: str = ',',
-                 mapper=None, **kwargs) -> None:
+    def __init__(
+        self, model, field_name="pk", delimiter: str = ",", mapper=None, **kwargs
+    ) -> None:
         super().__init__(**kwargs)
         self.model = model
-        self.delimiter = delimiter or ','
+        self.delimiter = delimiter or ","
         self.field_name = field_name
         self.converter = mapper
 
@@ -136,17 +145,17 @@ class RegistrationForm(forms.Form):
     """Simple form used to register new users"""
 
     username = forms.CharField(
-        max_length=256, min_length=MASTF_USERNAME_MIN_LEN,
-        required=True)
+        max_length=256, min_length=MASTF_USERNAME_MIN_LEN, required=True
+    )
     """The username which has to be unique"""
 
     password = forms.CharField(
-        max_length=256, min_length=MASTF_PASSWD_MIN_LEN,
-        required=True
+        max_length=256, min_length=MASTF_PASSWD_MIN_LEN, required=True
     )
     """The minimum password length will be defined by ``MASTF_PASSWD_MIN_LEN``."""
 
     role = forms.CharField(max_length=32, required=False)
+
 
 class ChangePasswordForm(forms.Form):
     password = forms.CharField(required=True)
@@ -165,6 +174,7 @@ class ProjectCreationForm(forms.Form):
 
 class AppPermissionForm(forms.Form):
     """Form used to create and update app permissions"""
+
     identifier = forms.CharField(max_length=256, required=True)
     name = forms.CharField(max_length=256, required=True)
     protection_level = forms.CharField(max_length=256, required=True)
@@ -181,6 +191,7 @@ class TeamForm(forms.Form):
     owner = ModelField(User, max_length=256, mapper=int)
     users = ManyToManyField(User, mapper=int, required=False)
 
+
 class EditTeamMembersForm(forms.Form):
     users = ManyToManyField(User, mapper=int)
 
@@ -191,3 +202,16 @@ class BundleForm(forms.Form):
     risk_level = forms.CharField(max_length=32, required=False)
     projects = ManyToManyField(Project, required=False)
 
+
+class SetupForm(forms.Form):
+    username = forms.CharField(
+        max_length=256, min_length=MASTF_USERNAME_MIN_LEN, required=True
+    )
+    """The username which has to be unique"""
+
+    password = forms.CharField(
+        max_length=256, min_length=MASTF_PASSWD_MIN_LEN, required=True
+    )
+    """The minimum password length will be defined by ``MASTF_PASSWD_MIN_LEN``."""
+
+    # Here is space for more configuration elements
