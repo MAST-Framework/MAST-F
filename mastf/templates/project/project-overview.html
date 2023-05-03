@@ -717,12 +717,241 @@ MAST-F Project | {{ project.name }}
                                 <div class="card">
                                     <div class="card-header">
                                         <h2 class="card-title">Project Configuration</h2>
+                                        <button class="btn btn-primary ms-auto">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M5 12l5 5l10 -10"></path>
+                                             </svg>
+                                             Save Changes
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-3">
+                            <div class="row mt-3 row-deck">
+                                <div class="col-md-4 mb-1">
+                                    <div class="card">
+                                        <div class="card-body">
+                                          <h3 class="card-title">Project ID</h3>
+                                          <p class="card-subtitle">Global identifier and used when interacting with the API.</p>
+                                          <div class="input-group input-group-flat">
+                                            <input type="text" value="{{project.project_uuid}}" class="form-control" placeholder="Project ID" readonly
+                                            id="project-id">
+                                            <a href="#" target-id="project-id" data-bs-toggle="tooltip" class="link-secondary"
+                                                data-bs-placement="bottom" title="Copy Project-ID"
+                                                onclick="copyTargetToClipboard(this);">
+                                                <span class="input-group-text">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 3v4a1 1 0 0 0 1 1h4"></path><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z"></path><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2"></path></svg>
+                                                  </span>
+                                            </a>
+                                          </div>
+                                        </div>
+                                        <div class="card-footer">
+                                          <div class="row align-items-center">
+                                            <div class="col">Learn more about <a href="#">Project ID</a></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div class="col-md-6 mb-1">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-title">Project Information</div>
+                                            <p class="card-subtitle">The project's name and tags that can be used within global search.</p>
+                                            <div class="col-auto">
+                                                <div class="col mb-2">
+                                                    <label class="form-label">
+                                                        Name
+                                                    </label>
+                                                    <input class="form-control" type="text" name="name" id="project-name" minlength="5"
+                                                        value="{{project.name}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <label class="form-label">Tags</label>
+                                                <div class="input-group input-group-flat">
+                                                    <span class="input-group-text" id="project-edit-tags-area">
+                                                        {% for tag in project.tags|split:"," %}
+                                                        <kbd id="project-edit-element-{{forloop.counter}}" style="margin-right: 3px; cursor: no-drop;">{{tag}}</kbd>
+                                                        {% endfor %}
+                                                    </span>
+                                                    <input id="project-edit-tags-input" type="text" class="form-control" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-title">Risk Level</div>
+                                            <p class="card-subtitle">The current risk level accumulated by number of identified risks.</p>
+                                            <span class="dropdown">
+                                                <div class="d-grid gap-2">
+                                                    <button class="btn bg-secondary-lt dropdown-toggle" type="button" id="vuln-types-dropdown"
+                                                    data-bs-toggle="dropdown" aria-expanded="false" >
+                                                    {{ project.risk_level }}
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-xl-start" aria-labelledby="host-type-dropdown"
+                                                    id="list-host-type">
+                                                    <span class="dropdown-header">Choose Risk Level</span>
+                                                    {% for severity in risk_types %}
+                                                    <li><a href="#" class="dropdown-item" onclick="applyRiskLevel(this);">{{severity}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="row align-items-center">
+                                              <div class="col">Learn more about <a href="#">Risk Levels</a></div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2 mb-3 row-deck">
+                                <div class="col-md-2 mb-2">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-title">Visibility</div>
+                                            <p class="card-subtitle">The current visibility level.</p>
+                                            <span class="dropdown">
+                                                <div class="d-grid gap-2">
+                                                    <button class="btn bg-secondary-lt dropdown-toggle" type="button" id="vuln-types-dropdown"
+                                                    data-bs-toggle="dropdown" aria-expanded="false" >
+                                                    {{ project.visibility }}
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-xl-start" aria-labelledby="host-type-dropdown"
+                                                    id="list-host-type">
+                                                    <span class="dropdown-header">Choose Risk Level</span>
+                                                    {% for level in visibility_types %}
+                                                    <li><a href="#" class="dropdown-item" onclick="applyVisibilityLevel(this);">{{level}}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="row align-items-center">
+                                              <div class="col">Learn more about <a href="#">Visibility Types</a></div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7 mb-2">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <label class="form-label required">Inspection Type</label>
+                                            <!-- Two options: 'simple' and 'advanced' -->
+                                            <div class="form-selectgroup-boxes row row-deck mb-3">
+                                                <div class="col-auto mb-1">
+                                                    <label class="form-selectgroup-item">
+                                                        <input type="radio" name="inspection_type" value="simple" class="form-selectgroup-input" checked>
+                                                        <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                        <span class="me-3">
+                                                            <span class="form-selectgroup-check"></span>
+                                                        </span>
+                                                        <span class="form-selectgroup-label-content">
+                                                            <span class="form-selectgroup-title strong mb-1">Simple</span>
+                                                            <span class="d-block text-muted">Provide only basic data needed for the report + more details...</span>
+                                                        </span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <label class="form-selectgroup-item">
+                                                        <input type="radio" name="inspection_type" value="advanced" class="form-selectgroup-input">
+                                                        <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                        <span class="me-3">
+                                                            <span class="form-selectgroup-check"></span>
+                                                        </span>
+                                                        <span class="form-selectgroup-label-content">
+                                                            <span class="form-selectgroup-title strong mb-1">Advanced</span>
+                                                            <span class="d-block text-muted">Insert charts and additional advanced analyses in the final report</span>
+                                                        </span>
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-title">Team</div>
+                                            {% if project.team %}
+                                            <div class="input-group input-group-flat">
+                                                <input type="text" value="{{project.team.name}}" class="form-control" placeholder="Team Name" readonly
+                                                id="team-name">
+                                                <a href="#" target-id="team-name" data-bs-toggle="tooltip" class="link-secondary"
+                                                    data-bs-placement="bottom" title="Copy Team-Name"
+                                                    onclick="copyTargetToClipboard(this);">
+                                                    <span class="input-group-text">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 3v4a1 1 0 0 0 1 1h4"></path><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z"></path><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2"></path></svg>
+                                                      </span>
+                                                </a>
+                                            </div>
+                                            {% else %}
+                                            <p class="card-subtitle">Select a team you want to assign to this project.</p>
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-primary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                        <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                        <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
+                                                        <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                        <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
+                                                        <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                                        <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
+                                                     </svg>
+                                                    Select Team
+                                                </button>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="row align-items-center">
+                                              <div class="col">Learn more about <a href="#">Teams</a></div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col">
-
+                                    <div class="card border-danger">
+                                        <div class="card-header">
+                                            <span class="fw-bold">Danger Zone</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row border-bottom mb-3">
+                                                <div class="col mb-1">Delete Project
+                                                    <span class="form-check-description">
+                                                        Delete this project and all data related to it.
+                                                    </span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-outline-danger" onclick="verifyActionWithText(this, deleteProject, 'Project/{{project.name}}');"
+                                                        modal-title="Delete Project" modal-input-text="I understand what I am doing"
+                                                        modal-text="<ul><li>All project related data will be lost,</li><li>All scans and scan results will be deleted.</li></ul>">
+                                                        Delete Project
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="row border-bottom mb-3">
+                                                <div class="col mb-1">Change Ownership
+                                                    <span class="form-check-description">
+                                                        Transfer ownership of this project to another user. Please note that you may not have any access to this project after you changed the owner.
+                                                    </span>
+                                                </div>
+                                                <div class="col-auto justify-content-center">
+                                                    <button class="btn btn-outline-danger" data-bs-toggle="modal" id="btn-change-pwd"
+                                                        data-bs-target="#modal-edit-pwd">Change</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             {% endif %}

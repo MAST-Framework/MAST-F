@@ -19,6 +19,7 @@ RESULTS_BASE = "project/results/results-base.html"
 class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = RESULTS_BASE
     permission_classes = [CanEditProject]
+    default_redirect = "Project-Scanners"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -32,6 +33,7 @@ class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
 
 class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     permission_classes = [CanEditProject]
+    default_redirect = "Project-Scanners"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

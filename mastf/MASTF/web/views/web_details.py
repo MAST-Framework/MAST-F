@@ -1,4 +1,5 @@
 import json
+import os
 
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -12,6 +13,7 @@ class DetailsView(ContextMixinBase, TemplateAPIView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['pages'] = ARTICLES
 
         platform = self.kwargs['platform'].lower()
         name = self.kwargs['name'].lower()
@@ -21,8 +23,11 @@ class DetailsView(ContextMixinBase, TemplateAPIView):
             messages.warning(self.request, f'Invalid details name: {path}', "FileNotFoundError")
             return context
 
+        if not os.path.commonprefix((path, DETAILS_DIR)).startswith(str(DETAILS_DIR)):
+            messages.warning(self.request, f'Invalid path name: {path}', "FileNotFoundError")
+            return context
+
         with open(str(path), "r", encoding="utf-8") as fp:
             context["data"] = json.load(fp)
 
-        context['pages'] = ARTICLES
         return context

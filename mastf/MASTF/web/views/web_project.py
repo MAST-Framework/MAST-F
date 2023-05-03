@@ -36,6 +36,7 @@ OVERVIEW_PATH = 'project/project-overview.html'
 class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [CanEditProject]
+    default_redirect = "Projects"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -67,6 +68,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
 class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [CanEditProject]
+    default_redirect = "Projects"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -95,6 +97,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
                               ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [CanEditProject]
+    default_redirect = "Projects"
 
     def post(self, request, *args, **kwargs):
         view = ScanCreationView.as_view()
@@ -144,6 +147,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [CanEditProject]
+    default_redirect = "Projects"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,14 +158,16 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
         context['dependencies'] = Dependency.objects.filter(project=context['project'])
         return context
 
+
 class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     template_name = OVERVIEW_PATH
     permission_classes = [CanEditProject]
+    default_redirect = "Projects"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
         context['active'] = 'tabs-settings'
-        context['Severity'] = [str(x) for x in Severity]
+        context['risk_types'] = [str(x) for x in Severity]
         return context

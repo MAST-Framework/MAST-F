@@ -212,10 +212,14 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         if not isinstance(obj, self.model) or request.method not in self:
             return False
 
+
         # Every admin should have access to all resources
         user: User = request.user
         if user.is_staff or user.is_superuser:
             return True
+
+        if user.is_anonymous or not user.is_authenticated:
+            return False
 
         acc = Account.objects.get(user=user)
         if acc.role == Role.ADMIN:

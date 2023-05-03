@@ -18,7 +18,7 @@ __all__ = [
     "AdminUserConfig",
     "AdminUsersConfiguration",
     "AdminTeamsConfiguration",
-    "AdminEnvironmentConfig"
+    "AdminEnvironmentConfig",
 ]
 
 
@@ -62,6 +62,7 @@ class UserTeamsView(ContextMixinBase, TemplateAPIView):
 class UserTeamView(ContextMixinBase, TemplateAPIView):
     template_name = "user/team.html"
     permission_classes = [CanViewTeam]
+    default_redirect = "Teams"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -72,6 +73,7 @@ class UserTeamView(ContextMixinBase, TemplateAPIView):
 class AdminUserConfig(ContextMixinBase, TemplateAPIView):
     template_name = "user/settings/settings-account.html"
     permission_classes = [CanEditUser]
+    default_redirect = "Settings"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -86,11 +88,11 @@ class AdminUserConfig(ContextMixinBase, TemplateAPIView):
 
 class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
     template_name = "user/admin/users.html"
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsAdmin]
+    default_redirect = "Settings"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-        self.check_permissions(self.request)
 
         context["users"] = Account.objects.all()
         context["active"] = "admin-user-config"
@@ -98,21 +100,23 @@ class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
         return context
 
     def post(self, *args, **kwargs):
-        # TODO: outsource this method call to dispatch()
-        self.check_permissions(self.request)
         # Note that we can use this API view here as the user must be an
         # Admin-User.
         view = RegistrationView.as_view()
         response = view(self.request, **self.kwargs)
 
         if response.status_code != 200:
-            messages.warning(self.request, f"Could not create user: {response.data.get('detail', '')}",
-                             "ValidationError")
-        return redirect('Admin-Users-Config')
+            messages.warning(
+                self.request,
+                f"Could not create user: {response.data.get('detail', '')}",
+                "ValidationError",
+            )
+        return redirect("Admin-Users-Config")
 
 
 class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
     template_name = "user/settings/settings-teams.html"
+    default_redirect = "Teams"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -128,18 +132,31 @@ class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
 class AdminEnvironmentConfig(ContextMixinBase, TemplateAPIView):
     template_name = "user/admin/env.html"
     permission_classes = [IsAdminUser | IsAdmin]
+    default_redirect = "Settings"
 
     user_elements = [
-        ("Allow Teams", "allow_teams", "Controls whether Teams can be created by users."),
-        ("Max Projects", "max_projects", "Controls the maximum amount of projects per user."),
+        (
+            "Allow Teams",
+            "allow_teams",
+            "Controls whether Teams can be created by users.",
+        ),
+        (
+            "Max Projects",
+            "max_projects",
+            "Controls the maximum amount of projects per user.",
+        ),
         ("Max Teams", "max_teams", "Controls the maximum amount of teams per user."),
-        ("Max Bundles", "max_bundles", "Controls the maximum amount of bundles per user."),
+        (
+            "Max Bundles",
+            "max_bundles",
+            "Controls the maximum amount of bundles per user.",
+        ),
     ]
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
         if not self.check_permissions(self.request):
-            raise exceptions.ValidationError('Insufficient Permissions')
+            raise exceptions.ValidationError("Insufficient Permissions")
 
         context["active"] = "env"
 
@@ -150,15 +167,25 @@ class AdminEnvironmentConfig(ContextMixinBase, TemplateAPIView):
             user_cat.elements.append(self.get_element(env, label, name, hint))
 
         auth_cat = namespace(name="Authentication")
-        auth_cat.elements = [self.get_element(
-            env, "Allow Registration", "allow_registration",
-            "Controls whether new users can be created by registration."
-        )]
+        auth_cat.elements = [
+            self.get_element(
+                env,
+                "Allow Registration",
+                "allow_registration",
+                "Controls whether new users can be created by registration.",
+            )
+        ]
 
-        context['environment'] = [user_cat, auth_cat]
+        context["environment"] = [user_cat, auth_cat]
         return context
 
-    def get_element(self, env: Environment, label, name: str,
-                    hint: str, disabled=False):
-        return namespace(name=name, value=getattr(env, name),
-                         hint=hint, disabled=disabled, label=label)
+    def get_element(
+        self, env: Environment, label, name: str, hint: str, disabled=False
+    ):
+        return namespace(
+            name=name,
+            value=getattr(env, name),
+            hint=hint,
+            disabled=disabled,
+            label=label,
+        )

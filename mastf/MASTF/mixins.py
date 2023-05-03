@@ -1,9 +1,8 @@
 from datetime import datetime
-from typing import Any
-from django import http
 
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -11,16 +10,24 @@ from rest_framework.permissions import BasePermission, exceptions
 
 from mastf.MASTF import settings
 from mastf.MASTF.scanners.plugin import ScannerPlugin
-from mastf.MASTF.models import Account, Project, Scan
+from mastf.MASTF.models import Account, Project
 
 LOGIN_URL = '/web/login'
 
 class TemplateAPIView(TemplateView):
     permission_classes = None
+    default_redirect = "Dashboard"
 
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        # TODO: catch validation errors
-        return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        try:
+            self.check_permissions(request)
+            return super().dispatch(request, *args, **kwargs)
+        except exceptions.ValidationError as err:
+            messages.error(request, str(err.detail), err.__class__.__name__)
+            return self.on_dispatch_error()
+
+    def on_dispatch_error(self):
+        return redirect(self.default_redirect, *self.args, **self.kwargs)
 
     def check_object_permissions(self, request, obj) -> bool:
         if self.permission_classes:

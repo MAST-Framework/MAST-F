@@ -1,47 +1,44 @@
-from django.shortcuts import redirect
 from django.db.models import Count, Case, When
 
-from mastf.MASTF.mixins import (
-    ContextMixinBase,
-    UserProjectMixin,
-    VulnContextMixin,
-    TemplateAPIView
-)
+from mastf.MASTF.mixins import ContextMixinBase, VulnContextMixin, TemplateAPIView
 from mastf.MASTF.models import (
-    Bundle, Project, namespace,
-    AbstractBaseFinding, Vulnerability
+    Bundle,
+    Project,
+    namespace,
+    AbstractBaseFinding,
+    Vulnerability,
 )
 from mastf.MASTF.utils.enum import Severity
 
 from mastf.MASTF.permissions import CanViewBundle
 
-__all__ = [
-    'BundleDetailsView'
-]
+__all__ = ["BundleDetailsView"]
+
 
 class BundleDetailsView(ContextMixinBase, VulnContextMixin, TemplateAPIView):
     template_name = "bundle/bundle-overview.html"
     permission_classes = [CanViewBundle]
+    default_redirect = "Bundles"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-        context['bundle'] = self.get_object(Bundle, pk_field='bundle_id')
+        context["bundle"] = self.get_object(Bundle, pk_field="bundle_id")
 
         available = []
-        projects = context['bundle'].projects.all()
+        projects = context["bundle"].projects.all()
         for project in Project.get_by_user(self.request.user):
             if project not in projects:
                 available.append(project)
 
-        context['available'] = available
-        context['vuln_types'] = [str(x) for x in Severity]
+        context["available"] = available
+        context["vuln_types"] = [str(x) for x in Severity]
 
         if self.request.path.endswith("/projects"):
-            context['active'] = 'tabs-projects'
-            context.update(self._apply_bundle_projects(context['bundle']))
+            context["active"] = "tabs-projects"
+            context.update(self._apply_bundle_projects(context["bundle"]))
         else:
-            context['active'] = 'tabs-overview'
-            context.update(self._apply_bundle_overview(context['bundle']))
+            context["active"] = "tabs-overview"
+            context.update(self._apply_bundle_overview(context["bundle"]))
 
         return context
 
@@ -52,7 +49,7 @@ class BundleDetailsView(ContextMixinBase, VulnContextMixin, TemplateAPIView):
         data.project_table_data = []
         for project in projects:
             pdata = AbstractBaseFinding.stats(Vulnerability, project=project)
-            pdata['project'] = project
+            pdata["project"] = project
             data.project_table_data.append(pdata)
 
         return data
@@ -62,18 +59,20 @@ class BundleDetailsView(ContextMixinBase, VulnContextMixin, TemplateAPIView):
         data.risk_level = []
         data.vuln_data = []
 
-        self.apply_vuln_context(data, AbstractBaseFinding.stats(Vulnerability, bundle=bundle))
-        filtered = (bundle.projects
-            .values('risk_level')
-            .annotate(count=Count('risk_level'))
-            .order_by('risk_level')
+        self.apply_vuln_context(
+            data, AbstractBaseFinding.stats(Vulnerability, bundle=bundle)
+        )
+        filtered = (
+            bundle.projects.values("risk_level")
+            .annotate(count=Count("risk_level"))
+            .order_by("risk_level")
         )
 
         amount = len(bundle.projects.all()) or 1
         for category in filtered:
-            level = {'name': str(category['risk_level']), 'count': category['count']}
-            level['color'] = self.colors.get(level['name'].lower(), "none")
-            level['percent'] = (level['count'] // amount) * 100
+            level = {"name": str(category["risk_level"]), "count": category["count"]}
+            level["color"] = self.colors.get(level["name"].lower(), "none")
+            level["percent"] = (level["count"] // amount) * 100
 
         pks = [x.pk for x in bundle.projects.all()]
         cases = {}
@@ -92,18 +91,18 @@ class BundleDetailsView(ContextMixinBase, VulnContextMixin, TemplateAPIView):
         #
         # This query should return a queryset of Project objects, sorted by their number of
         # vulnerabilities, with higher weights for critical vulnerabilities.
-        vuln = (Vulnerability.objects
-                .filter(scan__project__pk__in=pks)
-                .values('severity', 'scan__project', 'pk')
-                .annotate(**cases)
-                .annotate(total=Count('pk'))
-                .order_by(*[f"-{x}" for x in cases])
+        vuln = (
+            Vulnerability.objects.filter(scan__project__pk__in=pks)
+            .values("severity", "scan__project", "pk")
+            .annotate(**cases)
+            .annotate(total=Count("pk"))
+            .order_by(*[f"-{x}" for x in cases])
         )
         if len(vuln) >= 1:
-            data.top_vuln_first = Project.objects.get(pk=vuln[0]['scan__project'])
+            data.top_vuln_first = Project.objects.get(pk=vuln[0]["scan__project"])
         if len(vuln) >= 2:
-            data.top_vuln_second = Project.objects.get(pk=vuln[1]['scan__project'])
+            data.top_vuln_second = Project.objects.get(pk=vuln[1]["scan__project"])
         if len(vuln) >= 3:
-            data.top_vuln_third = Project.objects.get(pk=vuln[2]['scan__project'])
+            data.top_vuln_third = Project.objects.get(pk=vuln[2]["scan__project"])
 
         return data

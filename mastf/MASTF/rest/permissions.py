@@ -52,4 +52,8 @@ class CanEditScanFromScanner(BasePermission):
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        return Account.objects.get(user=request.user).role == Role.ADMIN
+        user = request.user
+        if user.is_anonymous or not user.is_authenticated:
+            return False
+
+        return Account.objects.get(user=user).role == Role.ADMIN

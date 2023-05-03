@@ -218,6 +218,19 @@ class File(models.Model):
 
 
 class Account(models.Model): # unused
+    """
+    Represents an account associated with a user in the system.
+
+    :param user: ForeignKey to the User model representing the user that owns
+                 this account.
+    :type user: User
+    :param role: The role assigned to this account. One of the choices
+                 available in the Role enumeration. Defaults to Role.REGULAR.
+    :type role: str
+    :param description: Optional description for this account.
+    :type description: str | None
+    """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, choices=Role.choices, default=Role.REGULAR)
     description = models.CharField(max_length=256, blank=True, null=True)
