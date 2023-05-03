@@ -1,15 +1,22 @@
 from shutil import rmtree
 
 from django.db.models import Q, QuerySet
+from django.contrib.auth.models import User
 
-from rest_framework import permissions, views, authentication, status
+from rest_framework import (
+    permissions,
+    views,
+    authentication,
+    status,
+    exceptions
+)
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from mastf.MASTF import settings
 from mastf.MASTF.utils.enum import Visibility
 from mastf.MASTF.permissions import CanEditProject, CanDeleteProject
-from mastf.MASTF.serializers import ProjectSerializer
+from mastf.MASTF.serializers import ProjectSerializer, TeamSerializer, UserSerializer
 from mastf.MASTF.models import (
     Project,
     Scan,
@@ -46,10 +53,40 @@ class ProjectView(APIViewBase):
         # The user has to be authenticated
         permissions.IsAuthenticated & (CanEditProject | CanDeleteProject)
     ]
+    bound_permissions = [CanDeleteProject, CanEditProject]
 
     model = Project
     serializer_class = ProjectSerializer
     lookup_field = 'project_uuid'
+
+    def prepare_patch(self, data: dict, instance):
+        if "owner" in data:
+            # remove current permissions and add them to the next user
+            new_owner = data["owner"]
+            try:
+                if isinstance(new_owner, (str, int)):
+                    new_owner = User.objects.get(pk=int(new_owner))
+            except Exception as err:
+                raise exceptions.ValidationError("Could not find user with provided ID") from err
+
+            if isinstance(new_owner, User):
+                CanDeleteProject.assign_to(new_owner, instance.pk)
+                CanEditProject.assign_to(new_owner, instance.pk)
+                CanDeleteProject.remove_from(instance.owner, instance)
+                CanEditProject.remove_from(instance.owner, instance)
+                data["owner"] = UserSerializer(new_owner).data
+
+        if "team" in data:
+            team = data["team"]
+            try:
+                if isinstance(team, (str, int)):
+                    team = Team.objects.get(pk=int(team))
+            except Exception as err:
+                raise exceptions.ValidationError("Could not find user with provided ID") from err
+
+            if isinstance(team, Team):
+                data["team"] = TeamSerializer(team).data
+
 
     def on_delete(self, request: Request, obj) -> None:
         rmtree(settings.PROJECTS_ROOT / str(obj.project_uuid))

@@ -190,23 +190,23 @@ for different components of each project.
                                         {% endwith %}
                                     </td>
 
-                                    <td class="text-muted">
-                                        {{ row.bundle.projects|length }}
+                                    <td>
+                                        {{ row.bundle.projects.all|length }}
                                     </td>
 
 
                                     <!-- High -->
-                                    <td class="text-muted">
+                                    <td>
                                         {{ row.high }}
                                     </td>
 
                                     <!-- Medium -->
-                                    <td class="text-muted">
+                                    <td>
                                         {{ row.medium }}
                                     </td>
 
                                     <!-- High -->
-                                    <td class="text-muted">
+                                    <td>
                                         {{ row.low }}
                                     </td>
 

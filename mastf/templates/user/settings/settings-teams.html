@@ -179,7 +179,6 @@
         });
 
         $('#team-users').val(users.join(","));
-        console.log(users.join(","));
     }
 
     $('#new-team-form').on("submit", function(event) {
@@ -218,8 +217,7 @@
                             <label class="form-label required">
                                 Name (min. 5 Characters)
                             </label>
-                            <input class="form-control" type="text" name="name" id="team-input-name" minlength="5"
-                                value="">
+                            <input class="form-control" type="text" name="name" id="team-input-name" value="">
                         </div>
                     </div>
                     <div class="row">

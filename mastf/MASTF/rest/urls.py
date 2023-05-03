@@ -15,7 +15,7 @@ urlpatterns = [
     path(r"setup/", views.WizardSetupView.as_view(), name="Wizard-Setup"),
 
     path(r"project/", include([
-        path(r"<uuid:project_uuid>", views.ProjectView.as_view()),
+        path(r"<uuid:project_uuid>", views.ProjectView.as_view(), name="REST-Project-View"),
         path(r"create", views.ProjectCreationView.as_view(), name='Project-Create'),
         path(r"all", views.ProjectListView.as_view()),
         path(r"dependencies", views.DependencyListView.as_view()),

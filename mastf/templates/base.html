@@ -393,7 +393,9 @@
                 i--;
                 time = 6000+(2000*i);
                 setTimeout(function() {
-                    $(alertElement).fadeOut("slow");
+                    $(alertElement).fadeOut("slow", function() {
+                        alertElement.remove();
+                    });
                 }, time);
             }
         };

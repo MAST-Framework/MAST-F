@@ -198,7 +198,7 @@ class AccountView(APIViewBase):
     ]
     bound_permissions = [CanViewAccount]
 
-    def prepare_patch(self, data: dict):
+    def prepare_patch(self, data: dict, instance):
         # The role should be updated by admins only
         if not bool(self.request.user and self.request.user.is_staff):
             if "role" in data:

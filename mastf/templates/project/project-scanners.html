@@ -1,0 +1,134 @@
+{% extends 'project/project-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block content %}
+<div class="tab-pane {% if active == "tabs-scanners" %}active show{% endif %}" id="tabs-scanners">
+    {% if active == "tabs-scanners" %}
+    <div class="row">
+        <!-- Vertical navigation bar for each scanner -->
+        <div class="col-3 border-end">
+            <div class="nav flex-column nav-tabs text-center" role="tablist" aria-orientation="vertical">
+                <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-vertical pe-0 pe-md-3 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-target-arrow" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 7a5 5 0 1 0 5 5"></path>
+                        <path d="M13 3.055a9 9 0 1 0 7.941 7.945"></path>
+                        <path d="M15 6v3h3l3 -3h-3v-3z"></path>
+                        <path d="M15 9l-3 3"></path>
+                     </svg>
+                     Scanners
+                </h1>
+
+                <!-- All tabs contain each scanner's name -->
+                {% for scanner_name in scan_results %}
+                <a class="nav-link {% if forloop.counter0 == 0 %}active{% endif %}" data-bs-toggle="tab" role="tab"
+                    aria-selected="{% if forloop.counter0 == 0 %}true{% else %}false{% endif %}"
+                    aria-controls="v-scanner-tab-{{ scanner_name }}" href="#v-scanner-tab-{{ scanner_name }}"
+                    id="v-scanner-nav-tab-{{ scanner_name }}" onclick="viewScanResults(this);">
+                    {{ scanner_name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Actual tab content -->
+        <div class="col-9">
+            <div class="tab-content">
+                {% for scanner_name, data in scan_results.items %}
+
+                <div class="tab-pane fade {% if forloop.counter0 == 0 %} show active{% endif %}"
+                    id="v-scanner-tab-{{ scanner_name }}" role="tabpanel"
+                    aria-labelledby="v-scanner-nav-tab-{{ scanner_name }}">
+
+                    <div class="page-header-tabs mb-1">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="page-title">
+                                    {{ scanner_name }}
+                                    <span class="page-pretitle ms-2"> ({{ data.start_date }})</span>
+                                </h3>
+                            </div>
+                            <div class="col-auto ms-auto">
+                                <div class="btn-list">
+                                    <!-- Use if statement to check whether a progress is active -->
+                                    <a href="#" class="btn btn-secondary-lt">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-hour-4 align-center" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                                            <path d="M12 12l3 2"></path>
+                                            <path d="M12 7v5"></path>
+                                            </svg>
+                                        Show Progress
+                                    </a>
+                                    <a href="{% url 'Scan-Index' project_uuid=project.project_uuid name=scanner_name|lower %}"
+                                        class="btn btn-primary d-none d-sm-inline-block">
+                                        View Results
+                                      </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Basic statistics -->
+                    <div class="row row-deck mb-2">
+                        <div class="col-md-4">
+                            <!-- Card with risk count-->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Results</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted"><b>{{ data.vuln_count }}</b></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <!-- Card with vulnerability count -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="mb-3">Total Vulnerabilities <strong> {% if data.vuln_count %}{{data.vuln_count}}{% else %}0{% endif %} </strong></p>
+                                    <div class="progress progress-separated mb-3">
+                                        {% if data.vuln_data %}
+                                            {% for category in data.vuln_data %}
+                                            <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        {% for category in data.vuln_data %}
+                                        <div class="col-auto d-flex align-items-center pe-2">
+                                            <span class="legend me-2 {{ category.color }}"></span>
+                                            <span>{{ category.name }}</span>
+                                            <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">{{ category.count }}</span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TODO: eventually add charts here -->
+                </div>
+                {% empty %}
+                <div class="container-fluid d-flex flex-column justify-content-center align-items-center">
+                    <div class="empty">
+                      <div class="empty-img">
+                        <img src="{% static 'static/undraw_bug_fixing_oc7a.svg' %}" height="128" alt="">
+                      </div>
+                      <p class="empty-title">Nothing here</p>
+                      <p class="empty-subtitle text-muted">
+                        This state can be achieved if no scan has been started or no scanner is
+                        available.
+                      </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock content %}

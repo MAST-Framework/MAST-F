@@ -26,7 +26,12 @@ REST = {
             success: onsuccess,
             data: data,
             contentType: contentType,
-            error: error,
+            error: error || function(data) {
+                if (data.detail) {
+                    Alerts.show("error", "Unexpected Error", data.detail);
+                    fadeOutMessages();
+                }
+            },
             headers: {
                 'X-CSRFToken': csrftoken
             }
@@ -279,6 +284,15 @@ Alerts = {
     },
 }
 
+Severity = {
+    'critical': 'pink',
+    'high': 'red',
+    'medium': 'orange',
+    'low': 'yellow',
+    'info': 'azure',
+    'secure': 'green',
+    'none': 'secondary'
+};
 
 /**
  * Utility module to enable a wizard-like view in a modal. This code

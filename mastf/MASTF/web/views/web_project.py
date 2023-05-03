@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.db.models import QuerySet, Q
+from django.contrib.auth.models import User
 
 from celery.result import AsyncResult
 
@@ -17,13 +18,14 @@ from mastf.MASTF.models import (
     namespace,
     Scanner,
     AbstractBaseFinding,
-    Dependency
+    Dependency,
+    Project
 )
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.rest.views import ScanCreationView
 from mastf.MASTF.rest.permissions import CanEditProject
-from mastf.MASTF.utils.enum import State, Severity
+from mastf.MASTF.utils.enum import State, Severity, Visibility
 
 __all__ = [
     'UserProjectDetailsView', 'UserProjectScanHistoryView',
@@ -31,10 +33,8 @@ __all__ = [
     'UserProjectConfigView'
 ]
 
-OVERVIEW_PATH = 'project/project-overview.html'
-
 class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = OVERVIEW_PATH
+    template_name = 'project/project-overview.html'
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -66,7 +66,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
 
 
 class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = OVERVIEW_PATH
+    template_name = 'project/project-scan-history.html'
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -95,7 +95,7 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
 
 class UserScannersView(UserProjectMixin, VulnContextMixin,
                               ContextMixinBase, TemplateAPIView):
-    template_name = OVERVIEW_PATH
+    template_name = 'project/project-scanners.html'
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -145,7 +145,7 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 
 
 class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = OVERVIEW_PATH
+    template_name = 'project/project-packages.html'
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -160,7 +160,7 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
 
 
 class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = OVERVIEW_PATH
+    template_name = 'project/project-settings.html'
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -169,5 +169,8 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
         self.apply_project_context(context)
 
         context['active'] = 'tabs-settings'
-        context['risk_types'] = [str(x) for x in Severity]
+        context['risk_types'] = list(Severity)
+        context['visibility_types'] = list(Visibility)
+        context["available"] = list(User.objects.all())
+        context["available"].remove(self.get_object(Project, "project_uuid").owner)
         return context

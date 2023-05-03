@@ -177,6 +177,7 @@ class AdminEnvironmentConfig(ContextMixinBase, TemplateAPIView):
         ]
 
         context["environment"] = [user_cat, auth_cat]
+        context["env"] = env
         return context
 
     def get_element(

@@ -1,0 +1,480 @@
+{% extends 'project/project-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block content %}
+<div class="tab-pane {% if active == "tabs-settings" %}active show{% endif %}" id="tabs-settings">
+    {% if active == "tabs-settings" %}
+    <div class="row">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Project Configuration</h2>
+                <button class="btn btn-primary ms-auto" onclick="updateProject();">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M5 12l5 5l10 -10"></path>
+                     </svg>
+                     Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3 row-deck">
+        <div class="col-md-4 mb-1">
+            <div class="card">
+                <div class="card-body">
+                  <h3 class="card-title">Project ID</h3>
+                  <p class="card-subtitle">Global identifier and used when interacting with the API.</p>
+                  <div class="input-group input-group-flat">
+                    <input type="text" value="{{project.project_uuid}}" class="form-control" placeholder="Project ID" readonly
+                    id="project-id">
+                    <a href="#" target-id="project-id" data-bs-toggle="tooltip" class="link-secondary"
+                        data-bs-placement="bottom" title="Copy Project-ID"
+                        onclick="copyTargetToClipboard(this);">
+                        <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 3v4a1 1 0 0 0 1 1h4"></path><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z"></path><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2"></path></svg>
+                          </span>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <div class="row align-items-center">
+                    <div class="col">Learn more about <a href="#">Project ID</a></div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <div class="col-md-6 mb-1">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Project Information</div>
+                    <p class="card-subtitle">The project's name and tags that can be used within global search.</p>
+                    <div class="col-auto">
+                        <div class="col mb-2">
+                            <label class="form-label">
+                                Name
+                            </label>
+                            <input class="form-control" type="text" name="name" id="input-project-name" minlength="5"
+                                value="{{project.name}}">
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label">Tags</label>
+                        <div class="input-group input-group-flat">
+                            <span class="input-group-text" id="project-edit-tags-area">
+                                {% for tag in project.tags|split:"," %}
+                                <kbd id="project-edit-element-{{forloop.counter}}" style="margin-right: 3px; cursor: no-drop;">{{tag}}</kbd>
+                                {% endfor %}
+                            </span>
+                            <input id="project-edit-tags-input" type="text" class="form-control" value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-1">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Risk Level</div>
+                    <p class="card-subtitle">The current risk level accumulated by number of identified risks.</p>
+                    <span class="dropdown">
+                        <div class="d-grid gap-2">
+                            <button class="btn bg-secondary-lt dropdown-toggle" type="button" id="input-risk-level"
+                            data-bs-toggle="dropdown" aria-expanded="false" >
+                            {{ project.risk_level }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-xl-start" aria-labelledby="input-risk-level"
+                            id="list-host-type">
+                            <span class="dropdown-header">Choose Risk Level</span>
+                            {% for severity in risk_types %}
+                            <li><a href="#" class="dropdown-item" onclick="applyRiskLevel(this);">{{severity}}</a></li>
+                            {% endfor %}
+                        </ul>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2 mb-3 row-deck">
+        <div class="col-md-2 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Visibility</div>
+                    <p class="card-subtitle">The current visibility level.</p>
+                    <span class="dropdown">
+                        <div class="d-grid gap-2">
+                            <button class="btn bg-secondary-lt dropdown-toggle" type="button" id="input-visibility"
+                            data-bs-toggle="dropdown" aria-expanded="false" >
+                            {{ project.visibility }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-xl-start" aria-labelledby="input-visibility"
+                            id="list-host-type">
+                            <span class="dropdown-header">Choose Visibility</span>
+                            {% for level in visibility_types %}
+                            <li><a href="#" class="dropdown-item" onclick="applyVisibility(this);">{{level}}</a></li>
+                            {% endfor %}
+                        </ul>
+                        </div>
+                    </span>
+                </div>
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                      <div class="col">Learn more about <a href="#">Visibility Types</a></div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class="col-md-7 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <label class="form-label required">Inspection Type</label>
+                    <!-- Two options: 'simple' and 'advanced' -->
+                    <div class="form-selectgroup-boxes row row-deck mb-3">
+                        <div class="col-auto mb-1">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="inspection_type" value="simple" class="form-selectgroup-input" checked
+                                    id="input-inspection-type">
+                                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                <span class="me-3">
+                                    <span class="form-selectgroup-check"></span>
+                                </span>
+                                <span class="form-selectgroup-label-content">
+                                    <span class="form-selectgroup-title strong mb-1">Simple</span>
+                                    <span class="d-block text-muted">Provide only basic data needed for the report + more details...</span>
+                                </span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="inspection_type" value="advanced" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                <span class="me-3">
+                                    <span class="form-selectgroup-check"></span>
+                                </span>
+                                <span class="form-selectgroup-label-content">
+                                    <span class="form-selectgroup-title strong mb-1">Advanced</span>
+                                    <span class="d-block text-muted">Insert charts and additional advanced analyses in the final report</span>
+                                </span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">Team</div>
+                    {% if project.team %}
+                    <div class="input-group input-group-flat">
+                        <input type="text" value="{{project.team.name}}" class="form-control" placeholder="Team Name" readonly
+                        id="team-name">
+                        <a href="#" target-id="team-name" data-bs-toggle="tooltip" class="link-secondary"
+                            data-bs-placement="bottom" title="Copy Team-Name"
+                            onclick="copyTargetToClipboard(this);">
+                            <span class="input-group-text">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 3v4a1 1 0 0 0 1 1h4"></path><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z"></path><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2"></path></svg>
+                              </span>
+                        </a>
+                        <a class="" href="#" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}"
+                            onclick="verifyAction(this, deleteTeam);" modal-title="Delete assigned team?"
+                            modal-text="If you proceed, you will remove access to this project from all team members">
+                            <span class="dropdown-item-icon text-red">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>                                                    </span>
+                            Delete
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="card-subtitle">Select a team you want to assign to this project.</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
+                                <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
+                                <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                                <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
+                             </svg>
+                            Select Team
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                      <div class="col">Learn more about <a href="#">Teams</a></div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card border-danger">
+                <div class="card-header">
+                    <span class="fw-bold">Danger Zone</span>
+                </div>
+                <div class="card-body">
+                    <div class="row border-bottom mb-3">
+                        <div class="col mb-1">Delete Project
+                            <span class="form-check-description">
+                                Delete this project and all data related to it.
+                            </span>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-outline-danger" onclick="verifyActionWithText(this, deleteProject, 'Project/{{project.name}}');"
+                                modal-title="Delete Project" modal-input-text="I understand what I am doing"
+                                modal-text="<ul><li>All project related data will be lost,</li><li>All scans and scan results will be deleted.</li></ul>">
+                                Delete Project
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row border-bottom mb-3">
+                        <div class="col mb-1">Change Ownership
+                            <span class="form-check-description">
+                                Transfer ownership of this project to another user. Please note that you may not have any access to this project after you changed the owner.
+                            </span>
+                        </div>
+                        <div class="col-auto justify-content-center">
+                            <button class="btn btn-outline-danger" data-bs-toggle="modal" id="btn-change-owner"
+                                data-bs-target="#modal-change-owner">Change</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+{{ block.super }}
+
+<script>
+
+    let area = document.getElementById("project-edit-tags-area");
+    let input = document.getElementById("project-edit-tags-input");
+    const projectTags = new Tags("project-edit-element", area, input);
+    projectTags.count = {{project.tags|split:","|length}};
+
+    function updateProject() {
+        var name = $('#input-project-name').val();
+        var tags = []
+        for (let step = 1; step <= projectTags.count; step++) {
+            tags.push($(`#${projectTags.prefix}-${step}`).text());
+        }
+
+        var strTags = tags.join(",");
+        var inspectionType = document.getElementById("input-inspection-type").checked ? "Simple" : "Advanced";
+
+        if (!name || name.length < 5) {
+            Alerts.show("warning", "Warning!", "The project name must contain at least 5 characters!");
+            fadeOutMessages();
+            return;
+        }
+        REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify({
+            name: name,
+            tags: strTags,
+            inspection_type: inspectionType
+        }), function(data) {
+            if (data.success) {
+                Alerts.show("success", "Success!", "Updated basic information about this project successfully.");
+            } else {
+                Alerts.show("error", "ValidationError", `Could not update data: ${data.detail}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+
+    function applyRiskLevel(element) {
+        var level = element.innerHTML.trim();
+        REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify({
+            risk_level: level,
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("error", "ValidationError", `Could not update data: ${data.detail}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+
+    function applyVisibility(element) {
+        var level = element.innerHTML.trim();
+        REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify({
+            visibility: level,
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("error", "ValidationError", `Could not update data: ${data.detail}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function deleteProject(element, event) {
+        REST.delete("{% url 'REST-Project-View' project.pk %}", function(data) {
+            if (data.success) {
+                window.location.href = "{% url 'Projects' %}";
+            } else {
+                Alerts.show("error", "ValidationError", `Could not delete project: ${data.detail}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function deleteTeam(element, event) {
+        REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify({
+            team: null,
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("error", "ValidationError", `Could not update data: ${data.detail}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function transferOwner() {
+        var owner = null;
+        var table = $('#table-modal-users').DataTable();
+
+        table.rows().every(function(index) {
+            if (userId != null) {
+                return;
+            }
+
+            var row = $(table.row(index).node());
+            var userId = row.attr('user-id');
+
+            if (document.getElementById(`chbx-user-${userId}`).checked) {
+                owner = userId;
+            }
+        });
+
+        if (owner != null) {
+            REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify({
+                owner: owner,
+            }), function(data) {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    Alerts.show("error", "ValidationError", `Could not update data: ${data.detail}`);
+                }
+                fadeOutMessages();
+            });
+        } else {
+            Alerts.show("error", "ValueError", "At least one user has to be selected");
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#table-modal-users').DataTable();
+    })
+
+</script>
+{% endblock js_extended %}
+
+{% block modals %}
+{{ block.super }}
+
+<div class="modal modal-blur fade" id="modal-change-owner" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-transfer-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M17 3v6"></path>
+                        <path d="M10 18l-3 3l-3 -3"></path>
+                        <path d="M7 21v-18"></path>
+                        <path d="M20 6l-3 -3l-3 3"></path>
+                        <path d="M17 21v-2"></path>
+                        <path d="M17 15v-2"></path>
+                     </svg>
+                </span>Transfer Ownership
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3 border-end m-1 bg-secondary-lt">
+                        <div class="mt-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path d="M16 19h6"></path><path d="M19 16v6"></path><path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path></svg>
+                            <span class="h3">
+                                Assign User
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row row-cols-1">
+                            <div class="col">
+                                <h4 class="subheader">Select among Available Users</h4>
+                            </div>
+                            <div class="col">
+                                <div class="table-responsive form-selectgroup-boxes">
+                                    <table class="table datatable" id="table-modal-users">
+                                        <thead>
+                                            <th>User</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for user in available %}
+                                            <tr user-id="{{user.pk}}">
+                                                <td>
+                                                    <label class="form-selectgroup-item">
+                                                        <input type="radio" name="owner" value="{{user.pk}}" class="form-selectgroup-input" id="chbx-user-{{user.pk}}">
+                                                        <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                            <span class="me-3">
+                                                                <span class="form-selectgroup-check"></span>
+                                                            </span>
+                                                            <span class="form-selectgroup-label-content">
+                                                                <div class="flex-fill">
+                                                                    <div class="font-weight-medium">{{ user.username }}</div>
+                                                                    <div class="text-muted"><a href="#" class="text-reset">
+                                                                    {% if user.email %}{{user.email}}{%else%}
+                                                                        No email set
+                                                                    {% endif %}
+                                                                    </a></div>
+                                                                </div>
+                                                            </span>
+                                                        </span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                Cancel
+            </a>
+            <input type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal"
+                id="team-submit" value="Transfer" onclick="transferOwner();">
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock modals %}

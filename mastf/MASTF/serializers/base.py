@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Permission
 from django.db.models import Manager
 
 from rest_framework import serializers
+from rest_framework.fields import empty
 
 from mastf.MASTF.permissions import BoundPermission, CanEditTeam
 from mastf.MASTF.models import (
@@ -202,8 +203,8 @@ class TeamSerializer(ManyToManySerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(many=False)
-    team = TeamSerializer(many=False)
+    owner = UserSerializer(many=False, partial=True)
+    team = TeamSerializer(many=False, partial=True)
 
     class Meta:
         model = Project

@@ -12,19 +12,18 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import (
-    authentication, status, permissions
-)
+from rest_framework import authentication, status, permissions
 
 from mastf.MASTF.permissions import BoundPermission
 
 logger = logging.getLogger(__name__)
 
+
 class GetObjectMixin:
     model = None
     """The model used to retrieve instances."""
 
-    lookup_field: str = 'pk'
+    lookup_field: str = "pk"
     """The field that should be used within object lookup"""
 
     def get_object(self, model=None, field=None, check=True):
@@ -36,28 +35,19 @@ class GetObjectMixin:
         model = model or self.model
         field = field or self.lookup_field
 
-        assert model is not None, (
-            "The stored model must not be null"
-        )
+        assert model is not None, "The stored model must not be null"
 
-        assert field is not None, (
-            "The field used for lookup must not be null"
-        )
+        assert field is not None, "The field used for lookup must not be null"
 
-        assert field in self.kwargs, (
-            "Invalid lookup field - not included in args"
-        )
+        assert field in self.kwargs, "Invalid lookup field - not included in args"
 
-        instance = get_object_or_404(
-            model.objects.all(), **{field: self.kwargs[field]}
-        )
+        instance = get_object_or_404(model.objects.all(), **{field: self.kwargs[field]})
         if check:
             self.check_object_permissions(self.request, instance)
         return instance
 
 
 class BoundPermissionsMixin:
-
     bound_permissions = None
     """Any user permissions that should be removed on DELETE requests"""
 
@@ -84,7 +74,7 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
     authentication_classes = [
         authentication.BasicAuthentication,
         authentication.SessionAuthentication,
-        authentication.TokenAuthentication
+        authentication.TokenAuthentication,
     ]
 
     serializer_class = None
@@ -100,9 +90,9 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         """
         instance = self.get_object()
 
-        assert self.serializer_class is not None, (
-            "The provided serializer class must not be null"
-        )
+        assert (
+            self.serializer_class is not None
+        ), "The provided serializer class must not be null"
         data = self.serializer_class(instance)
         return Response(data.data)
 
@@ -116,28 +106,32 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         """
         instance = self.get_object()
 
-        assert self.serializer_class is not None, (
-            "The provided serializer class must not be null"
-        )
+        assert (
+            self.serializer_class is not None
+        ), "The provided serializer class must not be null"
         try:
             data = request.data
-            self.prepare_patch(data)
+            self.prepare_patch(data, instance)
             serializer = self.serializer_class(instance, data=data, partial=True)
 
             if len(data) != 0:
-                if serializer.is_valid(): # we must call .is_valid() before .save()
+                if serializer.is_valid():  # we must call .is_valid() before .save()
                     serializer.save()
                 else:
-                    messages.error(self.request, str(serializer.errors), str(self.serializer_class.__name__))
+                    messages.error(
+                        self.request,
+                        str(serializer.errors),
+                        str(self.serializer_class.__name__),
+                    )
                     return Response(serializer.errors)
 
         except Exception as err:
             messages.error(self.request, str(err), str(err.__class__.__name__))
             logger.exception(f"({self.__class__.__name__}): {err.__class__.__name__}")
-            return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
+            return Response({"err": str(err)}, status.HTTP_400_BAD_REQUEST)
 
-        logger.debug('(%s) Instance-Update: %s', self.__class__.__name__, instance)
-        return Response({'success': True})
+        logger.debug("(%s) Instance-Update: %s", self.__class__.__name__, instance)
+        return Response({"success": True})
 
     def delete(self, request: Request, *args, **kwargs) -> Response:
         """Deletes the selected object.
@@ -161,10 +155,10 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         except Exception as err:
             logger.exception("(%s) Delete-Instance: ", self.__class__.__name__)
             messages.error(self.request, str(err), str(err.__class__.__name__))
-            return Response({'err': str(err)}, status.HTTP_400_BAD_REQUEST)
+            return Response({"err": str(err)}, status.HTTP_400_BAD_REQUEST)
 
-        logger.debug('Delete-Instance (success): id=%s', instance)
-        return Response({'success': True}, status.HTTP_200_OK)
+        logger.debug("Delete-Instance (success): id=%s", instance)
+        return Response({"success": True}, status.HTTP_200_OK)
 
     def on_delete(self, request: Request, obj) -> None:
         """Gets executed before the provided object will be deleted.
@@ -176,16 +170,15 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         """
         pass
 
-    def prepare_patch(self, data: dict):
+    def prepare_patch(self, data: dict, instance):
         pass
 
 
 class ListAPIViewBase(ListAPIView):
-
     authentication_classes = [
         authentication.BasicAuthentication,
         authentication.SessionAuthentication,
-        authentication.TokenAuthentication
+        authentication.TokenAuthentication,
     ]
 
     permission_classes = [permissions.IsAuthenticated]
@@ -207,7 +200,7 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
     authentication_classes = [
         authentication.BasicAuthentication,
         authentication.SessionAuthentication,
-        authentication.TokenAuthentication
+        authentication.TokenAuthentication,
     ]
 
     form_class = None
@@ -231,27 +224,29 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
 
         form = self.form_class(data=form_data)
         if not form.is_valid():
-            logger.warning('Form-Invalid at %s:\n%s', self.request.path, form.errors)
-            messages.warning(self.request, f"Invalid form data: {form.errors}", "FormValidationError")
+            logger.warning("Form-Invalid at %s:\n%s", self.request.path, form.errors)
+            messages.warning(
+                self.request, f"Invalid form data: {form.errors}", "FormValidationError"
+            )
             return Response(form.errors, status.HTTP_400_BAD_REQUEST)
 
         try:
             instance_id = self.make_uuid()
             data = form.cleaned_data
 
-            data['pk'] = instance_id
+            data["pk"] = instance_id
             self.set_defaults(request, data)
 
             instance = self.create(data)
             self.on_create(request, instance)
-            logger.debug('(%s) New-Instance: %s', self.__class__.__name__, instance)
+            logger.debug("(%s) New-Instance: %s", self.__class__.__name__, instance)
         except Exception as err:
             logger.exception("New-Instance")
             messages.error(self.request, str(err), str(err.__class__.__name__))
-            return Response({'detail': str(err)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"detail": str(err)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(
-            {'success': True, 'pk': str(instance_id)}, status.HTTP_201_CREATED
+            {"success": True, "pk": str(instance_id)}, status.HTTP_201_CREATED
         )
 
     def create(self, data) -> object:
@@ -273,7 +268,7 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
             if len(values) > 0:
                 getattr(instance, name).add(*values)
 
-        for permission in (self.bound_permissions or []):
+        for permission in self.bound_permissions or []:
             # Permissions should be created
             permission.assign_to(self.request.user, instance.pk)
 
@@ -297,4 +292,3 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
     def make_uuid(self):
         """Creates the UUID for a new instance"""
         return uuid4()
-
