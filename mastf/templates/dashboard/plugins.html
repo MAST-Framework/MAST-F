@@ -202,20 +202,8 @@ MASTF | Plugins
     const short_description = document.getElementById("add-permission-short_description").value;
     const description = document.getElementById("add-permission-description").value;
     const risk = document.getElementById("add-permission-risk").value;
-    const csrf = '{% csrf_token %}'.substr(55, 64)
-    const data = { "csrfmiddlewaretoken": csrf, "name": name, "identifier": identifier, "protection_level": protection_level, "group": group, "dangerous": dangerous, "short_description": short_description, "description": description, "risk": risk }
-    const response = await fetch("{% url 'AppPermissionCreate' %}", {
-      method: "POST",
-      mode: "cors",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken")
-      },
-      body: JSON.stringify(data),
-    });
-    console.log(response.json())
-    location.reload();
+    const data = { "name": name, "identifier": identifier, "protection_level": protection_level, "group": group, "dangerous": dangerous, "short_description": short_description, "description": description, "risk": risk }
+    REST.post("{% url 'AppPermissionCreate' %}", JSON.stringify(data), location.reload());
   }
 
   async function loadPermissionToEditModal(uuid) {

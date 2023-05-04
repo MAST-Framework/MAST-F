@@ -44,7 +44,7 @@ class HostForm(forms.Form):
 
 class HostTemplateForm(forms.Form):
     domain_name = forms.CharField(max_length=256, required=True)
-    ip_address = forms.CharField(max_length=32, required=False)
+    ip_adress = forms.CharField(max_length=32, required=False)
     owner = forms.CharField(max_length=256, required=False)
     description = forms.CharField(required=False)
 
