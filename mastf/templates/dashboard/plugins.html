@@ -203,7 +203,14 @@ MASTF | Plugins
     const description = document.getElementById("add-permission-description").value;
     const risk = document.getElementById("add-permission-risk").value;
     const data = { "name": name, "identifier": identifier, "protection_level": protection_level, "group": group, "dangerous": dangerous, "short_description": short_description, "description": description, "risk": risk }
-    REST.post("{% url 'AppPermissionCreate' %}", JSON.stringify(data), location.reload());
+    REST.post("{% url 'AppPermissionCreate' %}", JSON.stringify(data), (data) => {
+      if (data.success) {
+        location.reload();
+      } else {
+        Alerts.show("error", "Internal Server Error", data?.detail || "Could not create App-Permission!");
+        fadeOutMessages();
+      }
+    });
   }
 
   async function loadPermissionToEditModal(uuid) {
@@ -255,6 +262,9 @@ MASTF | Plugins
     REST.post("{% url 'HostCreate' %}", JSON.stringify(data), function(data) {
       if (data.success) {
         location.reload();
+      } else {
+        Alerts.show("error", "Internal Server Error", data?.detail || "Could not create Host!");
+        fadeOutMessages();
       }
     });
   }
@@ -301,6 +311,9 @@ MASTF | Plugins
     REST.post("{% url 'PackageCreationView' %}", JSON.stringify(data), function(data) {
       if (data.success) {
         location.reload();
+      } else {
+        Alerts.show("error", "Internal Server Error", data?.detail || "Could not create Package!");
+        fadeOutMessages();
       }
     });
   }
