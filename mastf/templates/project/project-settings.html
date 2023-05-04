@@ -179,27 +179,19 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 3v4a1 1 0 0 0 1 1h4"></path><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z"></path><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2"></path></svg>
                               </span>
                         </a>
-                        <a class="" href="#" scan-id-element="#scan-id-row-{{ forloop.counter }}" id="delete-scan-action-{{ forloop.counter }}"
-                            onclick="verifyAction(this, deleteTeam);" modal-title="Delete assigned team?"
-                            modal-text="If you proceed, you will remove access to this project from all team members">
-                            <span class="dropdown-item-icon text-red">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>                                                    </span>
-                            Delete
+                        <a href="#" onclick="verifyAction(this, deleteTeam);" modal-title="Delete assigned team?"
+                            modal-text="If you proceed, you will remove access to this project from all team members"
+                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove assigned team">
+                            <span class="input-group-text ms-2 text-red">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash ms-2 me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                            </span>
                         </a>
                     </div>
                     {% else %}
                     <p class="card-subtitle">Select a team you want to assign to this project.</p>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
-                                <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
-                                <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-                                <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
-                             </svg>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-set-team">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M17 10h2a2 2 0 0 1 2 2v1"></path><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path></svg>
                             Select Team
                         </button>
                     </div>
@@ -347,37 +339,46 @@
     };
 
     function transferOwner() {
-        var owner = null;
-        var table = $('#table-modal-users').DataTable();
+        patchTeam("user");
+    };
+
+    function setTeam() {
+        patchTeam("team");
+    };
+
+    function patchTeam(type) {
+        var value = null;
+        var table = $(`#table-modal-${type}s`).DataTable();
 
         table.rows().every(function(index) {
-            if (userId != null) {
+            if (value != null) {
                 return;
             }
 
             var row = $(table.row(index).node());
-            var userId = row.attr('user-id');
+            var id = row.attr(`${type}-id`);
 
-            if (document.getElementById(`chbx-user-${userId}`).checked) {
-                owner = userId;
+            if (document.getElementById(`chbx-${type}-${id}`).checked) {
+                value = id;
             }
         });
 
-        if (owner != null) {
-            REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify({
-                owner: owner,
-            }), function(data) {
+        if (value != null) {
+            data = {};
+            data[type] = value;
+            REST.patch("{% url 'REST-Project-View' project.pk %}", JSON.stringify(data), function(data) {
                 if (data.success) {
                     location.reload();
                 } else {
-                    Alerts.show("error", "ValidationError", `Could not update data: ${data.detail}`);
+                    Alerts.show("error", "ValidationError", `Could not update data: ${data.detail || "Internal Server Error"}`);
                 }
                 fadeOutMessages();
             });
         } else {
-            Alerts.show("error", "ValueError", "At least one user has to be selected");
+            Alerts.show("error", "ValueError", "At least one value has to be selected");
         }
     };
+
 
     document.addEventListener("DOMContentLoaded", function() {
         $('#table-modal-users').DataTable();
@@ -471,10 +472,99 @@
                 Cancel
             </a>
             <input type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal"
-                id="team-submit" value="Transfer" onclick="transferOwner();">
+                id="owner-submit" value="Transfer" onclick="transferOwner();">
         </div>
       </div>
     </div>
 </div>
+
+{% if not project.team %}
+<div class="modal modal-blur fade" id="modal-set-team" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M17 10h2a2 2 0 0 1 2 2v1"></path><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path></svg>
+                </span>Select Team
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3 border-end m-1 bg-secondary-lt">
+                        <div class="mt-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M5 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path d="M3 21v-2a4 4 0 0 1 4 -4h4c.96 0 1.84 .338 2.53 .901"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M16 19h6"></path><path d="M19 16v6"></path></svg>
+                            <span class="h3">
+                                Assign Team
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row row-cols-1">
+                            <div class="col">
+                                <h4 class="subheader">Select among Available Teams</h4>
+                            </div>
+                            <div class="col">
+                                <div class="table-responsive form-selectgroup-boxes">
+                                    <table class="table datatable" id="table-modal-teams">
+                                        <thead>
+                                            <th>Team</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for team in available_teams %}
+                                            <tr team-id="{{team.pk}}">
+                                                <td>
+                                                    <label class="form-selectgroup-item">
+                                                        <input type="radio" name="owner" value="{{team.pk}}" class="form-selectgroup-input" id="chbx-team-{{team.pk}}">
+                                                        <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                                            <span class="me-3">
+                                                                <span class="form-selectgroup-check"></span>
+                                                            </span>
+                                                            <span class="form-selectgroup-label-content">
+                                                                <div class="flex-fill">
+                                                                    <div class="font-weight-medium">{{ team.name }}</div>
+                                                                    <div class="text-muted">
+                                                                        {% with team.visibility|lower as level %}
+                                                                        <span class="badge bg-{% if level == 'private' %}green{% elif level == 'public'%}azure{% else %}secondary{% endif %}-lt">
+
+                                                                            {% if level %}
+                                                                            {{ level|capfirst }}
+                                                                            {% else %}
+                                                                            Undefined
+                                                                            {% endif %}
+                                                                        </span>
+                                                                        {% endwith %}
+                                                                    </div>
+                                                                </div>
+                                                            </span>
+                                                        </span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                Cancel
+            </a>
+            <input type="submit" class="btn btn-primary" data-bs-dismiss="modal"
+                id="team-submit" value="Assign Team" onclick="setTeam();">
+        </div>
+      </div>
+    </div>
+</div>
+{% endif %}
 
 {% endblock modals %}

@@ -203,9 +203,6 @@ class TeamSerializer(ManyToManySerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(many=False, partial=True)
-    team = TeamSerializer(many=False, partial=True)
-
     class Meta:
         model = Project
         fields = '__all__'

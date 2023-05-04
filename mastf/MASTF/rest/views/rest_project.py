@@ -74,18 +74,7 @@ class ProjectView(APIViewBase):
                 CanEditProject.assign_to(new_owner, instance.pk)
                 CanDeleteProject.remove_from(instance.owner, instance)
                 CanEditProject.remove_from(instance.owner, instance)
-                data["owner"] = UserSerializer(new_owner).data
 
-        if "team" in data:
-            team = data["team"]
-            try:
-                if isinstance(team, (str, int)):
-                    team = Team.objects.get(pk=int(team))
-            except Exception as err:
-                raise exceptions.ValidationError("Could not find user with provided ID") from err
-
-            if isinstance(team, Team):
-                data["team"] = TeamSerializer(team).data
 
 
     def on_delete(self, request: Request, obj) -> None:

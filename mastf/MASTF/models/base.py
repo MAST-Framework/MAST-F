@@ -67,7 +67,7 @@ class Team(models.Model):
     users.
     """
 
-    name = models.CharField(max_length=256, null=False)
+    name = models.CharField(max_length=256, null=False, unique=True)
     """The team's name"""
 
     users = models.ManyToManyField(User, related_name='teams')
@@ -87,6 +87,13 @@ class Team(models.Model):
     def get(owner: User, name: str) -> 'Team':
         query = models.Q(owner=owner, name=name) | models.Q(visibility=Visibility.PUBLIC, name=name)
         return Team.objects.filter(query).first()
+
+    @staticmethod
+    def get_by_owner(owner: User, queryset=None) -> models.QuerySet:
+        query = (models.Q(owner=owner) | models.Q(users__pk=owner.pk)
+            | models.Q(visibility=Visibility.PUBLIC))
+
+        return (queryset or Team.objects).filter(query)
 
 
 class Project(models.Model):

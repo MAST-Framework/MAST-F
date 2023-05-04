@@ -171,6 +171,18 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         pass
 
     def prepare_patch(self, data: dict, instance):
+        """Prepare a patch to update an instance of a model with the given data.
+
+        :param data: A dictionary containing the updated data to be patched.
+        :type data: dict
+        :param instance: An instance of a model to be updated.
+        :type instance: object
+
+        This method prepares a patch to update an instance of a model with
+        the given data. The updated data comes as a dictionary in the ``data``
+        parameter.  The updated data will be applied to the instance in the
+        database after calling this method.
+        """
         pass
 
 

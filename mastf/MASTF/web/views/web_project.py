@@ -19,7 +19,8 @@ from mastf.MASTF.models import (
     Scanner,
     AbstractBaseFinding,
     Dependency,
-    Project
+    Project,
+    Team
 )
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
@@ -173,4 +174,6 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
         context['visibility_types'] = list(Visibility)
         context["available"] = list(User.objects.all())
         context["available"].remove(self.get_object(Project, "project_uuid").owner)
+
+        context["available_teams"] = Team.get_by_owner(self.request.user)
         return context
