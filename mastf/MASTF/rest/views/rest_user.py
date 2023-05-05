@@ -3,23 +3,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from rest_framework.views import APIView
-from rest_framework import permissions, authentication, status
+from rest_framework import permissions, authentication, status, exceptions
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-from mastf.MASTF.serializers import (
-    UserSerializer,
-    AccountSerializer
-)
-from mastf.MASTF.forms import (
-    RegistrationForm,
-    ChangePasswordForm,
-    SetupForm
-)
-from mastf.MASTF.models import (
-    Account,
-    Environment
-)
+from mastf.MASTF.serializers import UserSerializer, AccountSerializer
+from mastf.MASTF.forms import RegistrationForm, ChangePasswordForm, SetupForm
+from mastf.MASTF.models import Account, Environment
 from mastf.MASTF.utils.enum import Role
 from mastf.MASTF.rest.permissions import IsAdmin
 from mastf.MASTF.permissions import (
@@ -39,7 +29,7 @@ __all__ = [
     "LogoutView",
     "AccountView",
     "ChangePasswordView",
-    "WizardSetupView"
+    "WizardSetupView",
 ]
 
 
@@ -61,6 +51,21 @@ class UserView(APIViewBase):
     model = User
     lookup_field = "pk"
     serializer_class = UserSerializer
+
+    def on_delete(self, request: Request, obj) -> None:
+        admin_count = len(Account.objects.filter(role=Role.ADMIN))
+        if obj == self.request.user and admin_count == 1:
+            # Check whether the user wants to delete the last admin account
+            acc = Account.objects.get(user=obj)
+            if acc.role == Role.ADMIN:
+                raise exceptions.ValidationError(
+                    (
+                        "You are going to remove the last admin account from this framework "
+                        "instance. This action is prohibited by default, because you woudn't "
+                        "be able to configure your instance properly after you have removed "
+                        "the last administrator."
+                    )
+                )
 
 
 class LoginView(APIView):
@@ -96,7 +101,6 @@ class LoginView(APIView):
         return Response({"success": True}, status.HTTP_200_OK)
 
 
-# TODO: manage access for creation of users
 class RegistrationView(APIView):
     """Endpoint for creating new users."""
 
@@ -191,23 +195,87 @@ class ChangePasswordView(GetObjectMixin, APIView):
 
 
 class AccountView(APIViewBase):
+    """A view for handling API requests related to accounts.
+
+    The ``AccountView`` class defines a view for handling API requests related to
+    accounts. The ``prepare_patch`` method is responsible for preparing the
+    account update by checking if the user is an administrator and if the ``'ADMIN'``
+    role is going to be removed from the last admin account.
+
+    If the user is not an admin, the role field is removed from the update as only
+    admins can change user's role's. The method raises a ``ValidationError`` if the
+    last admin account tries to remove its admin status.
+    """
+
     serializer_class = AccountSerializer
     model = Account
     permission_classes = [
+        # Only authenticated users with permission to view or edit accounts
+        # are allowed to make requests.
         permissions.IsAuthenticated & (CanViewAccount | CanEditAccount)
     ]
     bound_permissions = [CanViewAccount]
 
     def prepare_patch(self, data: dict, instance):
         # The role should be updated by admins only
-        if not bool(self.request.user and self.request.user.is_staff):
+        if not IsAdmin().has_permission(self.request, self):
             if "role" in data:
                 data.pop("role")
+        else:
+            # We now know that the user is an admin
+            admin_count = len(Account.objects.filter(role=Role.ADMIN))
+            if admin_count == 1 and instance.user == self.request.user:
+                if data.get("role", "") != Role.ADMIN and instance.role == Role.ADMIN:
+                    raise exceptions.ValidationError(
+                        (
+                            "You can't remove the 'ADMIN' role from the last admin account"
+                            "of this framework. You won't be able to edit configuration "
+                            "settings any more."
+                        )
+                    )
 
 
 class WizardSetupView(APIView):
+    """
+    A view that handles setting up an initial user account for the wizard.
+
+    This view is designed to be used only once, during the initial setup of
+    the wizard.
+
+    The post method of this view handles a ``POST`` request and creates an
+    initial user account for the wizard. It first checks if it has already
+    been initialized by checking the ``first_start`` attribute of the global
+    ``Environment`` object. If the wizard has already been initialized, it
+    returns an error response.
+
+    Otherwise, it creates a new ``SetupForm`` object from the request data,
+    validates it, and extracts the cleaned data from it. It then creates a
+    new user with the provided username and password, and a new account
+    object with the new user and a role of ADMIN.
+
+    It assigns various permissions to the new user and the new account, and
+    marks the wizard as initialized by setting the ``first_start`` attribute
+    of the global ``Environment`` object to ``False``.
+
+    Finally, it displays a message to the user indicating successful setup
+    and returns a success response with the new user's primary key.
+    """
+
     def post(self, request, *args, **kwargs):
+        """
+        Handles a POST request to create an initial user account (ADMIN) for
+        the wizard.
+
+        :param request: The HTTP request object.
+        :type request: rest_framework.request.Request
+
+        :return: A HTTP response object indicating the result of the request.
+        :rtype: rest_framework.response.Response
+        """
+
         env = Environment.env()
+        # If the wizard has already been initialized, we shall return an
+        # error response
         if not env.first_start:
             return Response(
                 {"detail": "Already initialized", "success": False},
@@ -225,6 +293,9 @@ class WizardSetupView(APIView):
         user = User.objects.create_user(
             username=data["username"], password=data["password"]
         )
+        # IMPORTANT: Create a new account object with the new user with a
+        # role of ADMIN. Don't forget that as we run into errors if no
+        # account is mapped to an existing user.
         acc = Account.objects.create(user=user, role=Role.ADMIN)
         for p in (CanCreateUser, CanDeleteUser, CanEditUser):
             p.assign_to(user, user.pk)
@@ -232,7 +303,8 @@ class WizardSetupView(APIView):
         for p in (CanEditAccount, CanViewAccount):
             p.assign_to(user, acc.pk)
 
+        # Mark the wizard as initialized and save the environment object
         env.first_start = False
         env.save()
         messages.info(self.request, "Finished setup, please log-in to your account!")
-        return Response({'success': True, 'pk': user.pk})
+        return Response({"success": True, "pk": user.pk})

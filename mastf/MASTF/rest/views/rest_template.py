@@ -5,6 +5,7 @@ from rest_framework import permissions
 from mastf.MASTF.serializers import TemplateSerializer
 from mastf.MASTF.models import FindingTemplate
 from mastf.MASTF.forms import FindingTemplateForm
+from mastf.MASTF.rest.permissions import IsExternal
 
 from .base import APIViewBase, CreationAPIViewBase, ListAPIViewBase
 
@@ -16,7 +17,7 @@ __all__ = [
 class FindingTemplateView(APIViewBase):
     """API-Endpoint for creating, managing and removing finding templates."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
 
     model = FindingTemplate
     lookup_field = 'template_id'
@@ -26,7 +27,7 @@ class FindingTemplateView(APIViewBase):
 class FindingTemplateCreationView(CreationAPIViewBase):
     """Separate APIView for creating new ``FindingTemplate`` objects"""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
     form_class = FindingTemplateForm
     model = FindingTemplate
 
@@ -38,5 +39,5 @@ class FindingTemplateListView(ListAPIViewBase):
     """A view listing all finding templates"""
 
     queryset = FindingTemplate.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
     serializer_class = TemplateSerializer

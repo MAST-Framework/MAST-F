@@ -22,7 +22,7 @@ from mastf.MASTF.forms import (
     TLSForm,
     HostTemplateForm
 )
-from mastf.MASTF.rest.permissions import CanEditScanAsField, CanEditScan
+from mastf.MASTF.rest.permissions import CanEditScanAsField, CanEditScan, IsExternal
 
 from .base import APIViewBase, CreationAPIViewBase, ListAPIViewBase, GetObjectMixin
 
@@ -85,7 +85,7 @@ class HostRelListView(GetObjectMixin, ListAPIViewBase):
 class HostTemplateView(APIViewBase):
     model = HostTemplate
     serializer_class = HostTemplateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
 
 class HostTemplateCreationView(CreationAPIViewBase):
     model = HostTemplate

@@ -271,9 +271,9 @@ MASTF | Plugins
   async function loadHostToEditModal(uuid) {
     const host = await getHost(uuid);
     console.log(host);
-    document.getElementById("edit-host-host_uuid").value = host.host_uuid;
+    document.getElementById("edit-host-host_uuid").value = host.template_id;
     document.getElementById("edit-host-domainName").value = host.domain_name;
-    document.getElementById("edit-host-ip").value = host.ip_adress;
+    document.getElementById("edit-host-ip").value = host.ip_address;
     document.getElementById("edit-host-owner").value = host.owner;
     document.getElementById("edit-host-description").value = host.description;
   }
@@ -339,7 +339,7 @@ MASTF | Plugins
       if (data.success) {
         location.reload();
       }
-    }));
+    });
   }
 </script>
 
@@ -416,7 +416,7 @@ MASTF | Plugins
           </div>
           <div class="mb-4">
             <label class="form-label">IP-Adress</label>
-            <input class="form-control" id="edit-host-ip" name="ip_adress" type="text" minlength="8" maxlength="128">
+            <input class="form-control" id="edit-host-ip" name="ip_address" type="text" minlength="8" maxlength="128">
           </div>
           <div class="mb-4">
             <label class="form-label">Owner</label>
@@ -898,7 +898,7 @@ MASTF | Plugins
       tmp.push(h.ip_address);
       tmp.push(h.owner)
       tmp.push(h.description);
-      tmp.push(editTag.replace("host_uuid", h.host_uuid));
+      tmp.push(editTag.replace("host_uuid", h.template_id));
       data.push(tmp);
     }
     return data

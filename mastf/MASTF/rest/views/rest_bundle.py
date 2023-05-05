@@ -132,7 +132,7 @@ class BundleChartView(GetObjectMixin, APIView):
         # Gets all month names
         month_names = [
              m.strftime("%B") for m in sorted(
-                 set(item.discovery_date.replace(day=1) for item in Vulnerability.objects.all())
+                 set(item.discovery_date.replace(day=1) for item in Vulnerability.objects.all() if item.discovery_date)
             )
         ]
         chart_data = {'series': series, 'categories': month_names, 'success': True}

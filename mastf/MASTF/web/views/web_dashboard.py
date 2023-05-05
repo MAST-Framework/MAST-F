@@ -1,14 +1,13 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import models
-from django.views import View
 
 from mastf.MASTF import settings
 from mastf.MASTF.scanners.plugin import ScannerPlugin
-from mastf.MASTF.mixins import ContextMixinBase, VulnContextMixin, TemplateAPIView
 from mastf.MASTF.rest.views import rest_project, rest_scan
-from mastf.MASTF.utils.enum import Visibility, Role
+from mastf.MASTF.rest.permissions import IsExternal
+from mastf.MASTF.utils.enum import Visibility
 from mastf.MASTF.models import (
     Project,
     Vulnerability,
@@ -17,21 +16,18 @@ from mastf.MASTF.models import (
     AbstractBaseFinding,
     Finding,
     Bundle,
-    Environment,
-    Account
+    Team,
 )
-from mastf.MASTF.forms import SetupForm
 from mastf.MASTF.serializers import ScanSerializer
-from mastf.MASTF.permissions import (
-    CanEditUser,
-    CanEditAccount,
-    CanViewAccount,
-    CanCreateUser,
-    CanDeleteUser,
-)
 
 from mastf.MASTF.utils.enum import Platform, PackageType, ProtectionLevel
-
+from mastf.MASTF.mixins import (
+    ContextMixinBase,
+    VulnContextMixin,
+    TemplateAPIView,
+    TopVulnerableProjectsMixin,
+    ScanTimelineMixin
+)
 # This file stores additional views that will be used to
 # display the web frontend
 
@@ -45,13 +41,47 @@ __all__ = [
 ]
 
 
-class DashboardView(ContextMixinBase, TemplateAPIView):
+class DashboardView(ContextMixinBase, TopVulnerableProjectsMixin,
+                    VulnContextMixin, ScanTimelineMixin, TemplateAPIView):
     template_name = "index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["selected"] = "Home"
+        projects = Project.get_by_user(self.request.user)
+
+        context.update(self.get_top_vulnerable_projects(projects))
+
+        context["vuln_timeline"] = self.get_timeline(Vulnerability, projects)
+        context["finding_timeline"] = self.get_timeline(Finding, projects)
+        context["scan_timeline"] = self.get_scan_timeline(projects)
+
+        bundles = Bundle.get_by_owner(self.request.user)
+        context["bundle_count"] = len(bundles)
+        context["inherited_bundle_count"] = len(bundles.filter(~models.Q(owner=self.request.user)))
+
+        context["project_count"] = len(projects)
+        context["public_project_count"] = len(projects.filter(visibility=Visibility.PUBLIC))
+
+        scans = Scan.objects.filter(project__in=projects)
+        context["scan_count"] = len(scans)
+        context["active_scan_count"] = len(scans.filter(is_active=True))
+
+        teams = Team.get_by_owner(self.request.user)
+        context["team_count"] = len(teams)
+        context["public_team_count"] = len(teams.filter(visibility=Visibility.PUBLIC))
         return context
+
+    def get_timeline(self, model, projects) -> namespace:
+        data = namespace()
+        queryset = model.objects.filter(scan__project__in=projects)
+
+        data.objects = (queryset
+            .values("discovery_date")
+            .annotate(total=models.Count('discovery_date'))
+        )
+        data.count = len(queryset)
+        return data
 
 
 class ProjectsView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
@@ -142,6 +172,11 @@ class LicenseView(ContextMixinBase, TemplateAPIView):
 
 class PluginsView(ContextMixinBase, TemplateAPIView):
     template_name = "dashboard/plugins.html"
+    permission_classes = [
+        # External users should not be able to query data from internal
+        # configured templates
+        ~IsExternal
+    ]
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -168,37 +203,14 @@ class PluginsView(ContextMixinBase, TemplateAPIView):
         return context
 
 
-class ScansView(ContextMixinBase, TemplateAPIView):
+class ScansView(ContextMixinBase, ScanTimelineMixin, TemplateAPIView):
     template_name = "dashboard/scans.html"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-
-        visibility_level = [str(x).upper() for x in Visibility]
-        for name in visibility_level:
-            if self.request.GET.get(name.lower(), "true").lower() != "true":
-                visibility_level.remove(name)
-
         projects = Project.get_by_user(self.request.user)
-        scans = (
-            Scan.objects.filter(project__visibility__in=visibility_level)
-            .filter(project__in=projects)
-            .order_by("start_date")
-        )
 
-        scan_table_data = []
-        for scan in scans:
-            vuln_stats = AbstractBaseFinding.stats(Vulnerability, scan=scan)
-            finding_stats = AbstractBaseFinding.stats(Finding, scan=scan)
-
-            data = namespace(scan=scan)
-            data.findings = vuln_stats.count + finding_stats.count
-            data.high_risks = vuln_stats.high + finding_stats.high
-            data.medium_risks = vuln_stats.medium + finding_stats.medium
-            data.low_risks = vuln_stats.low + finding_stats.low
-            scan_table_data.append(data)
-
-        context["scan_table_data"] = scan_table_data
+        context["scan_table_data"] = self.get_scan_timeline(projects)
         context["scanners"] = ScannerPlugin.all()
         context["available"] = projects
         return context

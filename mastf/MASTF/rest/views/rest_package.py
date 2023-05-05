@@ -1,4 +1,4 @@
-from rest_framework import permissions, authentication, response
+from rest_framework import permissions
 
 from mastf.MASTF.serializers import (
     PackageSerializer,
@@ -16,9 +16,18 @@ from mastf.MASTF.forms import (
     PackageVulnerabilityForm,
     DependencyForm
 )
-from mastf.MASTF.rest.permissions import IsScanProjectMember, CanEditProject
+from mastf.MASTF.rest.permissions import (
+    IsScanProjectMember,
+    CanEditProject,
+    IsExternal
+)
 
-from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase, GetObjectMixin, APIView
+from .base import (
+    APIViewBase,
+    ListAPIViewBase,
+    CreationAPIViewBase,
+    GetObjectMixin
+)
 
 __all__ = [
     'PackageView',
@@ -36,15 +45,15 @@ __all__ = [
 class PackageView(APIViewBase):
     model = Package
     serializer_class = PackageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
 
 class PackageCreationView(CreationAPIViewBase):
     model = Package
     form_class = PackageForm
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
 
 class PackageListView(ListAPIViewBase):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
     queryset = Package.objects.all()
     serializer_class = PackageSerializer
 
@@ -54,15 +63,15 @@ class PackageListView(ListAPIViewBase):
 class PackageVulnerabilityView(APIViewBase):
     model = PackageVulnerability
     serializer_class = PackageVulnerabilitySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
 
 class PackageVulnerabilityCreationView(CreationAPIViewBase):
     model = PackageVulnerability
     form_class = PackageVulnerabilityForm
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
 
 class PackageVulnerabilityListView(GetObjectMixin, ListAPIViewBase):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
     queryset = PackageVulnerability.objects.all()
     serializer_class = PackageVulnerabilitySerializer
     model = Package

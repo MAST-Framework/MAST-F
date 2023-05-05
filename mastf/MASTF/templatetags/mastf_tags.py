@@ -41,4 +41,6 @@ def component_color(category) -> str:
 
 @register.filter(name="timestamp")
 def timestamp(obj: date):
+    obj = obj or date.today()
+
     return mktime(obj.timetuple()) * 1000
