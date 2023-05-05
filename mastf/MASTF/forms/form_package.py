@@ -10,8 +10,8 @@ __all__ = [
 
 class PackageForm(forms.Form):
     name = forms.CharField(max_length=512, required=True)
-    artifact_id = forms.CharField(max_length=512, required=True)
-    group_id = forms.CharField(max_length=512, required=True)
+    artifact_id = forms.CharField(max_length=512, required=False)
+    group_id = forms.CharField(max_length=512, required=False)
     type = forms.CharField(max_length=256, required=True)
     platform = forms.CharField(max_length=256, required=True)
 

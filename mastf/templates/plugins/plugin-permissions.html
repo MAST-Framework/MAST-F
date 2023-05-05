@@ -16,9 +16,9 @@
                         <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#modal-add-permission">
                             Add Permission</a>
                     </div>
-                    <li class="list-inline-item">
+                    <div class="list-inline-item">
                         <a class="btn btn-outline" href="#" data-bs-toggle="modal" data-bs-target="#modal-upload-permission">Upload file</a>
-                    </li>
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,8 +62,8 @@
                     "render": function(data, type, row, meta) {
                         if (type === 'display') {
                             var text = Utils.escapeHTML(data);
-                            return `<input type="hidden" value="${text}" id="permission-id-row-${row.id}">
-                                <a href="#" target-id="permission-id-row-${row.id}" data-bs-toggle="tooltip"data-bs-placement="bottom" title="Copy Permission-ID" onclick="copyTargetToClipboard(this);">
+                            return `<input type="hidden" value="${text}" id="permission-id-row-${row.permission_uuid}">
+                                <a href="#" target-id="permission-id-row-${row.permission_uuid}" data-bs-toggle="tooltip"data-bs-placement="bottom" title="Copy Permission-ID" onclick="copyTargetToClipboard(this);">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg>
                                 </a>`;
                         } else {
@@ -110,10 +110,10 @@
                     "data": null,
                     "render": function(data, type, row, meta) {
                         if (type === 'display') {
-                            return `<a href="#" class="me-2" target-id="permission-id-row-${row.id}" onclick="prepareEditPermission(this);">
+                            return `<a href="#" class="me-2" target-id="permission-id-row-${row.permission_uuid}" onclick="prepareEditPermission(this);">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path><path d="M16 5l3 3"></path></svg>
                                 Edit</a>
-                                <a href="#" class="text-red" target-id="permission-id-row-${row.id}" onclick="verifyAction(this, deletePermission);"
+                                <a href="#" class="text-red" target-id="permission-id-row-${row.permission_uuid}" onclick="verifyAction(this, deletePermission);"
                                     modal-title="Delete App-Permission?" modal-submit-text="Delete"
                                     modal-text="<p>You are about to remove this app-permission globally. All affected scans will remove permissions of this type.</p>">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
@@ -363,7 +363,7 @@
                         <label for="modal-upload-file" class="form-label">Choose JSON file.</label>
                         <input type="file" class="form-control" id="modal-upload-file">
                         <span class="form-hint">
-                            Note that the uploaded file must have a pre-defined form described in
+                            Note that the uploaded file must follow a pre-defined structure described in
                             <a href="#" target="_blank">
                                 Mobile App Permission-List Format
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"></path><path d="M11 13l9 -9"></path><path d="M15 4h5v5"></path></svg>
@@ -374,7 +374,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layout-bottombar-collapse" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M20 6v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2z"></path><path d="M20 15h-16"></path><path d="M14 8l-2 2l-2 -2"></path></svg>
                                 Show Example
                             </a>
-                            <div class="collapse" id="collapseExample">
+                            <div class="collapse mt-1" id="collapseExample">
                                 <pre>
                                     <code class="highlight">
 <span class="nt">+</span> <span class="na">ungrouped</span><span class="nt">:</span>

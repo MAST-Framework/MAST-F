@@ -14,8 +14,8 @@ __all__ = [
 class Package(models.Model):
     package_uuid = models.UUIDField(max_length=36, primary_key=True)
     name = models.CharField(max_length=512, null=True)
-    artifact_id = models.CharField(max_length=512, null=True)
-    group_id = models.CharField(max_length=512, null=True)
+    artifact_id = models.CharField(max_length=512, null=True, blank=True)
+    group_id = models.CharField(max_length=512, null=True, blank=True)
     type = models.CharField(default=PackageType.NONE, choices=PackageType.choices, max_length=256)
     platform = models.CharField(default=Platform.UNKNOWN, choices=Platform.choices, max_length=256)
 

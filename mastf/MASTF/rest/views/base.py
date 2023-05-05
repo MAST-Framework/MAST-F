@@ -242,6 +242,10 @@ class ListAPIViewBase(ListAPIView):
         order_column = request.order_column
         if order_column != -1:
             order_column = request.columns[order_column]["name"]
+            if not hasattr(queryset.model, order_column):
+                logger.debug(f"Switching non-existend order-column '{order_column}' to 'pk'")
+                order_column = 'pk'
+
             if str(request.order_direction).lower() == 'desc':
                 order_column = f"-{order_column}"
 

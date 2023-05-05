@@ -45,15 +45,15 @@ __all__ = [
 class PackageView(APIViewBase):
     model = Package
     serializer_class = PackageSerializer
-    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
+    permission_classes = [permissions.IsAuthenticated]
 
 class PackageCreationView(CreationAPIViewBase):
     model = Package
     form_class = PackageForm
-    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
+    permission_classes = [permissions.IsAuthenticated]
 
 class PackageListView(ListAPIViewBase):
-    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Package.objects.all()
     serializer_class = PackageSerializer
 
