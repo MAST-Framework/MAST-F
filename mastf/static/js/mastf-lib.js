@@ -8,8 +8,8 @@ REST = {
         REST.ajax(url, 'POST', data, onsuccess, contentType, error);
     },
 
-    patch: function(url, data, onsuccess, contentType = "application/json", ) {
-        REST.ajax(url, 'PATCH', data, onsuccess, contentType);
+    patch: function(url, data, onsuccess, contentType = "application/json", error=null) {
+        REST.ajax(url, 'PATCH', data, onsuccess, contentType, error);
     },
 
     delete: function(url, onsuccess, contentType = "application/json") {
@@ -60,6 +60,17 @@ Utils = {
             return false;
         }
         return classAttr.includes("theme-dark");
+    },
+
+    escapeHTML: function(html) {
+        var text = document.createTextNode(html);
+        var p = document.createElement('p');
+        p.appendChild(text);
+        return p.innerHTML;
+    },
+
+    capitalize: function(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
     },
 
     convertParams: function(params) {
@@ -114,6 +125,22 @@ Utils = {
                 break;
         }
     },
+
+    permissionColors: {
+        'SIGNATURE': "green",
+        'SIGNATUREORSYSTEM': "green",
+        'KNOWNSIGNER': "green",
+        'RUNTIME': "green",
+        'DANGEROUS': "red",
+        'SYSTEM': "red",
+        'OEM': "red",
+        'PRIVILEGED': "red",
+        'VENDORPRIVILEGED': "red",
+        'NORMAL': "azure",
+        'COMPANION': "azure",
+        'CONFIGURATOR': "azure",
+        'PRE23': "azure",
+    }
 }
 
 /**
@@ -466,7 +493,6 @@ class Tags {
     }
 
     onCreateKbd(text) {
-        console.log(this);
         this.count++;
         const kbd = document.createElement("kbd");
         kbd.id = `${this.prefix}-${this.count}`;

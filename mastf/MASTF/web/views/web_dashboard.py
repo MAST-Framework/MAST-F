@@ -171,7 +171,7 @@ class LicenseView(ContextMixinBase, TemplateAPIView):
 
 
 class PluginsView(ContextMixinBase, TemplateAPIView):
-    template_name = "dashboard/plugins.html"
+    template_name = "plugins/plugins-base.html"
     permission_classes = [
         # External users should not be able to query data from internal
         # configured templates
@@ -196,10 +196,14 @@ class PluginsView(ContextMixinBase, TemplateAPIView):
             context["protection_levels"] = list(ProtectionLevel)
 
         page = self.request.GET.get("subpage", None)
+
+        context["active"] = "tabs-permissions"
+        self.template_name = "plugins/plugin-permissions.html"
         if page in ("packages", "hosts", "permissions"):
             context["active"] = f"tabs-{page}"
-        else:
-            context["active"] = "tabs-permissions"
+            self.template_name = f"plugins/plugin-{page}.html"
+
+
         return context
 
 

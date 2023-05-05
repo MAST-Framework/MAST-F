@@ -184,7 +184,7 @@
 
     function changeRole(element) {
         var role = element.innerHTML.trim();
-        REST.patch("{% url 'User-View' user.pk %}", JSON.stringify({
+        REST.patch("{% url 'Account-View' account.pk %}", JSON.stringify({
             role: role
         }), function(data) {
             if (data.success) {

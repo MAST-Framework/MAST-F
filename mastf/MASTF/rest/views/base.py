@@ -1,9 +1,10 @@
 import logging
 
+from typing import OrderedDict
 from uuid import uuid4
 
 from django.shortcuts import get_object_or_404
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models.fields.related import ManyToManyDescriptor
@@ -13,8 +14,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import authentication, status, permissions
+from rest_framework.pagination import PageNumberPagination
 
-from mastf.MASTF.permissions import BoundPermission
+from mastf.MASTF.utils.datatable import DataTableRequest
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +60,20 @@ class BoundPermissionsMixin:
         elements = filter(lambda x: request.method in x, self.bound_permissions)
         return list(elements)
 
+class DataTablePagination(PageNumberPagination):
+    page_query_param = "start"
+    page_size_query_param = "length"
+
+    def get_page_number(self, request, paginator):
+        number = abs(int(request.GET.get(self.page_query_param, 0)))
+        return (number // self.get_page_size(request)) + 1
+
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('recordsTotal', len(data)),
+            ('recordsFiltered', self.get_page_size(self.request)),
+            ('results', data)
+        ]))
 
 class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
     """Base class for default implementations of an APIView.
@@ -192,6 +208,7 @@ class ListAPIViewBase(ListAPIView):
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
     ]
+    pagination_class = DataTablePagination
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -205,6 +222,34 @@ class ListAPIViewBase(ListAPIView):
         """
         return queryset
 
+    def paginate_queryset(self, queryset: QuerySet):
+        request = DataTableRequest(self.request)
+
+        model = queryset.model
+        query: Q = None
+        for column in request.columns:
+            if not hasattr(model, column['name']):
+                logger.debug(f'Skipped column definition: {column["name"]}')
+                continue
+
+            next_query = Q(**column["params"])
+            if not query:
+                query = next_query
+            else:
+                query = next_query | query
+
+        queryset = queryset.filter(query) if query else queryset
+        order_column = request.order_column
+        if order_column != -1:
+            order_column = request.columns[order_column]["name"]
+            if str(request.order_direction).lower() == 'desc':
+                order_column = f"-{order_column}"
+
+            queryset = queryset.order_by(order_column)
+        else:
+            queryset = queryset.order_by("pk")
+
+        return super().paginate_queryset(queryset)
 
 class CreationAPIViewBase(BoundPermissionsMixin, APIView):
     """Basic API-Endpoint to create a new database objects."""

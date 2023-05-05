@@ -13,7 +13,7 @@ class AppPermission(models.Model):
     identifier = models.CharField(max_length=256, null=False)
     name = models.CharField(max_length=256, null=True)
     # maybe add choices here
-    protection_level = models.CharField(max_length=256, default=ProtectionLevel.NORMAL, choices=ProtectionLevel.choices)
+    protection_level = models.TextField(blank=True)
     dangerous = models.BooleanField(default=False)
     group = models.CharField(max_length=256, null=True)
 
@@ -26,7 +26,7 @@ class AppPermission(models.Model):
     def plevel_status(self) -> dict:
         plevel = {}
         colors = ProtectionLevel.colors()
-        for level in self.protection_level.split('|'):
+        for level in self.protection_level.split(','):
             found = False
             level = str(level).capitalize()
             for color, values in colors.items():
