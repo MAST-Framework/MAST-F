@@ -6,9 +6,12 @@ __pycache__/
 generator.py
 .vscode/
 
+
 # uploaded files
 mastf/projects/
 test_env.*
+*.crt
+*.key
 
 # C extensions
 *.so

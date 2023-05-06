@@ -218,21 +218,21 @@ class AccountView(APIViewBase):
 
     def prepare_patch(self, data: dict, instance):
         # The role should be updated by admins only
-        if not IsAdmin().has_permission(self.request, self):
-            if "role" in data:
+        if "role" in data:
+            if not IsAdmin().has_permission(self.request, self):
                 data.pop("role")
-        else:
-            # We now know that the user is an admin
-            admin_count = len(Account.objects.filter(role=Role.ADMIN))
-            if admin_count == 1 and instance.user == self.request.user:
-                if data.get("role", "") != Role.ADMIN and instance.role == Role.ADMIN:
-                    raise exceptions.ValidationError(
-                        (
-                            "You can't remove the 'ADMIN' role from the last admin account"
-                            "of this framework. You won't be able to edit configuration "
-                            "settings any more."
+            else:
+                # We now know that the user is an admin
+                admin_count = len(Account.objects.filter(role=Role.ADMIN))
+                if admin_count == 1 and instance.user == self.request.user:
+                    if data.get("role", "") != Role.ADMIN and instance.role == Role.ADMIN:
+                        raise exceptions.ValidationError(
+                            (
+                                "You can't remove the 'ADMIN' role from the last admin account"
+                                "of this framework. You won't be able to edit configuration "
+                                "settings any more."
+                            )
                         )
-                    )
 
 
 class WizardSetupView(APIView):

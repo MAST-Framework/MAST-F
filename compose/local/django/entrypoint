@@ -1,0 +1,51 @@
+#! /bin/bash
+
+# Make the container fail to start if we can't establish a connection
+# to our database.
+set -o errexit
+
+# Same applies to our pipes - if one of them fail, this script will
+# fail too
+set -o pipefail
+
+# exits if any of your variables is not set
+set -o nounset
+
+
+database_ready() {
+    python << END
+
+import sys
+
+if "${DB_ENGINE}" == "django.db.backends.sqlite3":
+    # Exit this script, because the connection is used locally
+    sys.exit(0);
+
+import psycopg2
+try:
+    psycopg2.connect(
+        dbname="${DB_DATABASE}",
+        user="${DB_USER}",
+        password="${DB_PASSWORD}",
+        host="${DB_HOST}",
+        port="${DB_PORT}",
+    )
+except psycopg2.OperationalError:
+    sys.exit(-1)
+
+sys.exit(0)
+END
+
+}
+
+until database_ready; do
+    # Redirect output to stderr instead of stdout
+    >&2 echo "Waiting for database to become available..."
+    sleep 2
+done
+
+>&2 echo "Database is available - starting container..."
+
+# Used to make the entrypoint a pass through to ensure that Docker runs
+# the command the user passes in
+exec "$@"

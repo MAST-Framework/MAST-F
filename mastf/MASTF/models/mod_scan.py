@@ -137,7 +137,7 @@ class Scanner(models.Model):
             .values('name')
             .annotate(scount=models.Sum('name'))
         )
-        return [x['name'] for x in queryset]
+        return [getattr(x, "name") for x in queryset]
 
 
 class ScanTask(models.Model):

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# same configuration as applied in compose/django/local/entrypoint
+set -o errexit
+set -o nounset
+
+cd /app
+celery -A mastf.MASTF worker -l "${CELERY_DEBUG_LEVEL}"

@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission, User
+from django.db import connection
 
 from rest_framework.permissions import (
     BasePermission,
@@ -170,6 +171,12 @@ class BoundPermission(OperationHolderMixin, BasePermission):
                 return True
         return False
 
+    def _ensure_table(self) -> bool:
+        # WARNING: We have to check that the Permission table exists before
+        # we can create our permission objects. Otherwise we would run into
+        # errors when running migrate for the first time.
+        return "auth_permission" in connection.introspection.table_names()
+
     def create(self, *args) -> Permission:
         """Create a new permission object with the given codename, name, and model.
 
@@ -183,6 +190,10 @@ class BoundPermission(OperationHolderMixin, BasePermission):
 
         codename = self.codename % args
         name = self.name % args
+
+        if not self._ensure_table():
+            return None
+
         permission = Permission.objects.filter(codename=codename)
         if permission.exists():
             self._permission = permission.first()

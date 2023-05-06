@@ -10,3 +10,5 @@ celery
 djangorestframework
 django-celery-results
 django-extensions
+redis
+psycopg2-binary
