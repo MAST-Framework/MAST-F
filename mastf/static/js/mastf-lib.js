@@ -21,17 +21,20 @@ REST = {
     },
 
     ajax: function(url, method, data = null, onsuccess = null, contentType = "application/json", error = null) {
+        if (error == null) {
+            error = function(data) {
+                if (data.detail) {
+                    Alerts.show("error", "Unexpected Error", data.detail);
+                    fadeOutMessages();
+                }
+            };
+        }
         $.ajax(url, {
             method: method,
             success: onsuccess,
             data: data,
             contentType: contentType,
-            error: error || function(data) {
-                if (data.detail) {
-                    Alerts.show("error", "Unexpected Error", data.detail);
-                    fadeOutMessages();
-                }
-            },
+            error: error,
             headers: {
                 'X-CSRFToken': csrftoken
             }

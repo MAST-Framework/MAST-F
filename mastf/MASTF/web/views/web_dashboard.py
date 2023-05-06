@@ -98,7 +98,7 @@ class ProjectsView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["active"] = "tabs-projects"
+        context["active"] = context["selected"] = "tabs-projects"
 
         stats = Project.stats(self.request.user)
         context.update(stats)
@@ -130,7 +130,7 @@ class BundlesView(VulnContextMixin, ContextMixinBase, TemplateAPIView):
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-        context["active"] = "tabs-bundles"
+        context["active"] = context["selected"] = "tabs-bundles"
         stats = Bundle.stats(self.request.user)
         context.update(stats)
 
@@ -203,7 +203,7 @@ class PluginsView(ContextMixinBase, TemplateAPIView):
             context["active"] = f"tabs-{page}"
             self.template_name = f"plugins/plugin-{page}.html"
 
-
+        context["selected"] = "tabs-plugins"
         return context
 
 
@@ -217,6 +217,7 @@ class ScansView(ContextMixinBase, ScanTimelineMixin, TemplateAPIView):
         context["scan_table_data"] = self.get_scan_timeline(projects)
         context["scanners"] = ScannerPlugin.all()
         context["available"] = projects
+        context["selected"] = "tabs-scans"
         return context
 
     def post(self, request, *args, **kwargs):
