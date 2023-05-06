@@ -1,0 +1,504 @@
+{% extends 'plugins/plugin-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block content %}
+<div id="permission-page" id="permission-page" class="col d-flex flex-column">
+    <div class="card-body">
+        <!-- Body -->
+        <div class="row mb-2">
+            <div class="col-auto">
+                <h1 class="card-title">Registered App-Permissions</h1>
+            </div>
+            <div class="col ms-auto text-end">
+                <div class="list-inline text-muted">
+                    <div class="list-inline-item">
+                        <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#modal-add-permission">
+                            Add Permission</a>
+                    </div>
+                    <div class="list-inline-item">
+                        <a class="btn btn-outline" href="#" data-bs-toggle="modal" data-bs-target="#modal-upload-permission">Upload file</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="table-responsive-xl">
+                <table id="table-app-permissions" class="table card-table text-nowrap datatable">
+                    <thead>
+                        <th class="w-1">ID</th>
+                        <th>Name</th>
+                        <th>Identifier</th>
+                        <th>Protection Level</th>
+                        <th>Group</th>
+                        <th class="w-1">Edit</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+{{ block.super }}
+
+<script>
+    $(document).ready(function() {
+        $('#table-app-permissions').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{% url 'AppPermissionListView' %}",
+                "dataSrc": function(json) {
+                    return json.results;
+                },
+            },
+            "columns": [
+                {
+                    "data": "permission_uuid",
+                    "render": function(data, type, row, meta) {
+                        if (type === 'display') {
+                            var text = Utils.escapeHTML(data);
+                            return `<input type="hidden" value="${text}" id="permission-id-row-${row.permission_uuid}">
+                                <a href="#" target-id="permission-id-row-${row.permission_uuid}" data-bs-toggle="tooltip"data-bs-placement="bottom" title="Copy Permission-ID" onclick="copyTargetToClipboard(this);">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+                                </a>`;
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+                {"data": "name"},
+                {
+                    "data": "identifier",
+                    "render": function(data, type, row, meta) {
+                        if (type === 'display') {
+                            var text = Utils.escapeHTML(data);
+                            return `<code class="highlight highlight-inline">${text}</code>`;
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    "data": "protection_level",
+                    "render": function(data, type, row, meta) {
+                        if (type === 'display') {
+                            var elements = Utils.escapeHTML(data).split(",");
+                            let color = Utils.permissionColors[elements[0].toUpperCase()] || "secondary";
+                            if (elements.length > 1) {
+                                return `
+                                <span class="badge bg-${color}-lt text-truncate">${Utils.capitalize(Utils.escapeHTML(elements[0]))}</span>,
+                                <span class="badge bg-secondary-lt text-truncate">+${elements.length-1}</span>
+                                `;
+                            } else if (elements.length == 0) {
+                                return "-";
+                            } else {
+                                return `<span class="badge bg-${color}-lt text-truncate">${Utils.capitalize(Utils.escapeHTML(elements[0]))}</span>`;
+                            }
+                        } else {
+                            return data;
+                        }
+                    }
+                },
+                {"data": "group"},
+                {
+                    "targets": -1,
+                    "data": null,
+                    "render": function(data, type, row, meta) {
+                        if (type === 'display') {
+                            return `<a href="#" class="me-2" target-id="permission-id-row-${row.permission_uuid}" onclick="prepareEditPermission(this);">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path><path d="M16 5l3 3"></path></svg>
+                                Edit</a>
+                                <a href="#" class="text-red" target-id="permission-id-row-${row.permission_uuid}" onclick="verifyAction(this, deletePermission);"
+                                    modal-title="Delete App-Permission?" modal-submit-text="Delete"
+                                    modal-text="<p>You are about to remove this app-permission globally. All affected scans will remove permissions of this type.</p>">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                                     Delete
+                                </a>`;
+                        } else {
+                            return data;
+                        }
+                    }
+                }
+            ]
+        });
+    });
+</script>
+
+<script>
+    function createPLevelKBD(data) {
+        const kbd = document.createElement("kbd");
+        kbd.innerHTML = Utils.capitalize(data);
+        kbd.style.marginRight = "3px";
+        kbd.style.cursor = "no-drop";
+        kbd.onclick = function(event) {
+            kbd.remove();
+        };
+
+        var name = Utils.permissionColors[data.toUpperCase()] || "secondary";
+        kbd.classList.add(`bg-${name}-lt`);
+        return kbd;
+    }
+
+    function insertProtectionLevel(event, element) {
+        if (event.inputType == "insertReplacementText") {
+            var target = element.getAttribute("target-id");
+
+            var area = document.getElementById(element.getAttribute("area-id"));
+            for (let child of area.childNodes) {
+                if (child.textContent.trim() == event.data) {
+                    return;
+                }
+            }
+
+            const kbd = createPLevelKBD(event.data);
+            area.appendChild(kbd);
+            $(element).val("");
+        }
+    };
+
+    function prepareEditPermission(element) {
+        var target = element.getAttribute("target-id");
+        var permissionId = $(`#${target}`).val();
+
+        if (!permissionId) {
+            Alerts.show("error", "ValueError", "Invalid permission ID selector: " + target);
+            fadeOutMessages();
+            return;
+        }
+
+        REST.doGet(`/api/v1/app-permission/${permissionId}`, function(data) {
+
+            $('#edit-permission-name').val(data.name);
+            $('#edit-permission-identifier').val(data.identifier);
+            $('#edit-permission-group').val(data.group);
+            $('#edit-permission-short_description').val(data.short_description);
+            $('#edit-permission-description').val(data.description);
+            $('#edit-permission-risk').val(data.risk);
+            $('#edit-permission-permission_uuid').val(data.permission_uuid);
+
+            var area = document.getElementById("permission-edit-tags-area");
+            area.replaceChildren([]);
+            for (let element of data.protection_level.split(",")) {
+                const kbd = createPLevelKBD(element);
+                area.appendChild(kbd);
+            }
+
+            $('#modal-edit-permission').modal("toggle");
+        })
+    };
+
+    function updatePermission() {
+        var area = document.getElementById("permission-edit-tags-area");
+        var protectionLevel = [];
+        for (let child of area.childNodes) {
+            if (child.tagName == 'KBD') {
+                protectionLevel.push(Utils.capitalize(child.textContent.trim()));
+            }
+        }
+
+        var permissionId = $('#edit-permission-permission_uuid').val();
+        REST.patch(`/api/v1/app-permission/${permissionId}`, JSON.stringify({
+            name: $('#edit-permission-name').val(),
+            identifier: $('#edit-permission-identifier').val(),
+            group: $('#edit-permission-group').val(),
+            short_description: $('#edit-permission-short_description').val(),
+            description: $('#edit-permission-description').val(),
+            risk: $('#edit-permission-risk').val(),
+            protection_level: protectionLevel.join(","),
+        }), function(data) {
+            if (data.success) {
+                Alerts.show("success", "Success!", `Successfully updated permission: ${permissionId}`);
+            } else {
+                Alerts.show("warning", "ValidationWarning!", `Could not update permission: ${data}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function deletePermission(element, event) {
+        var target = element.getAttribute("target-id");
+        var permissionId = $(`#${target}`).val();
+        REST.delete(`/api/v1/app-permission/${permissionId}`, function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("warning", "ValidationError", `Could not delete permission: ${data}`);
+            }
+        });
+    }
+
+    function createPermission() {
+        var area = document.getElementById("permission-add-tags-area");
+        var protectionLevel = [];
+        for (let child of area.childNodes) {
+            if (child.tagName == 'KBD') {
+                protectionLevel.push(Utils.capitalize(child.textContent.trim()));
+            }
+        }
+
+        REST.post('/api/v1/app-permission/create', JSON.stringify({
+            name: $('#add-permission-name').val(),
+            identifier: $('#add-permission-identifier').val(),
+            group: $('#edit-permission-group').val(),
+            short_description: $('#add-permission-short_description').val(),
+            description: $('#add-permission-description').val(),
+            risk: $('#add-permission-risk').val(),
+            protection_level: protectionLevel.join(","),
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("warning", "ValidationWarning!", `Could not create permission: ${data}`);
+            }
+            fadeOutMessages();
+
+        });
+    }
+
+</script>
+{% endblock js_extended %}
+
+{% block modals %}
+<div class="modal modal-blur fade" id="modal-edit-permission" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Edit Permission
+                </h5>
+                <!-- Simple workaround to close this modal -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label class="form-label required">Name</label>
+                            <input id="edit-permission-name" type="text" class="form-control" name="name" minlength="5" maxlength="256"
+                            required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label class="form-label required">Identifier</label>
+                            <input id="edit-permission-identifier" type="text" class="form-control" name="identifier" minlength="3"
+                            maxlength="256" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <label class="form-label required">Protection Level</label>
+                            <div class="input-group input-group-flat">
+                                <span class="input-group-text d-flex flex-lg-row" id="permission-edit-tags-area">
+                                </span>
+                                <input id="edit-permission-protection_level" type="text"  list="pLevelOptions" class="form-control" value=""
+                                    oninput="insertProtectionLevel(event, this);" target-id="permission-edit-tags-area"
+                                    area-id="permission-edit-tags-area">
+                                <datalist id="pLevelOptions" class="datalist">
+                                    {% for pl in protection_levels %}
+                                    <option value="{{ pl|lower }}">{{ pl|lower }}</option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-4">
+                            <label class=" form-label required">Group</label>
+                            <input id="edit-permission-group" type="text" class="form-control" name="group" minlength="3"
+                                maxlength="256" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-2">
+                        <label class="form-label required">Short Description</label>
+                        <input id="edit-permission-short_description" type="text" class="form-control" name="short_description">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label required">Longer Description</label>
+                        <textarea id="edit-permission-description" class="form-control" name="description"
+                            placeholder="Description..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Risk</label>
+                        <textarea id="edit-permission-risk" class="form-control" name="risk" placeholder="Detailed risk description..."></textarea>
+                    </div>
+                </div>
+
+
+                <input type="hidden" name="permission_uuid" id="edit-permission-permission_uuid">
+            </div>
+
+            <div class="modal-footer">
+                <input data-bs-dismiss="modal" onclick="updatePermission()" type="button" class="btn btn-primary"
+                    value="Save Changes" id="permission-submit">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-upload-permission" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <form action="{% url 'AppPermissionFileUpload' %}" method="post"></form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Upload File
+                    </h5>
+                    <!-- Simple workaround to close this modal -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                        {% csrf_token %}
+                        <label for="modal-upload-file" class="form-label">Choose JSON file.</label>
+                        <input type="file" class="form-control" id="modal-upload-file">
+                        <span class="form-hint">
+                            Note that the uploaded file must follow a pre-defined structure described in
+                            <a href="#" target="_blank">
+                                Mobile App Permission-List Format
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-external-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6"></path><path d="M11 13l9 -9"></path><path d="M15 4h5v5"></path></svg>
+                            </a>
+                            within the project documentation.
+                            <br>
+                            <a class="link-secondary mt-2" href="#collapseExample" data-bs-toggle="collapse" role="button">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-layout-bottombar-collapse" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M20 6v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2z"></path><path d="M20 15h-16"></path><path d="M14 8l-2 2l-2 -2"></path></svg>
+                                Show Example
+                            </a>
+                            <div class="collapse mt-1" id="collapseExample">
+                                <pre>
+                                    <code class="highlight">
+<span class="nt">+</span> <span class="na">ungrouped</span><span class="nt">:</span>
+  <span class="nt">+</span> <span class="na">permission</span><span class="nt">:</span>com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE
+    <span class="na">package</span><span class="nt">:</span>com.android.vending
+    <span class="na">label</span><span class="nt">:</span>Play Install Referrer API
+    <span class="na">description</span><span class="nt">:</span>Allows the app to retrieve its install referrer information.
+    <span class="na">protectionLevel</span><span class="nt">:</span>normal
+  <span class="nt">+</span> <span class="na">permission</span><span class="nt">:</span>com.samsung.android.mapsagent.permission.READ_APP_INFO
+    <span class="na">package</span><span class="nt">:</span>com.samsung.android.mapsagent
+    <span class="na">label</span><span class="nt">:</span>null
+    <span class="na">description</span><span class="nt">:</span>null
+    <span class="na">protectionLevel</span><span class="nt">:</span>normal
+                                    </code>
+                                </pre>
+                            </div>
+                        </span>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </a>
+                    <input value="Upload" type="submit" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Modal to add a Permission-->
+<div class="modal modal-blur fade" id="modal-add-permission" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Edit Permission
+                </h5>
+                <!-- Simple workaround to close this modal -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label class="form-label required">Name</label>
+                                <input id="add-permission-name" type="text" class="form-control" name="name" minlength="5" maxlength="256"
+                                required>
+                                <span class="form-hint">
+                                    The display name will be used within report generation to lower the amount if displayed characters
+                                    and to make text understanding easier.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label class="form-label required">Identifier</label>
+                                <input id="add-permission-identifier" type="text" class="form-control" name="identifier" minlength="3"
+                                maxlength="256" required>
+                                <span class="form-hint">
+                                    Identifiers will be used as search patterns within a scan. Note that iOS permission should start with
+                                    <code class="highlight highligh-inline"><span class="nx">apple</span><span class="p">.</span><span class="nx">permission</span><span class="p">.</span>IDENTIFIER</code>.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-4">
+                                <label class="form-label required">Protection Level</label>
+                                <div class="input-group input-group-flat">
+                                    <span class="input-group-text d-flex flex-lg-row" id="permission-add-tags-area">
+                                    </span>
+                                    <input id="add-permission-protection_level" type="text"  list="pLevelOptions-add" class="form-control" value=""
+                                        oninput="insertProtectionLevel(event, this);" target-id="permission-add-tags-area"
+                                        area-id="permission-add-tags-area">
+                                    <datalist id="pLevelOptions-add" class="datalist">
+                                        {% for pl in protection_levels %}
+                                        <option value="{{ pl|lower }}">{{ pl|lower }}</option>
+                                        {% endfor %}
+                                    </datalist>
+                                </div>
+                                <span class="form-hint">
+                                    Permissions can be classified into different protection levels, which indicate the level of risk
+                                    associated with granting the permission to the app. You can choose multiple levels if you want.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-4"">
+                                <label class=" form-label required">Group</label>
+                                <input id="add-permission-group" type="text" class="form-control" name="group" minlength="3"
+                                    maxlength="256" required>
+                                <span class="form-hint">
+                                    Each permission can be assigned to a permission-group.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-2">
+                            <label class="form-label required">Short Description</label>
+                            <input id="add-permission-short_description" type="text" class="form-control" name="short_description">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Longer Description</label>
+                            <span class="form-hint">This description will be used in report generation</span>
+                            <textarea id="add-permission-description" class="form-control" name="description"
+                                placeholder="Description..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Risk</label>
+                            <span class="form-hint">If a risk is associated to this permission, put a small description below.</span>
+                            <textarea id="add-permission-risk" class="form-control" name="risk" placeholder="Detailed risk description..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <input data-bs-dismiss="modal" onclick="createPermission()" type="button" class="btn btn-primary"
+                        value="Create" id="permission-create-submit">
+                </div>
+        </div>
+    </div>
+</div>
+{% endblock modals %}

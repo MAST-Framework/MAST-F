@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 # This will make sure the app is always imported when
 # Django starts so that shared_task will use this app.
 from mastf.MASTF.celery import app as celery_app

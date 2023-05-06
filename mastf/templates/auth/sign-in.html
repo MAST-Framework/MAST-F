@@ -7,67 +7,69 @@
 {% endblock navbar %}
 
 {% block page_body %}
-<div class="container container-tight py-4">
-  <div class="text-center mb-4">
-    <a href="." class="navbar-brand navbar-brand-autodark">
-      <img src="{% static 'static/new-logo-base.svg' %}" height="36" alt="">
-    </a>
-  </div>
-  <div class="card card-md">
-    <div class="card-body">
-      <h2 class="h2 text-center mb-4">Login to your account</h2>
-      {% if messages %}
-        {% for message in messages %}
-        <p class="text-center">
-          <span class="badge {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-lt{% else %}bg-azure-lt{% endif %}">
-          {{ message }}
-          </span>
-        </p>   
-        {% endfor %}
-      {% endif %}
-      <form action="{% url 'LoginUser' %}" method="POST">
-        {% csrf_token %}
-        {% if request.GET.next %}
-          {% autoescape on %}
-          <input type="hidden" value="{{ request.GET.next }}" name="fallback_url">
-          {% endautoescape %}
-        {% endif%}
-        <div class="mb-3">
-          <label class="form-label">Username</label>
-          <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="off">
-        </div>
-        <div class="mb-2">
-          <label class="form-label">
-            Password
-            <span class="form-label-description">
-              <a href="./forgot-password.html">Forgot password</a>
-            </span>
-          </label>
-          <div class="input-group input-group-flat">
-            <input type="password" class="form-control"  placeholder="Your password" name="password" autocomplete="off"
-                spellcheck="false" autocapitalize="off" autocorrect="off" id="password-input">
-            <span class="input-group-text">
-              <a href="#" class="link-secondary" title="Show/Hide password" id="show-password" data-bs-toggle="tooltip">
-                <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
-              </a>
-            </span>
-          </div>
-        </div>
-        <div class="mb-2">
-          <label class="form-check">
-            <input type="checkbox" name="remember_me" class="form-check-input"/>
-            <span class="form-check-label">Remember me on this device</span>
-          </label>
-        </div>
-        <div class="form-footer">
-          <input type="submit" class="btn btn-primary w-100" value="Sign In" id="login-submit">
-        </div>
-      </form>
+<div class="page-body">
+  <div class="container container-tight py-4 align-self-center">
+    <div class="text-center mb-4">
+      <a href="." class="navbar-brand navbar-brand-autodark">
+        <img src="{% static 'static/new-logo-base.svg' %}" height="64" alt="">
+      </a>
     </div>
-  </div>
-  <div class="text-center text-muted mt-3">
-    Don't have account yet? <a href="{% url 'SignUp' %}" tabindex="-1">Sign up</a>
+    <div class="card card-md">
+      <div class="card-body">
+        <h2 class="h2 text-center mb-4">Login to your account</h2>
+        {% if messages %}
+          {% for message in messages %}
+          <p class="text-center">
+            <span class="badge text-wrap {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-lt{% else %}bg-azure-lt{% endif %}">
+              {% autoescape off %}{{ message }}{% endautoescape %}
+            </span>
+          </p>
+          {% endfor %}
+        {% endif %}
+        <form action="{% url 'User-Login' %}" method="POST" id="login-form">
+          {% csrf_token %}
+          {% if request.GET.next %}
+            {% autoescape on %}
+            <input type="hidden" value="{{ request.GET.next }}" name="fallback_url">
+            {% endautoescape %}
+          {% endif%}
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="off">
+          </div>
+          <div class="mb-2">
+            <label class="form-label">
+              Password
+              <span class="form-label-description">
+                <a href="./forgot-password.html">Forgot password</a>
+              </span>
+            </label>
+            <div class="input-group input-group-flat">
+              <input type="password" class="form-control"  placeholder="Your password" name="password" autocomplete="off"
+                  spellcheck="false" autocapitalize="off" autocorrect="off" id="password-input">
+              <span class="input-group-text">
+                <a href="#" class="link-secondary" title="Show/Hide password" id="show-password" data-bs-toggle="tooltip">
+                  <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+                </a>
+              </span>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-check">
+              <input type="checkbox" name="remember_me" class="form-check-input"/>
+              <span class="form-check-label">Remember me on this device</span>
+            </label>
+          </div>
+          <div class="form-footer">
+            <input type="submit" class="btn btn-primary w-100" value="Sign In" id="login-submit">
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="text-center text-muted mt-3">
+      Don't have account yet? <a href="{% url 'User-Registration' %}" tabindex="-1">Sign up</a>
+    </div>
   </div>
 </div>
 {% endblock page_body %}
@@ -86,8 +88,9 @@
             else {
                 element.attr('type', 'text');
             }
-            
+
         });
     });
+
 </script>
 {% endblock js_extended %}

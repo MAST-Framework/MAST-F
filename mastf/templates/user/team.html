@@ -1,0 +1,219 @@
+{% extends 'user/settings/settings-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block css_extended %}
+<link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
+{% endblock css_extended %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="subheader">Team settings</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row ms-3 me-4">
+    <div class="col-md-4 mb-1">
+        <label class="from-label h3">Name</label>
+        <input type="text" class="form-control" placeholder="Team-ABC" value="{{team.name}}"
+            id="team-name" {% if request.user != team.owner %}disabled{%endif%}>
+        <span class="form-check-description mb-1">The project's name can be used as an additional field in generated reports. Use
+            <code class="highlight highlight-inline"><span class="mi">${</span>team.name<span class="mi">}</span></code> in report templates to reference this value.
+        </span>
+    </div>
+    <div class="col-md-3">
+        <label class="from-label h3">Team ID</label>
+        <input type="text" class="form-control" id="" value="{{team.pk}}" disabled>
+        <span class="form-check-description mb-1">The user id is unique and can be used to identify your team.</span>
+    </div>
+    <div class="col">
+        <div class="btn-list justify-content-end">
+            <a href="#" class="btn btn-primary {# The next line should be done with a permission check #}
+            {% if request.user != team.owner %}disabled{%endif%}"
+                onclick="updateTeam();">
+
+                <span id="btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                </span>
+                Save Changes
+            </a>
+        </div>
+    </div>
+</div>
+<div class="row mt-2 mb-2 ms-3 me-3">
+    <div class="col">
+        <div class="accordion" id="acc-users">
+            <div class="accordion-item bg-transparent">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#acc-users-view" aria-expanded="true" aria-controls="acc-users-view">
+
+                        Users <span class="badge rounded-pill bg-secondary-lt ms-1">{{team.users.all|length}}</span>
+                    </button>
+                </h2>
+                <div id="acc-users-view" class="accordion-collapse collapse" data-bs-parent="#acc-users">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table datatable" id="table-users">
+                                <thead>
+                                    <th>User</th>
+                                    {% if team.owner == request.user or account.role|lower == 'admin' %}
+                                    <th class="w-1 text-end">Manage</th>
+                                    {%endif%}
+                                </thead>
+                                <tbody>
+                                    {% for user in team.users.all %}
+                                    <tr id="user-row-{{user.pk}}" user-id="{{user.pk}}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <span class="avatar avatar-sm me-2">{{user.username|capfirst|first}}</span>
+                                                <div class="flex-fill">
+                                                    <div class="font-weight-medium">{{ user.username }}
+                                                        {% if user == request.user %}
+                                                        <span class="badge bg-teal-lt">It's You</span>
+                                                        {% endif %}
+                                                        {% if user == team.owner %}
+                                                        <span class="badge bg-purple-lt">Owner</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="text-muted"><a href="#" class="text-reset">
+                                                    {% if user.email %}{{user.email}}{%else%}
+                                                        No email set
+                                                    {% endif %}
+                                                    </a></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        {% if team.owner == request.user or account.role|lower == 'admin' %}
+                                        <td class="text-end flex-fill align-items-center">
+                                            {% if user != team.owner %}
+                                            <a class="" href="#" target-id="{{user.pk}}" onclick="verifyAction(this, leaveTeam);"
+                                                modal-title="Delete User?" modal-submit-text="Yes, I want to delete this user!"
+                                                modal-text="The user won't have access to shared resources afterwards.">
+                                                <span class="text-red">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                                                </span>
+                                            </a>
+                                            {%endif%}
+                                        </td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row ms-3 me-3 mb-3">
+    <div class="col">
+        <div class="card border-danger">
+            <div class="card-header">
+                <span class="fw-bold">Danger Zone</span>
+            </div>
+            <div class="card-body">
+                {% if team.owner == request.user or account.role|lower == 'admin' %}
+                <div class="row border-bottom mb-3">
+
+                    <div class="col mb-1">Delete Team
+                        <span class="form-check-description">
+                            Delete this team and all data related to it.
+                        </span>
+                    </div>
+                    <div class="col-auto">
+                        <a class="btn btn-outline-danger" href="#" target-id="{{team.pk}}" onclick="verifyActionWithText(this, deleteTeam, 'Team/{{team.name}}')"
+                        modal-title="Delete Team?" modal-submit-text="Yes, I want to delete this team!"
+                        modal-text="<ul>
+                            <li>All linked findings and vulnerabilities will be lost,</li>
+                            <li>All projects, bundles and scans will be removed immediately.</li>
+                            <li>Note that finding templates and app permission templates won't be affected
+                                if this team gets deleted.
+                            </li>
+                        </ul>">
+                        Delete Team
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="row border-bottom mb-3">
+                    <div class="col mb-1">Leave
+                        <span class="form-check-description">
+                            Leave this team and refuse access to shared resources.
+                        </span>
+                    </div>
+                    <div class="col-auto justify-content-center">
+                        <a class="btn btn-outline-danger" href="#" target-id="{{request.user.pk}}" onclick="verifyAction(this, leaveTeam);"
+                        modal-title="Leave Team?" modal-submit-text="Leave"
+                        modal-text="<p>You are about to leave the selected team. All shared resources will be lost and
+                            your access will be removed.</p>">
+                        Leave
+                        </a>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#table-users').DataTable();
+    });
+
+
+    function deleteTeam(element, event) {
+        var teamid = element.getAttribute("target-id");
+        REST.delete(`/api/v1/team/${teamid}`, function(data) {
+            if (data.success) {
+                window.location.href = "{% url 'Teams' %}";
+            }
+        })
+    };
+
+
+    function leaveTeam(element, event) {
+        var userid = element.getAttribute("target-id");
+        REST.patch("/api/v1/team/{{team.pk}}/members", JSON.stringify({
+            users: userid
+        }), function(data) {
+            if (data.success) {
+                if (userid == {{request.user.pk}} || userid == "{{request.user.pk}}") {
+                    window.location.href = "{% url 'Teams' %}";
+                } else {
+                    var table = $('#table-users').DataTable();
+                    table.row(`#user-row-${userid}`).remove().draw();
+                }
+            }
+        });
+    };
+
+    function updateTeam() {
+        var name = $('#team-name').val();
+        if (name.length > 5) {
+            REST.patch("/api/v1/team/{{team.pk}}", JSON.stringify({
+                name: name
+            }), function(data) {
+                if (data.success) {
+                    console.log("Changed Team!")
+                }
+            })
+        }
+    };
+
+</script>
+{% endblock %}

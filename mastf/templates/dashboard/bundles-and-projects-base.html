@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+<!-- Title -->
+{% block title %}
+MASTF | Bundles and Projects
+{% endblock title %}
+
+{% block css_extended %}
+<link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
+{% endblock css_extended %}
+
+{% block page_header %}
+<div class="page-header">
+<div class="container-fluid">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="page-pretitle">
+          Overview
+        </div>
+        <h2 class="page-title">
+          Bundles and Projects
+        </h2>
+      </div>
+      <div class="col-auto ms-auto">
+        <div class="btn-list">
+          <span class="d-none d-sm-inline">
+            {% if active == "tabs-projects" %}
+            <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#modal-new-project">
+                New Project
+              </a>
+            {% elif active == "tabs-bundles" %}
+            <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#modal-new-bundle">
+                New Bundle
+              </a>
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <ul class="nav nav-bordered mt-3" data-bs-toggle="tabs">
+                <li class="nav-item">
+                    <a href="{% url 'Projects' %}" class="nav-link {% if active == "tabs-projects" %}active{% endif %}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'Bundles' %}" class="nav-link {% if active == "tabs-bundles" %}active{% endif %}">Bundles</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock page_header %}
+
+{% block page_body %}
+<!-- Page body -->
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row-auto">
+            <div class="col">
+                <div class="card">
+                <div class="card-body">
+                    <div class="tab-content">
+                        {% block tab_content %}
+                        {% endblock tab_content %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+{% endblock js_extended %}
+

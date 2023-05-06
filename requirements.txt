@@ -8,3 +8,5 @@ waitress;platform_system=='Windows'
 gunicorn;platform_system!='Windows'
 celery
 djangorestframework
+django-celery-results
+django-extensions

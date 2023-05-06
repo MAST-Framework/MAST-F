@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{{ "Setup MAST-F"|title }}
+
+{% block navbar %}
+{% endblock navbar %}
+
+{% block page_body %}
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="text-center mb-4">
+            <a href="." class="navbar-brand navbar-brand-autodark">
+                <img src="{% static 'static/new-logo-base.svg' %}" height="64" alt="">
+            </a>
+        </div>
+        <div class="card card-md">
+            <div class="card-body text-center">
+                <h1>Welcome to MAST-F!</h1>
+                <p class="text-muted">The <b>M</b>obile <b>A</b>pplication <b>S</b>tatic <b>T</b>esting <b>F</b>ramework (MASTF)
+                    comes with different utility tools for static application testing. Start working collaborative
+                    on different projects in your team with the MAST-Framework to get more efficient.</p>
+            </div>
+            <div class="hr-text hr-text-center hr-text-spaceless">your data</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Create an <span class="badge bg-purple-lt">Administrator</span> account
+                        <span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true"
+                        title="Recommendations"
+                        data-bs-content="<p>In many cases, it's recommended to choose
+                            a username that is not easily guessable, as this can help to improve the security of the account.</p>">
+                            ?
+                        </span>
+                    </label>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="username" placeholder="Username" autocomplete="off"
+                            id="username">
+                        <div class="form-hint">
+                            Pick a username that is both unique and memorable.</div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">
+                                Password
+                                <span class="form-label-description">
+                                    Min. 12 Characters
+                                </span>
+                            </label>
+                            <div class="input-group input-group-flat">
+                                <input type="password" class="form-control"  placeholder="Your password" name="password" autocomplete="off"
+                                spellcheck="false" autocapitalize="off" autocorrect="off" id="password-input">
+                                <span class="input-group-text">
+                                    <a href="#" class="link-secondary" title="Show/Hide password" id="show-password" data-bs-toggle="tooltip">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <div class="row align-items-center mt-3">
+            <div class="col-4">
+                <div class="progress">
+                    <div class="progress-bar" style="width: 33%" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" aria-label="25% Complete">
+                        <span class="visually-hidden">33% Complete</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="btn-list justify-content-end">
+                    <input type="submit" class="btn btn-primary" onclick="createAdminUser();" value="Finish Setup">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+{% block js_extended %}
+<script>
+    function createAdminUser() {
+        $.ajax("{% url 'Wizard-Setup' %}", {
+            method: "POST",
+            success: function(data) {
+                if (data.success) {
+                    window.location.href = "{% url 'User-Login' %}";
+                } else {
+                    Alerts.show("error", "ValidationError", data.detail || "Could not create Admin-User");
+                    fadeOutMessages();
+                    // show error message
+                }
+            },
+            error: function(data) {
+                console.log(data.detail);
+                Alerts.show("error", "ValidationError", data.detail || "Could not create Admin-User");
+                fadeOutMessages();
+            },
+            data: JSON.stringify({
+                username: $('#username').val(),
+                password: $('#password-input').val(),
+            }),
+            contentType: "application/json",
+        })
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $("#show-password").on("click", function(event) {
+            event.preventDefault();
+            element = $("#password-input");
+
+            if (element.attr('type') == "text") {
+                element.attr('type', 'password');
+            }
+            else {
+                element.attr('type', 'text');
+            }
+
+        });
+    });
+</script>
+{% endblock js_extended %}

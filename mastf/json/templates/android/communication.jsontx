@@ -1,0 +1,38 @@
+{
+    "title": "Android Communication",
+    "pretitle": "OWASP Mobile Top 10 2016: M3 - Insecure Communication",
+    "short_summary": "Improper network security configuration in Android apps can introduce several security risks, such as sensitive data leakage, unauthorized access to data, and Man-in-the-Middle (MITM) attacks. ",
+
+    "sources": [
+        {
+            "value": "https://developer.android.com/training/articles/security-ssl",
+            "name": "Android Developers: Security with HTTPS and SSL"
+        }
+    ],
+
+    "content": [
+        {
+            "type": "html",
+            "tag": "h3",
+            "content": "Android Communication Security Risks"
+        },
+        "Here are some examples of the possible risks involved in using improper Android network security configuration:",
+        {
+            "type": "ol",
+            "content": [
+                "Unencrypted network communication: If an app sends sensitive data over an unencrypted connection, such as HTTP, it can be easily intercepted by attackers. This can lead to data breaches and other security incidents.",
+                "Improper certificate validation: If an app does not properly validate server certificates, it can be vulnerable to MITM attacks. An attacker can intercept the app's network traffic and present a fake certificate to the app, which the app may trust if it does not properly validate certificates.",
+                "Insecure or weak cryptography: If an app uses insecure or weak cryptography to encrypt sensitive data, attackers can easily decrypt the data and gain access to it.",
+                "Lack of certificate pinning: If an app does not use certificate pinning, it can be vulnerable to MITM attacks. Certificate pinning ensures that the app only communicates with the server whose certificate is pinned in the app's code, preventing attackers from intercepting the app's traffic and presenting a fake certificate."
+            ]
+        },
+        "Here's an example of an insecure connection:",
+        {
+            "type": "code",
+            "language": "java",
+            "content": "public class MainActivity extends AppCompatActivity {\n\n    @Override\n    protected void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        setContentView(R.layout.activity_main);\n\n        // Connect to the server over an unencrypted connection (HTTP)\n        String url = \"http://example.com/api/data\";\n        HttpClient httpClient = new DefaultHttpClient();\n        HttpGet httpGet = new HttpGet(url);\n\n        try {\n            HttpResponse httpResponse = httpClient.execute(httpGet);\n            // Handle the response\n            // ...\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n}\n"
+        },
+        "In this example, the app connects to a server over an unencrypted connection (HTTP). This can introduce a security risk because the app sends sensitive data in plaintext, which can be easily intercepted by attackers.",
+        "To mitigate these security risks, Android apps should use secure network communication practices such as using HTTPS for all network traffic, properly validating server certificates, using secure cryptography algorithms and key sizes, and implementing certificate pinning. Additionally, network traffic should be monitored and reviewed regularly for any security incidents."
+    ]
+}
