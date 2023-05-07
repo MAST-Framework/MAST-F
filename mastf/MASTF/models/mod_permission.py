@@ -1,12 +1,26 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django.db import models
 
 from mastf.MASTF.utils.enum import ProtectionLevel
 
 from .mod_finding import AbstractBaseFinding
 
-__all__ = [
-    'AppPermission', 'PermissionFinding'
-]
+__all__ = ["AppPermission", "PermissionFinding"]
+
 
 class AppPermission(models.Model):
     permission_uuid = models.UUIDField(primary_key=True)
@@ -26,19 +40,19 @@ class AppPermission(models.Model):
     def plevel_status(self) -> dict:
         plevel = {}
         colors = ProtectionLevel.colors()
-        for level in self.protection_level.split(','):
+        for level in self.protection_level.split(","):
             found = False
             level = str(level).capitalize()
             for color, values in colors.items():
                 if level in values:
                     plevel[level] = color
-                    found = True; break
+                    found = True
+                    break
 
             if not found:
-                plevel[level] = 'secondary'
+                plevel[level] = "secondary"
         return plevel
 
 
 class PermissionFinding(AbstractBaseFinding):
     permission = models.ForeignKey(AppPermission, null=True, on_delete=models.SET_NULL)
-

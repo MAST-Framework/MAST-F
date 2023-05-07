@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import uuid
 
 from django.db import models
@@ -9,17 +24,20 @@ from .base import Project, namespace, Team, Bundle
 from .mod_scan import Scan, Scanner
 
 __all__ = [
-    'STATE_CHOICES', 'FindingTemplate', 'Snippet',
-    'AbstractBaseFinding', 'Finding', 'Vulnerability'
+    "FindingTemplate",
+    "Snippet",
+    "AbstractBaseFinding",
+    "Finding",
+    "Vulnerability",
 ]
-
-STATE_CHOICES = [(str(x), str(x)) for x in State]
 
 class FindingTemplate(models.Model):
     template_id = models.CharField(max_length=128, null=True)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField()
-    default_severity = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=256)
+    default_severity = models.CharField(
+        default=Severity.NONE, choices=Severity.choices, max_length=256
+    )
     risk = models.TextField()
     mitigation = models.TextField()
     article = models.CharField(max_length=256, null=True)
@@ -46,7 +64,9 @@ class AbstractBaseFinding(models.Model):
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
     snippet = models.ForeignKey(Snippet, on_delete=models.SET_NULL, null=True)
 
-    severity = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=256)
+    severity = models.CharField(
+        default=Severity.NONE, choices=Severity.choices, max_length=256
+    )
     """Specifies the severity of this finding.
     There are five common severity states:
     - ``INFO``: Used on vulnerabilites that can't be exploited or that are
@@ -68,14 +88,26 @@ class AbstractBaseFinding(models.Model):
         abstract = True
 
     @staticmethod
-    def stats(model, member: User = None, project: Project = None, scan: Scan = None,
-              team: Team = None, base=None, bundle: Bundle = None) -> namespace:
+    def stats(
+        model,
+        member: User = None,
+        project: Project = None,
+        scan: Scan = None,
+        team: Team = None,
+        base=None,
+        bundle: Bundle = None,
+    ) -> namespace:
         data = namespace(count=0, high=0, critical=0, medium=0, low=0)
         if member:
             base = (base or model.objects).filter(
-                models.Q(scan__initiator=member) | models.Q(scan__project__owner=member)
+                models.Q(scan__initiator=member)
+                | models.Q(scan__project__owner=member)
                 | models.Q(scan__project__team__users__pk=member.pk)
-                | models.Q(scan__project__visibility=Visibility.PUBLIC, scan__project__team=None))
+                | models.Q(
+                    scan__project__visibility=Visibility.PUBLIC,
+                    scan__project__team=None,
+                )
+            )
 
         if project:
             base = (base or model.objects).filter(scan__project=project)
@@ -96,8 +128,7 @@ class AbstractBaseFinding(models.Model):
         data.medium = len(base.filter(severity=Severity.MEDIUM))
         data.low = len(base.filter(severity=Severity.LOW))
 
-        data.other = data.count - (data.critical + data.high
-            + data.medium + data.low)
+        data.other = data.count - (data.critical + data.high + data.medium + data.low)
         data.rel_count = data.count if data.count > 0 else 1
         return data
 
@@ -112,13 +143,14 @@ class Finding(AbstractBaseFinding):
 
 
 class Vulnerability(AbstractBaseFinding):
-    state = models.CharField(default=State.TO_VERIFY, choices=STATE_CHOICES, max_length=256)
+    state = models.CharField(
+        default=State.TO_VERIFY, choices=State.choices, max_length=256
+    )
     """Specifies the state of this vulnerability.
     There are five states by default:
     - ``To Verify``: Identified vulnerabilites that must be verified
     - `'Not Exploitable``: Identified vulnerabilities that can't be exploited
-    - ``Proposed Not Exploitable``: this vulnerability is proposed to be not
-                                    exploitable
+    - ``Proposed Not Exploitable``: this vulnerability is proposed to be not exploitable
     - ``Confirmed``: The vulnerability has been confirmed
     - ``Urgent``: marked as ``CRITICAL`` and confirmed
     """
@@ -129,4 +161,3 @@ class Vulnerability(AbstractBaseFinding):
     @staticmethod
     def make_uuid(*args) -> str:
         return f"SV-{uuid.uuid4()}-{uuid.uuid4()}"
-

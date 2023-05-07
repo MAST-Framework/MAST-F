@@ -1,3 +1,29 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+__doc__ = """
+Enriched permissions that can be combined with REST framework's permission
+classes. Use classes defined here to restrict access to different resources
+and create, assign and delete permissions at runtime.
+
+.. important::
+    Administrators will always be able to perform actions on resources as they
+    automatically inherit all permissions.
+
+"""
+
 import logging
 
 from django.contrib.contenttypes.models import ContentType
@@ -7,20 +33,16 @@ from django.db import connection
 from rest_framework.permissions import (
     BasePermission,
     SAFE_METHODS,
-    OperationHolderMixin
+    OperationHolderMixin,
 )
 from rest_framework.exceptions import ValidationError
 
 from mastf.MASTF.utils.enum import Role
-from mastf.MASTF.models import (
-    Team,
-    Project,
-    Bundle,
-    Account
-)
+from mastf.MASTF.models import Team, Project, Bundle, Account
 
 
 logger = logging.getLogger(__name__)
+
 
 class _Method(OperationHolderMixin, BasePermission):
     """
@@ -82,20 +104,21 @@ class _Method(OperationHolderMixin, BasePermission):
         """
         return request.method in self.methods
 
+
 # Below, standard methods are instantiated to allow basic permission creation.
-Delete = _Method('DELETE')
-Post = _Method('POST')
-Patch = _Method('PATCH')
-Get = _Method('GET')
-Put = _Method('PUT')
+Delete = _Method("DELETE")
+Post = _Method("POST")
+Patch = _Method("PATCH")
+Get = _Method("GET")
+Put = _Method("PUT")
 
 
 class BoundPermission(OperationHolderMixin, BasePermission):
     """Class that implements an advanced permission structure for the Django Rest Framework.
 
-    ``BoundPermission`` objects are used within ``ManyToManySerializer`` classes and APIView
-    classes defined in the ``rest.views.base`` module of this project. They integrate this
-    utility class so that permissions will be automatically added or removed from a user.
+    ``BoundPermission`` objects are used within :class:`ManyToManySerializer` classes and
+    APIView classes defined in the ``rest.views.base`` module of this project. They integrate
+    this utility class so that permissions will be automatically added or removed from a user.
 
     For instance, the following code creates a simple ``APIView`` that assigns a permission
     named ``CanEditArticle`` to a user:
@@ -143,12 +166,21 @@ class BoundPermission(OperationHolderMixin, BasePermission):
     """A boolean flag indicating whether this permission is created at runtime. Defaults to False."""
 
     errors = {
-        'not-found': {'detail': "You don't have enough permissions to access this resource"}
+        "not-found": {
+            "detail": "You don't have enough permissions to access this resource"
+        }
     }
     """A dictionary containing error messages raised by the permission."""
 
-    def __init__(self, codename: str, name: str, model: type,
-                 runtime: bool = False, mapper=None, methods=None) -> None:
+    def __init__(
+        self,
+        codename: str,
+        name: str,
+        model: type,
+        runtime: bool = False,
+        mapper=None,
+        methods=None,
+    ) -> None:
         self.codename = codename
         self.model = model
         self.name = name
@@ -166,7 +198,7 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         return self
 
     def __contains__(self, x: str) -> bool:
-        for method in (self.methods or []):
+        for method in self.methods or []:
             if x in method.methods:
                 return True
         return False
@@ -200,9 +232,7 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         else:
             content_type = ContentType.objects.get_for_model(self.model)
             self._permission = Permission.objects.create(
-                codename=codename,
-                name=name,
-                content_type=content_type
+                codename=codename, name=name, content_type=content_type
             )
         return self._permission
 
@@ -223,7 +253,6 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         if not isinstance(obj, self.model) or request.method not in self:
             return False
 
-
         # Every admin should have access to all resources
         user: User = request.user
         if user.is_staff or user.is_superuser:
@@ -240,7 +269,7 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         if not permission:
             # We have to throw the error here as the original check won't
             # use the False as wrong validation result.
-            raise ValidationError(**self.errors['not-found'])
+            raise ValidationError(**self.errors["not-found"])
 
         return permission in request.user.user_permissions.all()
 
@@ -289,30 +318,73 @@ class BoundPermission(OperationHolderMixin, BasePermission):
 
         permission = self.get(instance)
         if permission is not None:
-            logger.debug(f"Removing permission '{permission.codename}' from {usr.username}")
+            logger.debug(
+                f"Removing permission '{permission.codename}' from {usr.username}"
+            )
             usr.user_permissions.remove(permission)
 
 
-CanEditTeam = BoundPermission("can_edit_team_%s", "Can modify team (%s)", Team, runtime=True, methods=[Patch, Put])
-CanViewTeam = BoundPermission("can_view_team_%s", "Can view team (%s)", Team, runtime=True, methods=[Get])
-CanDeleteTeam = BoundPermission("can_delete_team_%s", "Can delete team (%s)", Team, runtime=True, methods=[Delete])
+CanEditTeam = BoundPermission(
+    "can_edit_team_%s", "Can modify team (%s)", Team, runtime=True, methods=[Patch, Put]
+)
+CanViewTeam = BoundPermission(
+    "can_view_team_%s", "Can view team (%s)", Team, runtime=True, methods=[Get]
+)
+CanDeleteTeam = BoundPermission(
+    "can_delete_team_%s", "Can delete team (%s)", Team, runtime=True, methods=[Delete]
+)
 
 # We have to split up both permissions as projects can only be
 # removed by their owners or at least users that have a delete
 # permission.
-CanEditProject = BoundPermission("can_edit_project_%s", "Can modify project (%s)", Project, runtime=True, methods=[Get, Patch])
-CanDeleteProject = BoundPermission("can_delete_project_%s", "Can delete project (%s)", Project, runtime=True, methods=[Delete])
+CanEditProject = BoundPermission(
+    "can_edit_project_%s",
+    "Can modify project (%s)",
+    Project,
+    runtime=True,
+    methods=[Get, Patch],
+)
+CanDeleteProject = BoundPermission(
+    "can_delete_project_%s",
+    "Can delete project (%s)",
+    Project,
+    runtime=True,
+    methods=[Delete],
+)
 
 # The same applies to user permissions. Note that super-users and
 # admin users will gain permissions immediately.
-CanEditUser = BoundPermission("can_edit_user_%s", "Can modify user (%s)", User, runtime=True, methods=[Get, Patch])
-CanDeleteUser = BoundPermission("can_delete_user_%s", "Can delete user (%s)", User, runtime=True, methods=[Delete])
-CanCreateUser = BoundPermission("can_create_user", "Can create users", User, methods=[Post])
+CanEditUser = BoundPermission(
+    "can_edit_user_%s", "Can modify user (%s)", User, runtime=True, methods=[Get, Patch]
+)
+CanDeleteUser = BoundPermission(
+    "can_delete_user_%s", "Can delete user (%s)", User, runtime=True, methods=[Delete]
+)
+CanCreateUser = BoundPermission(
+    "can_create_user", "Can create users", User, methods=[Post]
+)
 
-CanViewAccount = BoundPermission("can_view_acc_%s", "Can view account (%s)", Account, runtime=True, methods=[Get])
-CanEditAccount = BoundPermission("can_edit_acc_%s", "Can modify account (%s)", Account, runtime=True, methods=[Patch])
+CanViewAccount = BoundPermission(
+    "can_view_acc_%s", "Can view account (%s)", Account, runtime=True, methods=[Get]
+)
+CanEditAccount = BoundPermission(
+    "can_edit_acc_%s", "Can modify account (%s)", Account, runtime=True, methods=[Patch]
+)
 
-CanEditBundle = BoundPermission("can_edit_bundle_%s", "Can edit bundle (%s)", Bundle, runtime=True, methods=[Patch, Delete])
-CanDeleteBundle = BoundPermission("can_delete_bundle_%s", "Can delete bundle (%s)", Bundle, runtime=True, methods=[Delete])
-CanViewBundle = BoundPermission("can_view_bundle_%s", "Can view bundle (%s)", Bundle, runtime=True, methods=[Get])
-
+CanEditBundle = BoundPermission(
+    "can_edit_bundle_%s",
+    "Can edit bundle (%s)",
+    Bundle,
+    runtime=True,
+    methods=[Patch, Delete],
+)
+CanDeleteBundle = BoundPermission(
+    "can_delete_bundle_%s",
+    "Can delete bundle (%s)",
+    Bundle,
+    runtime=True,
+    methods=[Delete],
+)
+CanViewBundle = BoundPermission(
+    "can_view_bundle_%s", "Can view bundle (%s)", Bundle, runtime=True, methods=[Get]
+)

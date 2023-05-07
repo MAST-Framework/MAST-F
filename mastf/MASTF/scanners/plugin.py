@@ -1,15 +1,30 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from abc import ABCMeta
 
 from mastf.MASTF.utils.enum import StringEnum
-from mastf.MASTF.models import (
-    Project, Scanner, Scan, File
-)
+from mastf.MASTF.models import Project, Scanner, Scan, File
 
 __scanners__ = {}
+
 
 def Plugin(clazz):
     clazz()
     return clazz
+
 
 class Extension(StringEnum):
     DETAILS = "details"
@@ -20,8 +35,8 @@ class Extension(StringEnum):
     COMPONENTS = "components"
     EXPLORER = "explorer"
 
-class ScannerPlugin(metaclass=ABCMeta):
 
+class ScannerPlugin(metaclass=ABCMeta):
     name = None
     """The name (slug) of this scanner type (should contain no whitespace characters)"""
 
@@ -44,7 +59,7 @@ class ScannerPlugin(metaclass=ABCMeta):
         if self.name in __scanners__:
             raise KeyError("Scanner already registered")
 
-        self._internal = self.name.lower().replace(' ', "-").replace('--', '-')
+        self._internal = self.name.lower().replace(" ", "-").replace("--", "-")
         __scanners__[self._internal] = self
 
     def context(self, extension: str, scan: Scan, file: File) -> dict:
@@ -96,9 +111,15 @@ class ScannerPlugin(metaclass=ABCMeta):
 # order to test the functionality of scanner pages.
 from mastf.MASTF.scanners.mixins import *
 
-TextScannerMixins = (DetailsMixin, VulnerabilitiesMixin,
-                     PermissionsMixin, FindingsMixins,
-                     HostsMixin, ComponentsMixin)
+TextScannerMixins = (
+    DetailsMixin,
+    VulnerabilitiesMixin,
+    PermissionsMixin,
+    FindingsMixins,
+    HostsMixin,
+    ComponentsMixin,
+)
+
 
 @Plugin
 class TestScanner(*TextScannerMixins, ScannerPlugin):
@@ -109,11 +130,9 @@ class TestScanner(*TextScannerMixins, ScannerPlugin):
         Extension.VULNERABILITIES,
         Extension.FINDINGS,
         Extension.EXPLORER,
-        Extension.COMPONENTS
+        Extension.COMPONENTS,
     ]
 
     name = "Test"
     help = "Basic testing"
     title = "Test Scanner Plugin"
-
-

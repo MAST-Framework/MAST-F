@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
 
 from django.db import models
@@ -7,12 +22,10 @@ from mastf.MASTF.utils.enum import Severity
 
 from .base import Project, File, Team
 
-__all__ = [
-    'Scan', 'Scanner', 'ScanTask', 'Details'
-]
+__all__ = ["Scan", "Scanner", "ScanTask", "Details"]
+
 
 class Scan(models.Model):
-
     scan_uuid = models.CharField(primary_key=True, max_length=256)
     """Stores the identifier for this scan."""
 
@@ -52,7 +65,9 @@ class Scan(models.Model):
     status = models.CharField(null=True, max_length=256)
     """Stores information about the current scan's status"""
 
-    risk_level = models.CharField(default=Severity.NONE, choices=Severity.choices, max_length=256)
+    risk_level = models.CharField(
+        default=Severity.NONE, choices=Severity.choices, max_length=256
+    )
     """Stores the classification (LOW, MEDIUM, HIGH)"""
 
     initiator = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,7 +90,7 @@ class Scan(models.Model):
         :return: the last scan instance or None
         :rtype: Scan
         """
-        scans = Scan.objects.order_by('start_date')
+        scans = Scan.objects.order_by("start_date")
         if project:
             scans = scans.filter(project=project)
 
@@ -83,13 +98,14 @@ class Scan(models.Model):
             scans = scans.filter(initiator=initiator)
 
         if not project and not initiator:
-            scans = [] # !important: we don't want users to access unknown scans
+            scans = []  # !important: we don't want users to access unknown scans
 
         return scans[0] if len(scans) > 0 else None
 
     @staticmethod
-    def files(project: Project = None, initiator: User = None,
-              team: Team = None) -> list:
+    def files(
+        project: Project = None, initiator: User = None, team: Team = None
+    ) -> list:
         """Returns a list of files that have been saved by a given user or within the provided project.
 
         :param project: the project, defaults to None
@@ -110,7 +126,7 @@ class Scan(models.Model):
             scans = scans.filter(project__team=team)
 
         if not project and not team and not initiator:
-            return [] # !important: we don't want users to access unknown files
+            return []  # !important: we don't want users to access unknown files
 
         return [x.file for x in scans]
 
@@ -133,15 +149,16 @@ class Scanner(models.Model):
         :return: a list of selected scanners (only names)
         :rtype: list
         """
-        queryset = (Scanner.objects.filter(scan__project=project)
-            .values('name')
-            .annotate(scount=models.Sum('name'))
+        queryset = (
+            Scanner.objects.filter(scan__project=project)
+            .values("name")
+            .annotate(scount=models.Sum("name"))
         )
         return [getattr(x, "name") for x in queryset]
 
 
 class ScanTask(models.Model):
-    task_uuid = models.UUIDField(max_length=32 ,primary_key=True, null=False)
+    task_uuid = models.UUIDField(max_length=32, primary_key=True, null=False)
     scan = models.ForeignKey(Scan, models.CASCADE)
     scanner = models.ForeignKey(Scanner, models.CASCADE, null=True)
 

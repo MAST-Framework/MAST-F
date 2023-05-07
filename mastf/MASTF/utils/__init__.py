@@ -13,15 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import os
-
-from whitenoise import WhiteNoise
-from django.core.wsgi import get_wsgi_application
-
-from mastf.MASTF import settings
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mastf.MASTF.settings')
-
-static = os.path.join(settings.BASE_DIR, 'static')
-application = WhiteNoise(get_wsgi_application(),
-                         root=static, prefix='static/')
+__doc__ = """
+The 'utils' module is a collection of utility sub-modules that provide a
+variety of useful functions and classes for common tasks in development.
+"""

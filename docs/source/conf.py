@@ -12,8 +12,8 @@ project = 'MAST-Framework'
 copyright = '2023, MatrixEditor, Janbehere1'
 author = 'MatrixEditor, Janbehere1'
 
-version = '1.0'
-release = '1.0.0-alpha'
+version = '0.1'
+release = '0.0.1-alpha'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -22,6 +22,13 @@ release = '1.0.0-alpha'
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../..'))
+
+# Specify settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mastf.MASTF.settings')
+
+# Setup Django
+import django
+django.setup()
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -41,6 +48,7 @@ source_suffix = '.rst'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build', 'README.rst']
+mock_imports = ['django']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

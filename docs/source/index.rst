@@ -11,6 +11,38 @@ Welcome to MAST-Framework's documentation!
    :caption: Contents:
 
 
+.. toctree::
+   :maxdepth: 3
+   :caption: API Documentation
+   :hidden:
+   :numbered:
+
+   api/forms
+   api/serializers
+   api/permissions
+   api/converters
+   api/middleware
+   api/mixins
+   api/utils/index
+
+.. toctree::
+   :maxdepth: 3
+   :caption: REST API Documentation
+   :hidden:
+   :numbered:
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Web Components
+   :hidden:
+   :numbered:
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Troubleshooting
+   :hidden:
+   :numbered:
+
 
 Indices and tables
 ==================

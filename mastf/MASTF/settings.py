@@ -15,6 +15,9 @@ from os import environ as env
 
 #TODO: cleanup
 logger = logging.getLogger(__name__)
+
+SPHINX_BUILD = 'SPHINXBUILD' in env
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 DETAILS_DIR = BASE_DIR / "json" / "templates"
@@ -28,10 +31,11 @@ try:
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = env["DJANGO_SECRET_KEY"]
 except KeyError as err:
-    raise RuntimeError(
-        "Could not start due to invalid project settings: Please specify a"
-        "secret key in your environment file."
-    )
+    if not SPHINX_BUILD:
+        raise RuntimeError(
+            "Could not start due to invalid project settings: Please specify a "
+            "secret key in your environment file."
+        )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(env.get("DJANGO_DEBUG", default=0))
@@ -202,60 +206,60 @@ PROJECTS_TABLE_COLUMNS = [
 ]
 
 # -!- END USER-CONFIG -!-
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": True,
-    "formatters": {
-        "standard": {
-            "format": "[%(levelname)s] %(asctime)-15s - %(message)s",
-            "datefmt": "%d/%b/%Y %H:%M:%S",
-        },
-        "color": {
-            "()": "colorlog.ColoredFormatter",
-            "format": "%(log_color)s[%(levelname)s] %(asctime)-15s - %(message)s",
-            "datefmt": "%d/%b/%Y %H:%M:%S",
-            "log_colors": {
-                "DEBUG": "cyan",
-                "INFO": "green",
-                "WARNING": "yellow",
-                "ERROR": "red",
-                "CRITICAL": "red,bg_white",
+if not SPHINX_BUILD:
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": True,
+        "formatters": {
+            "standard": {
+                "format": "[%(levelname)s] %(asctime)-15s - %(message)s",
+                "datefmt": "%d/%b/%Y %H:%M:%S",
+            },
+            "color": {
+                "()": "colorlog.ColoredFormatter",
+                "format": "%(log_color)s[%(levelname)s] %(asctime)-15s - %(message)s",
+                "datefmt": "%d/%b/%Y %H:%M:%S",
+                "log_colors": {
+                    "DEBUG": "cyan",
+                    "INFO": "green",
+                    "WARNING": "yellow",
+                    "ERROR": "red",
+                    "CRITICAL": "red,bg_white",
+                },
             },
         },
-    },
-    "handlers": {
-        "logfile": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, "debug.log"),
-            "formatter": "standard",
+        "handlers": {
+            "logfile": {
+                "level": "DEBUG",
+                "class": "logging.FileHandler",
+                "filename": os.path.join(BASE_DIR, "debug.log"),
+                "formatter": "standard",
+            },
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "formatter": "color",
+            },
         },
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "color",
+        "loggers": {
+            "django": {
+                "handlers": ["console", "logfile"],
+                "level": "INFO",
+                "propagate": True,
+            },
+            "django.db.backends": {
+                "handlers": ["console", "logfile"],
+                # DEBUG will log all queries, so change it to WARNING.
+                "level": "INFO",
+                "propagate": False,  # Don't propagate to other handlers
+            },
+            "mastf.MASTF": {
+                "handlers": ["console", "logfile"],
+                "level": "DEBUG",
+                "propagate": False,
+            },
         },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "logfile"],
-            "level": "INFO",
-            "propagate": True,
-        },
-        "django.db.backends": {
-            "handlers": ["console", "logfile"],
-            # DEBUG will log all queries, so change it to WARNING.
-            "level": "INFO",
-            "propagate": False,  # Don't propagate to other handlers
-        },
-        "mastf.MASTF": {
-            "handlers": ["console", "logfile"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-    },
-}
+    }
 
 ###############################################################################
 # Articles

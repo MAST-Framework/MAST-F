@@ -6,7 +6,6 @@ from uuid import uuid4
 from django.shortcuts import get_object_or_404
 from django.db.models import QuerySet, Q
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.db.models.fields.related import ManyToManyDescriptor
 
 from rest_framework.views import APIView
@@ -16,7 +15,7 @@ from rest_framework.request import Request
 from rest_framework import authentication, status, permissions
 from rest_framework.pagination import PageNumberPagination
 
-from mastf.MASTF.utils.datatable import DataTableRequest
+from mastf.MASTF.utils.datatable import DataTableRequest, apply
 
 logger = logging.getLogger(__name__)
 
@@ -224,34 +223,7 @@ class ListAPIViewBase(ListAPIView):
 
     def paginate_queryset(self, queryset: QuerySet):
         request = DataTableRequest(self.request)
-
-        model = queryset.model
-        query: Q = None
-        for column in request.columns:
-            if not hasattr(model, column['name']):
-                logger.debug(f'Skipped column definition: {column["name"]}')
-                continue
-
-            next_query = Q(**column["params"])
-            if not query:
-                query = next_query
-            else:
-                query = next_query | query
-
-        queryset = queryset.filter(query) if query else queryset
-        order_column = request.order_column
-        if order_column != -1:
-            order_column = request.columns[order_column]["name"]
-            if not hasattr(queryset.model, order_column):
-                logger.debug(f"Switching non-existend order-column '{order_column}' to 'pk'")
-                order_column = 'pk'
-
-            if str(request.order_direction).lower() == 'desc':
-                order_column = f"-{order_column}"
-
-            queryset = queryset.order_by(order_column)
-        else:
-            queryset = queryset.order_by("pk")
+        queryset = apply(request, queryset)
 
         return super().paginate_queryset(queryset)
 

@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django import template
 from datetime import date
 from time import mktime
@@ -8,7 +23,8 @@ from mastf.MASTF.utils.enum import ComponentCategory
 
 register = template.Library()
 
-@register.filter(name='split')
+
+@register.filter(name="split")
 def split(value: str, key: str) -> list:
     """
     Returns the value turned into a list.
@@ -16,27 +32,29 @@ def split(value: str, key: str) -> list:
     return value.split(key) if value else []
 
 
-@register.filter(name='vuln_stats')
+@register.filter(name="vuln_stats")
 def vuln_stats(value):
     mixin = VulnContextMixin()
     data = {}
 
-    mixin.apply_vuln_context(data, AbstractBaseFinding.stats(PackageVulnerability, base=value))
+    mixin.apply_vuln_context(
+        data, AbstractBaseFinding.stats(PackageVulnerability, base=value)
+    )
     return data
 
 
-@register.filter(name='component_color')
+@register.filter(name="component_color")
 def component_color(category) -> str:
     if category == ComponentCategory.ACTIVITY:
-        return 'green'
+        return "green"
     elif category == ComponentCategory.PROVIDER:
-        return 'red'
+        return "red"
     elif category == ComponentCategory.SERVICE:
-        return 'yellow'
+        return "yellow"
     elif category == ComponentCategory.RECEIVER:
-        return 'orange'
+        return "orange"
 
-    return 'secondary'
+    return "secondary"
 
 
 @register.filter(name="timestamp")

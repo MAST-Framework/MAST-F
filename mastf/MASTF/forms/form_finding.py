@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor, Janbehere1
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django import forms
 
 from mastf.MASTF.models import Scan, FindingTemplate, Scanner, Component
@@ -7,20 +22,15 @@ from mastf.MASTF.rest.permissions import CanEditScanAsField
 from .base import ModelField
 
 __all__ = [
-    'FindingTemplateForm', 'AbstractFindingForm', 'FindingForm',
-    'VulnerabilityForm', 'ComponentForm'
+    "FindingTemplateForm",
+    "AbstractFindingForm",
+    "FindingForm",
+    "VulnerabilityForm",
+    "ComponentForm",
 ]
 
+
 class FindingTemplateForm(forms.Form):
-    """Form used to validate update requests of finding templates.
-
-    Note that this form is also used when creating new instances
-    of finding templates and registering them in the database.
-
-    All attributes must be declared as not required to enable performing
-    single attribute updates.
-    """
-
     title = forms.CharField(max_length=256, required=False)
     severity = forms.CharField(max_length=256, required=False)
     # The next two fields won't get a length maximum
@@ -48,6 +58,7 @@ class FindingForm(AbstractFindingForm):
 
 class VulnerabilityForm(AbstractFindingForm):
     state = forms.CharField(max_length=256, required=True)
+
 
 class ComponentForm(forms.Form):
     scanner = ModelField(Scanner, required=True)
