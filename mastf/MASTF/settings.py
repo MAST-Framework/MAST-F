@@ -13,10 +13,8 @@ import logging
 from pathlib import Path
 from os import environ as env
 
-#TODO: cleanup
+# TODO: cleanup
 logger = logging.getLogger(__name__)
-
-SPHINX_BUILD = 'SPHINXBUILD' in env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,24 +25,28 @@ MASTF_PROJECTS_DIR = BASE_DIR / "projects"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = int(env.get("DJANGO_DEBUG", default=1))
+
 try:
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = env["DJANGO_SECRET_KEY"]
 except KeyError as err:
-    if not SPHINX_BUILD:
+    if DEBUG:
+        SECRET_KEY = "django-insecure-vgh0!k)t1(4$5gb+f*g#$&lqwx6k%dp+d!x8v%jh1ct9%y=q+a"
+    else:
         raise RuntimeError(
             "Could not start due to invalid project settings: Please specify a "
             "secret key in your environment file."
         )
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(env.get("DJANGO_DEBUG", default=0))
 
-ALLOWED_HOSTS = env.get("DJANGO_ALLOWED_HOSTS", "").split(":")
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = int(env.get(
-    "DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE", 1
-))
+ALLOWED_HOSTS = env.get("DJANGO_ALLOWED_HOSTS", "*").split(":")
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = int(
+    env.get("DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE", 1)
+)
 SESSION_COOKIE_AGE = int(env.get("DJANGO_SESSION_COOKIE_AGE", 3600))  # 1h
 # Application definition
 
@@ -106,10 +108,17 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 WSGI_APPLICATION = "mastf.MASTF.wsgi.application"
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# HTTPS
+if str(env.get("DJANGO_HTTPS", False)).lower() == str(True).lower():
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    CSRF_TRUSTED_ORIGINS = env.get("DJANGO_CSRF_TRUSTED_ORIGINS", default="").split("|")
 
-CSRF_TRUSTED_ORIGINS = []
-CSRF_TRUSTED_ORIGINS.extend(env.get("CSRF_TRUSTED_ORIGINS", default="").split("|"))
+    if len(CSRF_TRUSTED_ORIGINS) == 0:
+        raise RuntimeError(
+            "Invalid HTTPS configuration: Make sure you set up CSRF trusted "
+            "origins as your instance won't be able to validate CSRF tokens "
+            "without this configuration."
+        )
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -149,16 +158,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
 
 FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.TemporaryFileUploadHandler"]
 
-
+# Celery
 CELERY_RESULT_BACKEND = env.get("CELERY_RESULT_BACKEND", "django-db")
 CELERY_BROKER_URL = env.get("CELERY_BROKER_URL", "pyamqp://")
 
@@ -192,6 +198,7 @@ D2J_TOOLSET = os.getenv("TOOLS_BAKSMALI", "d2j-")
 
 APKTOOL = os.getenv("TOOLS_APKTOOL", "apktool")
 
+# TODO:(remove)
 PROJECTS_TABLE_COLUMNS = [
     "ID",  # the project's ID won't be visible directly
     "Project Name",
@@ -206,60 +213,58 @@ PROJECTS_TABLE_COLUMNS = [
 ]
 
 # -!- END USER-CONFIG -!-
-if not SPHINX_BUILD:
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": True,
-        "formatters": {
-            "standard": {
-                "format": "[%(levelname)s] %(asctime)-15s - %(message)s",
-                "datefmt": "%d/%b/%Y %H:%M:%S",
-            },
-            "color": {
-                "()": "colorlog.ColoredFormatter",
-                "format": "%(log_color)s[%(levelname)s] %(asctime)-15s - %(message)s",
-                "datefmt": "%d/%b/%Y %H:%M:%S",
-                "log_colors": {
-                    "DEBUG": "cyan",
-                    "INFO": "green",
-                    "WARNING": "yellow",
-                    "ERROR": "red",
-                    "CRITICAL": "red,bg_white",
-                },
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "standard": {
+            "format": "[%(levelname)s] %(asctime)-15s - %(message)s",
+            "datefmt": "%d/%b/%Y %H:%M:%S",
+        },
+        "color": {
+            "()": "colorlog.ColoredFormatter",
+            "format": "%(log_color)s[%(levelname)s] %(asctime)-15s - %(message)s",
+            "datefmt": "%d/%b/%Y %H:%M:%S",
+            "log_colors": {
+                "DEBUG": "cyan",
+                "INFO": "green",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "red,bg_white",
             },
         },
-        "handlers": {
-            "logfile": {
-                "level": "DEBUG",
-                "class": "logging.FileHandler",
-                "filename": os.path.join(BASE_DIR, "debug.log"),
-                "formatter": "standard",
-            },
-            "console": {
-                "level": "DEBUG",
-                "class": "logging.StreamHandler",
-                "formatter": "color",
-            },
+    },
+    "handlers": {
+        "logfile": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "debug.log"),
+            "formatter": "standard",
         },
-        "loggers": {
-            "django": {
-                "handlers": ["console", "logfile"],
-                "level": "INFO",
-                "propagate": True,
-            },
-            "django.db.backends": {
-                "handlers": ["console", "logfile"],
-                # DEBUG will log all queries, so change it to WARNING.
-                "level": "INFO",
-                "propagate": False,  # Don't propagate to other handlers
-            },
-            "mastf.MASTF": {
-                "handlers": ["console", "logfile"],
-                "level": "DEBUG",
-                "propagate": False,
-            },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "color",
         },
-    }
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "logfile"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "django.db.backends": {
+            "handlers": ["console", "logfile"],
+            "level": "INFO",
+            "propagate": False,  # Don't propagate to other handlers
+        },
+        "mastf.MASTF": {
+            "handlers": ["console", "logfile"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}
 
 ###############################################################################
 # Articles

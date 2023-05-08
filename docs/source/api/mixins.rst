@@ -1,8 +1,8 @@
 .. _api_mixins:
 
-******
-Mixins
-******
+**********
+Web Mixins
+**********
 
 .. automodule:: mastf.MASTF.mixins
 

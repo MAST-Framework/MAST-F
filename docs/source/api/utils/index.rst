@@ -13,4 +13,5 @@ This module includes the following sub-modules:
 
    datatables
    enum
+   filetree
 

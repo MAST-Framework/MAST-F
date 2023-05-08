@@ -20,8 +20,7 @@ from django.core.wsgi import get_wsgi_application
 
 from mastf.MASTF import settings
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mastf.MASTF.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mastf.MASTF.settings")
 
-static = os.path.join(settings.BASE_DIR, 'static')
-application = WhiteNoise(get_wsgi_application(),
-                         root=static, prefix='static/')
+static = os.path.join(settings.BASE_DIR, "static")
+application = WhiteNoise(get_wsgi_application(), root=static, prefix="static/")

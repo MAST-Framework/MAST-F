@@ -10,12 +10,26 @@ Welcome to MAST-Framework's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. toctree::
+   :maxdepth: 3
+   :caption: Getting Started
+   :hidden:
+
+   intro/docker_setup
+   intro/dev_setup
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Reference
+   :hidden:
+
+   ref/guide
+   ref/models
 
 .. toctree::
    :maxdepth: 3
    :caption: API Documentation
    :hidden:
-   :numbered:
 
    api/forms
    api/serializers

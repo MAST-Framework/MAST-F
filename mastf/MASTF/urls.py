@@ -22,18 +22,20 @@ for name, clazz in converters.listconverters().items():
     register_converter(clazz, name)
 
 urlpatterns = [
-    path('api/v1/', include('mastf.MASTF.rest.urls')),
+    path("api/v1/", include("mastf.MASTF.rest.urls")),
 ]
 
 if settings.DEBUG:
-    urlpatterns.extend([
-        path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-    ])
+    urlpatterns.extend(
+        [path("api-auth/", include("rest_framework.urls", namespace="rest_framework"))]
+    )
 
 if not settings.API_ONLY:
     from mastf.MASTF.web import views
 
-    urlpatterns.extend([
-        path("web/", include('mastf.MASTF.web.urls')),
-        path("", views.DashboardView.as_view())
-    ])
+    urlpatterns.extend(
+        [
+            path("web/", include("mastf.MASTF.web.urls")),
+            path("", views.DashboardView.as_view()),
+        ]
+    )

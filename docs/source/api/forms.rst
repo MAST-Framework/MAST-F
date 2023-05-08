@@ -1,8 +1,8 @@
 .. _api_forms:
 
-*****
-Forms
-*****
+**************
+Enhanced Forms
+**************
 
 .. automodule:: mastf.MASTF.forms
 
@@ -25,7 +25,7 @@ In this example, we create a new form class called ``SampleForm`` that inherits
 from ``forms.Form``. we define a :class:`ModelField` that will use an incoming integer
 value as the primary key search value.
 
-.. info:: Developer Information
+.. note:: Developer Information
     Values of :class:`ModelField` and :class:`ManyToManyField` fields should be transmitted
     as string values as these fields expect a string as input. You can define a *mapper*
     function to convert an input string into your preferred primary key value.

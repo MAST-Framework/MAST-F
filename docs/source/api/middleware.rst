@@ -1,4 +1,4 @@
-.. _api_serializers:
+.. _api_middleware:
 
 **********
 Middleware

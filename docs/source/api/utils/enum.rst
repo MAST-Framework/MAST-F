@@ -40,3 +40,16 @@ Dependency-Related Classes
 
 .. autoclass:: mastf.MASTF.utils.enum.Relation
     :members:
+
+------------------
+Other Enum Classes
+------------------
+
+.. autoclass:: mastf.MASTF.utils.enum.HostType
+    :members:
+
+.. autoclass:: mastf.MASTF.utils.enum.DataProtectionLevel
+    :members:
+
+.. autoclass:: mastf.MASTF.utils.enum.ProtectionLevel
+    :members:

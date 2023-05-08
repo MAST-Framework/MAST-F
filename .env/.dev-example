@@ -25,6 +25,9 @@ DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE=1
 # Control the TTL of a session cookie default will be 3600s = 1h
 DJANGO_SESSION_COOKIE_AGE=3600
 
+# Control whether you want to start your instance with HTTPS
+DJANGO_HTTPS=True
+
 # -- Database-Configuration --------------------------------------------------
 # Configure database connection variables. Note that you can remove the
 # following lines to use a local SQLite database.

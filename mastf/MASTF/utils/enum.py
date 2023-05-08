@@ -376,50 +376,144 @@ class Relation(StringEnum):
 
 
 class HostType(StringEnum):
+    """Intended to be used to categorize the type of connection an app has made."""
+
     INVALID = "Invalid"
+    """Represents an invalid or erroneous connection."""
+
     TRACKER = "Tracker"
+    """Represents a connection made to a tracking service."""
+
     MALWARE = "Malware"
+    """Represents a connection made to a known malware domain."""
+
     OK = "Ok"
+    """Represents a connection made to a safe and trusted domain."""
+
     NOT_SET = "Not Set"
+    """
+    Represents a connection for which the type has not been set or cannot
+    be determined.
+    """
 
 
 class DataProtectionLevel(StringEnum):
+    """
+    Represents the different levels of data protection that can be applied to
+    transmitted data.
+    """
+
     PRIVATE = "Private"
+    """Represents data that is intended to be kept private and confidential."""
+
     PUBLIC = "Public"
+    """Represents data that can be freely shared with others."""
 
 
 class ProtectionLevel(StringEnum):
+    """
+    The ProtectionLevel class represents different permission protection levels
+    that are used in the Android permission system to protect user privacy and
+    security. (`Android Protection Levels`_)
+
+    .. _android protection levels: https://developer.android.com/reference/android/R.attr#protectionLevel
+    """
+
     APP_PREDICTOR = "AppPredictor"
+    """Used for permissions that are granted to app prediction services."""
+
     APPOP = "Appop"
+    """Used for permissions that are granted to AppOps services."""
+
     COMPANION = "Companion"
+    """Used for permissions that are granted to companion devices."""
+
     CONFIGURATOR = "Configurator"
+    """Used for permissions that are granted to app configurator services."""
+
     DANGEROUS = "Dangerous"
+    """Used for dangerous permissions that have to be approved by a user."""
+
     DEVELOPMENT = "Development"
+    """Used for permissions that are granted to development tools and features."""
+
     INCIDENTREPORTAPPROVER = "IncidentReportApprover"
+    """Used for permissions that are granted to incident report approver services."""
+
     INSTALLER = "Installer"
+    """Used for permissions that are granted to app installer services."""
+
     INSTANT = "Instant"
+    """Used for permissions that are granted to instant apps."""
+
     INTERNAL = "Internal"
+    """Used for permissions that are granted to internal system components and apps."""
+
     KNOWNSIGNER = "KnownSigner"
+    """Used for permissions that are granted to apps signed with a known signature."""
+
     MODULE = "Module"
+    """Used for permissions that are granted to dynamic feature modules."""
+
     NORMAL = "Normal"
+    """Used for normal permissions that don't pose a significant risk to user privacy and security."""
+
     OEM = "OEM"
+    """Used for permissions that are granted to OEM-specific apps and features."""
+
     PRE23 = "Pre23"
+    """Used for permissions that were introduced in Android 6.0 (API level 23) or earlier."""
+
     PREINSTALLED = "Preinstalled"
+    """Used for permissions that are granted to preinstalled system apps."""
+
     PRIVILEGED = "Privileged"
+    """Used for permissions that are granted to privileged system apps."""
+
     RECENTS = "Recents"
+    """Used for permissions that are granted to the recents screen."""
+
     RETAILDEMO = "RetailDemo"
+    """Used for permissions that are granted to retail demo apps."""
+
     ROLE = "Role"
+    """Used for permissions that are granted to app roles."""
+
     RUNTIME = "Runtime"
+    """Used for permissions that are granted at runtime."""
+
     SETUP = "Setup"
+    """Used for permissions that are granted to setup services."""
+
     SIGNATURE = "Signature"
+    """
+    A permission that the system is to grant only if the requesting application
+    is signed with the same certificate as the application that declared the
+    permission.
+    """
+
     SIGNATUREORSYSTEM = "SignatureOrSystem"
+    """Old synonym for ``signature|privileged``. Deprecated in API level 23."""
+
     SYSTEM = "System"
+    """Used for permissions that are granted to system components."""
+
     TEXTCLASSIFIER = "TextClassifier"
+    """Used for permissions that are granted to text classification services."""
+
     VENDORPRIVILEGED = "VendorPrivileged"
+    """Used for permissions that are granted to vendor-specific apps and features."""
+
     VERIFIER = "Verifier"
+    """Used for permissions that are granted to package verifier services."""
 
     @staticmethod
     def colors() -> dict:
+        """Returns protection levels categorized into three groups.
+
+        :return: categorized protection level groups.
+        :rtype: dict
+        """
         return {
             "green": (
                 ProtectionLevel.SIGNATURE,

@@ -1,9 +1,9 @@
 .. _api_permissions:
 
 
-***********
-Permissions
-***********
+*****************
+Permission System
+*****************
 
 .. automodule:: mastf.MASTF.permissions
 

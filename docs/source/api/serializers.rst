@@ -1,8 +1,8 @@
 .. _api_serializers:
 
-***********
-Serializers
-***********
+*********************
+Serializer Extensions
+*********************
 
 .. automodule:: mastf.MASTF.serializers
 

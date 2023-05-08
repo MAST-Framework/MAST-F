@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
+import logging
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -24,6 +25,7 @@ from .base import Project, File, Team
 
 __all__ = ["Scan", "Scanner", "ScanTask", "Details"]
 
+logger = logging.getLogger(__name__)
 
 class Scan(models.Model):
     scan_uuid = models.CharField(primary_key=True, max_length=256)
@@ -149,12 +151,9 @@ class Scanner(models.Model):
         :return: a list of selected scanners (only names)
         :rtype: list
         """
-        queryset = (
-            Scanner.objects.filter(scan__project=project)
-            .values("name")
-            .annotate(scount=models.Sum("name"))
-        )
-        return [getattr(x, "name") for x in queryset]
+        return list(set([
+            x.name for x in Scanner.objects.filter(scan__project=project)
+        ]))
 
 
 class ScanTask(models.Model):

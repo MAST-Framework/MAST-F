@@ -5,6 +5,7 @@ __pycache__/
 *.uxf
 generator.py
 .vscode/
+run.bat
 
 
 # uploaded files
