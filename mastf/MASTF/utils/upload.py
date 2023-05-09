@@ -3,12 +3,14 @@ import os
 import hashlib
 import logging
 
+from django.core.files.storage import FileSystemStorage
 from django.core.files.uploadedfile import TemporaryUploadedFile
 
 from mastf.MASTF import settings
 from mastf.MASTF.models import Project, File
 
 logger = logging.getLogger(__name__)
+storage = FileSystemStorage()
 
 def checksum_from_path(file_path: str) -> tuple:
     if not os.path.exists(file_path):
@@ -37,8 +39,8 @@ def get_file_cheksum(fp) -> tuple:
 def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project):
     internal_name = hashlib.md5(file.name.encode()).hexdigest()
 
-    suffix = file.name.split('.')[-1]
-    path = settings.PROJECTS_ROOT / str(project.project_uuid) / f"{internal_name}.{suffix}"
+    suffix = f".{file.name.split('.')[-1]}" if '.' in file.name else ""
+    path = (settings.PROJECTS_ROOT / str(project.project_uuid)) / f"{internal_name}{suffix}"
     if path.exists():
         logger.info('Uploaded file destination already exists!')
         return File.objects.get(file_path=str(path))

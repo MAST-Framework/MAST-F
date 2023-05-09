@@ -57,7 +57,7 @@ class StringEnum(Enum):
     ``>=``) with StringEnum members, but they will be compared based on their order of
     definition in the class, not their string values.
 
-    .. hint:: Additional attribute
+    .. hint::
         You can use the class attribute ``choices`` within definitions of Django database
         models to restrict the amount of accepted values. Note also, that the static field
         won't be added if you place your enum in other files than ``/mastf/MASTF/utils/enum.py``.

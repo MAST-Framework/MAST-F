@@ -64,7 +64,7 @@ class ScanView(APIViewBase):
 
 
 class ScanCreationMixin:
-    def set_defaults(self, request, data: dict) -> None:
+    def apply_defaults(self, request, data: dict) -> None:
         if not data.get("project", None) and not data.get("projects", None):
             raise exceptions.ValidationError("Project must not be null")
 
@@ -117,9 +117,10 @@ class ScanCreationView(ScanCreationMixin, CreationAPIViewBase):
 
     def set_defaults(self, request, data: dict) -> None:
         data.pop("projects")
-        super().set_defaults(request, data)
+        self.apply_defaults(request, data)
 
     def on_create(self, request: Request, instance: Scan) -> None:
+        instance.save()
         tasks.schedule_scan(
             instance, request.POST['File'],
             request.POST['selected_scanners']
@@ -137,9 +138,10 @@ class MultipleScanCreationView(ScanCreationMixin, CreationAPIViewBase):
 
         for project in projects:
             data['project'] = project
+            self.apply_defaults(self.request, data)
             instance = super().create(data)
             tasks.schedule_scan(
-                instance, self.request.POST['File'],
+                str(instance.pk), str(self.request.POST['File'].pk),
                 self.request.POST['selected_scanners']
             )
 

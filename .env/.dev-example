@@ -28,6 +28,11 @@ DJANGO_SESSION_COOKIE_AGE=3600
 # Control whether you want to start your instance with HTTPS
 DJANGO_HTTPS=True
 
+DJANGO_STORAGE_URL="/app_storage/"
+DJANGO_STORAGE_ROOT="/app_storage"
+
+DJANGO_PORT=8000
+
 # -- Database-Configuration --------------------------------------------------
 # Configure database connection variables. Note that you can remove the
 # following lines to use a local SQLite database.
@@ -49,3 +54,8 @@ CELERY_DEBUG_LEVEL=DEBUG
 
 # -- MASTF-Configuration ----------------------------------------------------
 MASTF_API_ONLY=0
+
+
+# -- Nginx-Configuration ----------------------------------------------------
+NGINX_HTTP_PORT=8080
+NGINX_HTTPS_PORT=8443

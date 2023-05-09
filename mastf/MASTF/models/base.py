@@ -194,7 +194,7 @@ class Project(models.Model):
         :return: the directory as ``Path`` object.
         :rtype: pathlib.Path
         """
-        return settings.MASTF_PROJECTS_DIR / str(self.project_uuid)
+        return settings.PROJECTS_ROOT / str(self.project_uuid)
 
     def dir(self, path: str, create: bool = True) -> pathlib.Path:
         """Returns the directory at the specified location.

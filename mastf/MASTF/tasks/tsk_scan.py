@@ -13,7 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import logging
 import uuid
 import zipfile
 
@@ -21,13 +20,14 @@ from datetime import datetime
 
 from celery import shared_task, group, states
 from celery.result import AsyncResult, GroupResult
+from celery.utils.log import get_task_logger
 
 from mastf.android.tools import apktool, baksmali
 from mastf.MASTF import settings
 from mastf.MASTF.models import Scan, ScanTask, Scanner, File, Details
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
 
 __all__ = [
     "schedule_scan",
@@ -37,14 +37,7 @@ __all__ = [
 
 
 def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
-    """Schedules the given scan.
-
-    :param scan: the scan to be started
-    :type scan: Scan
-    :param file: the target file
-    :type file: File
-    """
-
+    """Schedules the given scan."""
     # First, create the scan details and save the scan file
     Details(scan=scan, file=uploaded_file).save()
     scan.file = uploaded_file
@@ -58,20 +51,21 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     if scan.start_date.date() == datetime.today().date():
         scan.status = "Active"
         scan.save()
-        # The scan will be started whenever the right day
-        # is reached
+        # The scan will be started whenever the right day is reached
         task_uuid = uuid.uuid4()
         global_task = ScanTask(task_uuid=task_uuid, scan=scan)
         # The task must be saved before the preparation is executed
         global_task.save()
+        logger.info("Started global scan task on %s", scan.pk)
 
-        result: AsyncResult = prepare_scan.delay(str(scan.scan_uuid), names)
+        result: AsyncResult = prepare_scan.delay(str(scan.pk), names)
         global_task.celery_id = result.id
         global_task.save()
 
 
 @shared_task(bind=True)
 def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
+    logger.info("Scan Peparation: Setting up directories of scan %s", scan_uuid)
     scan = Scan.objects.get(scan_uuid=scan_uuid)
     self.update_state(
         state="PROGRESS", meta={"current": 10, "detail": "Directory setup..."}
@@ -90,7 +84,10 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     self.update_state(
         state="PROGRESS", meta={"current": 30, "detail": "Extracting files"}
     )
+    # TODO: add MIME type handlers (apk, ipa, aar, jar, dex); if no extension is given,
+    # a default handler based on the scan type should be used.
     if scan.scan_type.lower() == "android":
+        logger.info("Scan Peparation: Extracting files for scan %s", scan.pk)
         apktool.extractrsc(
             str(file_dir / scan.file.internal_name), str(contents), settings.APKTOOL
         )

@@ -24,7 +24,7 @@ Welcome to MAST-Framework's documentation!
    :hidden:
 
    ref/guide
-   ref/models
+   ref/models/index
 
 .. toctree::
    :maxdepth: 3

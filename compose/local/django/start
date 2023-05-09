@@ -10,4 +10,4 @@ echo "[DJANGO] Running migrations..."
 python /app/manage.py migrate
 # TODO: maybe run gunicorn
 echo "[DJANGO] Starting server"
-gunicorn mastf.MASTF.wsgi:application --bind 0.0.0.0:8000 --workers 4 --threads 4
+gunicorn mastf.MASTF.wsgi:application --bind 0.0.0.0:$DJANGO_PORT --workers 4 --threads 4

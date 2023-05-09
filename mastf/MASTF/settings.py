@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent.parent
 DETAILS_DIR = BASE_DIR / "json" / "templates"
 
-MASTF_PROJECTS_DIR = BASE_DIR / "projects"
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -40,7 +38,24 @@ except KeyError as err:
             "secret key in your environment file."
         )
 
+MEDIA_ROOT = env.get("DJANGO_STORAGE_ROOT", "")
+MEDIA_URL = env.get("DJANGO_STORAGE_URL", "")
+if not MEDIA_ROOT:
+    if DEBUG:
+        MEDIA_ROOT = str(BASE_DIR / 'projects')
+    else:
+        raise RuntimeError(
+            "Could not find a valid MEDIA_ROOT setting. Use a shared "
+            "storage to launch multiple web instances."
+        )
 
+if not MEDIA_URL:
+    if DEBUG:
+        MEDIA_URL = str(BASE_DIR / 'projects/') + '/'
+    else:
+        raise RuntimeError(
+            "Could not find a valid MEDIA_URL setting."
+        )
 
 ALLOWED_HOSTS = env.get("DJANGO_ALLOWED_HOSTS", "*").split(":")
 
@@ -181,7 +196,7 @@ MASTF_USERNAME_MIN_LEN = 5
 
 # -!- START USER-CONFIG -!-
 
-PROJECTS_ROOT = BASE_DIR / "projects"
+PROJECTS_ROOT = Path(MEDIA_ROOT) / "projects"
 if not PROJECTS_ROOT.exists():
     PROJECTS_ROOT.mkdir()
 
@@ -215,7 +230,7 @@ PROJECTS_TABLE_COLUMNS = [
 # -!- END USER-CONFIG -!-
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": True,
+    "disable_existing_loggers": False,
     "formatters": {
         "standard": {
             "format": "[%(levelname)s] %(asctime)-15s - %(message)s",

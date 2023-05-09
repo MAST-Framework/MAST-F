@@ -59,6 +59,7 @@ class BoundPermissionsMixin:
         elements = filter(lambda x: request.method in x, self.bound_permissions)
         return list(elements)
 
+
 class DataTablePagination(PageNumberPagination):
     page_query_param = "start"
     page_size_query_param = "length"
@@ -68,11 +69,16 @@ class DataTablePagination(PageNumberPagination):
         return (number // self.get_page_size(request)) + 1
 
     def get_paginated_response(self, data):
-        return Response(OrderedDict([
-            ('recordsTotal', len(data)),
-            ('recordsFiltered', self.get_page_size(self.request)),
-            ('results', data)
-        ]))
+        return Response(
+            OrderedDict(
+                [
+                    ("recordsTotal", len(data)),
+                    ("recordsFiltered", self.get_page_size(self.request)),
+                    ("results", data),
+                ]
+            )
+        )
+
 
 class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
     """Base class for default implementations of an APIView.
@@ -227,6 +233,7 @@ class ListAPIViewBase(ListAPIView):
 
         return super().paginate_queryset(queryset)
 
+
 class CreationAPIViewBase(BoundPermissionsMixin, APIView):
     """Basic API-Endpoint to create a new database objects."""
 
@@ -271,10 +278,10 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
             self.set_defaults(request, data)
 
             instance = self.create(data)
-            self.on_create(request, instance)
             logger.debug("(%s) New-Instance: %s", self.__class__.__name__, instance)
+            self.on_create(request, instance)
         except Exception as err:
-            logger.exception("New-Instance")
+            logger.exception("(%s) New-Instance", self.__class__.__name__)
             messages.error(self.request, str(err), str(err.__class__.__name__))
             return Response({"detail": str(err)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
