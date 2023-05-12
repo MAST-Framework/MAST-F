@@ -1,5 +1,5 @@
 # This file is part of MAST-F's Frontend API
-# Copyright (C) 2023  MatrixEditor, Janbehere1
+# Copyright (C) 2023  MatrixEditor
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,15 @@ __scanners__ = {}
 
 
 def Plugin(clazz):
-    clazz()
+    instance = clazz()
+    if not instance.name:
+        raise ValueError("The scanner's name can not be null!")
+
+    if instance.name in __scanners__:
+        raise KeyError("Scanner already registered")
+
+    instance.internal_name = ScannerPlugin.to_internal_name(instance.name)
+    __scanners__[instance.internal_name] = instance
     return clazz
 
 
@@ -52,15 +60,7 @@ class ScannerPlugin(metaclass=ABCMeta):
     task = None
     """The task to perform asynchronously"""
 
-    def __init__(self) -> None:
-        if not self.name:
-            raise ValueError("The scanner's name can not be null!")
-
-        if self.name in __scanners__:
-            raise KeyError("Scanner already registered")
-
-        self._internal = self.name.lower().replace(" ", "-").replace("--", "-")
-        __scanners__[self._internal] = self
+    _internal: str = None # noqa
 
     def context(self, extension: str, scan: Scan, file: File) -> dict:
         """Generates the rendering context for the given extension
@@ -91,6 +91,10 @@ class ScannerPlugin(metaclass=ABCMeta):
     def internal_name(self) -> str:
         return self._internal
 
+    @internal_name.setter
+    def internal_name(self, value: str) -> None:
+        self._internal = value
+
     @staticmethod
     def all() -> dict:
         return __scanners__
@@ -106,33 +110,6 @@ class ScannerPlugin(metaclass=ABCMeta):
 
         return result
 
-
-# TEST: The scanner implements all context functions in
-# order to test the functionality of scanner pages.
-from mastf.MASTF.scanners.mixins import *
-
-TextScannerMixins = (
-    DetailsMixin,
-    VulnerabilitiesMixin,
-    PermissionsMixin,
-    FindingsMixins,
-    HostsMixin,
-    ComponentsMixin,
-)
-
-
-@Plugin
-class TestScanner(*TextScannerMixins, ScannerPlugin):
-    extensions = [
-        Extension.DETAILS,
-        Extension.PERMISSIONS,
-        Extension.HOSTS,
-        Extension.VULNERABILITIES,
-        Extension.FINDINGS,
-        Extension.EXPLORER,
-        Extension.COMPONENTS,
-    ]
-
-    name = "Test"
-    help = "Basic testing"
-    title = "Test Scanner Plugin"
+    @staticmethod
+    def to_internal_name(name: str) -> str:
+        return str(name).lower().replace(" ", "-").replace("--", "-")

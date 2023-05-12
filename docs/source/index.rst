@@ -53,7 +53,20 @@ Welcome to MAST-Framework's documentation!
 
 .. toctree::
    :maxdepth: 3
-   :caption: Troubleshooting
+   :caption: Core API
+   :hidden:
+   :numbered:
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Android API
+   :hidden:
+
+   android_api/manifest
+
+.. toctree::
+   :maxdepth: 3
+   :caption: iOS API
    :hidden:
    :numbered:
 

@@ -168,7 +168,7 @@ MAST-F Project | {{ project.name }}
                         {% for name, plugin in scanners.items %}
                         <div class="col-lg-auto">
                             <label class="form-selectgroup-item mt-2 ms-1 me-1">
-                                <input type="checkbox" name="selected_scanners_{{ forloop.counter0 }}" value="{{ plugin.name }}" class="form-selectgroup-input">
+                                <input type="checkbox" name="selected_scanners_{{ forloop.counter0 }}" value="{{ plugin.internal_name }}" class="form-selectgroup-input">
                                 <span class="form-selectgroup-label d-flex align-items-center p-3">
                                 <span class="me-3">
                                     <span class="form-selectgroup-check"></span>

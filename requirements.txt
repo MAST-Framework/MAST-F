@@ -4,7 +4,6 @@ requests
 bs4
 colorlog
 whitenoise
-waitress;platform_system=='Windows'
 gunicorn;platform_system!='Windows'
 celery
 djangorestframework

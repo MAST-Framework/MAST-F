@@ -76,7 +76,7 @@ urlpatterns = [
             path(r"<str:name>/<str:extension>", views.ScannerView.as_view()),
         ])),
 
-        path(r"task/<uuid:task_uuid>", views.ScanTaskView.as_view()),
+        path(r"task/<uuid:celery_id>", views.ScanTaskView.as_view()),
     ])),
 
 

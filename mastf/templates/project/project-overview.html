@@ -73,38 +73,11 @@
                         {% for process in active_data %}
                         <div class="list-group-item">
                             <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <div class="status-indicator status-{% if process.state == 'FAILURE' or not process.id %}red{%else%}green{% endif %}
-                                        {% if not process.status.complete %} status-indicator-animated {%endif %}"
-                                        id="process-indicator-{{ process.id }}">
-                                        <div class="status-indicator-circle"></div>
-                                        <div class="status-indicator-circle"></div>
-                                    </div>
-                                </div>
                                 <div class="col">
-                                    <div class="progressbg">
-                                        <div class="progress progressbg-progress">
-                                            <div class="progress-bar bg-primary-lt" style="width: {{ process.status.total }}%;"
-                                                role="progressbar" aria-valuenow="{{ process.status.total }}" aria-valuemax="100"
-                                                aria-valuemin="0" aria-label="{{ process.status.current }}% Complete"
-                                                id="process-pgb-{{ process.id }}">
-
-                                                <div class="visually-hidden">{{ process.status.current }}% Complete</div>
-                                            </div>
-                                        </div>
-                                        <div class="progressbg-text"  id="process-pgb-text-{{ process.id }}">
-                                            {% if process.status.detail %}
-                                            {{ process.status.detail }}
-                                            {% else %}
-                                            {{ process.status.current }}% of 100% completed
-                                            {% endif %}
-                                            </div>
-                                        <div class="progressbg-value"  id="process-pgb-value-{{ process.id }}">
-                                            {% if process.status.current %}
-                                            {{ process.status.current }}%
-                                            {% endif %}
-                                        </div>
+                                    <div class='progress-wrapper'>
+                                        <div id='pgbar-task-{{process.id}}' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
                                     </div>
+                                    <div id="pgbar-msg-{{process.id}}">Waiting for Task with id <span class="text-muted">{{process.id}}</span> to start.</div>
                                 </div>
                             </div>
                         </div>
@@ -147,6 +120,8 @@
 
 {% block js_extended %}
 {{ block.super }}
+
+<script type="text/javascript" src="{% static 'js/progress.js' %}"></script>
 
 <script>
     createTimeline = function(data) {
@@ -348,11 +323,12 @@
         });
 
         {% for task in active_data %}
-            {% if task.id %}
-            ScanTaskProgressBar.create("/api/v1/scan/task/{{task.id}}", {
-                task_id: {{ task.id }}
-            });
-            {% endif %}
+        {% if task.id %}
+        CeleryProgressBar.initProgressBar("/api/v1/scan/task/{{task.id}}", {
+            progressBarId: "pgbar-task-{{task.id}}",
+            progressBarMessageId: "pgbar-msg-{{task.id}}",
+        });
+        {% endif %}
         {% endfor %}
 
     });

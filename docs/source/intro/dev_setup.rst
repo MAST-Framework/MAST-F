@@ -42,6 +42,7 @@ the process of setting up a virtual environment on Linux, Mac, and Windows.
 
         source ./venv/bin/activate
 
+.
     .. code-block:: console
         :caption: Windows
 

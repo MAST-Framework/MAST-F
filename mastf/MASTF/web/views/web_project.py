@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import redirect
 from django.db.models import QuerySet, Q
 from django.contrib.auth.models import User
@@ -8,7 +10,7 @@ from mastf.MASTF.mixins import (
     ContextMixinBase,
     UserProjectMixin,
     VulnContextMixin,
-    TemplateAPIView
+    TemplateAPIView,
 )
 from mastf.MASTF.models import (
     Vulnerability,
@@ -20,7 +22,7 @@ from mastf.MASTF.models import (
     AbstractBaseFinding,
     Dependency,
     Project,
-    Team
+    Team,
 )
 from mastf.MASTF.serializers import CeleryResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
@@ -29,13 +31,18 @@ from mastf.MASTF.rest.permissions import CanEditProject
 from mastf.MASTF.utils.enum import State, Severity, Visibility
 
 __all__ = [
-    'UserProjectDetailsView', 'UserProjectScanHistoryView',
-    'UserScannersView', 'UserProjectPackagesView',
-    'UserProjectConfigView'
+    "UserProjectDetailsView",
+    "UserProjectScanHistoryView",
+    "UserScannersView",
+    "UserProjectPackagesView",
+    "UserProjectConfigView",
 ]
 
+logger = logging.getLogger(__name__)
+
+
 class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-overview.html'
+    template_name = "project/project-overview.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -43,31 +50,44 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
-        project = context['project']
-        context['active'] = 'tabs-overview'
+        project = context["project"]
+        context["active"] = "tabs-overview"
+        logger.debug(
+            "[%s] Preparing Project-Overview data (%s)", project.pk, project.name
+        )
 
         vuln = Vulnerability.objects.filter(scan__project=project)
-        context['risk_count'] = len(vuln)
-        context['verified'] = len(vuln.filter(Q(severity=str(State.CONFIRMED))))
-        context['scan'] = Scan.last_scan(project)
+        context["risk_count"] = len(vuln)
+        context["verified"] = len(vuln.filter(Q(severity=str(State.CONFIRMED))))
+        context["scan"] = Scan.last_scan(project)
 
         tasks = ScanTask.active_tasks(project=project)
-        context['is_active'] = len(tasks) > 0
-        if context['is_active'] and context['scan'].is_active:
+        context["is_active"] = len(tasks) > 0
+        scan = context["scan"]
+
+        logger.debug(
+            "[%s] Queried %d active tasks (is_active=%s)",
+            project.pk,
+            len(tasks),
+            scan.is_active if scan is not None else False,
+        )
+        if context["is_active"] and (scan and scan.is_active):
             active_data = []
             for task in tasks:
                 if not task.celery_id:
+                    # rather add empty state than reporting that celery worker is not started
                     active_data.append(CeleryResultSerializer.empty())
                 else:
                     result = AsyncResult(task.celery_id)
                     active_data.append(CeleryResultSerializer(result).data)
-            context['active_data'] = active_data
+
+            context["active_data"] = active_data
 
         return context
 
 
 class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-scan-history.html'
+    template_name = "project/project-scan-history.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -75,9 +95,9 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
-        project = context['project']
-        context['active'] = 'tabs-scan-history'
-        context['scan_data'] = [
+        project = context["project"]
+        context["active"] = "tabs-scan-history"
+        context["scan_data"] = [
             self.get_scan_history(scan) for scan in Scan.objects.filter(project=project)
         ]
         return context
@@ -94,33 +114,36 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
         return data
 
 
-class UserScannersView(UserProjectMixin, VulnContextMixin,
-                              ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-scanners.html'
+class UserScannersView(
+    UserProjectMixin, VulnContextMixin, ContextMixinBase, TemplateAPIView
+):
+    template_name = "project/project-scanners.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def post(self, request, *args, **kwargs):
         view = ScanCreationView.as_view()
         view(request)
-        return redirect('Project-Overview', **self.kwargs)
+        return redirect("Project-Overview", **self.kwargs)
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
-        context['active'] = 'tabs-scanners'
+        context["active"] = "tabs-scanners"
 
-        project = context['project']
+        project = context["project"]
         scans = Scan.objects.filter(project=project).order_by("start_date")
         scanners = ScannerPlugin.all_of(project)
 
         results = {}
         for name, scanner in scanners.items():
-            project_scanner = Scanner.objects.filter(scan__project=project, name=name).first()
+            project_scanner = Scanner.objects.filter(
+                scan__project=project, name=name
+            ).first()
             results[scanner.name] = self.get_scan_results(scans, project_scanner)
 
-        context['scan_results'] = results
+        context["scan_results"] = results
         return context
 
     def get_scan_results(self, scans: QuerySet, scanner: str) -> dict:
@@ -135,18 +158,19 @@ class UserScannersView(UserProjectMixin, VulnContextMixin,
 
         data.start_date = str(scans[0].start_date)
         scan_query = Q(scan=scans[0])
-        for scan in scans[ 1: ]:
+        for scan in scans[1:]:
             scan_query = scan_query | Q(scan=scan)
 
-
         vuln = Vulnerability.objects.filter(scan_query & Q(scanner=scanner))
-        self.apply_vuln_context(data, AbstractBaseFinding.stats(Vulnerability, base=vuln))
+        self.apply_vuln_context(
+            data, AbstractBaseFinding.stats(Vulnerability, base=vuln)
+        )
         data.results = len(vuln)
         return data
 
 
 class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-packages.html'
+    template_name = "project/project-packages.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -154,14 +178,14 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
-        context['active'] = 'tabs-packages'
-        context['Severity'] = [str(x) for x in Severity]
-        context['dependencies'] = Dependency.objects.filter(project=context['project'])
+        context["active"] = "tabs-packages"
+        context["Severity"] = [str(x) for x in Severity]
+        context["dependencies"] = Dependency.objects.filter(project=context["project"])
         return context
 
 
 class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
-    template_name = 'project/project-settings.html'
+    template_name = "project/project-settings.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
@@ -169,9 +193,9 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
-        context['active'] = 'tabs-settings'
-        context['risk_types'] = list(Severity)
-        context['visibility_types'] = list(Visibility)
+        context["active"] = "tabs-settings"
+        context["risk_types"] = list(Severity)
+        context["visibility_types"] = list(Visibility)
         context["available"] = list(User.objects.all())
         context["available"].remove(self.get_object(Project, "project_uuid").owner)
 

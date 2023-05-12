@@ -1,5 +1,5 @@
 # This file is part of MAST-F's Frontend API
-# Copyright (C) 2023  MatrixEditor, Janbehere1
+# Copyright (C) 2023  MatrixEditor
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,9 +66,20 @@ class namespace(dict):
 class Team(models.Model):
     """A team contains a set of users.
 
-    Note: We rather use 'Team' as class name than 'Group' as a group
-    class is already defined by Django. Each team can have a list of
-    users.
+    .. note::
+        We rather use 'Team' as class name than 'Group' as a group class is
+        already defined by Django. Each team can have a list of users.
+
+    .. list-table::
+        :header-rows: 0
+        :widths: 50, 50
+
+        * - Serializer Class
+          - :class:`TeamSerializer`
+        * - Form Class
+          - :class:`TeamForm`
+        * - REST Views
+          - :class:`TeamView`, :class:`TeamListView` and :class:`TeamCreationView`
     """
 
     name = models.CharField(max_length=256, null=False, unique=True)
@@ -91,6 +102,15 @@ class Team(models.Model):
 
     @staticmethod
     def get(owner: User, name: str) -> "Team":
+        """Returns the first team that stores the given name of the provided user.
+
+        :param owner: the owner or member of a team
+        :type owner: User
+        :param name: the team's name
+        :type name: str
+        :return: the first occurrence or None
+        :rtype: Team
+        """
         query = models.Q(owner=owner, name=name) | models.Q(
             visibility=Visibility.PUBLIC, name=name
         )
@@ -98,12 +118,19 @@ class Team(models.Model):
 
     @staticmethod
     def get_by_owner(owner: User, queryset=None) -> models.QuerySet:
+        """Returns all teams in the scope of that user.
+
+        :param owner: the team owner or member
+        :type owner: User
+        :param queryset: üre-defined collection of teams, defaults to None
+        :type queryset: QuerySet, optional
+        :return: all teams the given user is a member or the owner of
+        :rtype: models.QuerySet
+        """
         query = (
             models.Q(owner=owner)
             | models.Q(users__pk=owner.pk)
-            | models.Q(visibility=Visibility.PUBLIC)
         )
-
         return (queryset or Team.objects).filter(query)
 
 
@@ -117,7 +144,7 @@ class Project(models.Model):
 
     This model class also defines utility methods that can be used to retrieve
     the local system path of the project directory as well as general stats that
-    will be mapped in a ``namespace`` object.
+    will be mapped in a :class:`namespace` object.
     """
 
     project_uuid = models.CharField(primary_key=True, null=False, max_length=256)
@@ -174,12 +201,24 @@ class Project(models.Model):
 
     @staticmethod
     def get_by_user(owner: User, queryset: models.QuerySet = None) -> models.QuerySet:
-        # This query attempts to collect all projects that can be modified by
-        # the given owner. That includes projects that are assigned to a team
-        # of which the provided user is a member; projects that are public and
-        # projects that are maintained by the provided owner.
-        # @ImplNote: Only projects that are globally PUBLIC and not assigned to
-        # any team will be included in this list.
+        """Returns all projects where the provided user has access to.
+
+        This query attempts to collect all projects that can be modified by the given
+        owner. That includes projects that are assigned to a team of which the provided
+        user is a member; projects that are public and projects that are maintained by
+        the given owner.
+
+        .. note::
+            Only projects that are globally PUBLIC and not assigned to any team will be
+            included in this list.
+
+        :param owner: the owner or member
+        :type owner: User
+        :param queryset: pre-defined project collection, defaults to None
+        :type queryset: models.QuerySet, optional
+        :return: all projects that fit the requirements
+        :rtype: models.QuerySet
+        """
         query = (
             models.Q(owner=owner)
             | models.Q(team__users__pk=owner.pk)
@@ -242,7 +281,7 @@ class File(models.Model):
     """Specifies the uploaded file name."""
 
 
-class Account(models.Model):  # unused
+class Account(models.Model):
     """
     Represents an account associated with a user in the system.
 

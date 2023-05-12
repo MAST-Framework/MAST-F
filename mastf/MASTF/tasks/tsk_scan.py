@@ -1,5 +1,5 @@
 # This file is part of MAST-F's Frontend API
-# Copyright (C) 2023  MatrixEditor, Janbehere1
+# Copyright (C) 2023  MatrixEditor
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,15 +14,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import uuid
-import zipfile
 
 from datetime import datetime
+from typing import Callable
 
-from celery import shared_task, group, states
+from celery import shared_task, group
 from celery.result import AsyncResult, GroupResult
 from celery.utils.log import get_task_logger
 
-from mastf.android.tools import apktool, baksmali
+from mastf.core.files import TaskFileHandler
+from mastf.core.progress import Observer
+
 from mastf.MASTF import settings
 from mastf.MASTF.models import Scan, ScanTask, Scanner, File, Details
 from mastf.MASTF.scanners.plugin import ScannerPlugin
@@ -50,6 +52,7 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     scan.save()
     if scan.start_date.date() == datetime.today().date():
         scan.status = "Active"
+        scan.is_active = True
         scan.save()
         # The scan will be started whenever the right day is reached
         task_uuid = uuid.uuid4()
@@ -66,11 +69,10 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
 @shared_task(bind=True)
 def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     logger.info("Scan Peparation: Setting up directories of scan %s", scan_uuid)
+    observer = Observer(self)
     scan = Scan.objects.get(scan_uuid=scan_uuid)
-    self.update_state(
-        state="PROGRESS", meta={"current": 10, "detail": "Directory setup..."}
-    )
 
+    observer.update("Directory setup...", current=10)
     # Setup of special directories in our project directory:
     file_dir = scan.project.dir(scan.file.md5)
 
@@ -81,58 +83,38 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
 
     src.mkdir(exist_ok=True)
     contents.mkdir(exist_ok=True)
-    self.update_state(
-        state="PROGRESS", meta={"current": 30, "detail": "Extracting files"}
-    )
+    observer.update("Extracting files...", current=30)
     # TODO: add MIME type handlers (apk, ipa, aar, jar, dex); if no extension is given,
     # a default handler based on the scan type should be used.
-    if scan.scan_type.lower() == "android":
-        logger.info("Scan Peparation: Extracting files for scan %s", scan.pk)
-        apktool.extractrsc(
-            str(file_dir / scan.file.internal_name), str(contents), settings.APKTOOL
+    handler = TaskFileHandler.from_scan(scan.file.internal_name, scan.scan_type)
+    if not handler:
+        # cancel scan
+        observer.fail("Could not find matching MIME-Type handler")
+        logger.warning(
+            "Could not load file handler for MIME-Type: %s", scan.file.internal_name
         )
-        self.update_state(
-            state="PROGRESS",
-            meta={"current": 60, "detail": "Decompilation of binary files"},
-        )
+        return
 
-        smali_dir = src / "smali"
-        smali_dir.mkdir(exist_ok=True)
-        tool = settings.D2J_TOOLSET + "dex2smali"
-        for path in contents.iterdir():
-            # If we try to analyze an APK file, the files have to be decompiled
-            # (currenlty only Smali)
-            if path.suffix == "dex":
-                baksmali.decompile(str(path), str(smali_dir), tool)
-
-    else:
-        with zipfile.ZipFile(str(file_dir / scan.file.internal_name)) as zfile:
-            # Extract initial files
-            zfile.extractall(str(contents))
-
-    self.update_state(
-        state="PROGRESS", meta={"current": 80, "detail": "Setting up scanners' tasks"}
-    )
+    handler.apply(scan.project.directory / scan.file.internal_name, file_dir, settings)
+    observer.update("Creating scanner specific ScanTask objects.", current=80)
     for name in selected_scanners:
         scanner = Scanner.objects.get(project=scan.project, name=name)
         # Note that we're creating scan tasks before calling the asynchronous
-        # group. The 'execure_scan' task will set the celery_id when it gets
+        # group. The 'execute_scan' task will set the celery_id when it gets
         # executed.
         ScanTask(task_uuid=uuid.uuid4(), scan=scan, scanner=scanner).save()
 
     tasks = group(
         [execute_scan.s(str(scan.scan_uuid), name) for name in selected_scanners]
     )
+    # We actually don't need the group result object, we just have to execute
+    # .get()
     result: GroupResult = tasks.get()
-
-    self.update_state(
-        state=states.SUCCESS,
-        meta={"current": 100, "detail": "Scanners have been started", "complete": True},
-    )
-    logger.info("Started scan with Group: %s", result)
+    observer.success("Scanners have been started")
+    logger.info("Started scan in Group: %s", result.id)
 
     # Rather delete the finished task than setting its state to finished
-    task = ScanTask.objects.filter(celery_id=self.id).first()
+    task = ScanTask.objects.filter(celery_id=self.request.id).first()
     task.active = False
     task.celery_id = None
     task.save()
@@ -141,6 +123,8 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
 @shared_task(bind=True)
 def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
     try:
+        logger.info("Running scan_task of <Scan %s, name='%s'>", scan_uuid, plugin_name)
+        observer = Observer(self)
         plugin = ScannerPlugin.all()[plugin_name]
         scan = Scan.objects.get(scan_uuid=scan_uuid)
 
@@ -149,9 +133,22 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
 
         # Before calling the actual task, the celery ID must be set in order
         # to fetch the current status.
-        task.celery_id = self.id
+        task.celery_id = self.request.id
         task.save()
 
-        plugin.task(scan, task)
-    except Exception:
-        logger.exception("Unhandled worker exeption:")
+        plugin_task = plugin.task
+        instance = plugin_task
+        if isinstance(plugin_task, type):
+            instance = plugin_task()
+
+        if isinstance(instance, Callable):
+            instance(scan, task, observer)
+        else:
+            raise TypeError(
+                "Unexpected task type %s; expected Callable[None, [Scan, ScanTask, Observer]]",
+                type(instance),
+            )
+    except Exception as err:
+        msg = "(%s) Unhandled worker exeption: " % err.__class__.__name__
+        observer.exception(msg)
+        logger.exception(msg)

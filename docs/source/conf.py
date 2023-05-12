@@ -9,8 +9,8 @@ import sys
 import os
 
 project = 'MAST-Framework'
-copyright = '2023, MatrixEditor, Janbehere1'
-author = 'MatrixEditor, Janbehere1'
+copyright = '2023, MatrixEditor '
+author = 'MatrixEditor '
 
 version = '0.1'
 release = '0.0.1-alpha'

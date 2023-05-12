@@ -45,7 +45,7 @@ RUN sed -i 's/\r$//g' /start_celery_beat
 RUN chmod +x /start_celery_beat
 
 # TODO: add file exclusion rules
-# COPY . /app
+COPY . /app
 # RUN rm -r /app/compose
 # RUN rm -r /app/.env
 # RUN rm -r /app

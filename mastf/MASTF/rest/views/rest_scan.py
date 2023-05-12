@@ -11,7 +11,7 @@ from rest_framework import status, views, exceptions
 from rest_framework.authentication import (
     TokenAuthentication,
     BasicAuthentication,
-    SessionAuthentication
+    SessionAuthentication,
 )
 
 from django.shortcuts import get_object_or_404
@@ -32,26 +32,27 @@ from mastf.MASTF.rest.permissions import ReadOnly, CanEditScan
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.utils.upload import handle_scan_file_upload
 from mastf.MASTF import tasks
+from mastf.MASTF.permissions import Get
 
-from .base import (
-    APIViewBase,
-    ListAPIViewBase,
-    CreationAPIViewBase,
-    GetObjectMixin
-)
+from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase, GetObjectMixin
 
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    'ScanView', 'ScanCreationView', 'ScanListView',
-    'ScannerView', 'ScanTaskView', 'MultipleScanCreationView'
+    "ScanView",
+    "ScanCreationView",
+    "ScanListView",
+    "ScannerView",
+    "ScanTaskView",
+    "MultipleScanCreationView",
 ]
+
 
 class ScanView(APIViewBase):
     permission_classes = [IsAuthenticated & (CanEditScan | ReadOnly)]
     model = Scan
     serializer_class = ScanSerializer
-    lookup_field = 'scan_uuid'
+    lookup_field = "scan_uuid"
 
     def on_delete(self, request: Request, obj: Scan) -> None:
         path = obj.project.dir(obj.file.internal_name, create=False)
@@ -62,18 +63,17 @@ class ScanView(APIViewBase):
             messages.error(request, str(err), err.__class__.__name__)
 
 
-
 class ScanCreationMixin:
     def apply_defaults(self, request, data: dict) -> None:
         if not data.get("project", None) and not data.get("projects", None):
             raise exceptions.ValidationError("Project must not be null")
 
-        data['initiator'] = request.user
-        data['risk_level'] = 'None'
-        data['status'] = 'Scheduled'
-        if not data['start_date']:
+        data["initiator"] = request.user
+        data["risk_level"] = "None"
+        data["status"] = "Scheduled"
+        if not data["start_date"]:
             # The date would be set automatically
-            data.pop('start_date')
+            data.pop("start_date")
 
         # remove the delivered scanners
         plugins = ScannerPlugin.all()
@@ -83,6 +83,7 @@ class ScanCreationMixin:
             # to create the Scan object
             name = self.request.POST.get(f"selected_scanners_{i}", None).lower()
             if not name or name not in plugins:
+                logger.warning("Invalid scanner name (unknown): %s", name)
                 break
 
             # Even if the scanner is present, we have to add it
@@ -90,24 +91,26 @@ class ScanCreationMixin:
             selected.append(name)
 
         if len(selected) == 0:
-            logger.warning('No scanner selected - aborting scan generation')
-            raise ValueError('At least one scanner has to be selected')
+            logger.warning("No scanner selected - aborting scan generation")
+            raise ValueError("At least one scanner has to be selected")
 
         # As the QueryDict is mutable, we can store the selected
         # parameters before we're starting each scanner
-        setattr(self.request.POST, '_mutable', True)
-        self.request.POST['selected_scanners'] = selected
+        setattr(self.request.POST, "_mutable", True)
+        self.request.POST["selected_scanners"] = selected
 
         # the file has to be downloaded before any action shoule be executed
-        file_url = data.pop('file_url', None)
+        file_url = data.pop("file_url", None)
         if not file_url:
-            uploaded_file = handle_scan_file_upload(self.request.FILES['file'], data['project'])
+            uploaded_file = handle_scan_file_upload(
+                self.request.FILES["file"], data["project"]
+            )
             if not uploaded_file:
-                raise ValueError('Could not save uploaded file')
+                raise ValueError("Could not save uploaded file")
 
-            self.request.POST['File'] = uploaded_file
+            self.request.POST["File"] = uploaded_file
         else:
-            raise NotImplementedError('URL not implemented!')
+            raise NotImplementedError("URL not implemented!")
 
 
 class ScanCreationView(ScanCreationMixin, CreationAPIViewBase):
@@ -122,9 +125,9 @@ class ScanCreationView(ScanCreationMixin, CreationAPIViewBase):
     def on_create(self, request: Request, instance: Scan) -> None:
         instance.save()
         tasks.schedule_scan(
-            instance, request.POST['File'],
-            request.POST['selected_scanners']
+            instance, request.POST["File"], request.POST["selected_scanners"]
         )
+
 
 class MultipleScanCreationView(ScanCreationMixin, CreationAPIViewBase):
     form_class = ScanForm
@@ -137,15 +140,14 @@ class MultipleScanCreationView(ScanCreationMixin, CreationAPIViewBase):
             raise exceptions.ValidationError("Projects must not be null")
 
         for project in projects:
-            data['project'] = project
+            data["project"] = project
             self.apply_defaults(self.request, data)
             instance = super().create(data)
             tasks.schedule_scan(
-                str(instance.pk), str(self.request.POST['File'].pk),
-                self.request.POST['selected_scanners']
+                str(instance.pk),
+                str(self.request.POST["File"].pk),
+                self.request.POST["selected_scanners"],
             )
-
-
 
 
 class ScanListView(ListAPIViewBase):
@@ -159,17 +161,17 @@ class ScanListView(ListAPIViewBase):
 
 
 class ScannerView(views.APIView):
-
     authentication_classes = [
         BasicAuthentication,
         SessionAuthentication,
-        TokenAuthentication
+        TokenAuthentication,
     ]
 
     permission_classes = [IsAuthenticated & CanEditScan]
 
-    def get(self, request: Request, scan_uuid: UUID, name: str,
-            extension: str) -> Response:
+    def get(
+        self, request: Request, scan_uuid: UUID, name: str, extension: str
+    ) -> Response:
         """Generates a result JSON for each scanner extension
 
         :param request: the HttpRequest
@@ -198,19 +200,17 @@ class ScannerView(views.APIView):
         return Response(results)
 
 
-class ScanTaskView(GetObjectMixin, views.APIView):
-    authentication_classes = [
-        BasicAuthentication,
-        SessionAuthentication,
-        TokenAuthentication
-    ]
-
-    permission_classes = [IsAuthenticated & CanEditScan]
-
+class ScanTaskView(APIViewBase):
+    permission_classes = [IsAuthenticated & Get]
     model = ScanTask
-    lookup_field = 'task_uuid'
+    lookup_field = "celery_id"
 
-    def get(self, request: Request, task_uuid: UUID) -> Response:
+    def get(self, *args, **kwargs) -> Response:
+        logger.debug(
+            "[%s] Task lookup for id='%s'",
+            self.__class__.__name__,
+            self.kwargs.get("celery_id", None),
+        )
         task: ScanTask = self.get_object()
         if not task.celery_id:
             data = CeleryResultSerializer.empty()
