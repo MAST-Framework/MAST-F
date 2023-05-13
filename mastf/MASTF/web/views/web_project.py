@@ -24,7 +24,7 @@ from mastf.MASTF.models import (
     Project,
     Team,
 )
-from mastf.MASTF.serializers import CeleryResultSerializer
+from mastf.MASTF.serializers import CeleryAsyncResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.rest.views import ScanCreationView
 from mastf.MASTF.rest.permissions import CanEditProject
@@ -64,6 +64,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
         tasks = ScanTask.active_tasks(project=project)
         context["is_active"] = len(tasks) > 0
         scan = context["scan"]
+        scan.is_active = context["is_active"]
 
         logger.debug(
             "[%s] Queried %d active tasks (is_active=%s)",
@@ -74,15 +75,13 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
         if context["is_active"] and (scan and scan.is_active):
             active_data = []
             for task in tasks:
-                if not task.celery_id:
-                    # rather add empty state than reporting that celery worker is not started
-                    active_data.append(CeleryResultSerializer.empty())
-                else:
+                if task.celery_id and task.active:
                     result = AsyncResult(task.celery_id)
-                    active_data.append(CeleryResultSerializer(result).data)
+                    active_data.append(CeleryAsyncResultSerializer(result).data)
 
             context["active_data"] = active_data
 
+        scan.save()
         return context
 
 

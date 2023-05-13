@@ -11,7 +11,9 @@ services:
     image: web_mastf_django
     command: /start
     volumes:
-      - .:/app
+      - type: bind
+        source: ./
+        target: /app
       - static_volume:/app/mastf/static/
       - storage_data:/app_storage
     expose:
@@ -58,15 +60,17 @@ services:
   celery_worker:
     build:
       context: ./
-      dockerfile: ./compose/local/django/Dockerfile
+      dockerfile: ./compose/local/django/celery/Dockerfile
 
     image: mastf_celery_worker
     command: /start_celery_worker
     volumes:
       # In order to include additional scanner files and librares, we
       # have to include the whole app directory.
-      - .:/app
-      - static_volume:/app/mastf/static/
+      - type: bind
+        source: ./
+        target: /app
+
       - storage_data:/app_storage
     env_file:
       # This container needs the same configuration files as defined in
@@ -87,14 +91,16 @@ services:
   celery_beat:
     build:
       context: ./
-      dockerfile: ./compose/local/django/Dockerfile
+      dockerfile: ./compose/local/django/celery/Dockerfile
 
     image: mastf_celery_beat
     command: /start_celery_beat
     volumes:
       # Same as above
-      - .:/app
-      - static_volume:/app/mastf/static/
+      - type: bind
+        source: ./
+        target: /app
+
       - storage_data:/app_storage
     env_file:
       # Same as above
@@ -117,8 +123,8 @@ services:
       - ./.env/.dev-example
     environment:
       NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
-    volumes:
-      - static_volume:/app/mastf/static/
+    # volumes:
+    #   - static_volume:/app/mastf/static/
     depends_on:
       - web-django
     networks:

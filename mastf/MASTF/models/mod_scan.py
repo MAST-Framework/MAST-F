@@ -161,21 +161,22 @@ class ScanTask(models.Model):
     scan = models.ForeignKey(Scan, models.CASCADE)
     scanner = models.ForeignKey(Scanner, models.CASCADE, null=True)
 
+    name = models.CharField(max_length=256, blank=True, null=True)
     celery_id = models.CharField(max_length=256, null=True)
     active = models.BooleanField(default=True)
 
     @staticmethod
     def active_tasks(scan: Scan = None, project: Project = None) -> list:
         if scan:
-            return ScanTask.objects.filter(active=True, scan=scan)
+            return list(ScanTask.objects.filter(active=True, scan=scan))
 
         if project:
-            return ScanTask.objects.filter(active=True, scan__project=project)
+            return list(ScanTask.objects.filter(active=True, scan__project=project))
 
         return []
 
 
-class Details(models.Model):
+class Details(models.Model): # TODO
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
 
     cvss = models.FloatField(default=0)

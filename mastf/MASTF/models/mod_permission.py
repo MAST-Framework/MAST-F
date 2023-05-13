@@ -13,11 +13,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from uuid import uuid4
 from django.db import models
 
 from mastf.MASTF.utils.enum import ProtectionLevel
 
-from .mod_finding import AbstractBaseFinding
+from .mod_finding import AbstractBaseFinding, FindingTemplate
 
 __all__ = ["AppPermission", "PermissionFinding"]
 
@@ -52,6 +53,18 @@ class AppPermission(models.Model):
             if not found:
                 plevel[level] = "secondary"
         return plevel
+
+    @staticmethod
+    def create_unknown(identifier, protection_level) -> "AppPermission":
+        return AppPermission.objects.create(
+            pk=uuid4(),
+            identifier=identifier,
+            name=identifier.split(".")[-1].lower().capitalize(),
+            protection_level=protection_level,
+            dangerous="dangerous" in protection_level.lower(),
+            short_description="Dynamic generated description. Please edit the short and long description"
+            "in the plugins-context of your site.",
+        )
 
 
 class PermissionFinding(AbstractBaseFinding):

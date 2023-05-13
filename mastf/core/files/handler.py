@@ -69,6 +69,11 @@ class TaskFileHandler:
 def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings):
     src = dest_dir / 'src'
     contents = dest_dir / 'contents'
+    if not src.exists():
+        src.mkdir(parents=True, exist_ok=True)
+
+    if not contents.exists():
+        contents.mkdir(parents=True, exist_ok=True)
 
     apktool.extractrsc(str(src_path), str(contents), settings.APKTOOL)
     smali_dir = src / 'smali'

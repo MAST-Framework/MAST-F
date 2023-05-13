@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import uuid
+import pathlib
 
 from datetime import datetime
 from typing import Callable
@@ -56,7 +57,7 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
         scan.save()
         # The scan will be started whenever the right day is reached
         task_uuid = uuid.uuid4()
-        global_task = ScanTask(task_uuid=task_uuid, scan=scan)
+        global_task = ScanTask(task_uuid=task_uuid, scan=scan, name="Scan Preparation Task")
         # The task must be saved before the preparation is executed
         global_task.save()
         logger.info("Started global scan task on %s", scan.pk)
@@ -69,12 +70,15 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
 @shared_task(bind=True)
 def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     logger.info("Scan Peparation: Setting up directories of scan %s", scan_uuid)
-    observer = Observer(self)
+
+    task = ScanTask.objects.filter(celery_id=self.request.id).first()
+    observer = Observer(self, scan_task=task)
     scan = Scan.objects.get(scan_uuid=scan_uuid)
 
     observer.update("Directory setup...", current=10)
     # Setup of special directories in our project directory:
-    file_dir = scan.project.dir(scan.file.md5)
+    file_dir = scan.project.dir(scan.file.internal_name)
+    file_path = scan.file.file_path
 
     # The first directory will store decompiled source code files,
     # and the second will store data that has been extracted initially.
@@ -86,50 +90,51 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     observer.update("Extracting files...", current=30)
     # TODO: add MIME type handlers (apk, ipa, aar, jar, dex); if no extension is given,
     # a default handler based on the scan type should be used.
-    handler = TaskFileHandler.from_scan(scan.file.internal_name, scan.scan_type)
+    handler = TaskFileHandler.from_scan(file_path, scan.scan_type)
     if not handler:
         # cancel scan
-        observer.fail("Could not find matching MIME-Type handler")
-        logger.warning(
-            "Could not load file handler for MIME-Type: %s", scan.file.internal_name
-        )
-        return
+        _, meta = observer.fail("Could not find matching MIME-Type handler")
+        logger.warning("Could not load file handler for MIME-Type: %s", file_path)
+        return meta.get("description")
 
-    handler.apply(scan.project.directory / scan.file.internal_name, file_dir, settings)
+    handler.apply(pathlib.Path(file_path), file_dir, settings)
     observer.update("Creating scanner specific ScanTask objects.", current=80)
+
+    plugins = ScannerPlugin.all()
     for name in selected_scanners:
-        scanner = Scanner.objects.get(project=scan.project, name=name)
+        scanner = Scanner.objects.get(scan=scan, name=name)
         # Note that we're creating scan tasks before calling the asynchronous
         # group. The 'execute_scan' task will set the celery_id when it gets
         # executed.
-        ScanTask(task_uuid=uuid.uuid4(), scan=scan, scanner=scanner).save()
+        plugin = plugins[name]
+        ScanTask.objects.create(
+            task_uuid=uuid.uuid4(), scan=scan, scanner=scanner, name=plugin.name
+        )
 
     tasks = group(
         [execute_scan.s(str(scan.scan_uuid), name) for name in selected_scanners]
     )
     # We actually don't need the group result object, we just have to execute
     # .get()
-    result: GroupResult = tasks.get()
-    observer.success("Scanners have been started")
+    result: GroupResult = tasks()
+    _, meta = observer.success("Scanners have been started")
     logger.info("Started scan in Group: %s", result.id)
 
     # Rather delete the finished task than setting its state to finished
-    task = ScanTask.objects.filter(celery_id=self.request.id).first()
-    task.active = False
-    task.celery_id = None
-    task.save()
+    return meta.get("description")
 
 
 @shared_task(bind=True)
 def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
     try:
         logger.info("Running scan_task of <Scan %s, name='%s'>", scan_uuid, plugin_name)
-        observer = Observer(self)
+
         plugin = ScannerPlugin.all()[plugin_name]
         scan = Scan.objects.get(scan_uuid=scan_uuid)
 
-        scanner = Scanner.objects.get(project=scan.project, name=plugin.internal_name)
+        scanner = Scanner.objects.get(scan=scan, name=plugin.internal_name)
         task = ScanTask.objects.get(scan=scan, scanner=scanner)
+        observer = Observer(self, scan_task=task)
 
         # Before calling the actual task, the celery ID must be set in order
         # to fetch the current status.
@@ -142,7 +147,11 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
             instance = plugin_task()
 
         if isinstance(instance, Callable):
-            instance(scan, task, observer)
+            rvalue = instance(scan, task, observer)
+            observer.success(
+                "[%s] Finished scanner task with rvalue: %s", plugin_name, str(rvalue)
+            )
+            return rvalue
         else:
             raise TypeError(
                 "Unexpected task type %s; expected Callable[None, [Scan, ScanTask, Observer]]",
@@ -150,5 +159,6 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
             )
     except Exception as err:
         msg = "(%s) Unhandled worker exeption: " % err.__class__.__name__
-        observer.exception(msg)
         logger.exception(msg)
+        _, meta = observer.exception(err, msg)
+        return meta.get("description")

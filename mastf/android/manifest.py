@@ -207,7 +207,9 @@ class AXmlVisitor(metaclass=AXmlVisitorBase):
     The call above is equivalent to the following (assume ``visit_permission_node``
     has been defined before):
 
-    >>> visitor.manifest['uses-permission'] = visit_permission_node
+    >>> visitor.uses_permission["android:name"] = visit_permission_node
+    >>> # equivalent to
+    >>> visitor.uses_permission.add("android:name", visit_permission_node)
 
     Note that the called function won't have any other positional arguments
     than the visited element. In addition, this class supports optional

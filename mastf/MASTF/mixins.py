@@ -244,8 +244,8 @@ class VulnContextMixin:
             {
                 "name": "...",
                 "color": "bg-${color}",
-                "percent" "...",
-                "count" "..."
+                "percent": "...",
+                "count": "..."
             }
 
         :param stats: single vulnerablity statistics according to severity

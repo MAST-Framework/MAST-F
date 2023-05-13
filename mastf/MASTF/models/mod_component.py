@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django.db import models
+from uuid import uuid4
 
 from mastf.MASTF.utils.enum import ComponentCategory
 
@@ -33,6 +34,10 @@ class Component(models.Model):
     category = models.CharField(
         null=True, choices=ComponentCategory.choices, max_length=256
     )
+
+    @staticmethod
+    def make_uuid(*args) -> str:
+        return f"cpt_{uuid4()}"
 
     @staticmethod
     def stats(scan: Scan) -> list:  # type := list[namespace]

@@ -30,7 +30,7 @@ To get started **locally**, follow these steps:
 2. Open the ``docker-compose.yml`` file in the root directory of the project to review the available services and their configuration.
 3. Generate a self signed certificate and private key to enable HTTPS. Save the generated files to ``/compose/local/nginx/``:
 
-    .. code-block:: console
+    .. code-block:: bash
         :caption: On Linux and Mac
 
         openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365
@@ -41,7 +41,7 @@ To get started **locally**, follow these steps:
 
 4. Run the following command to start all the required services and dependencies:
 
-    .. code:: console
+    .. code:: bash
 
         docker compose up -d
 

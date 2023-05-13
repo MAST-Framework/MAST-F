@@ -18,14 +18,14 @@ the process of setting up a virtual environment on Linux, Mac, and Windows.
 
 1. Clone the main Git reppository via command line:
 
-    .. code-block:: console
+    .. code-block:: bash
         :caption: All platforms
 
         git clone https://github.com/MAST-Framework/MAST-F.git && cd MAST-F
 
 2. Run the following command to create a new virtual environment:
 
-    .. code-block:: console
+    .. code-block:: bash
         :caption: On Linux and Mac:
 
         python3 -m venv ./venv
@@ -37,12 +37,12 @@ the process of setting up a virtual environment on Linux, Mac, and Windows.
 
 3. Activate the virtual environment by running the appropriate command for your system:
 
-   .. code-block:: console
+    .. code-block:: bash
         :caption: On Linux and Mac:
 
         source ./venv/bin/activate
 
-.
+
     .. code-block:: console
         :caption: Windows
 
@@ -50,7 +50,7 @@ the process of setting up a virtual environment on Linux, Mac, and Windows.
 
 4. Once your virtual environment is active, install the required packages by running the following command:
 
-    .. code-block:: console
+    .. code-block:: bash
 
         pip install .r requirements.txt
 
@@ -63,12 +63,12 @@ the process of setting up a virtual environment on Linux, Mac, and Windows.
 You now have a fully functional development environment for this project. You can start the development server
 pointing to ``localhost:8000`` with the following command:
 
-.. code-block:: console
+.. code-block:: bash
     :caption: On Linux and Mac
 
     python3 manage.py runserver
 
-.. code-block:: console
+.. code-block:: bash
     :caption: On Windows
 
     py manage.py runserver

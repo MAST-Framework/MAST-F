@@ -1,6 +1,6 @@
 class CeleryProgressBar {
     // Taken from https://github.com/czue/celery-progress/blob/master/celery_progress/static/celery_progress/celery_progress.js
-    // with some improvements
+    // with some changes
     /**
      * Copyright (c) 2018 Cory Zue
      */
@@ -58,12 +58,12 @@ class CeleryProgressBar {
      */
     onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
         progressBarElement.style.backgroundColor = this.barColors.error;
-        excMessage = excMessage || data?.progress?.exc_message || '';
-        progressBarMessageElement.textContent = "Uh-Oh, something went wrong:" + excMessage;
+        excMessage = data?.result || excMessage || '';
+        progressBarMessageElement.textContent = "Error:" + excMessage;
 
         if (excMessage) {
             Alerts.show("error", "Unexpected Error", excMessage);
-        fadeOutMessages();
+            fadeOutMessages();
         }
     }
 

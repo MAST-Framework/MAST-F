@@ -20,7 +20,11 @@ from django.contrib import messages
 
 from celery.result import AsyncResult
 
-from mastf.MASTF.serializers import ScanSerializer, CeleryResultSerializer
+from mastf.MASTF.serializers import (
+    ScanSerializer,
+    CeleryAsyncResultSerializer,
+    ScanTaskSerializer,
+)
 from mastf.MASTF.models import (
     Scan,
     Project,
@@ -45,6 +49,7 @@ __all__ = [
     "ScannerView",
     "ScanTaskView",
     "MultipleScanCreationView",
+    "ScanTaskListView",
 ]
 
 
@@ -213,9 +218,19 @@ class ScanTaskView(APIViewBase):
         )
         task: ScanTask = self.get_object()
         if not task.celery_id:
-            data = CeleryResultSerializer.empty()
+            data = {}
         else:
             result = AsyncResult(task.celery_id)
-            data = CeleryResultSerializer(result).data
+            data = CeleryAsyncResultSerializer(result).data
 
         return Response(data)
+
+
+class ScanTaskListView(GetObjectMixin, ListAPIViewBase):
+    queryset = ScanTask.objects.all()
+    model = Scan
+    serializer_class = ScanTaskSerializer
+    permission_classes = [IsAuthenticated & CanEditScan]
+
+    def filter_queryset(self, queryset: QuerySet) -> QuerySet:
+        return queryset.filter(scan=self.get_object())

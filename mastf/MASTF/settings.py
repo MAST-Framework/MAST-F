@@ -206,11 +206,10 @@ API_ONLY = int(env.get("MASTF_API_ONLY", default=0))
 # Constant to set the working directory for dex2jar tools.
 # Note that the provided string must be a prefix and not the
 # full path of a single tool, for instance:
-#      - D2J_TOOLSET := '/home/admin/tools/dex-tools/d2j-'
+#      - D2J_TOOLSET := '/home/admin/tools/dex-tools/d2j'
 # or on windows:
-#      - D2J_TOOLSET := 'C:\Users\Public\Tools\dex-tools\d2j-'
-D2J_TOOLSET = os.getenv("TOOLS_BAKSMALI", "d2j-")
-
+#      - D2J_TOOLSET := 'C:\Users\Public\Tools\dex-tools\d2j'
+D2J_TOOLSET = os.getenv("TOOLS_BAKSMALI", "d2j")
 APKTOOL = os.getenv("TOOLS_APKTOOL", "apktool")
 
 # TODO:(remove)

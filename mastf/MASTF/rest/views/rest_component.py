@@ -40,6 +40,4 @@ class ComponentCreationView(CreationAPIViewBase):
     # The access to a selected scan will be checked when
     # form.is_valid() is executed.
     permission_classes = [permissions.IsAuthenticated]
-
-    def make_uuid(self):
-        return f"cpt_{super().make_uuid()}"
+    make_uuid = Component.make_uuid

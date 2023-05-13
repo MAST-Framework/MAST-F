@@ -59,3 +59,7 @@ MASTF_API_ONLY=0
 # -- Nginx-Configuration ----------------------------------------------------
 NGINX_HTTP_PORT=8080
 NGINX_HTTPS_PORT=8443
+
+# -- Tools-Configuration ----------------------------------------------------
+APKTOOL_VERSION="2.5.0"
+DEX2JAR_VERSION="1.2"

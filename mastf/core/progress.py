@@ -22,15 +22,37 @@ PROGRESS = "PROGRESS"
 class Observer:
     """Represents an observer of a task.
 
+    Use this class wihtin a shared_task registered in your celery worker. This
+    class enables process tracking, e.g:
+
+    .. code-block:: python
+        :linenos:
+
+        @shared_task(bind=True)
+        def my_task(self, *args):
+            observer = Observer(self)
+
+            if some_condition_to_fail:
+                # Fail will set a exception class that is used by celery
+                # to report any issue was raised during execution
+                status, meta = observer.fail("Condition not accepted!")
+                return meta.get("description")
+
+            # Always return the detail string as it will be used later on
+            status, meta = observer.succes("Condition passed!")
+            return meta.get("description")
+
+
     :param task: The task being observed.
     :type task: Task
     :param position: the initial progress position, defaults to 0
     :type position: int, optional
     """
 
-    def __init__(self, task: Task, position: int = 0) -> None:
+    def __init__(self, task: Task, position: int = 0, scan_task=None) -> None:
         self._task = task
         self._pos = abs(position) % 100
+        self._scan_task = scan_task
 
     @property
     def task(self) -> Task:
@@ -126,6 +148,9 @@ class Observer:
         if meta and isinstance(meta, dict):
             data.update(meta)
 
+        if self._scan_task and self._scan_task.name:
+            data["name"] = self._scan_task.name
+
         self.task.update_state(state=state, meta=data)
         return state, meta
 
@@ -137,9 +162,10 @@ class Observer:
         :return: the updated task state and meta information
         :rtype: tuple
         """
+        self._finish_scan_task()
         return self.update(msg, *args, current=100, state=states.SUCCESS)
 
-    def fail(self, msg: str, *args) -> tuple:
+    def fail(self, msg: str, exc_type=RuntimeError, *args) -> tuple:
         """Sets the task state to ``FALIURE`` and inserts the given message.
 
         :param msg: the message to format
@@ -147,12 +173,13 @@ class Observer:
         :return: the updated task state and meta information
         :rtype: tuple
         """
+        self._finish_scan_task()
         return self.update(
             msg,
             *args,
             current=100,
             state=states.FAILURE,
-            meta={"exc_type": RuntimeError, "exc_message": msg % args},
+            meta={"exc_type": (exc_type or RuntimeError).__name__, "exc_message": msg % args},
         )
 
     def exception(self, exception, msg: str, *args) -> tuple:
@@ -165,6 +192,7 @@ class Observer:
         :return: the updated task state and meta information
         :rtype: tuple
         """
+        self._finish_scan_task()
         return self.update(
             msg,
             *args,
@@ -175,3 +203,36 @@ class Observer:
                 "exc_message": str(exception),
             },
         )
+
+    def _finish_scan_task(self):
+        if self._scan_task:
+            self._scan_task.active = False
+            self._scan_task.save()
+
+# TODO: finish class
+class TaskInfo:
+    def __init__(self, result: AsyncResult = None, task_id: str = None) -> None:
+        self._result = result if not task_id else AsyncResult(task_id)
+        self._meta = self._result._get_task_meta() or {}
+
+        if not self._result:
+            raise ValueError("You have to provide at least the result instance or task id.")
+
+    @property
+    def task_id(self) -> str:
+        return self._task.id
+
+    @property
+    def meta(self) -> dict:
+        return self._meta
+
+    @property
+    def state(self) -> dict:
+        return self._result.state
+
+    @property
+    def status(self) -> str:
+        return self.meta.get("status", PROGRESS)
+
+    def to_repr(self) -> dict:
+        ...
