@@ -28,9 +28,14 @@ DJANGO_SESSION_COOKIE_AGE=3600
 # Control whether you want to start your instance with HTTPS
 DJANGO_HTTPS=True
 
+# The storage URL where all project data should be saved separately. Note the
+# trailing ``/`` that is needed by Django. Remove this connfiguration if you work locally.
 DJANGO_STORAGE_URL="/app_storage/"
+
+# Same as described in DJANGO_STORAGE_URL without traling slash.
 DJANGO_STORAGE_ROOT="/app_storage"
 
+# The port django should be served on.
 DJANGO_PORT=8000
 
 # -- Database-Configuration --------------------------------------------------

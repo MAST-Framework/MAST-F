@@ -1,2 +1,2 @@
 
-from .base import AndroidPermissions
+from .adb import AndroidPermissions

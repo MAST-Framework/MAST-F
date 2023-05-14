@@ -55,7 +55,8 @@ Welcome to MAST-Framework's documentation!
    :maxdepth: 3
    :caption: Core API
    :hidden:
-   :numbered:
+
+   core_api/progress
 
 .. toctree::
    :maxdepth: 3
@@ -63,6 +64,7 @@ Welcome to MAST-Framework's documentation!
    :hidden:
 
    android_api/manifest
+   android_api/permission
 
 .. toctree::
    :maxdepth: 3

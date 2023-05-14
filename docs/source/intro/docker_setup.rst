@@ -134,9 +134,185 @@ used wihtin the django application should be set in the environment file of this
     is used as the broker will also be used as the backend for storing task results.
 
 
-~~~~~~~~~~~~~~~~~~~
-Nginx Configuration
+
+Nginx
+-----
+
+The Nginx reverse proxy is a powerful tool for directing incoming network traffic to backend servers. This chapter provides a
+detailed guide on configuring the Nginx service using the available configuration variables. It also includes recommendations
+for accepting only HTTPS traffic and generating a self-signed certificate and private key for the Nginx server.
+
+Configuration Steps
 ~~~~~~~~~~~~~~~~~~~
 
+1. Install Nginx:
+    Ensure that Nginx is installed on your server or local machine if you don't want to use docker. Otherwise, take a quick look
+    at the pre-defined docker-compose configuration
+
+    .. code-block:: yaml
+
+        nginx:
+            # build context with configuration files
+            build: ./compose/local/nginx/
+            env_file:
+                # environment variables
+                - ./.env/.dev-example
+            ports:
+                - ${NGINX_HTTP_PORT}:80
+                - ${NGINX_HTTPS_PORT}:443
+            environment:
+                NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
+            depends_on:
+                - web-django
+            networks:
+                - frontend
+
+2. Nginx Configuration File:
+    There are two pre-defined nginx configuration files: one for HTTP-only servers and one for strict HTTPS servers. Note that
+    there will be only HTTPS-traffic allowed with the default configuration (recommended).
+
+    .. hint::
+        You can use environment variables declared in your environment file ``./.env/.dev-example`` in the Nginx configuration
+        file:
+
+        .. code-block:: nginx
+
+            upstream django {
+                server web-django:${DJANGO_PORT};
+            }
+
+    However, if you want to enforce HTTP traffic, you have to apply the following changes to the Dockerfile placed in
+    ``compose/nginx``:
+
+    .. code-block:: dockerfile
+
+        # Instead of preparing SSL (remove the following directives)
+        COPY default.conf.conf /etc/nginx/templates/default.conf.conf
+        RUN mkdir -p /etc/ssl/
+        COPY cert.pem /etc/ssl/cert.pem
+        COPY key.pem /etc/ssl/key.pem
+
+        # Just copy the HTTP configuration (add thid line)
+        COPY nginx.http.conf /etc/nginx/conf.d/default.conf
+
+3. Generate Self-Signed Certificate
+
+    .. note::
+        Ensure that OpenSSL is installed on your system. Use the package manager or download it from the official website.
+        For Windows users: If you have git installed on your system, make sure that you have also installed Git Bash. Run
+        Git Bash in order to start a new window with a bash shell in it. You can now execute the command described below.
+
+    In a new terminal, run the following commands to generate a self-signed certificate and private key:
+
+    .. code:: bash
+
+        openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout /path/to/key.pem -out /path/to/cert.pem
+
+    In order to use the generated private key and certificate, copy them into the ``compose/nginx/`` directory of this
+    repository.
+
+
+.. caution::
+    These steps provide a simplistic overview of how HTTPS can be enabled via a nginx reverse proxy. It is not meant to be
+    complete in any ways. For more HTTPS security related information, please refer to the `NGINX Guide <https://www.nginx.com/resources/wiki/start/topics/examples/full/>`_.
+
+
+Environment Options
+~~~~~~~~~~~~~~~~~~~
+
+- ``NGINX_HTTP_PORT=8080``:
+    This configuration variable specifies the port number on which the Nginx server listens for incoming HTTP
+    connections. The default value is set to ``8080``, but it can be modified to any available port number.
+
+    * Any HTTP traffic received on this port will be directed to the backend servers configured in the Nginx reverse proxy.
+
+- ``NGINX_HTTPS_PORT=8443``:
+    This configuration variable defines the port number on which the Nginx server listens for incoming HTTPS
+    connections. The default value is set to ``8443``, but it can be changed to any available port number.
+
+    * HTTPS traffic received on this port will be securely handled by the Nginx server using SSL/TLS encryption.
+    * It is important to configure the Nginx server with a valid SSL/TLS certificate and private key to enable HTTPS communication on this port.
+    * Typically, the backend servers behind the Nginx reverse proxy will communicate over plain HTTP, while the Nginx server itself handles the SSL/TLS encryption for incoming HTTPS requests.
+
+
+
+Django
+------
+
+The following environment variables apply to all services using the environment file. For frontend specific configurations,
+please refer to the :doc:`Django Settings` documentation.
+
+.. note::
+    All described environment variables cannot be used in local development.
+
+.. py:data:: DJANGO_DEBUG
+    :value: 1
+    :type: int
+
+    Control whether the web instance should be running in debug mode to provide detailed exception descriptions.
+
+    .. warning::
+        Never enable this option in production environments as it would potentially leak important and sensitive
+        configuration vairables.
+
+.. py:data:: DJANGO_SECRET_KEY
+    :type: str
+
+    Specifies the secret key that Django will use. For more information about secret keys in Django, please refer to the
+    chapter `Cryptographic signing <https://docs.djangoproject.com/en/4.2/topics/signing/>`_ of the Django documentation.
+
+.. py:data:: DJANGO_ALLOWED_HOSTS
+    :type: str
+    :value: "*"
+
+    Make sure to edit the allowed host variable to specify which host should be able to connect to your web instance. Sperate
+    them with ``:`` to add multiple hosts.
+
+.. py:data:: DJANGO_CSRF_TRUSTED_ORIGINS
+    :type: str
+    :value: "https://localhost:8443|https://127.0.0.1:8443"
+
+    .. important::
+        Configure the trusted hosts if you are using a revere proxy like nginx. Replace hostnames of the given URLs to match
+        your own ones.
+
+.. py:data:: DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE
+    :type: int
+    :value: 1
+
+    Use this configuration to control whether django should remove active sessions when the browser is closed.
+
+.. py:data:: DJANGO_SESSION_COOKIE_AGE
+    :type: int
+    :value: 3600
+
+    Control the TTL of a session cookie default will be 3600s = 1h
+
+.. py:data:: DJANGO_HTTPS
+    :type: bool
+    :value: True
+
+    Control whether you want to start your services with HTTPS enabled. Enable this option only if you want
+    to use HTTPS.
+
+.. py:data:: DJANGO_STORAGE_URL
+    :type: str
+    :value: "/app_storage/"
+
+    The storage URL where all project data should be saved separately. Note the trailing ``/`` that is needed
+    by Django. Remove this connfiguration if you work locally.
+
+
+.. py:data:: DJANGO_STORAGE_ROOT
+    :type: str
+    :value: "/app_storage"
+
+    Same as described in :data:`DJANGO_STORAGE_URL` without traling slash.
+
+.. py:data:: DJANGO_PORT
+    :type: int
+    :value: 8000
+
+    The port django should be served on.
 
 

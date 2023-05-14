@@ -231,6 +231,7 @@ class ScanTaskListView(GetObjectMixin, ListAPIViewBase):
     model = Scan
     serializer_class = ScanTaskSerializer
     permission_classes = [IsAuthenticated & CanEditScan]
+    lookup_field = "scan_uuid"
 
     def filter_queryset(self, queryset: QuerySet) -> QuerySet:
         return queryset.filter(scan=self.get_object())

@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from celery.app.task import Task, states
-from celery.result import AsyncResult
 
 PROGRESS = "PROGRESS"
 
@@ -104,6 +103,7 @@ class Observer:
         *args,
         current: int = -1,
         increment: bool = True,
+        step: int = 1,
         total: int = 100,
         state: str = PROGRESS,
         meta: dict = None,
@@ -132,7 +132,7 @@ class Observer:
 
         percent: float = 0
         if current == -1:
-            current = self.increment() if increment else self.pos
+            current = self.increment(abs(step) or 1) if increment else self.pos
         else:
             self.pos = current % total
 
@@ -209,30 +209,3 @@ class Observer:
             self._scan_task.active = False
             self._scan_task.save()
 
-# TODO: finish class
-class TaskInfo:
-    def __init__(self, result: AsyncResult = None, task_id: str = None) -> None:
-        self._result = result if not task_id else AsyncResult(task_id)
-        self._meta = self._result._get_task_meta() or {}
-
-        if not self._result:
-            raise ValueError("You have to provide at least the result instance or task id.")
-
-    @property
-    def task_id(self) -> str:
-        return self._task.id
-
-    @property
-    def meta(self) -> dict:
-        return self._meta
-
-    @property
-    def state(self) -> dict:
-        return self._result.state
-
-    @property
-    def status(self) -> str:
-        return self.meta.get("status", PROGRESS)
-
-    def to_repr(self) -> dict:
-        ...

@@ -7,10 +7,14 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import sys
 import os
+import re
 
-project = 'MAST-Framework'
-copyright = '2023, MatrixEditor '
-author = 'MatrixEditor '
+project = u'MAST-Framework'
+slug = re.sub(r"\W+", '-', project.lower())
+copyright = u'2023, MatrixEditor'
+author = 'MatrixEditor'
+language = "en"
+
 
 version = '0.1'
 release = '0.0.1-alpha'
@@ -51,6 +55,7 @@ source_suffix = '.rst'
 exclude_patterns = ['_build', 'README.rst']
 mock_imports = ['django']
 
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 import sphinx_rtd_theme
@@ -64,6 +69,7 @@ html_theme_options = {
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
+    'navigation_depth': 4,
     # Toc options
     'collapse_navigation': False,
     'titles_only': False
