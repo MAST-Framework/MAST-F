@@ -1,4 +1,2 @@
 sphinx>=6.2.1
 sphinx_rtd_theme>=1.2.0
-Django>=4.1.7
-requests>=2.28.1

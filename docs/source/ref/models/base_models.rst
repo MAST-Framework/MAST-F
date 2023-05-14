@@ -13,3 +13,17 @@ there is another utility class that comes with some special behaviour:
 .. autoclass:: mastf.MASTF.models.Team
     :members:
     :no-undoc-members:
+
+.. autoclass:: mastf.MASTF.models.Project
+    :members:
+    :no-undoc-members:
+
+.. autoclass:: mastf.MASTF.models.File
+    :members:
+    :no-undoc-members:
+
+.. autoclass:: mastf.MASTF.models.Account
+    :members:
+    :no-undoc-members:
+
+*TODO:* ``Environment``, ``Bundle``

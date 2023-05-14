@@ -137,7 +137,7 @@ class Team(models.Model):
 class Project(models.Model):
     """Database model for mobile application projects.
 
-    .. info::
+    .. note::
         Projects may be assigned to whole teams instead of set only one user in
         charge of it. All users that are a member of the project's team are able
         to modify the project.
