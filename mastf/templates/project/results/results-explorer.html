@@ -85,7 +85,7 @@
             }
 
             var path = node.getAttribute("path");
-            var url = "/api/v1/files/" + path.split("/")[0] + "/?file=" + path;
+            var url = "/api/v1/project/{{project.pk}}/files/" + path.split("/")[0] + "/?file=" + path;
             REST.doGet(url, function(data) {
                 let theme_name = 'enlighter';
                 if (Utils.isDarkLaf()) {

@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from abc import ABCMeta
+from re import sub
 
 from mastf.MASTF.utils.enum import StringEnum
 from mastf.MASTF.models import Project, Scanner, Scan, File
@@ -112,4 +113,4 @@ class ScannerPlugin(metaclass=ABCMeta):
 
     @staticmethod
     def to_internal_name(name: str) -> str:
-        return str(name).lower().replace(" ", "-").replace("--", "-")
+        return sub(r"[\s]", "-", str(name)).lower().replace('--', '-')

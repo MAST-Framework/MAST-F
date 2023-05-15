@@ -1,6 +1,8 @@
+from re import sub
 from uuid import uuid4
 
 from rest_framework import permissions
+from rest_framework.request import Request
 
 from mastf.MASTF.serializers import TemplateSerializer
 from mastf.MASTF.models import FindingTemplate
@@ -30,6 +32,10 @@ class FindingTemplateCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated & ~IsExternal]
     form_class = FindingTemplateForm
     model = FindingTemplate
+
+    def set_defaults(self, request: Request, data: dict) -> None:
+        data["internal_id"] = sub(r"[\s_:]", "-", data.get("title")).lower()
+
 
     def make_uuid(self):
         return f"FT-{uuid4()}-{uuid4()}"

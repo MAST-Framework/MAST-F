@@ -18,7 +18,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 
-from mastf.MASTF.utils.enum import Severity, State, Visibility, HostType
+from mastf.MASTF.utils.enum import Severity, State, Visibility
 
 from .base import Project, namespace, Team, Bundle
 from .mod_scan import Scan, Scanner
@@ -33,6 +33,7 @@ __all__ = [
 
 class FindingTemplate(models.Model):
     template_id = models.CharField(max_length=128, null=True)
+    internal_id = models.CharField(max_length=256, null=True)
     title = models.CharField(max_length=256, blank=True)
     description = models.TextField()
     default_severity = models.CharField(
@@ -78,7 +79,7 @@ class AbstractBaseFinding(models.Model):
     - ``CRITICAL``: Verified vulnerabilites that have been marked as ``HIGH``
     """
 
-    discovery_date = models.DateField(null=True)
+    discovery_date = models.DateField(null=True, auto_now=True, auto_now_add=False)
     """Stores the date this vulnerability was detected."""
 
     scanner = models.ForeignKey(Scanner, on_delete=models.SET_NULL, null=True)

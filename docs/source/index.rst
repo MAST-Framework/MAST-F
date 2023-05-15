@@ -31,6 +31,7 @@ Welcome to MAST-Framework's documentation!
    :caption: API Documentation
    :hidden:
 
+   api/rest/index
    api/forms
    api/serializers
    api/permissions

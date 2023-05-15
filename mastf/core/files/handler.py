@@ -16,10 +16,14 @@
 import re
 import pathlib
 import zipfile
+import hashlib
+import logging
 
 from mastf.android.tools import apktool, baksmali
 
 handlers = []
+logger = logging.getLogger(__name__)
+
 
 class TaskFileHandler:
     def __init__(self, extension: str, scan_type: str = None) -> None:
@@ -67,25 +71,33 @@ class TaskFileHandler:
 
 @TaskFileHandler(extension=r".*\.apk", scan_type="android")
 def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings):
-    src = dest_dir / 'src'
-    contents = dest_dir / 'contents'
+    src = dest_dir / "src"
+    contents = dest_dir / "contents"
     if not src.exists():
         src.mkdir(parents=True, exist_ok=True)
 
     if not contents.exists():
         contents.mkdir(parents=True, exist_ok=True)
 
+    logging.debug("Extracting APK file with apktool...")
     apktool.extractrsc(str(src_path), str(contents), settings.APKTOOL)
-    smali_dir = src / 'smali'
+    smali_dir = src / "smali"
     smali_dir.mkdir(exist_ok=True)
 
     tool = f"{settings.D2J_TOOLSET}-dex2smali"
-    for path in contents.glob("*.dex"):
-        baksmali.decompile(str(path), str(smali_dir), tool)
+    dex_files = list(contents.glob(r"*/**/*.dex")) + list(contents.glob(r"*.dex"))
+    for path in dex_files:
+        logging.debug(
+            "Decompiling classes with %s: classes=%s -> to=%s",
+            tool,
+            str(path),
+            str(smali_dir),
+        )
+        baksmali.decompile(str(path), str(smali_dir), tool, options=["--force"])
 
 
 @TaskFileHandler(extension=r".*\.ipa", scan_type="ios")
 def ipa_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings) -> None:
     with zipfile.ZipFile(str(src_path)) as zfile:
         # Extract initial files
-        zfile.extractall(str(dest_dir / 'contents'))
+        zfile.extractall(str(dest_dir / "contents"))

@@ -5,20 +5,24 @@ import uuid
 from xml.dom.minidom import Element, parse
 
 from mastf.android.manifest import AXmlVisitor
+from mastf.core.progress import Observer
+
 from mastf.MASTF.models import (
     Scan,
     ScanTask,
     AppPermission,
     PermissionFinding,
     Snippet,
-    Component
+    Component,
 )
 from mastf.MASTF.utils.enum import ProtectionLevel, Severity
 
 logger = logging.getLogger(__name__)
 
 
-def run_manifest_scan(task: ScanTask, manifest_file: pathlib.Path):
+def run_manifest_scan(
+    task: ScanTask, manifest_file: pathlib.Path, observer: Observer = None
+):
     visitor = AXmlVisitor()
     handler = AndroidManifestHandler(task, manifest_file)
 
@@ -28,23 +32,32 @@ def run_manifest_scan(task: ScanTask, manifest_file: pathlib.Path):
                 document = parse(mfp)
 
         except Exception as err:
-            logger.debug(
-                "[%s] Skipping manifest due to parsing error: %s",
-                type(err).__name__,
-                str(err),
-            )
+            if observer:
+                observer.update(
+                    "[%s] Skipping manifest due to parsing error: %s",
+                    type(err).__name__,
+                    str(err),
+                    do_log=True,
+                    log_level=logging.ERROR
+                )
             return
 
         handler.link(visitor)
         visitor.visit_document(document)
     else:
-        logger.debug("Skipped %s due to non-existed file!", str(manifest_file))
+        if observer:
+            observer.update(
+                "Skipped %s due to non-existed file!", str(manifest_file), do_log=True
+            )
 
 
 class AndroidManifestHandler:
-    def __init__(self, task: ScanTask, path: pathlib.Path) -> None:
+    def __init__(
+        self, task: ScanTask, path: pathlib.Path, observer: Observer = None
+    ) -> None:
         self.task = task
         self.path = path
+        self.observer = observer
         self.snippet = Snippet(language="xml", file_name=path.name)
         self._saved = False
 
@@ -67,15 +80,22 @@ class AndroidManifestHandler:
             protection_level = ProtectionLevel.NORMAL
         else:
             if protection_level not in list(ProtectionLevel):
-                logger.debug(
-                    "Switching unknown ProtectionLevel classifier: %s", protection_level
-                )
+                if self.observer:
+                    self.observer.update(
+                        "Switching unknown ProtectionLevel classifier: %s",
+                        protection_level,
+                        do_log=True,
+                    )
                 protection_level = ProtectionLevel.NORMAL
 
         if not queryset.exists():
-            logger.debug(
-                "Creating new Permission: %s [pLevel=%s]", identifier, protection_level
-            )
+            if self.observer:
+                self.observer.update(
+                    "Creating new Permission: %s [pLevel=%s]",
+                    identifier,
+                    protection_level,
+                    do_log=True,
+                )
             permission = AppPermission.create_unknown(identifier, protection_level)
         else:
             permission = queryset.first()
@@ -96,6 +116,4 @@ class AndroidManifestHandler:
     def on_application(self, element: Element, name: str) -> None:
         exported = element.getAttribute("android:exported")
 
-        Component.objects.create(
-            pk=Component.make_uuid(), is_exported=...
-        )
+        # ...

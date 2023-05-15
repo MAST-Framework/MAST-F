@@ -148,9 +148,11 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
 
         if isinstance(instance, Callable):
             rvalue = instance(scan, task, observer)
-            observer.success(
+            _, meta = observer.success(
                 "[%s] Finished scanner task with rvalue: %s", plugin_name, str(rvalue)
             )
+
+            rvalue = rvalue or meta
             return rvalue
         else:
             raise TypeError(
@@ -158,7 +160,7 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
                 type(instance),
             )
     except Exception as err:
-        msg = "(%s) Unhandled worker exeption: " % err.__class__.__name__
+        msg = "(%s) Unhandled worker exeption: %s" % (err.__class__.__name__, str(err))
         logger.exception(msg)
         _, meta = observer.exception(err, msg)
         return meta.get("description")

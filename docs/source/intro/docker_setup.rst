@@ -16,7 +16,8 @@ files are located in the ``/compose/local/`` directory.
     :alt: Overview of container architecture
 
     Figure 1: Overview of container architecture. Note that our Django container will be able to
-    comunicate with containers in the backend network.
+    comunicate with containers in the backend network. Note also that the storage network is still
+    under development and can't be integrated yet.
 
 
 

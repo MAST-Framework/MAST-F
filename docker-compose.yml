@@ -10,6 +10,9 @@ services:
 
     image: web_mastf_django
     command: /start
+    env_file:
+      - ./.env
+
     volumes:
       - type: bind
         source: ./
@@ -18,14 +21,6 @@ services:
       - storage_data:/app_storage
     expose:
       - 8000
-    env_file:
-      # This environment file will store all necessary information to
-      # be able run the web instance. Note that this file may contain
-      # the secret key for Django and locations for SSL certificates.
-      #
-      # If you're running PostgreSQL, make sure to include necessary
-      # environment variables to access the database.
-      - ./.env/.dev-example
 
     depends_on:
       - redis
@@ -64,6 +59,9 @@ services:
 
     image: mastf_celery_worker
     command: /start_celery_worker
+    env_file:
+      - ./.env
+
     volumes:
       # In order to include additional scanner files and librares, we
       # have to include the whole app directory.
@@ -72,10 +70,6 @@ services:
         target: /app
 
       - storage_data:/app_storage
-    env_file:
-      # This container needs the same configuration files as defined in
-      # out web instance.
-      - ./.env/.dev-example
 
     depends_on:
       - redis
@@ -95,6 +89,9 @@ services:
 
     image: mastf_celery_beat
     command: /start_celery_beat
+    env_file:
+      - ./.env
+
     volumes:
       # Same as above
       - type: bind
@@ -102,9 +99,6 @@ services:
         target: /app
 
       - storage_data:/app_storage
-    env_file:
-      # Same as above
-      - ./.env/.dev-example
 
     depends_on:
       - redis
@@ -116,11 +110,11 @@ services:
   # Our reverse proxy for handling requests and serving static files
   nginx:
     build: ./compose/local/nginx/
-    env_file:
-      - ./.env/.dev-example
     ports:
-      - ${NGINX_HTTP_PORT}:80
-      - ${NGINX_HTTPS_PORT}:443
+      - 8080:80
+      - 8443:443
+    env_file:
+      - ./.env
     environment:
       NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
     # volumes:

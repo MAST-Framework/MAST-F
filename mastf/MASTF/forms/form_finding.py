@@ -31,7 +31,7 @@ __all__ = [
 
 
 class FindingTemplateForm(forms.Form):
-    title = forms.CharField(max_length=256, required=False)
+    title = forms.CharField(max_length=256, required=True)
     severity = forms.CharField(max_length=256, required=False)
     # The next two fields won't get a length maximum
     description = forms.CharField(required=False)

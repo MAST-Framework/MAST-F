@@ -13,6 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+from logging import DEBUG, WARNING, ERROR, INFO, Logger
 from celery.app.task import Task, states
 
 PROGRESS = "PROGRESS"
@@ -48,10 +49,11 @@ class Observer:
     :type position: int, optional
     """
 
-    def __init__(self, task: Task, position: int = 0, scan_task=None) -> None:
+    def __init__(self, task: Task, position: int = 0, scan_task=None, logger: Logger = None) -> None:
         self._task = task
         self._pos = abs(position) % 100
         self._scan_task = scan_task
+        self._logger = logger
 
     @property
     def task(self) -> Task:
@@ -61,6 +63,15 @@ class Observer:
         :rtype: Task
         """
         return self._task
+
+    @property
+    def logger(self) -> Logger:
+        """Gets the underlying logger.
+
+        :return: a linked task logger
+        :rtype: Task
+        """
+        return self._logger
 
     @property
     def pos(self) -> int:
@@ -107,6 +118,8 @@ class Observer:
         total: int = 100,
         state: str = PROGRESS,
         meta: dict = None,
+        do_log: bool = False,
+        log_level: str = DEBUG,
     ) -> tuple:
         """Update the current task state.
 
@@ -152,7 +165,10 @@ class Observer:
             data["name"] = self._scan_task.name
 
         self.task.update_state(state=state, meta=data)
-        return state, meta
+        if do_log and self._logger:
+            self._logger.log(log_level, data["description"])
+
+        return state, data
 
     def success(self, msg: str = "", *args) -> tuple:
         """Sets the task state to ``SUCCESS`` and inserts the given message.
@@ -163,7 +179,7 @@ class Observer:
         :rtype: tuple
         """
         self._finish_scan_task()
-        return self.update(msg, *args, current=100, state=states.SUCCESS)
+        return self.update(msg, *args, current=100, state=states.SUCCESS, do_log=True, log_level=INFO)
 
     def fail(self, msg: str, exc_type=RuntimeError, *args) -> tuple:
         """Sets the task state to ``FALIURE`` and inserts the given message.
@@ -180,6 +196,8 @@ class Observer:
             current=100,
             state=states.FAILURE,
             meta={"exc_type": (exc_type or RuntimeError).__name__, "exc_message": msg % args},
+            do_log=True,
+            log_level=WARNING
         )
 
     def exception(self, exception, msg: str, *args) -> tuple:
@@ -202,6 +220,8 @@ class Observer:
                 "exc_type": type(exception).__name__,
                 "exc_message": str(exception),
             },
+            do_log=True,
+            log_level=ERROR
         )
 
     def _finish_scan_task(self):

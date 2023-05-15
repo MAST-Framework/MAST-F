@@ -64,7 +64,9 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
         tasks = ScanTask.active_tasks(project=project)
         context["is_active"] = len(tasks) > 0
         scan = context["scan"]
-        scan.is_active = context["is_active"]
+        if scan:
+            scan.is_active = context["is_active"]
+            scan.save()
 
         logger.debug(
             "[%s] Queried %d active tasks (is_active=%s)",
@@ -81,7 +83,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
 
             context["active_data"] = active_data
 
-        scan.save()
+
         return context
 
 
@@ -140,7 +142,7 @@ class UserScannersView(
             project_scanner = Scanner.objects.filter(
                 scan__project=project, name=name
             ).first()
-            results[scanner.name] = self.get_scan_results(scans, project_scanner)
+            results[scanner.internal_name] = self.get_scan_results(scans, project_scanner)
 
         context["scan_results"] = results
         return context

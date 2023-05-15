@@ -25,12 +25,11 @@ class FindingCreationView(CreationAPIViewBase):
     permission_classes = [permissions.IsAuthenticated & IsScanInitiator]
     model = Finding
     form_class = FindingForm
+    make_uuid = Finding.make_uuid
 
     def set_defaults(self, request, data: dict) -> None:
         self.check_object_permissions(self.request, data['scan'])
 
-    def make_uuid(self):
-        return f"SF-{uuid4()}-{uuid4()}"
 
 class FindingListView(GetObjectMixin, ListAPIViewBase):
     permission_classes = [permissions.IsAuthenticated & CanEditScan]
