@@ -42,7 +42,7 @@ MEDIA_ROOT = env.get("DJANGO_STORAGE_ROOT", "")
 MEDIA_URL = env.get("DJANGO_STORAGE_URL", "")
 if not MEDIA_ROOT:
     if DEBUG:
-        MEDIA_ROOT = str(BASE_DIR / 'projects')
+        MEDIA_ROOT = str(BASE_DIR)
     else:
         raise RuntimeError(
             "Could not find a valid MEDIA_ROOT setting. Use a shared "
@@ -51,7 +51,7 @@ if not MEDIA_ROOT:
 
 if not MEDIA_URL:
     if DEBUG:
-        MEDIA_URL = str(BASE_DIR / 'projects/') + '/'
+        MEDIA_URL = str(BASE_DIR) + '/'
     else:
         raise RuntimeError(
             "Could not find a valid MEDIA_URL setting."
@@ -197,9 +197,9 @@ YARA_BASE_DIR = str(env.get("YARA_BASE_DIR", BASE_DIR / "yara"))
 
 # -!- START USER-CONFIG -!-
 
-PROJECTS_ROOT = Path(MEDIA_ROOT) / "projects"
+PROJECTS_ROOT = Path(MEDIA_ROOT) / 'projects'
 if not PROJECTS_ROOT.exists():
-    PROJECTS_ROOT.mkdir()
+    PROJECTS_ROOT.mkdir(exist_ok=True, parents=True)
 
 API_ONLY = int(env.get("MASTF_API_ONLY", default=0))
 

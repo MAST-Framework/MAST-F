@@ -62,15 +62,15 @@ class TaskFileHandler:
 
         return None
 
-    def apply(self, src_path: pathlib.Path, dest_dir: pathlib.Path, settings) -> None:
+    def apply(self, src_path: pathlib.Path, dest_dir: pathlib.Path, settings, **kwargs) -> None:
         if not self.func:
             raise ValueError("Expected a callable function or class instance, got None")
 
-        self.func(src_path, dest_dir, settings)
+        self.func(src_path, dest_dir, settings, **kwargs)
 
 
 @TaskFileHandler(extension=r".*\.apk", scan_type="android")
-def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings):
+def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings, **kwargs):
     src = dest_dir / "src"
     contents = dest_dir / "contents"
     if not src.exists():
@@ -79,7 +79,11 @@ def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings):
     if not contents.exists():
         contents.mkdir(parents=True, exist_ok=True)
 
-    logging.debug("Extracting APK file with apktool...")
+    logger.debug("Extracting APK file with apktool...")
+    observer = kwargs.get("observer", None)
+    if observer:
+        observer.update("Extracting APK file with apktool...")
+
     apktool.extractrsc(str(src_path), str(contents), settings.APKTOOL)
     smali_dir = src / "smali"
     smali_dir.mkdir(exist_ok=True)
@@ -87,17 +91,19 @@ def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings):
     tool = f"{settings.D2J_TOOLSET}-dex2smali"
     dex_files = list(contents.glob(r"*/**/*.dex")) + list(contents.glob(r"*.dex"))
     for path in dex_files:
-        logging.debug(
-            "Decompiling classes with %s: classes=%s -> to=%s",
+        logger.debug("Decompiling classes with %s: classes=%s -> to=%s" % (
             tool,
             str(path),
-            str(smali_dir),
-        )
+            str(smali_dir)
+        ))
+        if observer:
+            observer.update("Decompiling %s with %s to /src/smali", path.name, tool)
+
         baksmali.decompile(str(path), str(smali_dir), tool, options=["--force"])
 
 
 @TaskFileHandler(extension=r".*\.ipa", scan_type="ios")
-def ipa_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings) -> None:
+def ipa_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings, **kwargs) -> None:
     with zipfile.ZipFile(str(src_path)) as zfile:
         # Extract initial files
         zfile.extractall(str(dest_dir / "contents"))

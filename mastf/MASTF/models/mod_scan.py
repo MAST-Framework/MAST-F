@@ -175,6 +175,13 @@ class ScanTask(models.Model):
 
         return []
 
+    @staticmethod
+    def finish_scan(scan: Scan, task: 'ScanTask') -> None:
+        tasks = ScanTask.active_tasks(scan)
+        if len(tasks) == 0 or (len(tasks) == 1 and tasks[0] == task):
+            scan.is_active = False
+            scan.save()
+
 
 class Details(models.Model): # TODO
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)

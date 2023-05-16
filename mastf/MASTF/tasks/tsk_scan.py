@@ -97,7 +97,7 @@ def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
         logger.warning("Could not load file handler for MIME-Type: %s", file_path)
         return meta.get("description")
 
-    handler.apply(pathlib.Path(file_path), file_dir, settings)
+    handler.apply(pathlib.Path(file_path), file_dir, settings, observer=observer)
     observer.update("Creating scanner specific ScanTask objects.", current=80)
 
     plugins = ScannerPlugin.all()
@@ -149,9 +149,9 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
         if isinstance(instance, Callable):
             rvalue = instance(scan, task, observer)
             _, meta = observer.success(
-                "[%s] Finished scanner task with rvalue: %s", plugin_name, str(rvalue)
+                "[%s] Finished scanner task", plugin_name
             )
-
+            ScanTask.finish_scan(scan, task)
             rvalue = rvalue or meta
             return rvalue
         else:
@@ -163,4 +163,5 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
         msg = "(%s) Unhandled worker exeption: %s" % (err.__class__.__name__, str(err))
         logger.exception(msg)
         _, meta = observer.exception(err, msg)
+        ScanTask.finish_scan(scan, task)
         return meta.get("description")

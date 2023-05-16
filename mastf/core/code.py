@@ -123,23 +123,26 @@ def yara_scan_file(file: pathlib.Path, task: ScanTask, base_dir=YARA_BASE_DIR, o
 
 def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = None,
                        base_dir: str = YARA_BASE_DIR):
+    print("Started Code Analysis...")
     task = ScanTask.objects.get(pk=scan_task_pk)
     path = pathlib.Path(start_dir)
     if not path.exists():
         logger.warning("Could not validate start directory: %s", str(path))
     else:
+        total = 100
         if observer:
             # Extra: use this function in your shared task and track the current progress
             # of this scan.
             observer.pos = 0
-            observer.update("Starting YARA Scan...")
+            observer.update("Enumerating file objects...")
+            total = len(list(path.glob("**/*.*")))
+            observer.update("Starting YARA Scan...", total=total)
+
 
         for directory in path.glob("*/**"):
             # Reset the progres bar if
             if observer:
-                if observer.pos >= 99:
-                    observer.pos = 0
-                observer.update("Scanning folder: '%s' ...", str(directory), do_log=True)
+                observer.update("Scanning folder: '%s' ...", str(directory), do_log=True, total=total)
 
             if not mp.current_process().daemon:
                 with mp.Pool(os.cpu_count()) as pool:
@@ -153,9 +156,10 @@ def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = N
                     if child.is_dir():
                         continue
 
-                    if observer and observer.pos >= 99:
-                        observer.pos = 0
-                        observer.update("Scanning file: '%s' ...", str(child), do_log=True)
+                    if observer:
+                        if observer.pos >= 99:
+                            observer.pos = 0
+                        observer.update("Scanning file: $%s$ ...", str(child.name), do_log=True, total=total)
 
                     yara_scan_file(child, task, base_dir)
 

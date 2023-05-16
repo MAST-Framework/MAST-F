@@ -43,7 +43,9 @@ def run_manifest_scan(
             return
 
         handler.link(visitor)
+        print("Parsing manifest...")
         visitor.visit_document(document)
+        print("Finished manifest parsing!")
     else:
         if observer:
             observer.update(

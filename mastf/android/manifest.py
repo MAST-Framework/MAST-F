@@ -161,8 +161,8 @@ class AXmlVisitorBase(type):
         for element in nodes:
             if isinstance(element, str) and element not in exclude:
                 nname = str(element).replace("-", "_")
-                axml_elements[nname] = _AXmlElement(nname.lower())
-                setattr(new_class, nname, axml_elements[nname])
+                axml_elements[element] = _AXmlElement(nname.lower())
+                setattr(new_class, nname, axml_elements[element])
 
         if hasattr(new_class, "__axml__"):
             # To add elements from super classes we check against
