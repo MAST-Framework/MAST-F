@@ -19,7 +19,7 @@ __all__ = [
 class FindingTemplateView(APIViewBase):
     """API-Endpoint for creating, managing and removing finding templates."""
 
-    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
+    permission_classes = [permissions.IsAuthenticated]
 
     model = FindingTemplate
     lookup_field = 'template_id'
@@ -29,7 +29,7 @@ class FindingTemplateView(APIViewBase):
 class FindingTemplateCreationView(CreationAPIViewBase):
     """Separate APIView for creating new ``FindingTemplate`` objects"""
 
-    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
+    permission_classes = [permissions.IsAuthenticated]
     form_class = FindingTemplateForm
     model = FindingTemplate
 
@@ -45,5 +45,5 @@ class FindingTemplateListView(ListAPIViewBase):
     """A view listing all finding templates"""
 
     queryset = FindingTemplate.objects.all()
-    permission_classes = [permissions.IsAuthenticated & ~IsExternal]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = TemplateSerializer

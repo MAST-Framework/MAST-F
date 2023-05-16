@@ -218,7 +218,7 @@ Vulnerability = {
 
         if (data != null) {
             EnlighterJS.init('pre', 'code.vuln_code', {
-                language : data?.language.toLowerCase(),
+                language : data?.snippet.language.toLowerCase() || "text",
                 theme: theme_name,
                 indent : 2,
                 textOverflow: 'scroll'
@@ -290,7 +290,7 @@ Finding = {
         }
 
         EnlighterJS.init('pre', 'code.finding_code', {
-            language : data.language.toLowerCase(),
+            language : data?.snippet.language.toLowerCase() || "text",
             theme: theme_name,
             indent : 2,
             textOverflow: 'scroll'

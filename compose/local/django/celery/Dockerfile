@@ -31,8 +31,7 @@ RUN wget https://github.com/pxb1988/dex2jar/releases/download/v${DEX2JAR_VERSION
     && unzip dex2jar-${DEX2JAR_VERSION}.zip -d /opt \
     && chmod +x /opt/dex-tools-${DEX2JAR_VERSION}/d2j-* \
     && rm dex2jar-${DEX2JAR_VERSION}.zip
-# Set environment variables
-ENV PATH="/opt/dex-tools-${DEX2JAR_VERSION}:${PATH}"
+
 
 
 # Download and install Apktool
@@ -42,6 +41,13 @@ RUN wget https://github.com/iBotPeaches/Apktool/releases/download/v${APKTOOL_VER
     && chmod +x /usr/local/bin/apktool \
     && chmod +x /usr/local/bin/apktool.jar
 
+ENV JADX_VERSION="1.4.7"
+RUN wget -O jadx.zip https://github.com/skylot/jadx/releases/download/v${JADX_VERSION}/jadx-${JADX_VERSION}.zip \
+    && unzip jadx.zip -d "/opt/jadx-${JADX_VERSION}" \
+    && chmod +x "/opt/jadx-${JADX_VERSION}/bin/jadx"
+
+# Set environment variables
+ENV PATH="/opt/dex-tools-${DEX2JAR_VERSION}:/opt/jadx-${JADX_VERSION}/bin:${PATH}"
 
 # Ensure all project dependencies are installed correctly
 COPY ./requirements.txt /requirements.txt

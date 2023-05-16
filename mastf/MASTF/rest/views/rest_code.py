@@ -133,4 +133,4 @@ class FileCodeView(GetObjectMixin, views.APIView):
             logger.warning("Could not find file at '%s'", str(target))
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        return Response(open(str(target), "rb"))
+        return Response(open(str(target), "r"))

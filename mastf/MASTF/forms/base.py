@@ -194,7 +194,7 @@ class AppPermissionForm(forms.Form):
     name = forms.CharField(max_length=256, required=True)
     protection_level = forms.CharField(max_length=256, required=True)
     dangerous = forms.BooleanField(required=False, initial=False)
-    group = forms.CharField(max_length=256, required=True)
+    group = forms.CharField(max_length=256, required=False)
 
     short_description = forms.CharField(max_length=256, required=True)
     description = forms.CharField(required=False)

@@ -88,7 +88,11 @@ def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings, **kwar
     smali_dir = src / "smali"
     smali_dir.mkdir(exist_ok=True)
 
+    java_dir = src / 'java'
+    java_dir.mkdir(exist_ok=True)
+
     tool = f"{settings.D2J_TOOLSET}-dex2smali"
+    java_tool = f"{settings.D2J_TOOLSET}-dex2jar"
     dex_files = list(contents.glob(r"*/**/*.dex")) + list(contents.glob(r"*.dex"))
     for path in dex_files:
         logger.debug("Decompiling classes with %s: classes=%s -> to=%s" % (
@@ -100,6 +104,10 @@ def apk_handler(src_path: pathlib.Path, dest_dir: pathlib.Path, settings, **kwar
             observer.update("Decompiling %s with %s to /src/smali", path.name, tool)
 
         baksmali.decompile(str(path), str(smali_dir), tool, options=["--force"])
+
+        if observer:
+            observer.update("Decompiling %s with %s to /src/java", path.name, java_tool)
+        baksmali.to_java(str(path), str(java_dir), java_tool, options=["--force"])
 
 
 @TaskFileHandler(extension=r".*\.ipa", scan_type="ios")

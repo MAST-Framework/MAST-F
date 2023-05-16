@@ -41,10 +41,10 @@ class YaraResult:
     def severity(self) -> Severity:
         if not self._severity:
             for sv in Severity:
-                if str(sv).lower() == self.get("severity", Severity.NONE.value).lower():
+                if str(sv).lower() == self._meta.get("severity", Severity.NONE.value).lower():
                     self._severity = sv
 
-        return self._severity
+        return self._severity or Severity.INFO
 
     @property
     def template_id(self) -> str:
@@ -52,7 +52,11 @@ class YaraResult:
 
     @property
     def internal_id(self) -> str:
-        return self._meta.get("ft_internal_id", None)
+        name = self._meta.get("ft_internal_id", None)
+        if not name:
+            return name
+
+        return FindingTemplate.make_internal_id(name)
 
     def get_template_data(self) -> dict:
         return {
@@ -67,21 +71,22 @@ class YaraResult:
             queryset = None
             if self.template_id:
                 queryset = FindingTemplate.objects.filter(pk=self.template_id)
-            elif self.internal_id:
-                queryset = FindingTemplate.objects.filter(internal_name=self.internal_id)
+
+            if self.internal_id:
+                queryset = (queryset or FindingTemplate.objects).filter(internal_id=self.internal_id)
 
             if queryset and queryset.exists():
                 self._template = queryset.first()
             else:
                 # 2: No finding template exists and we have to create one. This code
                 # makes sure that no other template is mapped to the template's title.
-                data = self.template_data
+                data = self.get_template_data()
                 if not data["title"]:
                     logger.warning("Invalid FindingTemplate definition: missing a valid title")
                     return None
 
-                data["internal_name"] = re.sub(r"[\s_:]", "-", data["title"]).replace("--", "-")
-                data["pk"] = FindingTemplate.make_uuid()
+                data["internal_id"] = FindingTemplate.make_internal_id(data["title"])
+                data["template_id"] = FindingTemplate.make_uuid()
                 data["default_severity"] = self.severity
 
                 self._template = FindingTemplate.objects.create(**data)
@@ -105,7 +110,7 @@ def yara_scan_file(file: pathlib.Path, task: ScanTask, base_dir=YARA_BASE_DIR, o
 
         snippet = Snippet.objects.create(
             language=result["language"],
-            file_name=result.target,
+            file_name="/".join(result.target.split("/")[5:]),
             file_size=os.path.getsize(str(file)),
             sys_path=str(file),
         )
@@ -135,14 +140,14 @@ def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = N
             # of this scan.
             observer.pos = 0
             observer.update("Enumerating file objects...")
-            total = len(list(path.glob("**/*.*")))
+            total = len(list(path.glob("*/**")))
             observer.update("Starting YARA Scan...", total=total)
 
 
         for directory in path.glob("*/**"):
             # Reset the progres bar if
             if observer:
-                observer.update("Scanning folder: '%s' ...", str(directory), do_log=True, total=total)
+                observer.update("Scanning folder: <%s> ...", str(directory), do_log=True, total=total)
 
             if not mp.current_process().daemon:
                 with mp.Pool(os.cpu_count()) as pool:
@@ -155,11 +160,7 @@ def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = N
                 for child in directory.iterdir():
                     if child.is_dir():
                         continue
-
-                    if observer:
-                        if observer.pos >= 99:
-                            observer.pos = 0
-                        observer.update("Scanning file: $%s$ ...", str(child.name), do_log=True, total=total)
+                    # observer.update("Scanning file: <%s> ...", str(child.name), do_log=True, total=total)
 
                     yara_scan_file(child, task, base_dir)
 

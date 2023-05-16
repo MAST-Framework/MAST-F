@@ -43,9 +43,7 @@ def run_manifest_scan(
             return
 
         handler.link(visitor)
-        print("Parsing manifest...")
         visitor.visit_document(document)
-        print("Finished manifest parsing!")
     else:
         if observer:
             observer.update(
@@ -110,7 +108,7 @@ class AndroidManifestHandler:
             pk=str(uuid.uuid4()),
             scan=self.scan,
             snippet=self.snippet,
-            severity=Severity.MEDIUM if permission.is_dangerous else Severity.NONE,
+            severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
             scanner=self.task.scanner,
             permission=permission,
         )

@@ -4,8 +4,7 @@ import inspect
 import re
 
 from mastf.core.progress import Observer
-from mastf.core.code import yara_code_analysis
-
+from mastf.MASTF.scanners.code import yara_code_analysis
 from mastf.MASTF.scanners.mixins import (
     DetailsMixin,
     PermissionsMixin,

@@ -18,15 +18,20 @@ MAST-F Project | {{ project.name }}
         <div class="row align-items-center">
             <div class="col-auto">
               <span class="status-indicator
-              {% if not project.risk_level %}status-secondary
+                {% if not project.risk_level %}status-secondary
+                {% else %}
+                {% with project.risk_level|lower as level %}
+                    {% if level == "high" %}status-red
+                    {% elif level == "medium"%}status-orange
+                    {% elif level == "low" %}status-yellow
+                    {% elif level == "secure" %}status-green
+                    {% elif level == "critical" %}status-pink
                     {% else %}
-                        {% if project.risk_level|lower == "high" %}status-red
-                        {% elif project.risk_level|lower == "medium"%}status-orange
-                        {% elif project.risk_level|lower == "low" %}status-yellow
-                        {% else %}status-green
-                        {% endif %}
-                    status-indicator-animated
-                    {% endif %}">
+                    status-secondary
+                    {% endif %}
+                {% endwith %}
+                status-indicator-animated
+                {% endif %}">
                   <span class="status-indicator-circle"></span>
                   <span class="status-indicator-circle"></span>
                   <span class="status-indicator-circle"></span>

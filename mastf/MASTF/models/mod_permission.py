@@ -61,7 +61,7 @@ class AppPermission(models.Model):
             identifier=identifier,
             name=identifier.split(".")[-1].lower().capitalize(),
             protection_level=protection_level,
-            dangerous="dangerous" in protection_level.lower(),
+            dangerous="dangerous" in str(protection_level).lower(),
             short_description="Dynamic generated description. Please edit the short and long description"
             "in the plugins-context of your site.",
         )

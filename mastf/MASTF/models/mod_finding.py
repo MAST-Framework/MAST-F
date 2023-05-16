@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import uuid
+import re
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -46,6 +47,10 @@ class FindingTemplate(models.Model):
     @staticmethod
     def make_uuid(*args) -> str:
         return f"FT-{uuid.uuid4()}-{uuid.uuid4()}"
+
+    @staticmethod
+    def make_internal_id(title: str):
+        return re.sub(r"[\s_:]", "-", title).replace("--", "-").lower()
 
 
 class Snippet(models.Model):
@@ -82,8 +87,8 @@ class AbstractBaseFinding(models.Model):
     discovery_date = models.DateField(null=True, auto_now=True, auto_now_add=False)
     """Stores the date this vulnerability was detected."""
 
-    scanner = models.ForeignKey(Scanner, on_delete=models.SET_NULL, null=True)
-    template = models.ForeignKey(FindingTemplate, on_delete=models.SET_NULL, null=True)
+    scanner = models.ForeignKey(Scanner, on_delete=models.CASCADE, null=True)
+    template = models.ForeignKey(FindingTemplate, on_delete=models.CASCADE, null=True)
 
     class Meta:
         abstract = True

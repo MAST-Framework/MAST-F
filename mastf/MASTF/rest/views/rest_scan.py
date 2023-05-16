@@ -62,8 +62,16 @@ class ScanView(APIViewBase):
     def on_delete(self, request: Request, obj: Scan) -> None:
         path = obj.project.dir(obj.file.internal_name, create=False)
         try:
-            os.remove(obj.file.file_path)
+            file_path = obj.file.file_path
+            if not os.path.exists(obj.file.file_path):
+                file_path = obj.project.directory / obj.file.internal_name
+                if not path.exists():
+                    messages.warning("Could not remove uploaded file!")
+                else:
+                    file_path = str(file_path)
+
             shutil.rmtree(str(path))
+            os.remove(file_path)
         except OSError as err:
             messages.error(request, str(err), err.__class__.__name__)
 

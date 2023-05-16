@@ -56,7 +56,7 @@
     },
     "class": {
         "is_dir": false,
-        "suffix": ".*\\.(class|java)$",
+        "suffix": ".*\\.(java)$",
         "language": "java"
     },
     "classsmali": {

@@ -15,6 +15,7 @@ from rest_framework.response import Response
 
 from mastf.MASTF import settings
 from mastf.MASTF.utils.enum import Visibility
+from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.permissions import CanEditProject, CanDeleteProject
 from mastf.MASTF.serializers import ProjectSerializer, TeamSerializer, UserSerializer
 from mastf.MASTF.models import (
@@ -160,7 +161,9 @@ class ProjectChartView(GetObjectMixin, views.APIView):
 
     def chart_pie(self, project: Project) -> dict:
         data = {}
+        plugins = ScannerPlugin.all()
         for scanner in Scanner.objects.filter(scan__project=project):
-            data[scanner.name] = len(Finding.objects.filter(scan__project=project, scanner=scanner))
+            name = plugins[scanner.name].title
+            data[name] = len(Finding.objects.filter(scan__project=project, scanner=scanner))
 
         return data

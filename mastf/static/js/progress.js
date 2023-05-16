@@ -84,6 +84,10 @@ class CeleryProgressBar {
     }
 
     onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
+        if (parseFloat(progressBarElement.style.width.replace("%", "").trim()) > progress.percent) {
+            return;
+        }
+
         progressBarElement.style.backgroundColor = this.barColors.progress;
         progressBarElement.style.width = progress.percent + "%";
         var description = progress.description || "";
@@ -94,7 +98,7 @@ class CeleryProgressBar {
                 progressBarMessageElement.textContent = this.messages.started;
             }
         } else {
-            progressBarMessageElement.textContent = progress.current + '% of ' + progress.total + ' processed. ' + description;
+            progressBarMessageElement.textContent = progress.percent + '% of ' + progress.total + ' processed. ' + description.replace("<", "<kbd>").replace(">", "</kbd>");
         }
     }
 

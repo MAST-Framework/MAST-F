@@ -277,6 +277,12 @@
         console.log($('#finding-id-row-' + row.getAttribute('counter')).attr('value'))
     };
 
+    document.addEventListener("DOMContentLoaded", function() {
+        {% for category in data %}
+        $('#table-{{ category.name.trim|lower }}-{{ forloop.counter }}').DataTable();
+        {% endfor %}
+    });
+
 
 </script>
 {% endblock js_extended %}
