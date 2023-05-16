@@ -4,7 +4,11 @@
 set -o errexit
 set -o nounset
 
-cd /app
+
+
+if [ ! -d "${YARA_BASE_DIR}" ]; then
+    mkdir "${YARA_BASE_DIR}"
+fi
 
 if [ -f "${YARA_BASE_DIR}/.yss.pid" ] || [ -f "${YARA_BASE_DIR}.yss.pid" ]; then
     echo "[Startup] Running YSS detected - Stopping server..."
@@ -14,5 +18,6 @@ fi
 echo "[Startup] Starting YSS: dir=${YARA_BASE_DIR}, rules=${YARA_RULES_DIR}"
 yss --base-dir "${YARA_BASE_DIR}" -L "${YSS_LOGGING_CONFIG}" --signature-dir "${YARA_RULES_DIR}" --background
 
+cd /app
 # then start celery
 celery -A mastf.MASTF worker -l "${CELERY_DEBUG_LEVEL}"

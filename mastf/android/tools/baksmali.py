@@ -35,12 +35,12 @@ def decompile(
         raise RuntimeError(err.stderr.decode()) from err
 
 
-def to_java(dex_path: str, dest_path: str, jadx_path: str, options: list = None) -> None:
+def to_java(dex_dir: str, dex_path: str, dest_path: str, jadx_path: str, options: list = None) -> None:
     if sys.platform in ("win32", "win64"):
         jadx_path = f"{jadx_path}.bat"
 
     try:
-        cmd = f"{jadx_path} -d {dest_path} {getopts(options)} {dex_path}"
+        cmd = f"cd {dex_dir} && {jadx_path} -d {dest_path} {getopts(options)} {dex_path}"
         subprocess.run(
             f"{cmd} && mv {dest_path}/sources/* {dest_path} && rm -rf {dest_path}/sources",
             shell=True,

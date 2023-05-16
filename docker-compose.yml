@@ -17,7 +17,7 @@ services:
       - type: bind
         source: ./
         target: /app
-      - static_volume:/app/mastf/static/
+
       - storage_data:/app_storage
     expose:
       - 8000
@@ -38,10 +38,8 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=mastf_django
-      - POSTGRES_PASSWORD=supersecretpassword
-      - POSTGRES_DB=mastf_backend_db
+    env_file:
+      - ./.env
     networks:
       - backend
 

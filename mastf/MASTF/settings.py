@@ -212,6 +212,7 @@ API_ONLY = int(env.get("MASTF_API_ONLY", default=0))
 #      - D2J_TOOLSET := 'C:\Users\Public\Tools\dex-tools\d2j'
 D2J_TOOLSET = os.getenv("TOOLS_BAKSMALI", "d2j")
 APKTOOL = os.getenv("TOOLS_APKTOOL", "apktool")
+JADX = env.get("JADX_TOOL", "jadx")
 
 # TODO:(remove)
 PROJECTS_TABLE_COLUMNS = [

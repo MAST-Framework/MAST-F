@@ -30,7 +30,7 @@ class AppPermission(models.Model):
     # maybe add choices here
     protection_level = models.TextField(blank=True)
     dangerous = models.BooleanField(default=False)
-    group = models.CharField(max_length=256, null=True)
+    group = models.CharField(max_length=256, null=True, blank=True)
 
     short_description = models.CharField(max_length=256, blank=True)
     description = models.TextField(blank=True)
