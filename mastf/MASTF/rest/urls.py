@@ -14,6 +14,9 @@ urlpatterns = [
     path(r"env/<uuid:pk>", views.EnvironmentView.as_view(), name="Environment-View"),
     path(r"setup/", views.WizardSetupView.as_view(), name="Wizard-Setup"),
 
+    path(r"rest-docs/swagger", views.RestSchemaView.with_ui(), name="rest-api-docs"),
+    path(r"rest-docs/redoc", views.RestSchemaView.with_ui("redoc"), name="rest-api-docs"),
+
     path(r"project/", include([
         path(r"<uuid:project_uuid>", views.ProjectView.as_view(), name="REST-Project-View"),
         path(r"create", views.ProjectCreationView.as_view(), name='Project-Create'),
@@ -140,8 +143,8 @@ urlpatterns = [
         ])),
 
         path(r"cipher/", include([
-            path(r"create", views.TLSCreationView.as_view()),
-            path(r"<uuid:pk>", views.TLSView.as_view()),
+            path(r"create", views.CipherSuiteCreationView.as_view()),
+            path(r"<uuid:pk>", views.CipherSuiteView.as_view()),
         ])),
 
         path(r"datacoll/", include([

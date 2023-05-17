@@ -17,6 +17,7 @@ Welcome to MAST-Framework's documentation!
 
    intro/docker_setup
    intro/dev_setup
+   intro/scaling
 
 .. toctree::
    :maxdepth: 3
@@ -25,6 +26,7 @@ Welcome to MAST-Framework's documentation!
 
    ref/guide
    ref/models/index
+   ref/technologies
 
 .. toctree::
    :maxdepth: 3
@@ -58,6 +60,7 @@ Welcome to MAST-Framework's documentation!
    :hidden:
 
    core_api/progress
+   core_api/file_handler
 
 .. toctree::
    :maxdepth: 3
@@ -66,6 +69,7 @@ Welcome to MAST-Framework's documentation!
 
    android_api/manifest
    android_api/permission
+   android_api/tools
 
 .. toctree::
    :maxdepth: 3

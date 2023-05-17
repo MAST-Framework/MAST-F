@@ -90,7 +90,7 @@
                 "data": "artifact_id",
                 "render":renderIdAsCode
             },
-            {"data": "type"},
+            {"data": "package_type"},
             {"data": "platform"},
             {
                 "targets": -1,
@@ -122,7 +122,7 @@
             name: $('#add-package-name').val(),
             group_id: $('#add-package-group_id').val(),
             artifact_id: $('#add-package-artifact_id').val(),
-            type: $('#add-package-type').val(),
+            package_type: $('#add-package-type').val(),
             platform: $('#add-package-platform').val(),
         }), function(data) {
             if (data.success) {
@@ -174,7 +174,7 @@
             name: $('#edit-package-name').val(),
             group_id: $('#edit-package-group_id').val(),
             artifact_id: $('#edit-package-artifact_id').val(),
-            type: $('#edit-package-type').val(),
+            package_type: $('#edit-package-type').val(),
             platform: $('#edit-package-platform').val(),
         }), function(data) {
             if (data.success) {

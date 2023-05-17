@@ -6,10 +6,10 @@ __pycache__/
 .vscode/
 .tools/
 
-# YSS directories
+# YSS files and directories
 *.pid
 socket/
-
+*.log.*
 
 # uploaded files
 mastf/projects/

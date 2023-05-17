@@ -38,7 +38,7 @@ def run_manifest_scan(
                     type(err).__name__,
                     str(err),
                     do_log=True,
-                    log_level=logging.ERROR
+                    log_level=logging.ERROR,
                 )
             return
 
@@ -80,22 +80,20 @@ class AndroidManifestHandler:
             protection_level = ProtectionLevel.NORMAL
         else:
             if protection_level not in list(ProtectionLevel):
-                if self.observer:
-                    self.observer.update(
-                        "Switching unknown ProtectionLevel classifier: %s",
-                        protection_level,
-                        do_log=True,
-                    )
-                protection_level = ProtectionLevel.NORMAL
-
-        if not queryset.exists():
-            if self.observer:
                 self.observer.update(
-                    "Creating new Permission: %s [pLevel=%s]",
-                    identifier,
+                    "Switching unknown ProtectionLevel classifier: %s",
                     protection_level,
                     do_log=True,
                 )
+                protection_level = ProtectionLevel.NORMAL
+
+        if not queryset.exists():
+            self.observer.update(
+                "Creating new Permission: %s [pLevel=%s]",
+                identifier,
+                protection_level,
+                do_log=True,
+            )
             permission = AppPermission.create_unknown(identifier, protection_level)
         else:
             permission = queryset.first()
@@ -116,4 +114,4 @@ class AndroidManifestHandler:
     def on_application(self, element: Element, name: str) -> None:
         exported = element.getAttribute("android:exported")
 
-        # ...
+

@@ -26,8 +26,9 @@ from mastf.MASTF.mixins import (
     VulnContextMixin,
     TemplateAPIView,
     TopVulnerableProjectsMixin,
-    ScanTimelineMixin
+    ScanTimelineMixin,
 )
+
 # This file stores additional views that will be used to
 # display the web frontend
 
@@ -41,8 +42,13 @@ __all__ = [
 ]
 
 
-class DashboardView(ContextMixinBase, TopVulnerableProjectsMixin,
-                    VulnContextMixin, ScanTimelineMixin, TemplateAPIView):
+class DashboardView(
+    ContextMixinBase,
+    TopVulnerableProjectsMixin,
+    VulnContextMixin,
+    ScanTimelineMixin,
+    TemplateAPIView,
+):
     template_name = "index.html"
 
     def get_context_data(self, **kwargs):
@@ -58,10 +64,14 @@ class DashboardView(ContextMixinBase, TopVulnerableProjectsMixin,
 
         bundles = Bundle.get_by_owner(self.request.user)
         context["bundle_count"] = len(bundles)
-        context["inherited_bundle_count"] = len(bundles.filter(~models.Q(owner=self.request.user)))
+        context["inherited_bundle_count"] = len(
+            bundles.filter(~models.Q(owner=self.request.user))
+        )
 
         context["project_count"] = len(projects)
-        context["public_project_count"] = len(projects.filter(visibility=Visibility.PUBLIC))
+        context["public_project_count"] = len(
+            projects.filter(visibility=Visibility.PUBLIC)
+        )
 
         scans = Scan.objects.filter(project__in=projects)
         context["scan_count"] = len(scans)
@@ -76,9 +86,8 @@ class DashboardView(ContextMixinBase, TopVulnerableProjectsMixin,
         data = namespace()
         queryset = model.objects.filter(scan__project__in=projects)
 
-        data.objects = (queryset
-            .values("discovery_date")
-            .annotate(total=models.Count('discovery_date'))
+        data.objects = queryset.values("discovery_date").annotate(
+            total=models.Count("discovery_date")
         )
         data.count = len(queryset)
         return data

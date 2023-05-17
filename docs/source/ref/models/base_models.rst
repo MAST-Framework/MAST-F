@@ -10,20 +10,26 @@ there is another utility class that comes with some special behaviour:
 .. autoclass:: mastf.MASTF.models.namespace
     :members:
 
+.. autoclass:: mastf.MASTF.models.Environment
+    :members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
+
 .. autoclass:: mastf.MASTF.models.Team
     :members:
-    :no-undoc-members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
 
 .. autoclass:: mastf.MASTF.models.Project
     :members:
-    :no-undoc-members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
 
 .. autoclass:: mastf.MASTF.models.File
     :members:
-    :no-undoc-members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
 
 .. autoclass:: mastf.MASTF.models.Account
     :members:
-    :no-undoc-members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
 
-*TODO:* ``Environment``, ``Bundle``
+.. autoclass:: mastf.MASTF.models.Bundle
+    :members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist

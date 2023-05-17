@@ -27,18 +27,21 @@ __all__ = ["Scan", "Scanner", "ScanTask", "Details"]
 
 logger = logging.getLogger(__name__)
 
+
 class Scan(models.Model):
+    """Describes a static app scan."""
+
     scan_uuid = models.CharField(primary_key=True, max_length=256)
     """Stores the identifier for this scan."""
 
     origin = models.CharField(null=True, max_length=32)
-    """Stores the scan origin of the scan.
+    """Stores the scan origin of the scan. The origin can point to the following values:
 
-    The origin can point to the following values:
-    - Play-Store
-    - iOS-App-Store
-    - APKPure
-    - File
+        - Play-Store
+        - iOS-App-Store
+        - APKPure
+        - File
+        - ...
     """
 
     source = models.CharField(null=True, max_length=256)
@@ -151,41 +154,86 @@ class Scanner(models.Model):
         :return: a list of selected scanners (only names)
         :rtype: list
         """
-        return list(set([
-            x.name for x in Scanner.objects.filter(scan__project=project)
-        ]))
+        return list(
+            set([x.name for x in Scanner.objects.filter(scan__project=project)])
+        )
 
 
 class ScanTask(models.Model):
+    """Represents a task for internal scans.
+
+    .. note::
+        This model is introduced to enable multiple web instances being able to
+        handle task-specific requests.
+    """
+
     task_uuid = models.UUIDField(max_length=32, primary_key=True, null=False)
+    """
+    The UUID field with a maximum length of 32 characters is set as the primary key of
+    the model.
+    """
+
     scan = models.ForeignKey(Scan, models.CASCADE)
+    """
+    A foreign key to the :class:`Scan` model, with the ``CASCADE`` option to ensure
+    that when a :class:`Scan` object is deleted, all related ``ScanTask`` objects are
+    also deleted.
+    """
+
     scanner = models.ForeignKey(Scanner, models.CASCADE, null=True)
+    """
+    A foreign key to the :class:`Scanner` model, with the ``CASCADE`` option and
+    able to allow null values.
+    """
 
     name = models.CharField(max_length=256, blank=True, null=True)
+    """The task's name (primarily used in HTML representation)"""
+
     celery_id = models.CharField(max_length=256, null=True)
+    """The assigned celery id (may be null on creation)."""
+
     active = models.BooleanField(default=True)
+    """Indicates whether the :class:`ScanTask` object is currently active."""
 
     @staticmethod
     def active_tasks(scan: Scan = None, project: Project = None) -> list:
+        """A static method that returns a list of active :class:`ScanTask` objects.
+
+         It takes two optional parameters: scan and project. If scan is provided, it
+         returns a list of active ScanTask objects associated with that :class:`Scan`
+         object. If project is provided, it returns a list of active ScanTask objects
+         associated with :class:`Scan` objects that belong to that :class:`Project`
+         object. If neither parameter is provided, an empty list is returned.
+
+        :param scan: the target scan, defaults to None
+        :type scan: :class:`Scan`, optional
+        :param project: the target project, defaults to None
+        :type project: :class:`Project`, optional
+        :return: a list of active scans
+        :rtype: list
+        """
         if scan:
             return list(ScanTask.objects.filter(active=True, scan=scan))
 
         if project:
             return list(ScanTask.objects.filter(active=True, scan__project=project))
-
         return []
 
     @staticmethod
-    def finish_scan(scan: Scan, task: 'ScanTask') -> None:
+    def finish_scan(scan: Scan, task: "ScanTask") -> None:
+        """
+        This method is used to finish a scan by setting the ``is_active`` attribute of
+        the corresponding Scan object to False when all related ScanTask objects have
+        completed.
+        """
         tasks = ScanTask.active_tasks(scan)
         if len(tasks) == 0 or (len(tasks) == 1 and tasks[0] == task):
             scan.is_active = False
             scan.save()
 
 
-class Details(models.Model): # TODO
+class Details(models.Model):  # TODO
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
-
     cvss = models.FloatField(default=0)
-    file = models.ForeignKey(File, models.SET_NULL, null=True)
+    file = models.ForeignKey(File, models.SET_NULL, null=True) # unused
     tracker_count = models.IntegerField(default=0)

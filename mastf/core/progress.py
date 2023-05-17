@@ -49,7 +49,9 @@ class Observer:
     :type position: int, optional
     """
 
-    def __init__(self, task: Task, position: int = 0, scan_task=None, logger: Logger = None) -> None:
+    def __init__(
+        self, task: Task, position: int = 0, scan_task=None, logger: Logger = None
+    ) -> None:
         self._task = task
         self._pos = abs(position) % 100
         self._scan_task = scan_task
@@ -164,7 +166,9 @@ class Observer:
         if self._scan_task and self._scan_task.name:
             data["name"] = self._scan_task.name
 
-        self.task.update_state(state=state, meta=data)
+        if self.task:
+            self.task.update_state(state=state, meta=data)
+
         if do_log and self._logger:
             self._logger.log(log_level, data["description"])
 
@@ -179,7 +183,9 @@ class Observer:
         :rtype: tuple
         """
         self._finish_scan_task()
-        return self.update(msg, *args, current=100, state=states.SUCCESS, do_log=True, log_level=INFO)
+        return self.update(
+            msg, *args, current=100, state=states.SUCCESS, do_log=True, log_level=INFO
+        )
 
     def fail(self, msg: str, exc_type=RuntimeError, *args) -> tuple:
         """Sets the task state to ``FALIURE`` and inserts the given message.
@@ -195,9 +201,12 @@ class Observer:
             *args,
             current=100,
             state=states.FAILURE,
-            meta={"exc_type": (exc_type or RuntimeError).__name__, "exc_message": msg % args},
+            meta={
+                "exc_type": (exc_type or RuntimeError).__name__,
+                "exc_message": msg % args,
+            },
             do_log=True,
-            log_level=WARNING
+            log_level=WARNING,
         )
 
     def exception(self, exception, msg: str, *args) -> tuple:
@@ -221,11 +230,10 @@ class Observer:
                 "exc_message": str(exception),
             },
             do_log=True,
-            log_level=ERROR
+            log_level=ERROR,
         )
 
     def _finish_scan_task(self):
         if self._scan_task:
             self._scan_task.active = False
             self._scan_task.save()
-

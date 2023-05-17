@@ -14,6 +14,9 @@ urlpatterns = [
     path(r"scans/", views.ScansView.as_view(), name='Scans'),
     path(r"plug-ins/", views.PluginsView.as_view(), name='Plug-Ins'),
 
+    path("docs/", include([
+
+    ])),
     # Top navigation bar links, that can be used to view the user's profile,
     # logout or to navigate to the global settings.
     path(r"settings/", include([

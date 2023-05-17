@@ -13,3 +13,5 @@ redis
 psycopg2-binary
 yara-python
 yara-scanner
+drf_yasg
+pyyaml

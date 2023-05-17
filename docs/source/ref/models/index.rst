@@ -11,3 +11,7 @@ Model Reference
    :hidden:
 
    base_models
+   scan_models
+   finding_models
+   permission_models
+   package_models

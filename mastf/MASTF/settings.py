@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     "mastf.MASTF",
     "rest_framework",
     "django_celery_results",
+    "drf_yasg"
 ]
 
 if DEBUG:

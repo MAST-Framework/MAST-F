@@ -12,3 +12,4 @@ from .rest_package import *
 from .rest_host import *
 from .rest_component import *
 from .rest_env import *
+from .rest_schema import *

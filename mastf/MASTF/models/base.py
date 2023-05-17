@@ -150,10 +150,10 @@ class Project(models.Model):
     project_uuid = models.CharField(primary_key=True, null=False, max_length=256)
     """Stores the UUID of this project."""
 
-    name = models.CharField(null=True, max_length=256)
+    name = models.CharField(null=True, max_length=256, unique=True)
     """Stores the display name of this application."""
 
-    tags = models.CharField(max_length=4096, null=True)
+    tags = models.CharField(max_length=4096, null=True, blank=True)
     """Stores tags for this project (comma-spearated)"""
 
     visibility = models.CharField(
@@ -301,18 +301,61 @@ class Account(models.Model):
 
 
 class Bundle(models.Model):
+    """
+    The ``Bundle`` class represents a collection of projects that belong to a single
+    owner. Each bundle can be assigned a risk level and can have multiple tags to
+    help with organization.
+    """
+
     bundle_id = models.UUIDField(primary_key=True)
-    name = models.CharField(max_length=256, null=False)
+    """A UUID field that serves as the primary key for a bundle instance."""
+
+    name = models.CharField(max_length=256, null=False, unique=True)
+    """
+    A string field that stores the name of the bundle. It has a maximum length of 256
+    characters and is required.
+    """
+
     tags = models.TextField(blank=True)
+    """
+    A text field that stores tags associated with the bundle. It is optional and
+    can be left blank.
+    """
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    """A foreign key to the User model that represents the owner of the bundle."""
+
     risk_level = models.CharField(
         default=Severity.NONE, choices=Severity.choices, max_length=32
     )
+    """
+    A string field that stores the risk level associated with the bundle. It has a
+    default value of ``Severity.NONE``.
+    """
 
     projects = models.ManyToManyField(Project, related_name="bundles")
+    """
+    A many-to-many field that connects the bundle to the :class:`Project` model and allows
+    multiple projects to be associated with a single bundle.
+    """
 
     @staticmethod
     def stats(owner: User) -> namespace:
+        """
+        This method takes a User instance and returns a namespace object that
+        contains statistics about the bundles owned by that user. The namespace
+        object contains the following fields:
+
+        - ``count``: The total number of bundles owned by the user.
+        - ``risk_high``: The number of bundles with a risk level of Severity.HIGH.
+        - ``risk_medium``: The number of bundles with a risk level of Severity.MEDIUM.
+        - ``ids``: A list of UUIDs representing the IDs of all the bundles owned by the user.
+
+        :param owner: the owner
+        :type owner: User
+        :return: a namespace containing stats about the queried bundles.
+        :rtype: :class:`namespace`
+        """
         bundles = Bundle.get_by_owner(owner)
 
         data = namespace(count=len(bundles))
@@ -324,10 +367,20 @@ class Bundle(models.Model):
 
     @staticmethod
     def get_by_owner(owner: User, queryset: models.QuerySet = None) -> models.QuerySet:
-        # This query attempts to collect all bundles that can be modified by
-        # the given owner. That includes bundles that are assigned to a team
-        # of which the provided user is a member; bundles that are public and
-        # bundles that are maintained by the provided owner.
+        """
+        This method takes a User instance and an optional QuerySet instance and returns a
+        QuerySet containing all bundles that can be modified by the provided owner. This
+        includes bundles that are assigned to a team of which the provided user is a member,
+        public bundles, and bundles maintained by the provided owner. If a QuerySet instance
+        is provided, the method will apply the filter to that queryset.
+
+        :param owner: the bundle owner
+        :type owner: User
+        :param queryset: the initial queryset to use, defaults to None
+        :type queryset: models.QuerySet, optional
+        :return: the filtered queryset
+        :rtype: models.QuerySet
+        """
         # @ImplNote: Projects which are invisible by default may be included
         # within this query. As bundles try to visualize data of the assigned
         # projects, private projects may be shared throughout a team.
@@ -344,17 +397,51 @@ class Bundle(models.Model):
 
 
 class Environment(models.Model):
+    """
+    The ``Environment`` class is a Django model representing the configuration of the
+    application's environment.
+    """
+
     env_id = models.UUIDField(primary_key=True)
+    """
+    A UUIDField attribute that serves as the primary key of the model. It uniquely
+    identifies the environment instance.
+    """
+
     allow_registration = models.BooleanField(default=True)
+    """
+    A boolean attribute that determines whether new user registration is allowed in the
+    current environment. The default value is ``True``.
+    """
+
     allow_teams = models.BooleanField(default=True)
-    max_projects = models.IntegerField(default=10000)
+    """
+    A boolean attribute that determines whether teams are allowed in the environment.
+    The default value is ``True``.
+    """
+
+    max_projects = models.IntegerField(default=100000)
+    """Specifies the maximum number of projects allowed in the environment."""
+
     max_teams = models.IntegerField(default=10000)
+    """Defines the maximum number of teams allowed in the environment"""
+
     max_bundles = models.IntegerField(default=10000)
+    """Defines the maximum number of bundles allowed in the environment."""
 
     first_start = models.BooleanField(default=True)
+    """Indicates whether the application is starting up for the first time."""
 
     @staticmethod
     def env() -> "Environment":
+        """A static method that returns the environment instance.
+
+        If an instance is not found, a new one is created with a unique UUID. This
+        method returns the only instance of the Environment model.
+
+        :return: the current environment instance
+        :rtype: ``Environment``
+        """
         queryset = Environment.objects.first()
         if not queryset:
             return Environment.objects.create(env_id=uuid4())

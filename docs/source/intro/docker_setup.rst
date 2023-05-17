@@ -116,6 +116,19 @@ secure values before deploying the project.
     The environment variables ``POSTGRES_USER`` and ``POSTGRES_DB`` must point to the same value
     as ``DB_USER`` and ``DB_NAME`` do defined in your environment file.
 
+    By default, the following section of the configuration file describes how to place the mentioned environment
+    variables:
+
+    .. code-block:: properties
+
+        # Specify user and password only once
+        DB_DATABASE=mastf_backend_db
+        DB_USER=mastf_django
+        DB_PASSWORD=supersecretpassword
+
+        POSTGRES_USER=${DB_USER}
+        POSTGRES_PASSWORD=${DB_PASSWORD}
+        POSTGRES_DB=${DB_DATABASE}
 
 Broker
 ------
@@ -273,8 +286,10 @@ please refer to the :doc:`Django Settings` documentation.
     :type: str
     :value: "https://localhost:8443|https://127.0.0.1:8443"
 
+    Trusted origins when configuring Django to run with HTTPS.
+
     .. important::
-        Configure the trusted hosts if you are using a revere proxy like nginx. Replace hostnames of the given URLs to match
+        Configure the trusted hosts if you are using a reverse proxy like nginx. Replace hostnames of the given URLs to match
         your own ones.
 
 .. py:data:: DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE

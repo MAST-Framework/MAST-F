@@ -52,7 +52,7 @@ the process of setting up a virtual environment on Linux, Mac, and Windows.
 
     .. code-block:: bash
 
-        pip install .r requirements.txt
+        pip install -r requirements.txt
 
     .. note::
         The ``requirements.txt`` file contains a list of all packages required to

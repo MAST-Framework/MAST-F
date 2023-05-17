@@ -85,6 +85,8 @@ class CeleryProgressBar {
 
     onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
         if (parseFloat(progressBarElement.style.width.replace("%", "").trim()) > progress.percent) {
+            console.log("c: ", parseFloat(progressBarElement.style.width.replace("%", "").trim()));
+            console.log("P: ", progress.percent);
             return;
         }
 

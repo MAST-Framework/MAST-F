@@ -52,7 +52,7 @@ Dashboard | MAST-Framework
                                         <path d="M12 16h.01"></path>
                                     </svg>
                                 </span>
-                                No projects created
+                                Either no projects have been created or no risks have been identified.
                             </div>
                         </div>
                         {% endif %}
@@ -309,7 +309,7 @@ Dashboard | MAST-Framework
             },
             xaxis: {
                 type: 'datetime',
-                min: min,
+                min: min_date,
                 tickAmount: 6,
             },
             tooltip: {
