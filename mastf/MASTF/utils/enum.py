@@ -544,7 +544,7 @@ class ComponentCategory(StringEnum):
     SERVICE = "Service"
     RECEIVER = "Receiver"
     PROVIDER = "Provider"
-    VIEW = "view"
+    APPLICATION = "Application"
 
 
 # Small workaround to set an additional static attribute for Django models

@@ -5,7 +5,7 @@ List of used Frameworks
 ***********************
 
 In this documentation page, we will provide basic information about the frameworks used
-in this project. Note that the following table won't include transient dependencies.
+in this project. Note that the following tables won't include transient dependencies.
 Container services won't be included as well as they can be changed by any user to fit
 his requirements.
 
@@ -40,6 +40,9 @@ his requirements.
     * - `Yara Scanner Server`_ (YSS)
       - ``2.0.3``
       - Yara scanner and server
+    * - `Androguard`_
+      - ``3.3.5``
+      - Tool to support Android analysis
     * - (`Sphinx`_)
       - ``6.2.1``
       - Documentation builder
@@ -96,5 +99,6 @@ his requirements.
 .. _Enlighterjs: https://github.com/EnlighterJS/EnlighterJS
 .. _jsVectormap: https://github.com/themustafaomar/jsvectormap
 .. _celery: https://docs.celeryq.dev/en/stable/getting-started/introduction.html
+.. _Androguard:
 
 

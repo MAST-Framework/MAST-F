@@ -19,4 +19,12 @@ methods in detail.
     :members:
     :exclude-members: MultipleObjectsReturned, DoesNotExist
 
+.. autoclass:: mastf.MASTF.models.Certificate
+    :members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
+
 .. TODO: Details
+.. autoclass:: mastf.MASTF.models.Details
+    :members:
+    :exclude-members: MultipleObjectsReturned, DoesNotExist
+

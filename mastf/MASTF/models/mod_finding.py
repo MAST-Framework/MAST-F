@@ -21,7 +21,7 @@ from django.contrib.auth.models import User
 
 from mastf.MASTF.utils.enum import Severity, State, Visibility
 
-from .base import Project, namespace, Team, Bundle
+from .base import Project, namespace, Team, Bundle, TimedModel
 from .mod_scan import Scan, Scanner
 
 __all__ = [
@@ -32,7 +32,7 @@ __all__ = [
     "Vulnerability",
 ]
 
-class FindingTemplate(models.Model):
+class FindingTemplate(TimedModel):
     """
     Represents a model for storing information about a finding template. This model
     is used to create, update and delete templates which then are used to generate
@@ -126,7 +126,7 @@ class FindingTemplate(models.Model):
         return re.sub(r"[\s_:]", "-", title).replace("--", "-").lower()
 
 
-class Snippet(models.Model):
+class Snippet(TimedModel):
     """Django model for storing code snippets with optional information."""
 
     lines = models.CharField(max_length=2048, blank=True)
@@ -145,7 +145,7 @@ class Snippet(models.Model):
     """Stores the size of the file where the snippet was found (optional)."""
 
 
-class AbstractBaseFinding(models.Model):
+class AbstractBaseFinding(TimedModel):
     """
     AbstractBaseFinding is an abstract model that serves as a base class for all
     findings in the vulnerability scanner.
@@ -165,7 +165,7 @@ class AbstractBaseFinding(models.Model):
     )
     """The severity of the finding"""
 
-    discovery_date = models.DateField(null=True, auto_now=True, auto_now_add=False)
+    discovery_date = models.DateField(null=True, auto_now=False, auto_now_add=True)
     """Stores the date this vulnerability or finding was detected."""
 
     scanner = models.ForeignKey(Scanner, on_delete=models.CASCADE, null=True)

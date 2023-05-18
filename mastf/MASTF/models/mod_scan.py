@@ -21,14 +21,14 @@ from django.contrib.auth.models import User
 
 from mastf.MASTF.utils.enum import Severity
 
-from .base import Project, File, Team
+from .base import Project, File, Team, TimedModel
 
-__all__ = ["Scan", "Scanner", "ScanTask", "Details"]
+__all__ = ["Scan", "Scanner", "ScanTask", "Details", "Certificate"]
 
 logger = logging.getLogger(__name__)
 
 
-class Scan(models.Model):
+class Scan(TimedModel):
     """Describes a static app scan."""
 
     scan_uuid = models.CharField(primary_key=True, max_length=256)
@@ -136,7 +136,7 @@ class Scan(models.Model):
         return [x.file for x in scans]
 
 
-class Scanner(models.Model):
+class Scanner(TimedModel):
     """Simple model to map selected scanners to a scan."""
 
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
@@ -159,7 +159,7 @@ class Scanner(models.Model):
         )
 
 
-class ScanTask(models.Model):
+class ScanTask(TimedModel):
     """Represents a task for internal scans.
 
     .. note::
@@ -232,8 +232,61 @@ class ScanTask(models.Model):
             scan.save()
 
 
-class Details(models.Model):  # TODO
+# -- Scan Details ------------------------------------------------------------
+class Certificate(TimedModel):
+    """Represents an identified certificate.
+
+    The :class:`Details` is designed to store multiple certificate instances as
+    each app may contain more than one certificates. We don't specify the scan
+    reference directly as it will be created in a many-to-many relationship.
+
+    :ivar details: A list of :class:`Details` objects this certificate was found in
+    :type details: ``ManyToManyField``
+    """
+
+    version = models.CharField(max_length=12, blank=True, null=True)
+    """Indicates whether the Certificate is signed using APK signature scheme version X.
+
+    Note that version values are stored in the format ``vX`` where ``X`` represents the
+    version number. In addition, a higher version number declares lower signature schemes
+    impicitly.
+    """
+
+    sha1 = models.CharField(max_length=255, blank=True)
+    """The sha1 fingerprint"""
+
+    sha256 = models.CharField(max_length=255, blank=True)
+    """The sha256 fingerprint"""
+
+    issuer = models.TextField(blank=True)
+    """Human readable certificate issuer."""
+
+    subject = models.TextField(blank=True)
+    """Human readable subject."""
+
+    hash_algorithm = models.TextField(blank=True)
+    """Describes the used hashing algorithm"""
+
+    signature_algorithm = models.TextField(blank=True)
+    """The used signature algorithm."""
+
+    serial_number = models.TextField(blank=True)
+    """If present, the serial number will be stored in a ``TextField``."""
+
+
+
+
+class Details(TimedModel):  # TODO
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
     cvss = models.FloatField(default=0)
-    file = models.ForeignKey(File, models.SET_NULL, null=True) # unused
+    icon = models.CharField(max_length=1024, null=True, blank=True)
     tracker_count = models.IntegerField(default=0)
+
+    app_name = models.CharField(max_length=512, null=True, blank=True)
+    app_id = models.CharField(max_length=512, blank=True, null=True)
+    app_version = models.CharField(max_length=512, blank=True, null=True)
+
+    target_sdk = models.CharField(max_length=32, blank=True, null=True)
+
+    # Many-To-Many relationships here
+    certificates = models.ManyToManyField(Certificate, related_name="details")

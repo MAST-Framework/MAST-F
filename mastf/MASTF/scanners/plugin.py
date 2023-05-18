@@ -13,11 +13,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import inspect
+import logging
+
 from abc import ABCMeta
 from re import sub
+from pathlib import Path
+
+
+from mastf.core.progress import Observer
 
 from mastf.MASTF.utils.enum import StringEnum
-from mastf.MASTF.models import Project, Scanner, Scan, File
+from mastf.MASTF.models import Project, Scanner, Scan, File, ScanTask
 
 __scanners__ = {}
 
@@ -45,6 +52,76 @@ class Extension(StringEnum):
     EXPLORER = "explorer"
 
 
+class AbstractScanner(metaclass=ABCMeta):
+    def __init__(self) -> None:
+        self._task = None
+        self._observer = None
+        self._file_dir = None
+        self._meta: dict = {}
+
+    def __getitem__(self, key) -> object:
+        val = self.get_item(key)
+        if not val and key in self._meta:
+            return self._meta[key]
+        return val
+
+    def __setitem__(self, key, value):
+        self._meta[key] = value
+
+    def __call__(self, scan_task: ScanTask, observer: Observer) -> None:
+        # Prepare internal values
+        self._task = scan_task
+        self._observer = observer
+
+        project: Project = scan_task.scan.project
+        self._file_dir = project.dir(scan_task.scan.file.internal_name, False)
+        self.prepare_scan()
+        self.scan()
+
+    def get_item(self, key) -> object:
+        if isinstance(key, type):
+            for value in self._meta.values():
+                if isinstance(value, key):
+                    return value
+        return None
+
+    def prepare_scan(self) -> None:
+        pass
+
+    def scan(self) -> None:
+        for name, func in inspect.getmembers(self):
+            if name.startswith("do"):
+                name = "-".join([x.capitalize() for x in name.split("-")[1:]])
+                self.observer.update(
+                    "Started sub-task %s", name, do_log=True, log_level=logging.INFO
+                )
+                try:
+                    func()
+                except Exception as err:
+                    self.observer.update(
+                        "(%s) Sub-Task %s failed: %s",
+                        type(err).__name__,
+                        name,
+                        str(err),
+                    )
+
+    @property
+    def scan_task(self) -> ScanTask:
+        return self._task
+
+    @property
+    def scan(self) -> Scan:
+        return self._task.scan
+
+    @property
+    def file_dir(self) -> Path:
+        return self._file_dir
+
+    @property
+    def observer(self) -> Observer:
+        return self._observer
+
+
 class ScannerPlugin(metaclass=ABCMeta):
     name = None
     """The name (slug) of this scanner type (should contain no whitespace characters)"""
@@ -61,7 +138,7 @@ class ScannerPlugin(metaclass=ABCMeta):
     task = None
     """The task to perform asynchronously"""
 
-    _internal: str = None # noqa
+    _internal = None  # noqa
 
     def context(self, extension: str, scan: Scan, file: File) -> dict:
         """Generates the rendering context for the given extension
@@ -113,4 +190,4 @@ class ScannerPlugin(metaclass=ABCMeta):
 
     @staticmethod
     def to_internal_name(name: str) -> str:
-        return sub(r"[\s]", "-", str(name)).lower().replace('--', '-')
+        return sub(r"[\s]", "-", str(name)).lower().replace("--", "-")

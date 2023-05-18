@@ -24,7 +24,16 @@ from mastf.MASTF.utils.enum import Visibility, Severity, InspectionType, Role
 
 # As we're importing all classes and variables within the '__init__'
 # file, this statement is needed to cleanup accessabe members.
-__all__ = ["namespace", "Team", "Project", "File", "Account", "Bundle", "Environment"]
+__all__ = [
+    "namespace",
+    "Team",
+    "Project",
+    "File",
+    "Account",
+    "Bundle",
+    "Environment",
+    "TimedModel",
+]
 
 
 class namespace(dict):
@@ -60,10 +69,18 @@ class namespace(dict):
         return super().__getattribute__(__name)
 
 
+class TimedModel(models.Model):
+    created_on = models.DateTimeField(auto_now_add=True, null=True)
+    updated_on = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
 ############################################################
 # Django Models
 ############################################################
-class Team(models.Model):
+class Team(TimedModel):
     """A team contains a set of users.
 
     .. note::
@@ -127,14 +144,11 @@ class Team(models.Model):
         :return: all teams the given user is a member or the owner of
         :rtype: models.QuerySet
         """
-        query = (
-            models.Q(owner=owner)
-            | models.Q(users__pk=owner.pk)
-        )
+        query = models.Q(owner=owner) | models.Q(users__pk=owner.pk)
         return (queryset or Team.objects).filter(query)
 
 
-class Project(models.Model):
+class Project(TimedModel):
     """Database model for mobile application projects.
 
     .. note::
@@ -251,7 +265,7 @@ class Project(models.Model):
         return directory
 
 
-class File(models.Model):
+class File(TimedModel):
     """Stores information about the uploaded file.
 
     Note that this model will store information about the uploaded files only;
@@ -281,7 +295,7 @@ class File(models.Model):
     """Specifies the uploaded file name."""
 
 
-class Account(models.Model):
+class Account(TimedModel):
     """
     Represents an account associated with a user in the system.
 
@@ -300,7 +314,7 @@ class Account(models.Model):
     description = models.CharField(max_length=256, blank=True, null=True)
 
 
-class Bundle(models.Model):
+class Bundle(TimedModel):
     """
     The ``Bundle`` class represents a collection of projects that belong to a single
     owner. Each bundle can be assigned a risk level and can have multiple tags to
@@ -396,7 +410,7 @@ class Bundle(models.Model):
         return queryset.filter(query)
 
 
-class Environment(models.Model):
+class Environment(TimedModel):
     """
     The ``Environment`` class is a Django model representing the configuration of the
     application's environment.

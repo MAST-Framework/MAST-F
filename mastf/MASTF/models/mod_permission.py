@@ -19,11 +19,12 @@ from django.db import models
 from mastf.MASTF.utils.enum import ProtectionLevel
 
 from .mod_finding import AbstractBaseFinding
+from .base import TimedModel
 
 __all__ = ["AppPermission", "PermissionFinding"]
 
 
-class AppPermission(models.Model):
+class AppPermission(TimedModel):
     """Represents an application permission with its related attributes."""
 
     permission_uuid = models.UUIDField(primary_key=True)

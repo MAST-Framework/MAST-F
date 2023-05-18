@@ -19,21 +19,28 @@ from uuid import uuid4
 from mastf.MASTF.utils.enum import ComponentCategory
 
 from .mod_scan import Scanner, Scan
-from .base import namespace
+from .base import namespace, TimedModel
 
-__all__ = ["Component"]
+__all__ = ["Component", "IntentFilter"]
 
+class IntentFilter(TimedModel):
+    name = models.CharField(max_length=1024, blank=True)
+    action = models.CharField(max_length=1024, blank=True, null=True)
 
-class Component(models.Model):
+class Component(TimedModel):
     cid = models.CharField(max_length=256, primary_key=True)
     scanner = models.ForeignKey(Scanner, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=2048)
     is_exported = models.BooleanField(default=False)
-    is_protected = models.BooleanField(default=False)
+    is_protected = models.BooleanField(default=True)
+    is_launcher = models.BooleanField(default=False)
+    is_main = models.BooleanField(default=False)
+
     category = models.CharField(
         null=True, choices=ComponentCategory.choices, max_length=256
     )
+    intent_filters = models.ManyToManyField(IntentFilter, related_name="components")
 
     @staticmethod
     def make_uuid(*args) -> str:

@@ -16,22 +16,22 @@
 from django.db import models
 
 from mastf.MASTF.utils.enum import HostType, DataProtectionLevel
-from mastf.MASTF.models import Snippet, Scan, Scanner
+from mastf.MASTF.models import Snippet, Scan, Scanner, TimedModel
 
 
-class TLS(models.Model):
+class TLS(TimedModel):
     tls_uuid = models.UUIDField(primary_key=True)
     version = models.CharField(max_length=256, null=True)
     recommended = models.BooleanField(default=False)
 
 
-class CipherSuite(models.Model):
+class CipherSuite(TimedModel):
     cipher_uuid = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=256, blank=True)
     recommended = models.BooleanField(default=False)
 
 
-class DataCollectionGroup(models.Model):
+class DataCollectionGroup(TimedModel):
     dc_uuid = models.UUIDField(primary_key=True)
     group = models.CharField(max_length=256, null=False)
     protection_level = models.CharField(
@@ -41,7 +41,7 @@ class DataCollectionGroup(models.Model):
     )
 
 
-class HostTemplate(models.Model):
+class HostTemplate(TimedModel):
     template_id = models.UUIDField(primary_key=True)
     domain_name = models.CharField(max_length=256, null=False)
     ip_address = models.CharField(max_length=32, null=True)
@@ -49,7 +49,7 @@ class HostTemplate(models.Model):
     description = models.TextField(null=False, blank=True)
 
 
-class Host(models.Model):
+class Host(TimedModel):
     host_id = models.CharField(max_length=256, primary_key=True)
     # REVISIT: When we know the scanner we don't need the scan instance,
     # because the scanner is already mapped to the scan.

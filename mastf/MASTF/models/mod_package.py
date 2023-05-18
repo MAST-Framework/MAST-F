@@ -17,13 +17,13 @@ from django.db import models
 
 from mastf.MASTF.utils.enum import Platform, PackageType, Relation, Severity
 
-from .base import Project
+from .base import Project, TimedModel
 from .mod_scan import Scanner
 
 __all__ = ["Package", "PackageVulnerability", "Dependency"]
 
 
-class Package(models.Model):
+class Package(TimedModel):
     """A Django model that represents a software package."""
 
     package_uuid = models.UUIDField(max_length=36, primary_key=True)
@@ -55,7 +55,7 @@ class Package(models.Model):
     """
 
 
-class PackageVulnerability(models.Model):
+class PackageVulnerability(TimedModel):
     """A Django model that represents a vulnerability associated with a software package."""
 
     identifier = models.UUIDField(max_length=36, primary_key=True)
@@ -76,7 +76,7 @@ class PackageVulnerability(models.Model):
     """The severity of the vulnerability. It is a string that should be one of the values from."""
 
 
-class Dependency(models.Model):
+class Dependency(TimedModel):
     """Represents a dependency of a project on a software package."""
 
     dependency_uuid = models.CharField(max_length=72, primary_key=True)  # UUID*2
