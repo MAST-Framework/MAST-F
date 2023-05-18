@@ -294,6 +294,17 @@ class File(TimedModel):
     internal_name = models.CharField(max_length=32, default="")
     """Specifies the uploaded file name."""
 
+    @staticmethod
+    def relative_path(path: str) -> str:
+        # assert that the path contains the "projects" directive
+        if not isinstance(path, str):
+            path = str(path)
+
+        idx = path.find("projects")
+        assert idx != -1, "Invalid path %s: Needed an absolute path" % path
+
+        sub_path = path[idx + len("projects") + 1 :]
+        return "/".join(sub_path.split("/")[2:])
 
 class Account(TimedModel):
     """

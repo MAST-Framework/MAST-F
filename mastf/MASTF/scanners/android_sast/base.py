@@ -12,13 +12,13 @@ from mastf.MASTF.scanners.plugin import (
     Plugin,
     ScannerPlugin,
     Extension,
-    AbstractScanner,
+    AbstractInspector,
 )
 
 from mastf.MASTF.scanners.android_sast import get_manifest_info, get_app_info
 
 
-class AndroidScanner(AbstractScanner):
+class AndroidTask(AbstractInspector):
     def prepare_scan(self) -> None:
         self["apk"] = apk.APK(self.scan.file.file_path)
 
@@ -40,7 +40,7 @@ class AndroidScannerPlugin(*mixins, ScannerPlugin):
     name = "Android Plugin"
     title = "Android SAST Engine"
     help = "Basic security checks for Android apps."
-    task = AndroidScanner
+    task = AndroidTask
     extensions = [
         Extension.DETAILS,
         Extension.PERMISSIONS,

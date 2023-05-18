@@ -25,7 +25,7 @@ from mastf.core.progress import Observer
 
 from mastf.MASTF.utils.enum import Severity
 from mastf.MASTF.settings import YARA_BASE_DIR
-from mastf.MASTF.models import ScanTask, Finding, FindingTemplate, Snippet
+from mastf.MASTF.models import ScanTask, Finding, FindingTemplate, Snippet, File
 
 logger = logging.getLogger(__name__)
 
@@ -97,20 +97,21 @@ class YaraResult:
         return self._meta.get(key, None)
 
 def yara_scan_file(file: pathlib.Path, task: ScanTask, base_dir=YARA_BASE_DIR, observer: Observer = None):
+    rel_path = File.relative_path(str(file))
     for match in scan_file(str(file), str(base_dir)):
         result = YaraResult(match)
 
         template = result.get_template()
         if not template:
             if observer:
-                observer.update("Skipping file: %s", str(file), do_log=True)
+                observer.update("Skipping file: %s", rel_path, do_log=True)
             else:
-                logger.debug("Skipping file: %s", str(file))
+                logger.debug("Skipping file: %s", rel_path)
             continue
 
         snippet = Snippet.objects.create(
             language=result["language"],
-            file_name="/".join(result.target.split("/")[5:]),
+            file_name=File.relative_path(result.target),
             file_size=os.path.getsize(str(file)),
             sys_path=str(file),
         )
@@ -132,7 +133,7 @@ def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = N
     task = ScanTask.objects.get(pk=scan_task_pk)
     path = pathlib.Path(start_dir)
     if not path.exists():
-        logger.warning("Could not validate start directory: %s", str(path))
+        logger.warning("Could not validate start directory: %s", File.relative_path(path))
     else:
         total = 100
         if observer:
@@ -147,7 +148,7 @@ def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = N
         for directory in path.glob("*/**"):
             # Reset the progres bar if
             if observer:
-                observer.update("Scanning folder: <%s> ...", str(directory), do_log=True, total=total)
+                observer.update("Scanning folder: <%s> ...", File.relative_path(directory), do_log=True, total=total)
 
             if not mp.current_process().daemon:
                 with mp.Pool(os.cpu_count()) as pool:

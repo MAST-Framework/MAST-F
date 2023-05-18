@@ -4,10 +4,10 @@ import uuid
 
 from xml.dom.minidom import Element, parse
 
-from mastf.android.manifest import AXmlVisitor
+from mastf.android.axml import AXmlVisitor
 from mastf.core.progress import Observer
 
-from mastf.MASTF.scanners.plugin import AbstractScanner
+from mastf.MASTF.scanners.plugin import AbstractInspector
 from mastf.MASTF.models import (
     Scan,
     IntentFilter,
@@ -21,23 +21,23 @@ from mastf.MASTF.utils.enum import ProtectionLevel, Severity, ComponentCategory
 logger = logging.getLogger(__name__)
 
 
-def get_manifest_info(scanner: AbstractScanner) -> None:
+def get_manifest_info(inspector: AbstractInspector) -> None:
     # Collect detailed information about permissions, components and
     # intent filters
-    content_dir = scanner.file_dir / "contents"
+    content_dir = inspector.file_dir / "contents"
     manifest_files = content_dir.glob("*/**/AndroidManifest.xml")
 
-    scanner.observer.update("Running manifest analysis...", do_log=True)
+    inspector.observer.update("Running manifest analysis...", do_log=True)
     for manifest in manifest_files:
         run_manifest_scan(
-            scanner,
+            inspector,
             manifest,
         )
 
 
-def run_manifest_scan(scanner: AbstractScanner, manifest_file: pathlib.Path):
+def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path):
     visitor = AXmlVisitor()
-    handler = AndroidManifestHandler(scanner, manifest_file)
+    handler = AndroidManifestHandler(inspector, manifest_file)
 
     if manifest_file.exists():
         try:
@@ -45,7 +45,7 @@ def run_manifest_scan(scanner: AbstractScanner, manifest_file: pathlib.Path):
                 document = parse(mfp)
 
         except Exception as err:
-            scanner.observer.update(
+            inspector.observer.update(
                 "[%s] Skipping manifest due to parsing error: %s",
                 type(err).__name__,
                 str(err),
@@ -57,16 +57,16 @@ def run_manifest_scan(scanner: AbstractScanner, manifest_file: pathlib.Path):
         handler.link(visitor)
         visitor.visit_document(document)
     else:
-        scanner.observer.update(
+        inspector.observer.update(
             "Skipped %s due to non-existed file!", str(manifest_file), do_log=True
         )
 
 
 class AndroidManifestHandler:
     def __init__(
-        self, scanner: AbstractScanner, path: pathlib.Path, observer: Observer = None
+        self, inspector: AbstractInspector, path: pathlib.Path, observer: Observer = None
     ) -> None:
-        self.scanner = scanner
+        self.inspector = inspector
         self.path = path
         self.observer = observer
         self.snippet = Snippet(language="xml", file_name=path.name)
@@ -74,7 +74,7 @@ class AndroidManifestHandler:
 
     @property
     def scan(self) -> Scan:
-        return self.task.scan
+        return self.inspector.scan
 
     def link(self, visitor: AXmlVisitor) -> None:
         # TODO: link visitor to instance methods
@@ -122,7 +122,7 @@ class AndroidManifestHandler:
             scan=self.scan,
             snippet=self.snippet,
             severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
-            scanner=self.task.scanner,
+            inspector=self.inspector.scan_task.scanner,
             permission=permission,
         )
 
@@ -144,7 +144,7 @@ class AndroidManifestHandler:
     def handle_component(self, element: Element, ctype: str, name: str) -> None:
         component = Component.objects.create(
             cid=Component.make_uuid(),
-            scanner=self.scanner.scan_task.scanner,
+            inspector=self.inspector.scan_task.inspector,
             name=name,
             category=ctype.capitalize(),
             is_exported=element.getAttribute("android:name") == "true",

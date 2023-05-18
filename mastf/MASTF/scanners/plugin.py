@@ -52,7 +52,7 @@ class Extension(StringEnum):
     EXPLORER = "explorer"
 
 
-class AbstractScanner(metaclass=ABCMeta):
+class AbstractInspector(metaclass=ABCMeta):
     def __init__(self) -> None:
         self._task = None
         self._observer = None

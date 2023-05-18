@@ -8,6 +8,10 @@ set -o nounset
 # Make sure to apply any migrations available.
 echo "[DJANGO] Running migrations..."
 python /app/manage.py migrate
+
+echo "[DJANGO] Importing new templates..."
+python manage.py load_finding_templates
+
 # TODO: maybe run gunicorn
 echo "[DJANGO] Starting server"
 gunicorn mastf.MASTF.wsgi:application --bind 0.0.0.0:$DJANGO_PORT --workers 4 --threads 4

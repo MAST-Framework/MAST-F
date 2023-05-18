@@ -32,6 +32,7 @@ __all__ = [
     "Vulnerability",
 ]
 
+
 class FindingTemplate(TimedModel):
     """
     Represents a model for storing information about a finding template. This model
@@ -100,6 +101,15 @@ class FindingTemplate(TimedModel):
 
     article = models.CharField(max_length=256, null=True)
     """A link to an article associated with the finding."""
+
+    meta_cvss = models.CharField(max_length=32, null=True, blank=True)
+    """Default CVSS score associated with this finding."""
+
+    meta_cwe = models.CharField(max_length=32, null=True, blank=True)
+    """CWE identifier assigned to this template."""
+
+    meta_masvs = models.CharField(max_length=256, null=True, blank=True)
+    """Additional reference to the mobile verification standard."""
 
     @staticmethod
     def make_uuid(*args) -> str:
@@ -292,6 +302,27 @@ class Finding(AbstractBaseFinding):
         """
         return f"SF-{uuid.uuid4()}-{uuid.uuid4()}"
 
+    @staticmethod
+    def create(
+        template: FindingTemplate,
+        snippet: Snippet,
+        scanner: Scanner,
+        text: str = "",
+        *args,
+        severity=None,
+    ) -> "Finding":
+        assert template, "The template should not be null on a new Finding!"
+
+        return Finding.objects.create(
+            pk=Finding.make_uuid(),
+            scan=scanner.scan,
+            scanner=scanner,
+            snippet=snippet,
+            severity=severity or template.default_severity,
+            template=template,
+            is_custom=bool(text),
+            custom_text=text % args
+        )
 
 class Vulnerability(AbstractBaseFinding):
     """A model that represents a vulnerability.
