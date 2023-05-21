@@ -47,7 +47,7 @@ class FindingTemplate(TimedModel):
 
     >>> template = FindingTemplate(
             template_id="1",
-            internal_id="template-1",
+            internal_id="example-template",
             title="Example Template",
             description="This is an example template.",
             default_severity=Severity.HIGH,
@@ -59,7 +59,7 @@ class FindingTemplate(TimedModel):
 
     Updating an existing finding template:
 
-    >>> template = FindingTemplate.objects.get(internal_id="template-1")
+    >>> template = FindingTemplate.objects.get(internal_id="example-template")
     >>> template.title = "Updated Example Template"
     >>> template.description = "This is an updated example template."
     >>> template.save()
@@ -84,6 +84,9 @@ class FindingTemplate(TimedModel):
 
     description = models.TextField()
     """A description of the template."""
+
+    is_html = models.BooleanField(default=False)
+    """Indicates whether the text of this finding has html format."""
 
     default_severity = models.CharField(
         default=Severity.NONE, choices=Severity.choices, max_length=256

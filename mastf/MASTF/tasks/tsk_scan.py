@@ -42,7 +42,7 @@ __all__ = [
 def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     """Schedules the given scan."""
     # First, create the scan details and save the scan file
-    Details(scan=scan, file=uploaded_file).save()
+    Details.objects.create(scan=scan)
     scan.file = uploaded_file
     for name in names:
         Scanner(name=name, scan=scan).save()
@@ -147,7 +147,7 @@ def execute_scan(self, scan_uuid: str, plugin_name: str) -> AsyncResult:
             instance = plugin_task()
 
         if isinstance(instance, Callable):
-            rvalue = instance(scan, task, observer)
+            rvalue = instance(task, observer)
             _, meta = observer.success(
                 "[%s] Finished scanner task", plugin_name
             )

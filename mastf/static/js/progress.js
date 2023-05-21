@@ -100,7 +100,7 @@ class CeleryProgressBar {
                 progressBarMessageElement.textContent = this.messages.started;
             }
         } else {
-            progressBarMessageElement.textContent = progress.percent + '% of ' + progress.total + ' processed. ' + description.replace("<", "<kbd>").replace(">", "</kbd>");
+            progressBarMessageElement.innerHTML = progress.percent + '% of ' + progress.total + ' processed. ' + Utils.replaceBackticks(description);
         }
     }
 
@@ -118,8 +118,8 @@ class CeleryProgressBar {
      */
     onData(data) {
         let done = false;
-        if (data.info) {
-            this.onProgress(this.progressBarElement, this.progressBarMessageElement, data.info);
+        if (data.progress) {
+            this.onProgress(this.progressBarElement, this.progressBarMessageElement, data.progress);
         }
         if (data.complete === true) {
             done = true;

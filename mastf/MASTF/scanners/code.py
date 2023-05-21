@@ -41,7 +41,10 @@ class YaraResult:
     def severity(self) -> Severity:
         if not self._severity:
             for sv in Severity:
-                if str(sv).lower() == self._meta.get("severity", Severity.NONE.value).lower():
+                if (
+                    str(sv).lower()
+                    == self._meta.get("severity", Severity.NONE.value).lower()
+                ):
                     self._severity = sv
 
         return self._severity or Severity.INFO
@@ -60,9 +63,8 @@ class YaraResult:
 
     def get_template_data(self) -> dict:
         return {
-            key: self._meta.get(f"ft_fallback_{key}", "") for key in (
-                "title", "description", "risk", "mitigation", "article"
-            )
+            key: self._meta.get(f"ft_fallback_{key}", "")
+            for key in ("title", "description", "risk", "mitigation", "article")
         }
 
     def get_template(self) -> FindingTemplate:
@@ -73,7 +75,9 @@ class YaraResult:
                 queryset = FindingTemplate.objects.filter(pk=self.template_id)
 
             if self.internal_id:
-                queryset = (queryset or FindingTemplate.objects).filter(internal_id=self.internal_id)
+                queryset = (queryset or FindingTemplate.objects).filter(
+                    internal_id=self.internal_id
+                )
 
             if queryset and queryset.exists():
                 self._template = queryset.first()
@@ -82,7 +86,9 @@ class YaraResult:
                 # makes sure that no other template is mapped to the template's title.
                 data = self.get_template_data()
                 if not data["title"]:
-                    logger.warning("Invalid FindingTemplate definition: missing a valid title")
+                    logger.warning(
+                        "Invalid FindingTemplate definition: missing a valid title"
+                    )
                     return None
 
                 data["internal_id"] = FindingTemplate.make_internal_id(data["title"])
@@ -96,7 +102,13 @@ class YaraResult:
     def __getitem__(self, key: str):
         return self._meta.get(key, None)
 
-def yara_scan_file(file: pathlib.Path, task: ScanTask, base_dir=YARA_BASE_DIR, observer: Observer = None):
+
+def yara_scan_file(
+    file: pathlib.Path,
+    task: ScanTask,
+    base_dir=YARA_BASE_DIR,
+    observer: Observer = None,
+):
     rel_path = File.relative_path(str(file))
     for match in scan_file(str(file), str(base_dir)):
         result = YaraResult(match)
@@ -127,34 +139,53 @@ def yara_scan_file(file: pathlib.Path, task: ScanTask, base_dir=YARA_BASE_DIR, o
         )
 
 
-def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = None,
-                       base_dir: str = YARA_BASE_DIR):
-    print("Started Code Analysis...")
+def yara_code_analysis(
+    scan_task_pk: str,
+    start_dir: str,
+    observer: Observer = None,
+    base_dir: str = YARA_BASE_DIR,
+):
+    if observer:
+        observer.update(
+            "Started YARA Code analysis...", do_log=True, log_level=logging.INFO
+        )
+
     task = ScanTask.objects.get(pk=scan_task_pk)
     path = pathlib.Path(start_dir)
     if not path.exists():
-        logger.warning("Could not validate start directory: %s", File.relative_path(path))
+        (logger if not observer else observer.logger).warning(
+            "Could not validate start directory: %s", File.relative_path(path)
+        )
     else:
         total = 100
         if observer:
             # Extra: use this function in your shared task and track the current progress
             # of this scan.
             observer.pos = 0
-            observer.update("Enumerating file objects...")
+            observer.update("Enumerating file objects...", do_log=True)
             total = len(list(path.glob("*/**")))
-            observer.update("Starting YARA Scan...", total=total)
-
+            observer.update("Starting YARA Scan...", total=total, do_log=True)
 
         for directory in path.glob("*/**"):
             # Reset the progres bar if
             if observer:
-                observer.update("Scanning folder: <%s> ...", File.relative_path(directory), do_log=True, total=total)
+                observer.update(
+                    "Scanning folder: %s ...",
+                    File.relative_path(directory),
+                    do_log=True,
+                    total=total,
+                )
 
             if not mp.current_process().daemon:
                 with mp.Pool(os.cpu_count()) as pool:
-                    pool.starmap(yara_scan_file, [
-                        (child, task, base_dir) for child in directory.iterdir() if not child.is_dir()
-                    ])
+                    pool.starmap(
+                        yara_scan_file,
+                        [
+                            (child, task, base_dir)
+                            for child in directory.iterdir()
+                            if not child.is_dir()
+                        ],
+                    )
             else:
                 # As we can't use sub processes in a daemon process, we have to
                 # call the function in a simple loop
@@ -164,4 +195,3 @@ def yara_code_analysis(scan_task_pk: str, start_dir: str, observer: Observer = N
                     # observer.update("Scanning file: <%s> ...", str(child.name), do_log=True, total=total)
 
                     yara_scan_file(child, task, base_dir)
-

@@ -1,0 +1,218 @@
+{
+    "templates": [
+        {
+            "title": "Insecure Implementation of SSL with AllowAllHostnameVerifier",
+            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the setDefaultHostnameVerifier method is called with the AllowAllHostnameVerifier.INSTANCE parameter. This insecure implementation bypasses hostname verification, potentially exposing the application to man-in-the-middle attacks.",
+            "risk": "The insecure implementation of SSL allows attackers to intercept the communication between the Android application and the server, compromising the confidentiality and integrity of sensitive data transmitted.",
+            "mitigation": "To mitigate this issue, use a secure implementation of SSL in Android applications by ensuring proper hostname verification. Instead of using AllowAllHostnameVerifier.INSTANCE, utilize a HostnameVerifier implementation that performs proper hostname validation, such as DefaultHostnameVerifier.INSTANCE or a custom implementation.",
+            "article": "android/insecure-ssl",
+            "default_severity": "Medium",
+            "meta_cvss": "6.5 (Medium)",
+            "meta_cwe": "CWE-295",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used, and that proper certificate validation is performed."
+        },
+        {
+            "title": "Insecure Implementation of SSL with TrustManager Ignoring Certificate Validation",
+            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the <kbd>setHostnameVerifier</kbd> method is called with the <kbd>AllowAllHostnameVerifier.INSTANCE</kbd> parameter, and then the setTrustManagers method is called with a TrustManager implementation that ignores certificate validation by returning null in the getAcceptedIssuers method and empty implementation in the checkClientTrusted and checkServerTrusted methods.",
+            "risk": "By ignoring certificate validation, this insecure implementation of SSL allows attackers to perform man-in-the-middle attacks, intercepting and manipulating the application's communication with the server.",
+            "mitigation": "To mitigate this security risk, ensure proper certificate validation by using a secure HostnameVerifier implementation and a TrustManager implementation that performs appropriate certificate checks in the checkClientTrusted and checkServerTrusted methods.",
+            "article": "android/insecure-ssl",
+            "default_severity": "Critical",
+            "meta_cvss": "9.0 (Critical)",
+            "meta_cwe": "CWE-295",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used, and that proper certificate validation is performed.",
+            "is_html": true
+        },
+        {
+            "title": "Insecure Implementation of SSL with TrustManager Accepting All Certificates",
+            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the setHostnameVerifier method is called with the AllowAllHostnameVerifier.INSTANCE parameter, and then the setTrustAllCerts method is called with a true parameter, indicating acceptance of all certificates.",
+            "risk": "By accepting all certificates, this insecure implementation of SSL allows attackers to intercept and manipulate the application's communication without any certificate validation, leading to the compromise of sensitive data.",
+            "mitigation": "To mitigate this security risk, ensure proper certificate validation by using a secure HostnameVerifier implementation and avoid accepting all certificates.",
+            "article": "android/insecure-ssl",
+            "default_severity": "Critical",
+            "meta_cvss": "9.8 (Critical)",
+            "meta_cwe": "CWE-295",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used, and that proper certificate validation is performed.",
+            "is_html": true
+        },
+        {
+            "title": "Insecure Implementation of SSL with Weak Cipher Suites",
+            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the setEnabledCipherSuites method is called with an array of cipher suites that include weak encryption algorithms such as DES or RC4. These weak cipher suites are vulnerable to cryptographic attacks and should be avoided.",
+            "risk": "Using weak cipher suites in SSL implementations can lead to the compromise of sensitive data due to vulnerabilities in the encryption algorithms. Attackers can exploit these weaknesses to decrypt the transmitted data.",
+            "mitigation": "To mitigate this security risk, ensure that only strong and secure cipher suites are enabled in the SSL configuration. Avoid the use of weak encryption algorithms like DES and RC4 and prefer modern, secure cipher suites.",
+            "article": "android/insecure-ssl",
+            "default_severity": "High",
+            "meta_cvss": "7.5 (High)",
+            "meta_cwe": "CWE-327",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used.",
+            "is_html": true
+        },
+        {
+            "title": "Insecure Implementation of SSL with SSLv3 or TLSv1",
+            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the <kbd>setEnabledProtocols</kbd> method is called with an array of protocols that include SSLv3 or TLSv1. These older SSL/TLS versions have known vulnerabilities and should be avoided.",
+            "risk": "Using outdated and insecure SSL/TLS protocols like SSLv3 or TLSv1 can expose the Android application to various attacks, including POODLE and BEAST. Attackers can exploit these vulnerabilities to decrypt or manipulate the encrypted communication.",
+            "mitigation": "To mitigate this security risk, ensure that only secure SSL/TLS protocols are enabled in the SSL configuration. Disable SSLv3 and TLSv1 and prefer newer, more secure protocols such as TLSv1.2 or TLSv1.3.",
+            "article": "android/insecure-ssl",
+            "default_severity": "High",
+            "meta_cvss": "7.5 (High)",
+            "meta_cwe": "CWE-326",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used.",
+            "is_html": true
+        },
+        {
+            "title": "Insecure Use of Random Number Generator (java.util.Random)",
+            "description": "This rule detects insecure use of the `java.util.Random` class in Android applications' source code. The `java.util.Random` class uses a linear congruential algorithm that produces predictable and easily guessable random numbers.",
+            "risk": "Using the insecure `java.util.Random` class can lead to security vulnerabilities, such as predictable random values. Attackers can exploit these predictable values to bypass security controls or perform cryptographic attacks.",
+            "mitigation": "To mitigate this security risk, use the secure `java.security.SecureRandom` class instead of `java.util.Random` to generate random numbers in Android applications. `java.security.SecureRandom` provides cryptographically strong random values.",
+            "article": "android/crypto",
+            "default_severity": "High",
+            "meta_cvss": "7.5 (High)",
+            "meta_cwe": "CWE-338",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that strong random numbers are used for generating secrets and keys."
+        },
+        {
+            "title": "Insecure Use of Random Number Generator (android.util.Random)",
+            "description": "This rule detects insecure use of the `android.util.Random` class in Android applications' source code. The `android.util.Random` class uses a linear congruential algorithm that produces predictable and easily guessable random numbers.",
+            "risk": "Using the insecure `android.util.Random` class can lead to security vulnerabilities, such as predictable random values. Attackers can exploit these predictable values to bypass security controls or perform cryptographic attacks.",
+            "mitigation": "To mitigate this security risk, use the secure `java.security.SecureRandom` class instead of `android.util.Random` to generate random numbers in Android applications. `java.security.SecureRandom` provides cryptographically strong random values.",
+            "article": "android/crypto",
+            "default_severity": "High",
+            "meta_cvss": "7.5 (High)",
+            "meta_cwe": "CWE-338",
+            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that strong random numbers are used for generating secrets and keys."
+        },
+        {
+            "title": "Insecure Logging of Sensitive Information",
+            "description": "This rule detects insecure logging practices in Android applications' source code where sensitive information, such as passwords, API keys, or personally identifiable information (PII), is logged in plain text.",
+            "risk": "Insecure logging of sensitive information can lead to the exposure of confidential data, making it accessible to potential attackers. This can result in unauthorized access, data breaches, or privacy violations.",
+            "mitigation": "To mitigate this security risk, avoid logging sensitive information directly. Use secure logging mechanisms, such as obfuscation or encryption, to prevent the exposure of sensitive data in logs.",
+            "article": "android/logging",
+            "default_severity": "High",
+            "meta_cvss": "7.5 (High)",
+            "meta_cwe": "CWE-532",
+            "meta_masvs": "V3: Data Protection - Securely protect sensitive information and ensure data minimization."
+        },
+        {
+            "title": "Insecure Logging of Exceptions",
+            "description": "This rule detects insecure logging practices in Android applications' source code where exceptions or stack traces are logged without appropriate handling or sanitization.",
+            "risk": "Insecure logging of exceptions can expose sensitive information, including code snippets, system details, or sensitive business logic, which can aid attackers in identifying vulnerabilities and exploiting them.",
+            "mitigation": "To mitigate this security risk, avoid logging detailed exception messages or stack traces directly. Instead, log only relevant information while ensuring that the logs do not disclose sensitive details.",
+            "article": "android/logging",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-209",
+            "meta_masvs": "V3: Data Protection - Securely protect sensitive information and ensure data minimization."
+        },
+        {
+            "title": "Insecure Logging of Debug Messages in Release Build",
+            "description": "This rule detects insecure logging practices in Android applications' source code where debug log statements are present in release builds. Debug logs may contain sensitive information that can aid attackers in understanding the application's internals.",
+            "risk": "Insecure logging of debug messages in release builds can disclose sensitive information, including API endpoints, internal logic, or security mechanisms, making it easier for attackers to target and exploit the application.",
+            "mitigation": "To mitigate this security risk, ensure that debug log statements are not present in release builds. Use proper logging frameworks and configurations to prevent the logging of debug messages in production environments.",
+            "article": "android/logging",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-532",
+            "meta_masvs": "V3: Data Protection - Securely protect sensitive information and ensure data minimization."
+        },
+        {
+            "title": "Creation of Temporary File (java.io.File)",
+            "description": "This rule detects insecure practices in Android applications' source code where temporary files are created using the `java.io.File` class without appropriate security measures.",
+            "risk": "Insecure creation of temporary files can lead to security vulnerabilities, such as unauthorized access or leakage of sensitive data. Attackers can exploit these insecure files for malicious purposes.",
+            "mitigation": "To mitigate this security risk, use secure APIs provided by the Android framework, such as `Context.getCacheDir()` or `Context.getFilesDir()`, to create and manage temporary files. These APIs ensure appropriate permissions and storage isolation.",
+            "article": "android/files",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-377",
+            "meta_masvs": "V2: Secure Storage - Implement secure storage solutions based on application requirements."
+        },
+        {
+            "title": "Creation of Temporary File (java.io.FileOutputStream)",
+            "description": "This rule detects insecure practices in Android applications' source code where temporary files are created using the `java.io.FileOutputStream` class without appropriate security measures.",
+            "risk": "Insecure creation of temporary files can lead to security vulnerabilities, such as unauthorized access or leakage of sensitive data. Attackers can exploit these insecure files for malicious purposes.",
+            "mitigation": "To mitigate this security risk, use secure APIs provided by the Android framework, such as `Context.getCacheDir()` or `Context.getFilesDir()`, to create and manage temporary files. These APIs ensure appropriate permissions and storage isolation.",
+            "article": "android/files",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-377",
+            "meta_masvs": "V2: Secure Storage - Implement secure storage solutions based on application requirements."
+        },
+        {
+            "title": "Creation of Temporary File (android.content.ContextWrapper)",
+            "description": "This rule detects insecure practices in Android applications' source code where temporary files are created using the `android.content.ContextWrapper` class without appropriate security measures.",
+            "risk": "Insecure creation of temporary files can lead to security vulnerabilities, such as unauthorized access or leakage of sensitive data. Attackers can exploit these insecure files for malicious purposes.",
+            "mitigation": "To mitigate this security risk, use secure APIs provided by the Android framework, such as `Context.getCacheDir()` or `Context.getFilesDir()`, to create and manage temporary files. These APIs ensure appropriate permissions and storage isolation.",
+            "article": "android/files",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-377",
+            "meta_masvs": "V2: Secure Storage - Implement secure storage solutions based on application requirements."
+        },
+        {
+            "title": "Root Detection Enabled (Checking for Common Root Access Paths)",
+            "description": "This rule detects the presence of root detection mechanisms in Android applications' source code that check for common root access paths or files on the device.",
+            "risk": "Checking for common root access paths can help identify potential root access. However, relying solely on this method for root detection may not be comprehensive enough, as root access can be obtained without leaving traces in these common paths.",
+            "mitigation": "To mitigate this security risk, supplement path-based root detection with other techniques, such as verifying the integrity of system files or using system calls to check for root access. Implement a multi-layered approach to increase the effectiveness of root detection.",
+            "article": "android/security",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-330",
+            "meta_masvs": "V9: Device Security - Implement runtime application self-protection (RASP) mechanisms."
+        },
+        {
+            "title": "Root Detection Enabled (Using System Properties)",
+            "description": "This rule detects the presence of root detection mechanisms in Android applications' source code that examine system properties to check for root access.",
+            "risk": "Examining system properties can help identify potential root access. However, relying solely on system properties for root detection can be bypassed by custom ROMs or root-hiding techniques that manipulate these properties.",
+            "mitigation": "To mitigate this security risk, combine system property checks with other root detection techniques to increase the effectiveness of root detection. Regularly update the root detection mechanism to address new methods used to hide root access.",
+            "article": "android/security",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-330",
+            "meta_masvs": "V9: Device Security - Implement runtime application self-protection (RASP) mechanisms."
+        },
+        {
+            "title": "Root Detection Enabled (Using Shell Commands)",
+            "description": "This rule detects the presence of root detection mechanisms in Android applications' source code that execute shell commands to check for root access.",
+            "risk": "Using shell commands for root detection allows apps to check for root access by executing specific commands and examining the output. However, if the root detection implementation is not robust or the commands used are outdated, it may result in false negatives or false positives, compromising the effectiveness of root detection.",
+            "mitigation": "To mitigate this security risk, ensure that root detection mechanisms using shell commands are implemented securely and use reliable and up-to-date commands. Regularly review and update the root detection implementation to address new rooting methods.",
+            "article": "android/security",
+            "default_severity": "Medium",
+            "meta_cvss": "5.5 (Medium)",
+            "meta_cwe": "CWE-330",
+            "meta_masvs": "V9: Device Security - Implement runtime application self-protection (RASP) mechanisms."
+        },
+
+        {
+            "title": "Dynamic Class Loading (DexClassLoader)",
+            "description": "This rule detects the use of dynamic class loading through DexClassLoader and PathClassLoader in Android applications' source code.",
+            "risk": "Dynamic class loading using DexClassLoader or PathClassLoader can introduce security risks, such as loading malicious classes or executing arbitrary code. Attackers can leverage this technique to bypass static analysis and gain unauthorized access to sensitive functionalities.",
+            "mitigation": "To mitigate this security risk, carefully validate the sources of dynamically loaded classes when using DexClassLoader. Implement input validation and strict whitelisting of allowed class names to prevent the loading of unauthorized or malicious classes.",
+            "article": "android/security",
+            "default_severity": "Info",
+            "meta_cvss": "3.1 (Low)",
+            "meta_cwe": "CWE-470",
+            "meta_masvs": "V5: Attack Detection - Implement protections to detect and mitigate attacks."
+        },
+        {
+            "title": "Dynamic Class Loading (Reflection)",
+            "description": "This rule detects the use of dynamic class loading through reflection.",
+            "risk": "Dynamic class loading through reflection can introduce security risks, such as loading malicious classes or executing arbitrary code. This technique is often used to bypass static analysis and gain unauthorized access to sensitive functionalities.",
+            "mitigation": "To mitigate this security risk, carefully review and validate the sources of dynamically loaded classes. Consider using safer alternatives, such as static class loading or using well-defined interfaces instead of dynamically loading classes.",
+            "article": "android/security",
+            "default_severity": "Info",
+            "meta_cvss": "3.1 (Low)",
+            "meta_cwe": "CWE-470",
+            "meta_masvs": "V5: Attack Detection - Implement protections to detect and mitigate attacks."
+        }
+
+
+
+
+
+
+
+
+
+
+
+    ]
+}

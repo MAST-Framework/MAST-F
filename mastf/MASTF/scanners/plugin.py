@@ -76,7 +76,7 @@ class AbstractInspector(metaclass=ABCMeta):
         project: Project = scan_task.scan.project
         self._file_dir = project.dir(scan_task.scan.file.internal_name, False)
         self.prepare_scan()
-        self.scan()
+        self.run_scan()
 
     def get_item(self, key) -> object:
         if isinstance(key, type):
@@ -88,7 +88,7 @@ class AbstractInspector(metaclass=ABCMeta):
     def prepare_scan(self) -> None:
         pass
 
-    def scan(self) -> None:
+    def run_scan(self) -> None:
         for name, func in inspect.getmembers(self):
             if name.startswith("do"):
                 name = "-".join([x.capitalize() for x in name.split("-")[1:]])

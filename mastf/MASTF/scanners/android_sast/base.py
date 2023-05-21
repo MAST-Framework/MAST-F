@@ -1,5 +1,6 @@
 from androguard.core.bytecodes import apk
 
+from mastf.MASTF import settings
 from mastf.MASTF.scanners.code import yara_code_analysis
 from mastf.MASTF.scanners.mixins import (
     DetailsMixin,
@@ -15,6 +16,7 @@ from mastf.MASTF.scanners.plugin import (
     AbstractInspector,
 )
 
+from mastf.MASTF.scanners.sast import SastIntegration
 from mastf.MASTF.scanners.android_sast import get_manifest_info, get_app_info
 
 
@@ -30,6 +32,15 @@ class AndroidTask(AbstractInspector):
 
     def do_app_info_scan(self) -> None:
         get_app_info(self)
+
+    def do_code_scan(self) -> None:
+        sast = SastIntegration(
+            self.observer,
+            rules_dir=(settings.BASE_DIR / "android" / "rules"),
+            excluded=[],
+            scan_task=self.scan_task
+        )
+        sast.start(self.file_dir)
 
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)

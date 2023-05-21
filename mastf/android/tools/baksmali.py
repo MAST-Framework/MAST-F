@@ -91,10 +91,10 @@ def to_java(dex_dir: str, dex_path: str, dest_path: str, jadx_path: str, options
     try:
         cmd = f"cd {dex_dir} && {jadx_path} -d {dest_path} {getopts(options)} {dex_path}"
         subprocess.run(
-            f"{cmd} && mv {dest_path}/sources/* {dest_path} && rm -rf {dest_path}/sources",
+            f"{cmd} && mv -u {dest_path}/sources/* {dest_path} && rm -rf {dest_path}/sources",
             shell=True,
             capture_output=True,
-            check=True,
+            check=False,
         )
     except subprocess.CalledProcessError as err:
         raise RuntimeError(err.stdout.decode()) from err

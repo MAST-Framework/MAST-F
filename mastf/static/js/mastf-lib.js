@@ -88,6 +88,26 @@ Utils = {
         return result;
     },
 
+    replaceBackticks(input) {
+        let output = '';
+        let count = 0;
+
+        for (let i = 0; i < input.length; i++) {
+          if (input[i] === '`') {
+            if (count % 2 === 0) {
+              output += '<kbd>';
+            } else {
+              output += '</kbd>';
+            }
+            count++;
+          } else {
+            output += input[i];
+          }
+        }
+
+        return output;
+    },
+
     /**
      * Applies a progress bar color and width according to the
      * provided severity.
@@ -191,11 +211,18 @@ Vulnerability = {
     },
 
     handleTemplateData: function(data) {
-        document.getElementById('vuln-info-text').innerHTML = data.description;
+        var description = data.description;
+        var title = data.title;
+        if (data.is_html) {
+            description = Utils.replaceBackticks(description);
+            title = Utils.replaceBackticks(title);
+        }
 
-        title = $('#vuln-title');
-        title.html(data.title);
-        title.attr('href', "/web/details/" + data.article);
+        document.getElementById('finding-info-text').innerHTML = description;
+
+        let titleElement = $('#finding-title');
+        titleElement.html(title);
+        titleElement.attr('href', "/web/details/" + data.article);
     },
 
     handleFindingData: function(data) {
@@ -268,11 +295,18 @@ Finding = {
     },
 
     handleTemplateData: function(data) {
-        document.getElementById('finding-info-text').innerHTML = data.description
+        var description = data.description;
+        var title = data.title;
+        if (data.is_html) {
+            description = Utils.replaceBackticks(description);
+            title = Utils.replaceBackticks(title);
+        }
 
-        title = $('#finding-title')
-        title.html(data.title);
-        title.attr('href', "/web/details/" + data.article);
+        document.getElementById('finding-info-text').innerHTML = description;
+
+        let titleElement = $('#finding-title');
+        titleElement.html(title);
+        titleElement.attr('href', "/web/details/" + data.article);
     },
 
     handleFindingData: function(data) {
