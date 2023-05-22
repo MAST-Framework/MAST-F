@@ -11,9 +11,9 @@
 
 MAST-F is a comprehensive Mobile Application Security Testing Framework designed to test the security of iOS and Android mobile applications. It provides a wide range of tools and features to identify vulnerabilities and weaknesses in mobile apps, helping developers and security professionals ensure the robustness and integrity of their applications.
 
-## Documentation
+## Documentation & Help
 
-The documentation for MAST-F is available on [Github-Pages](https://mast-framework.github.io/mast-f). It contains detailed information about the framework, its usage, configuration options, and various testing techniques. We highly recommend referring to the documentation to get started with MAST-F.
+The documentation for MAST-F is available on [Github-Pages](https://mast-framework.github.io/mast-f). It contains detailed information about the framework, its usage, configuration options, and various testing techniques. We highly recommend referring to the documentation to get started with MAST-F. Please visit the [Discussions](https://github.com/orgs/MAST-Framework/discussions) tab to ask questions or get help.
 
 ## Key Features
 
