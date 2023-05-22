@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{{ "Sign in - MAST-F"|title }}
+
+{% block navbar %}
+{% endblock navbar %}
+
+{% block page_body %}
+<div class="container container-tight py-4">
+  <div class="text-center mb-4">
+    <a href="." class="navbar-brand navbar-brand-autodark"><img src="{% static 'static/new-logo-base.svg' %}" height="64" alt=""></a>
+  </div>
+  <form class="card card-md" action="{% url 'User-Registration' %}" method="POST" autocomplete="off">
+    {% csrf_token %}
+
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Create new account</h2>
+      {% if messages %}
+        {% for message in messages %}
+        <p class="text-center">
+          <span class="badge {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}bg-red-lt{% else %}bg-azure-lt{% endif %}">
+            {% autoescape off %}{{ message }}{% endautoescape %}
+          </span>
+        </p>
+        {% endfor %}
+      {% endif %}
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-control" placeholder="Enter username" name="username" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <div class="input-group input-group-flat">
+          <input type="password" class="form-control" maxlength="256" minlength="12" placeholder="Password" name="password" autocomplete="off">
+          <span class="input-group-text">
+            <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
+              <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
+            </a>
+          </span>
+        </div>
+      </div>
+      <div class="form-footer">
+        <input type="submit" class="btn btn-primary w-100" value="Create New Account" id="register-submit">
+      </div>
+    </div>
+  </form>
+  <div class="text-center text-muted mt-3">
+    Already have account? <a href="{% url 'User-Login' %}" tabindex="-1">Sign in</a>
+  </div>
+</div>
+{% endblock page_body %}

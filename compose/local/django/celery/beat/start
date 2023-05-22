@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# same configuration as applied in compose/django/local/entrypoint
+set -o errexit
+set -o nounset
+
+# Remove old process information
+rm -f './celerybeat.pid'
+celery -A mastf.MASTF beat -l "${CELERY_DEBUG_LEVEL}"

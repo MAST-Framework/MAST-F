@@ -1,0 +1,8 @@
+# The virtual environment should not be copied
+venv/
+.git
+.gitignore
+
+# Add your IDE folders below
+.vscode/
+

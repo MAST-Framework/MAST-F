@@ -1,0 +1,411 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block title %}
+Dashboard | MAST-Framework
+{% endblock title %}
+
+{% block page_header %}
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col">
+                <div class="page-pretitle">Overview</div>
+                <h2 class="page-title">Dashboard</h2>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_header %}
+
+{% block page_body %}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row row-deck">
+            <div class="col-md-4 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="subheader mb-3">top vulnerable projects</p>
+                        {% if top_vuln_first %}
+                        <div class="row">
+                            <div class="col">
+                                <span class="text-red">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-1-filled" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm.994 5.886c-.083 -.777 -1.008 -1.16 -1.617 -.67l-.084 .077l-2 2l-.083 .094a1 1 0 0 0 0 1.226l.083 .094l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l.293 -.293v5.586l.007 .117a1 1 0 0 0 1.986 0l.007 -.117v-8l-.006 -.114z" stroke-width="0" fill="currentColor"></path>
+                                    </svg>
+                                </span>
+                                <a href="{% url 'Project-Overview' top_vuln_first.pk %}" class="link-secondary">
+                                    {{top_vuln_first.name}}
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="row">
+                            <div class="col">
+                                <span class="text-secondary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                                        <path d="M12 8v4"></path>
+                                        <path d="M12 16h.01"></path>
+                                    </svg>
+                                </span>
+                                Either no projects have been created or no risks have been identified.
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if top_vuln_second %}
+                        <div class="row">
+                            <div class="col">
+                                <span class="text-red">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-2-filled" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm1 5h-3l-.117 .007a1 1 0 0 0 0 1.986l.117 .007h3v2h-2l-.15 .005a2 2 0 0 0 -1.844 1.838l-.006 .157v2l.005 .15a2 2 0 0 0 1.838 1.844l.157 .006h3l.117 -.007a1 1 0 0 0 0 -1.986l-.117 -.007h-3v-2h2l.15 -.005a2 2 0 0 0 1.844 -1.838l.006 -.157v-2l-.005 -.15a2 2 0 0 0 -1.838 -1.844l-.157 -.006z" stroke-width="0" fill="currentColor"></path>
+                                    </svg>
+                                </span>
+                                <a href="{% url 'Project-Overview' top_vuln_second.pk %}" class="link-secondary">
+                                    {{top_vuln_second.name}}
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if top_vuln_third %}
+                        <div class="row">
+                            <div class="col">
+                                <span class="text-orange">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-3-filled" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10 -10 10s-10 -4.477 -10 -10s4.477 -10 10 -10zm1 5h-2l-.15 .005a2 2 0 0 0 -1.85 1.995a1 1 0 0 0 1.974 .23l.02 -.113l.006 -.117h2v2h-2l-.133 .007c-1.111 .12 -1.154 1.73 -.128 1.965l.128 .021l.133 .007h2v2h-2l-.007 -.117a1 1 0 0 0 -1.993 .117a2 2 0 0 0 1.85 1.995l.15 .005h2l.15 -.005a2 2 0 0 0 1.844 -1.838l.006 -.157v-2l-.005 -.15a1.988 1.988 0 0 0 -.17 -.667l-.075 -.152l-.019 -.032l.02 -.03a2.01 2.01 0 0 0 .242 -.795l.007 -.174v-2l-.005 -.15a2 2 0 0 0 -1.838 -1.844l-.157 -.006z" stroke-width="0" fill="currentColor"></path>
+                                    </svg>
+                                </span>
+                                <a href="{% url 'Project-Overview' top_vuln_third.pk %}" class="link-secondary">
+                                    {{top_vuln_third.name}}
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container-fluid d-flex flex-column justify-content-center" id="no-vulnerabilties-data">
+                            <div class="empty">
+                                <p class="empty-title">No Vulnerability-data available</p>
+                                <p class="empty-subtitle text-muted">
+                                    As of now, there are no vulnerabilities listed.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="chart-vuln-timeline"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mt-1">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container-fluid d-flex flex-column justify-content-center" id="no-findings-data">
+                            <div class="empty">
+                                <p class="empty-title">No Finding-data available</p>
+                                <p class="empty-subtitle text-muted">
+                                    For now, no findings have been identified.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="chart-finding-timeline"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-1 row-deck">
+            <div class="col-sm-6 col-lg-3 mt-1">
+              <div class="card card-sm">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="bg-primary text-white avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-stack-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M12 4l-8 4l8 4l8 -4l-8 -4"></path>
+                            <path d="M4 12l8 4l8 -4"></path>
+                            <path d="M4 16l8 4l8 -4"></path>
+                         </svg>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <div class="font-weight-medium">
+                        {{project_count|default:"0"}} Project{% if project_count != 1 %}s{% endif %}
+                      </div>
+                      <div class="text-muted">
+                        {{public_project_count|default:"0"}} public
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 mt-1">
+              <div class="card card-sm">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="bg-green text-white avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-box" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path>
+                            <path d="M12 12l8 -4.5"></path>
+                            <path d="M12 12l0 9"></path>
+                            <path d="M12 12l-8 -4.5"></path>
+                         </svg>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <div class="font-weight-medium">
+                        {{bundle_count|default:"0"}} Bundle{% if bundle_count != 1 %}s{% endif %}
+                      </div>
+                      <div class="text-muted">
+                        {{inherited_bundle_count|default:"0"}} inherited
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 mt-1">
+              <div class="card card-sm">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="bg-twitter text-white avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-target-arrow" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                            <path d="M12 7a5 5 0 1 0 5 5"></path>
+                            <path d="M13 3.055a9 9 0 1 0 7.941 7.945"></path>
+                            <path d="M15 6v3h3l3 -3h-3v-3z"></path>
+                            <path d="M15 9l-3 3"></path>
+                         </svg>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <div class="font-weight-medium">
+                        {{scan_count|default:"0"}} Scan{% if scan_count != 1 %}s{% endif %}
+                      </div>
+                      <div class="text-muted">
+                        {{active_scan_count|default:"0"}} active
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-3 mt-1">
+              <div class="card card-sm">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <span class="bg-facebook text-white avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                            <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path>
+                            <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                            <path d="M17 10h2a2 2 0 0 1 2 2v1"></path>
+                            <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+                            <path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path>
+                         </svg>
+                      </span>
+                    </div>
+                    <div class="col">
+                      <div class="font-weight-medium">
+                        {{team_count|default:"0"}} Team{% if team_count != 1 %}s{% endif %}
+                      </div>
+                      <div class="text-muted">
+                        {{public_team_count|default:"0"}} public
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="row">
+            <div class="col">
+                <div class="card mt-2 bg-transparent">
+                    <div class="card-body">
+                        <p class="subheader">Aging Report</p>
+                        <div class="container-fluid d-flex flex-column justify-content-center" id="no-scan-data">
+                            <div class="empty">
+                                <p class="empty-title">No Scan-data available</p>
+                                <p class="empty-subtitle text-muted">
+                                    Please start a scan first to see an aging report.
+                                </p>
+                            </div>
+                        </div>
+                        <div id="chart-aging-report"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_body %}
+
+{% block js_extended %}
+<script>
+
+    function prepareTimeline(model, series, min_date, element, title) {
+        var root = document.documentElement;
+        var style = getComputedStyle(root);
+        var colors = [];
+        if (Utils.isDarkLaf()) {
+            colors.push(style.getPropertyValue('--tblr-secondary'));
+        }
+
+        if (series.length == 0) {
+            return;
+        }
+        $(`#no-${model.toLowerCase()}-data`).remove();
+
+        var options = {
+            series: [{
+                name: model,
+                data: series
+            }],
+            chart: {
+                id: `model-${model}`,
+                group: 'sparklines',
+                type: 'area',
+                height: 160,
+                sparkline: {
+                    enabled: true,
+                }
+            },
+            title: {
+                text: title,
+                offsetX: 30,
+                style: {
+                    fontSize: '24px',
+                    cssClass: 'apexcharts-yaxis-title'
+                }
+            },
+            subtitle: {
+                text: model,
+                offsetX: 30,
+                style: {
+                    fontSize: '14px',
+                    cssClass: 'apexcharts-yaxis-title'
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            markers: {
+                size: 0,
+                style: 'hollow',
+            },
+            xaxis: {
+                type: 'datetime',
+                min: min_date,
+                tickAmount: 6,
+            },
+            tooltip: {
+                x: {
+                    format: 'dd MMM yyyy'
+                }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    gradientToColors: colors,
+                    inverseColors: false,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.9,
+                    stops: [0, 100]
+                }
+            },
+        };
+        var chart = new ApexCharts(document.querySelector(`#${element}`), options);
+        chart.render();
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        prepareTimeline("Vulnerabilities", [
+        {% for row in vuln_timeline.objects %}
+        {% if row.discovery_date %}[ {{ row.discovery_date|timestamp }}, {{ row.total }}],{% endif %}
+        {% endfor %}
+        ], {% with vuln_timeline.objects|first as vuln %}{{ vuln.discovery_date|timestamp }}{% endwith %}, "chart-vuln-timeline", "{{vuln_timeline.count}}");
+
+        prepareTimeline("Findings", [
+        {% for row in finding_timeline.objects %}
+        {% if row.discovery_date %}{% endif %}[ {{ row.discovery_date|timestamp }}, {{ row.total }}],{% endfor %}
+        ], {% with finding_timeline.objects|first as finding %}{{ finding.discovery_date|timestamp }}{% endwith %}, "finding-vuln-timeline", "{{finding_timeline.count}}");
+
+        {% if scan_timeline|length > 0 %}
+        $('#no-scan-data').remove();
+
+        var root = document.documentElement;
+        var style = getComputedStyle(root);
+        var colors = [];
+
+        if (Utils.isDarkLaf()) {
+            colors.push(style.getPropertyValue('--tblr-secondary'));
+        }
+
+        var options = {
+            series: [{
+                name: "Findings",
+                data: [
+                {% for row in scan_timeline %}
+                [ {{ row.scan.start_date|timestamp }}, {{ row.findings }}],
+                {% endfor %}
+                ]
+            }],
+            chart: {
+                id: 'area-datetime',
+                type: 'area',
+                height: 200,
+
+            },
+            dataLabels: {
+                enabled: false
+            },
+            markers: {
+                size: 0,
+                style: 'hollow',
+            },
+            xaxis: {
+                type: 'datetime',
+                {% with scan_timeline|first as row %}
+                min: {{ row.scan.start_date|timestamp }},
+                {% endwith %}
+                tickAmount: 6,
+            },
+            tooltip: {
+                x: {
+                    format: 'dd MMM yyyy'
+                }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    gradientToColors: colors,
+                    inverseColors: false,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.9,
+                    stops: [0, 100]
+                }
+            },
+        };
+        var chart = new ApexCharts(document.querySelector("#chart-aging-report"), options);
+        chart.render();
+        {% endif %}
+
+    });
+</script>
+{% endblock js_extended %}

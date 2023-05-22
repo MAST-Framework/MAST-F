@@ -1,0 +1,92 @@
+{
+    "manifest": {
+        "is_dir": false,
+        "suffix": "AndroidManifest\\.xml",
+        "language": "xml"
+    },
+    "xml": {
+        "is_dir": false,
+        "suffix": ".*\\.xml$",
+        "language": "xml"
+    },
+    "json": {
+        "is_dir": false,
+        "suffix": ".*\\.json$",
+        "language": "json"
+    },
+    "css": {
+        "is_dir": false,
+        "suffix": ".*\\.css$",
+        "language": "css"
+    },
+    "js": {
+        "is_dir": false,
+        "suffix": ".*\\.js$",
+        "language": "javascript"
+    },
+    "properties": {
+        "is_dir": false,
+        "suffix": ".*\\.properties$",
+        "language": "properties"
+    },
+    "yaml": {
+        "is_dir": false,
+        "suffix": ".*\\.(yaml|yml)$",
+        "language": "yaml"
+    },
+    "zip": {
+        "is_dir": false,
+        "suffix": ".*\\.(zip|7z|tar|gz|tar\\.gz|apk)$",
+        "language": "zip"
+    },
+    "html": {
+        "is_dir": false,
+        "suffix": ".*\\.html$",
+        "language": "html"
+    },
+    "csv": {
+        "is_dir": false,
+        "suffix": ".*\\.csv$",
+        "language": "csv"
+    },
+    "cfg": {
+        "is_dir": false,
+        "suffix": ".*\\.(cfg|conf|ini)$",
+        "language": "config"
+    },
+    "class": {
+        "is_dir": false,
+        "suffix": ".*\\.(java)$",
+        "language": "java"
+    },
+    "classsmali": {
+        "is_dir": false,
+        "suffix": ".*\\.smali$",
+        "language": "smali"
+    },
+    "sourceroot": {
+        "is_dir": true,
+        "suffix": "src"
+    },
+    "pplibfolder": {
+        "is_dir": true,
+        "suffix": "lib"
+    },
+    "classkotlin": {
+        "is_dir": false,
+        "suffix": ".*\\.(kt|kts|ktm)$",
+        "language": "kotlin"
+    },
+    "package": {
+        "is_dir": true,
+        "common_path": ".*[/]?src/.*"
+    },
+    "native": {
+        "is_dir": false,
+        "suffix": ".*\\.(so)$"
+    },
+    "image": {
+        "is_dir": false,
+        "suffix": ".*\\.(svg|png|svg|bmp)"
+    }
+}

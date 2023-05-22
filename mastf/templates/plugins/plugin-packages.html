@@ -1,0 +1,348 @@
+{% extends 'plugins/plugin-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block content %}
+<div id="packages-page" class="col d-flex flex-column">
+    <div class="card-body">
+        <div class="row mb-2">
+            <div class="col-auto">
+                <h1 class="card-title">Registered App-Permissions</h1>
+            </div>
+            <div class="col ms-auto text-end">
+                <div class="list-inline text-muted">
+                    <div class="list-inline-item">
+                        <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#modal-add-package">
+                            Add Package
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="table-responsive-xl">
+                    <table id="table-app-packages" class="table card-table text-nowrap datatable">
+                        <thead>
+                            <th class="w-1">ID</th>
+                            <th>Name</th>
+                            <th>Group ID</th>
+                            <th>Artifact ID</th>
+                            <th>Type</th>
+                            <th>Platform</th>
+                            <th class="w-1">Edit</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+{{ block.super }}
+
+<script>
+    $(document).ready(function() {
+
+        const renderIdAsCode = function(data, type, row, meta) {
+            if (type === 'display') {
+                var text = Utils.escapeHTML(data);
+                return `<code class="highlight highlight-inline">${text}</code>`;
+            } else {
+                return data;
+            }
+        };
+
+        $('#table-app-packages').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{% url 'PackageListView' %}",
+                "dataSrc": function(json) {
+                    return json.results;
+                },
+            },
+            "columns": [
+            {
+                "data": "package_uuid",
+                "render": function(data, type, row, meta) {
+                    if (type === 'display') {
+                        var text = Utils.escapeHTML(data);
+                        return `<input type="hidden" value="${text}" id="package-id-row-${row.package_uuid}">
+                        <a href="#" target-id="package-id-row-${row.package_uuid}" data-bs-toggle="tooltip"data-bs-placement="bottom" title="Copy Package-ID" onclick="copyTargetToClipboard(this);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+                        </a>`;
+                    } else {
+                        return data;
+                    }
+                }
+            },
+            {"data": "name"},
+            {
+                "data": "group_id",
+                "render": renderIdAsCode
+            },
+            {
+                "data": "artifact_id",
+                "render":renderIdAsCode
+            },
+            {"data": "package_type"},
+            {"data": "platform"},
+            {
+                "targets": -1,
+                "data": null,
+                "render": function(data, type, row, meta) {
+                    if (type === 'display') {
+                        return `<a href="#" class="me-2" target-id="package-id-row-${row.package_uuid}" onclick="prepareEditPackage(this);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path><path d="M16 5l3 3"></path></svg>
+                            Edit</a>
+                            <a href="#" class="text-red" target-id="package-id-row-${row.package_uuid}" onclick="verifyAction(this, deletePackage);"
+                            modal-title="Delete Package?" modal-submit-text="Delete"
+                            modal-text="<p>You are about to remove this app-package globally. All affected scans will remove this package.</p>">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                            Delete
+                        </a>`;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+            ]
+        });
+    });
+</script>
+
+<script>
+    function createPackage() {
+        REST.post('/api/v1/package/create', JSON.stringify({
+            name: $('#add-package-name').val(),
+            group_id: $('#add-package-group_id').val(),
+            artifact_id: $('#add-package-artifact_id').val(),
+            package_type: $('#add-package-type').val(),
+            platform: $('#add-package-platform').val(),
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("warning", "ValidationWarning!", `Could not create package: ${data}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function deletePackage(element, event) {
+        var target = element.getAttribute("target-id");
+        var packageId = $(`#${target}`).val();
+        REST.delete(`/api/v1/package/${packageId}`, function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("warning", "ValidationError", `Could not delete package: ${data}`);
+            }
+        });
+    };
+
+    function prepareEditPackage(element) {
+        var target = element.getAttribute("target-id");
+        var packageId = $(`#${target}`).val();
+
+        if (!packageId) {
+            Alerts.show("error", "ValueError", "Invalid package ID selector: " + target);
+            fadeOutMessages();
+            return;
+        }
+
+        REST.doGet(`/api/v1/package/${packageId}`, function(data) {
+            $('#edit-package-name').val(data.name);
+            $('#edit-package-group_id').val(data.group_id);
+            $('#edit-package-artifact_id').val(data.artifact_id);
+            $('#edit-package-type').val(data.type || "None");
+            $('#edit-package-platform').val(data.platform || "Undefined");
+            $('#edit-package-package_uuid').val(data.package_uuid);
+
+            $('#modal-edit-package').modal("toggle");
+        });
+    };
+
+    function updatePackage() {
+        var packageId = $('#edit-package-package_uuid').val();
+        REST.patch(`/api/v1/package/${packageId}`, JSON.stringify({
+            name: $('#edit-package-name').val(),
+            group_id: $('#edit-package-group_id').val(),
+            artifact_id: $('#edit-package-artifact_id').val(),
+            package_type: $('#edit-package-type').val(),
+            platform: $('#edit-package-platform').val(),
+        }), function(data) {
+            if (data.success) {
+                Alerts.show("success", "Success!", `Successfully updated package: ${packageId}.<p>Refresh this site to apply changes to the table.</p>`);
+            } else {
+                Alerts.show("warning", "ValidationWarning!", `Could not update package: ${data}`);
+            }
+            fadeOutMessages();
+        });
+    };
+</script>
+
+{% endblock js_extended %}
+
+{% block modals %}
+<div class="modal modal-blur fade" id="modal-edit-package" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Edit Package
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Package ID</label>
+                            <div class="input-group input-group-flat">
+                                <input type="text" class="form-control" id="edit-package-package_uuid" readonly>
+                                <a href="#" target-id="edit-package-package_uuid" data-bs-toggle="tooltip" class="link-secondary"
+                                    data-bs-placement="bottom" title="Copy Package-ID" onclick="copyTargetToClipboard(this);">
+                                    <span class="input-group-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M15 3v4a1 1 0 0 0 1 1h4"></path><path d="M18 17h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h4l5 5v7a2 2 0 0 1 -2 2z"></path><path d="M16 17v2a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h2"></path></svg>
+                                    </span>
+                                </a>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label required">Name</label>
+                            <input id="edit-package-name" class="form-control" placeholder="Name" required minlength="3" maxlength="256"
+                                type="text">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Group ID</label>
+                            <input id="edit-package-group_id" class="form-control" placeholder="Group Id" required minlength="3"
+                            maxlength="256" type="text">
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Artifact ID</label>
+                            <input id="edit-package-artifact_id" class="form-control" placeholder="Artifact Id" required minlength="3"
+                            maxlength="256" type="text">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <label class="form-label required">Type/Source</label>
+                            <select class="form-select" id="edit-package-type">
+                                {% for t in type %}
+                                <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="form-label required">Platform</label>
+                            <select class="form-select" id="edit-package-platform">
+                                {% for p in platforms %}
+                                <option value="{{ p }}">{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <input data-bs-dismiss="modal" onclick="updatePackage()" type="button" class="btn btn-primary"
+                value="Save Changes" id="package-submit">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal to edit package-->
+<div class="modal modal-blur fade" id="modal-add-package" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-package" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path>
+                        <path d="M12 12l8 -4.5"></path>
+                        <path d="M12 12l0 9"></path>
+                        <path d="M12 12l-8 -4.5"></path>
+                        <path d="M16 5.25l-8 4.5"></path>
+                     </svg>
+                    New Package
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="row">
+                        <div class="col mb-4">
+                            <label class="form-label required">Name</label>
+                            <input id="add-package-name" class="form-control" placeholder="Name" required minlength="3" maxlength="256"
+                                type="text">
+                            <span class="form-hint">The package name will be used as the display text in generated reports.</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Group ID</label>
+                            <input id="add-package-group_id" class="form-control" placeholder="Group Id" required minlength="3"
+                            maxlength="256" type="text">
+                            <span class="form-hint">
+                                A Group-ID is a unique identifier for a group or organization that is responsible for a set of related projects.
+                            </span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Artifact ID</label>
+                            <input id="edit-package-artifact_id" class="form-control" placeholder="Artifact Id" required minlength="3"
+                                maxlength="256" type="text">
+                            <span class="form-hint">An artifactId is a unique identifier for a specific project artifact.</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 mb-4">
+                            <label class="form-label required">Type/Source</label>
+                            <select class="form-select" id="add-package-type">
+                                {% for t in type %}
+                                <option value="{{ t }}">{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="form-hint">The type of this package. Note that internal handlers depend on this option and will
+                                treat each package differently based on its type.
+                            </span>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="form-label required">Platform</label>
+                            <select class="form-select" id="add-package-platform">
+                                {% for p in platforms %}
+                                <option value="{{ p }}">{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="form-hint">Additional label to distinguish platform related packages.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <input data-bs-dismiss="modal" onclick="createPackage()" type="button" class="btn btn-primary"
+                value="Create" id="package-submit">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock modals %}

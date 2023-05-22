@@ -1,0 +1,189 @@
+{% extends 'project/results/results-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block css_extended %}
+<link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
+{% endblock css_extended %}
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#table-components').DataTable();
+    })
+
+    handleComponentDeletion = function(element, event) {
+        var componentsTable = $('#table-components').DataTable();;
+        row = element.getAttribute("row-id");
+        if (row == null) {
+            console.warn("Invalid row pointer at:", element);
+            return;
+        }
+
+        cid = element.getAttribute('cid');
+        if (cid == null) {
+            console.warn("Invalid component ID at: #cid-row-" + row);
+            return;
+        }
+
+        REST.delete("/api/v1/component/" + cid, function(data) {
+            if (data.success) {
+                componentsTable.row('#' + row)
+                    .remove()
+                    .draw();
+                console.debug('(Frontent) removed component: ' + row);
+            }
+            else {
+                console.warn('(Frontend) Could not delete component');
+            }
+        });
+    };
+</script>
+{% endblock js_extended %}
+
+{% block content %}
+{% if 'components' in extensions %}
+<div class="tab-pane {% if active == "tabs-components" %}active show{% endif %}"
+    id="tabs-components">
+    {% if active == "tabs-components" %}
+    <div class="row row-cards">
+        {% for stats in data.stats %}
+        <div class="col-sm-3 mb-1">
+            <div class="card">
+                <div class="card-body">
+                    {% with stats.category|component_color as color %}
+                    <p class="mb-3">{{stats.category}} <strong> {% if stats.count %}{{stats.count}}{% else %}0{% endif %} </strong></p>
+                    <div class="progress progress-separated mb-3">
+
+                        <div class="progress-bar" role="progressbar"
+                            style="width: {{stats.protected_rel}}%;  background-color: rgba(var(--tblr-{{color}}-rgb), .09);" aria-label="Protected"></div>
+
+                        <div class="progress-bar bg-{{color}}" role="progressbar"
+                            style="width: {{stats.exported_rel}}%" aria-label="Exported"></div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-auto d-flex align-items-center pe-2">
+                            <span class="legend me-2" style=" background-color: rgba(var(--tblr-{{color}}-rgb), .09);"></span>
+                            <span>Protected</span>
+                            <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">
+                                {{stats.protected}}
+                            </span>
+                        </div>
+                        <div class="col-auto d-flex align-items-center pe-2">
+                            <span class="legend me-2 bg-{{color}}"></span>
+                            <span>Exported</span>
+                            <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-muted">
+                                {{stats.exported}}
+                            </span>
+                        </div>
+                    </div>
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+
+    <hr class="mt-3 mb-3">
+
+    <div class="row">
+        <div class="col">
+            {% if data.elements|length == 0 %}
+            <div class="row flex-column justify-content-center">
+                <div class="empty">
+                <p class="empty-title">No components identified</p>
+                <p class="empty-subtitle text-muted">
+                    This scanner could not identify any app related components.
+                </p>
+                </div>
+            </div>
+            {% else %}
+            <div class="table-responsive-xl">
+                <table id="table-components" class="table card-table text-nowrap datatable">
+                    <input type="hidden" value="{{scan.scan_uuid}}" id="scan-id">
+                    <thead>
+                        <th class="w-1">ID</th>
+                        <th class="w-1">Category</th>
+                        <th class="w-2">Name</th>
+                        <th class="w-1">Exported</th>
+                        <th class="w-1">Protected</th>
+                        <th class="text-end w-1">Manage</th>
+                    </thead>
+
+                    <!-- Table body generation:
+
+                        {% comment %} All rows will be generated automatically {% endcomment %}
+                    -->
+                    <tbody>
+                        {% for component in data.elements %}
+                        <tr id="tbl-row-id-{{forloop.counter}}">
+                            <td>
+                                <input type="hidden" value="{{ component.cid }}" id="cid-row-{{ forloop.counter }}">
+                                <a href="#" row="{{ forloop.counter }}" id="cid-copy-{{ forloop.counter }}"
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Component-ID">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                                        <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                                    </svg>
+                                </a>
+                            </td>
+                            <td class="text-muted">
+                                {{ component.category }}
+                            </td>
+                            <td class="text-muted text-truncate">
+                                {{ component.name }}
+                            </td>
+                            <!-- The file-text should be truncated as it could be long -->
+                            <td class="text-muted">
+                                {% if component.is_exported %}
+                                <span class="badge bg-orange-lt">
+                                    Yes
+                                </span>
+                                {% else %}
+                                <span class="badge bg-green-lt">
+                                    No
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted">
+                                {% if component.is_protected %}
+                                <span class="badge bg-green-lt">
+                                    Yes
+                                </span>
+                                {% else %}
+                                <span class="badge bg-red-lt">
+                                    No
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-end">
+                                <a href="#" row-id="tbl-row-id-{{forloop.counter}}" cid="{{component.cid}}" onclick="verifyAction(this, handleComponentDeletion);">
+                                    <span class="text-red" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete host result">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M4 7l16 0"></path>
+                                            <path d="M10 11l0 6"></path>
+                                            <path d="M14 11l0 6"></path>
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,341 @@
+{% extends 'project/project-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block content %}
+<div class="tab-pane {% if active == "tabs-overview" %}active show{% endif %}" id="tabs-overview">
+    {% if active == "tabs-overview" %}
+    <div class="row row-deck">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">total identified risks</div>
+                    <div class="h2">
+                        {% if vuln_count %}
+                        {{ vuln_count }}
+                        {% else %}
+                        None
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">Last scan</div>
+                    {% if is_active %}
+                    <div class="h2 text-muted">
+                        <span class="badge bg-green-lt">
+                            Active
+                        </span>
+                    </div>
+                    {% else %}
+                    <div class="h2">
+                        {% if scan %}
+                        {{ scan.start_date|timesince:today }} ago
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">Verified vulnerabilities</div>
+                    <div class="h2">
+                        {% if verified %}
+                        {{ verified }}
+                        {% else %}
+                        None
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row row-deck">
+        {% if is_active and active_data|length %}
+        <div class="hr-text mb-3 mt-3">Progress</div>
+
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader mb-2">Process overview</div>
+                    <div class="list-group">
+                        {% for process in active_data %}
+                        <div class="list-group-item">
+                            <div class="col">
+                                <div class="row">
+                                    <h3 class="subheader" id="task-{{process.id}}">Task <span class="text-muted">{{process.id}}</span></h3>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class='progress'>
+                                        <div id='pgbar-task-{{process.id}}' class="progress-bar" style="width: 0%;"></div>
+                                    </div>
+                                    <div id="pgbar-msg-{{process.id}}">Waiting for Task with id <span class="text-muted">{{process.id}}</span> to start...</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+        <div class="hr-text mb-3 mt-3">Overview</div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Findings timeline</h3>
+                    <div class="text-muted mb-1" id="no-timeline-data">
+                        No timeline data available
+                    </div>
+                    <div id="chart-finding-timeline"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Findings by Type</h3>
+                    <div class="text-muted mb-1" id="no-finding-data">
+                        No scan findings available
+                    </div>
+                    <div id="chart-finding-by-type"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+{{ block.super }}
+
+<script type="text/javascript" src="{% static 'js/progress.js' %}"></script>
+
+<script>
+    createTimeline = function(data) {
+        dates = [];
+        vuln_data = [];
+        finding_data = [];
+
+        for (key in data) {
+            dates.push(key);
+
+            values = data[key];
+            vuln_data.push(values.vuln_count);
+            finding_data.push(values.finding_count);
+        }
+
+        if (dates.length == 0) {
+            return;
+        }
+
+        document.getElementById('no-timeline-data').remove();
+        timeline = new ApexCharts(document.getElementById('chart-finding-timeline'), {
+            chart: {
+                type: "area",
+                fontFamily: 'inherit',
+                height: 240,
+                parentHeightOffset: 0,
+                toolbar: {
+                    show: true,
+                },
+                animations: {
+                    enabled: false
+                },
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            fill: {
+                opacity: .16,
+                type: 'solid'
+            },
+            stroke: {
+                width: 2,
+                lineCap: "round",
+                curve: "smooth",
+            },
+            series: [{
+                name: 'Vulnerabilities',
+                data: vuln_data
+            }, {
+                name: 'Findings',
+                data: finding_data
+            }],
+            tooltip: {
+                theme: 'dark'
+            },
+            grid: {
+                padding: {
+                    top: -20,
+                    right: 0,
+                    left: -4,
+                    bottom: -4
+                },
+                strokeDashArray: 4,
+            },
+            xaxis: {
+                labels: {
+                    padding: 0,
+                },
+                tooltip: {
+                    enabled: false
+                },
+                axisBorder: {
+                    show: false,
+                },
+                type: 'datetime',
+            },
+            yaxis: {
+                labels: {
+                    padding: 4
+                },
+            },
+            labels: [
+                dates
+            ],
+            colors: [tabler.getColor("primary"), tabler.getColor("purple")],
+            legend: {
+                show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                    width: 10,
+                    height: 10,
+                    radius: 100
+                },
+                itemMargin: {
+                    horizontal: 8,
+                    vertical: 8
+                }
+            },
+        })
+
+        timeline.render();
+    };
+
+    createPie = function(data) {
+        colors = [];
+        series = [];
+        labels = [];
+        index = 0.0;
+
+        for (key in data) {
+            labels.push(key);
+            series.push(data[key]);
+
+            var x = 1.0 - index;
+            if (x > 0.4) {
+                colors.push(tabler.getColor("primary", x));
+            }
+            else {
+                colors.push(tabler.getColor("secondary", 1.0 - x));
+            }
+            index -= 0.2
+        }
+
+        if (labels.length > 0) {
+            var gtz = false;
+            for (let value of series) {
+                if (value > 0) {
+                    document.getElementById('no-finding-data').remove();
+                    gtz = true;
+                    break;
+                }
+            }
+            if (!gtz) {
+                return;
+            }
+        }
+        pie = new ApexCharts(document.getElementById('chart-finding-by-type'), {
+            chart: {
+                type: "donut",
+                fontFamily: 'inherit',
+                height: 240,
+                parentHeightOffset: 0,
+                sparkline: {
+                    enabled: true
+                },
+                animations: {
+                    enabled: false
+                },
+            },
+            series: series,
+            labels: labels,
+            tooltip: {
+                theme: 'dark'
+            },
+            grid: {
+                strokeDashArray: 4,
+            },
+            colors: colors,
+            legend: {
+                show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                    width: 10,
+                    height: 10,
+                    radius: 120,
+                },
+                itemMargin: {
+                    horizontal: 8,
+                    vertical: 8
+                },
+            },
+            tooltip: {
+                fillSeriesColor: false
+            },
+        });
+
+        pie.render();
+    };
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // fetch data from API and create a timeline chart
+        $.ajax({
+            url: "/api/v1/project/{{ project.project_uuid }}/chart/timeline",
+            method: 'GET',
+            success: function(data) {
+                createTimeline(data);
+            }
+        });
+
+        $.ajax({
+            url: "/api/v1/project/{{ project.project_uuid }}/chart/pie",
+            method: 'GET',
+            success: function(data) {
+                createPie(data);
+            }
+        });
+
+        {% for task in active_data %}
+        {% if task.id %}
+        CeleryProgressBar.initProgressBar("/api/v1/scan/task/{{task.id}}", {
+            progressBarId: "pgbar-task-{{task.id}}",
+            progressBarMessageId: "pgbar-msg-{{task.id}}",
+        });
+        {% endif %}
+        {% endfor %}
+
+    });
+</script>
+{% endblock js_extended %}

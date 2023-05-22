@@ -1,0 +1,278 @@
+{% extends 'plugins/plugin-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block content %}
+<div id="hosts-page" class="col d-flex flex-column">
+    <div class="card-body">
+        <!-- Body -->
+        <div class="row mb-2">
+            <div class="col-auto">
+                <h1 class="card-title">Registered Host-Templates</h1>
+            </div>
+            <div class="col ms-auto text-end">
+                <div class="list-inline text-muted">
+                    <div class="list-inline-item">
+                        <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#modal-add-host">
+                            Add Host Template
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="table-responsive-xl">
+                    <table id="table-app-hosts" class="table card-table text-nowrap datatable">
+                        <thead>
+                            <th class="w-1">ID</th>
+                            <th>Domain Name</th>
+                            <th>IP-Address</th>
+                            <th>Owner</th>
+                            <th class="w-1">Edit</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+{{ block.super }}
+
+<script>
+    $(document).ready(function() {
+        $('#table-app-hosts').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{% url 'HostListView' %}",
+                "dataSrc": function(json) {
+                    return json.results;
+                },
+            },
+            "columns": [
+            {
+                "data": "template_id",
+                "render": function(data, type, row, meta) {
+                    if (type === 'display') {
+                        var text = Utils.escapeHTML(data);
+                        return `<input type="hidden" value="${text}" id="host-id-row-${row.template_id}">
+                        <a href="#" target-id="host-id-row-${row.template_id}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy Host-Template-ID" onclick="copyTargetToClipboard(this);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+                        </a>`;
+                    } else {
+                        return data;
+                    }
+                }
+            },
+            {
+                "data": "domain_name",
+                "render": function(data, type, row, meta) {
+                    if (type === 'display') {
+                        var text = Utils.escapeHTML(data);
+                        return `<code class="highlight highlight-inline">${text}</code>`;
+                    } else {
+                        return data;
+                    }
+                }
+            },
+            {"data": "ip_address"},
+            {"data": "owner"},
+            {
+                "targets": -1,
+                "data": null,
+                "render": function(data, type, row, meta) {
+                    if (type === 'display') {
+                        return `<a href="#" class="me-2" target-id="host-id-row-${row.template_id}" onclick="prepareEditHost(this);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-edit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path><path d="M16 5l3 3"></path></svg>
+                            Edit</a>
+                            <a href="#" class="text-red" target-id="host-id-row-${row.template_id}" onclick="verifyAction(this, deleteHost);"
+                            modal-title="Delete Host-Template?" modal-submit-text="Delete"
+                            modal-text="<p>You are about to remove this Host-Template globally. All affected scans will set host information to NULL that reference the tempalte to be deleted.</p>">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                            Delete
+                        </a>`;
+                    } else {
+                        return data;
+                    }
+                }
+            }
+            ]
+        });
+    });
+</script>
+
+<script>
+    function prepareEditHost(element) {
+        var target = element.getAttribute("target-id");
+        var hostId = $(`#${target}`).val();
+
+        if (!hostId) {
+            Alerts.show("error", "ValueError", "Invalid package ID selector: " + target);
+            fadeOutMessages();
+            return;
+        }
+
+        REST.doGet(`/api/v1/host/template/${hostId}`, function(data) {
+            $('#edit-host-domain_name').val(data.domain_name);
+            console.log(data);
+            $('#edit-host-ip_address').val(data.ip_address);
+            $('#edit-host-description').val(data.description);
+            $('#edit-host-owner').val(data.owner);
+            $('#edit-host-template_id').val(data.template_id);
+
+            $('#modal-edit-host').modal("toggle");
+        });
+    };
+
+    function createHost() {
+        REST.post('/api/v1/host/template/create', JSON.stringify({
+            domain_name: $('#edit-host-domain_name').val(),
+            ip_address: $('#edit-host-ip_address').val(),
+            description: $('#edit-host-description').val(),
+            owner: $('#edit-host-owner').val(),
+        }), function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("warning", "ValidationWarning!", `Could not create host-template: ${data}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function updateHost() {
+        var hostId = $('#edit-host-template_id').val();
+        REST.patch(`/api/v1/host/template/${hostId}`, JSON.stringify({
+            domain_name: $('#edit-host-domain_name').val(),
+            ip_address: $('#edit-host-ip_address').val(),
+            description: $('#edit-host-description').val(),
+            owner: $('#edit-host-owner').val(),
+        }), function(data) {
+            if (data.success) {
+                Alerts.show("success", "Success!", `Successfully updated host-template:<br> ${packageId}.<p>Refresh this site to apply changes to the table.</p>`);
+            } else {
+                Alerts.show("warning", "ValidationWarning!", `Could not update template:<br> ${data}`);
+            }
+            fadeOutMessages();
+        });
+    };
+
+    function deletePackage(element, event) {
+        var target = element.getAttribute("target-id");
+        var hostId = $(`#${target}`).val();
+        REST.delete(`/api/v1/host/template/${hostId}`, function(data) {
+            if (data.success) {
+                location.reload();
+            } else {
+                Alerts.show("warning", "ValidationError", `Could not delete host-template: ${data}`);
+            }
+        });
+    };
+
+</script>
+{% endblock js_extended %}
+
+{% block modals %}
+<!--Modal to create a host entry-->
+<div class="modal modal-blur fade" id="modal-add-host" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 15l6 -6"></path><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path></svg>
+                    Add Host Template
+                </h5>
+                <!-- Simple workaround to close this modal -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label required">Domain Name</label>
+                        <input class="form-control" type="text" placeholder="www.example.com" required id="add-host-domain_name"
+                        minlength="5" maxlength="255">
+                        <span class="form-hint">The domain name is used in first place to extract hosts from source code.</span>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">IP-Adress</label>
+                        <input class="form-control" id="add-host-ip_address" placeholder="e.g. 127.0.0.1 or IPv6" type="text" minlength="8"
+                        maxlength="128">
+                        <span class="form-hint">Use an IPv4 address range or a single address to identify the host.</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Owner</label>
+                        <input class="form-control" id="add-host-owner" placeholder="Google" type="text" maxlength="255">
+                        <span class="form-hint">The owner and description can be used within report generation as additional display labels.</span>
+                    </div>
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="add-host-description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <input data-bs-dismiss="modal" onclick="createHost()" type="button" class="btn btn-primary" value="Create"
+                id="host-submit">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-edit-host" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M9 15l6 -6"></path><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463"></path></svg>
+                    Edit Host Template
+                </h5>
+                <!-- Simple workaround to close this modal -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="host-template-id" id="edit-host-template_id">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label required">Domain Name</label>
+                        <input class="form-control" type="text" placeholder="www.example.com" required id="edit-host-domain_name"
+                        minlength="5" maxlength="255">
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">IP-Adress</label>
+                        <input class="form-control" id="edit-host-ip_address" placeholder="e.g. 127.0.0.1 or IPv6" type="text"
+                        maxlength="128">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Owner</label>
+                        <input class="form-control" id="edit-host-owner" placeholder="Google" type="text" maxlength="255">
+                    </div>
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" id="edit-host-description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </a>
+                <input data-bs-dismiss="modal" onclick="updateHost()" type="button" class="btn btn-primary" value="Create"
+                id="host-submit">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock modals %}

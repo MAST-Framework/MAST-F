@@ -1,0 +1,325 @@
+{% extends 'user/settings/settings-base.html' %}
+{% load static %}
+{% load mastf_tags %}
+
+{% block css_extended %}
+<link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
+{% endblock css_extended %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-auto">
+                <h1 class="card-title">Teams</h1>
+            </div>
+            <div class="col ms-auto text-end">
+                <div class="list-inline list-inline-dots text-muted">
+                    <div class="list-inline-item">
+                        <a href="#" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modal-new-team"
+                            onclick="Steps.reset('new-team');">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="28" height="28" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M12 5l0 14"></path>
+                                <path d="M5 12l14 0"></path>
+                             </svg>
+                             New Team
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col m-3">
+        <div class="table-responsive-md">
+            <table class="table" id="table-teams">
+                <thead>
+                    <th class="w-1">ID</th>
+                    <th class="w-1">Name</th>
+                    <th class="w-1">Users</th>
+                    <th class="w-1">Visibility</th>
+                    <th class="w-1 text-end">Manage</th>
+                </thead>
+                <tbody>
+                    {% for team in teams %}
+                    <tr id="team-row-{{team.pk}}">
+                        <td>
+                            <input type="hidden" value="{{ team.pk }}" id="team-id-row-{{ forloop.counter }}">
+                            <a href="#" target-id="team-id-row-{{ forloop.counter }}"
+                                id="team-id-copy-{{ forloop.counter }}" data-bs-toggle="tooltip"
+                                data-bs-placement="bottom" title="Copy Team-ID"
+                                onclick="copyTargetToClipboard(this);">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                                    <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+                                </svg>
+                            </a>
+                        </td>
+
+                        <td class="text-muted">
+                            <a href="{% if is_admin %}{% url 'Admin-Team-Config' team.pk %}{% else %}{% url 'Team-Overview' team.pk %}{% endif %}" class="link-secondary">
+                                {{ team.name }}
+                            </a>
+                        </td>
+
+                        <td class="text-muted">
+                            {{ team.users.all|length }}
+                        </td>
+
+                        <td class="align-center">
+                            {% with team.visibility|lower as level %}
+                            <span class="badge bg-{% if level == 'private' %}green{% elif level == 'public'%}azure{% else %}secondary{% endif %}-lt">
+
+                                {% if level %}
+                                {{ level|capfirst }}
+                                {% else %}
+                                Undefined
+                                {% endif %}
+                            </span>
+                            {% endwith %}
+                        </td>
+
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <a class="btn btn-outline dropdown-toggle btn-sm" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Actions
+                                </a>
+
+                                <div class="dropdown-menu">
+                                    <span class="dropdown-header">Edit Team</span>
+                                    {% if team.owner == request.user or account.role|lower == 'admin' %}
+                                    <a class="dropdown-item" href="#" target-id="{{team.pk}}" onclick="verifyActionWithText(this, deleteTeam, 'Team/{{team.name}}')"
+                                        modal-title="Delete Team?" modal-submit-text="Yes, I want to delete this team!"
+                                        modal-text="<ul>
+                                            <li>All linked findings and vulnerabilities will be lost,</li>
+                                            <li>All projects, bundles and scans will be removed immediately.</li>
+                                            <li>Note that finding templates and app permission templates won't be affected
+                                                if this team gets deleted.
+                                            </li>
+                                        </ul>">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
+                                        Delete
+                                    </a>
+                                    {% endif %}
+
+                                    {% if team.owner != request.user %}
+                                    <a class="dropdown-item" href="#" target-id="{{team.pk}}" onclick="verifyAction(this, leaveTeam);"
+                                        modal-title="Leave Team?" modal-submit-text="Leave"
+                                        modal-text="<p>You are about to leave the selected team. All shared resources will be lost and
+                                            your access will be removed.</p>">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-door-exit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M13 12v.01"></path><path d="M3 21h18"></path><path d="M5 21v-16a2 2 0 0 1 2 -2h7.5m2.5 10.5v7.5"></path><path d="M14 7h7m-3 -3l3 3l-3 3"></path></svg>
+                                        Leave
+                                    </a>
+                                    {% endif %}
+                                </div>
+
+
+                              </div>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js_extended %}
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        $('#table-teams').DataTable();
+        $('#table-modal-users').DataTable();
+    });
+
+    function deleteTeam(element, event) {
+        var teamid = element.getAttribute("target-id");
+        REST.delete(`/api/v1/team/${teamid}`, function(data) {
+            if (data.success) {
+                var table = $('#table-teams').DataTable();
+                table.row(`#team-row-${teamid}`).remove().draw();
+            }
+        })
+    };
+
+
+    function leaveTeam(element, event) {
+        var teamid = element.getAttribute("target-id");
+        console.log(teamid);
+        REST.patch(`/api/v1/team/${teamid}/members`, JSON.stringify({
+            users: "{{request.user.pk}}"
+        }), function(data) {
+            if (data.success) {
+                var table = $('#table-teams').DataTable();
+                table.row(`#team-row-${teamid}`).remove().draw();
+            }
+        })
+    };
+
+    function prepareCreateTeam() {
+        document.querySelector('select[name="table-modal-users_length"]').disabled = true;
+        var table = $('#table-modal-users').DataTable();
+        var users = ["{{request.user.pk}}"];
+
+        table.rows().every(function(index) {
+            var row = $(table.row(index).node());
+            var user = row.attr('user-id');
+
+            if (document.getElementById(`chbx-team-${user}`).checked) {
+                users.push(user);
+            }
+        });
+
+        $('#team-users').val(users.join(","));
+    }
+
+    $('#new-team-form').on("submit", function(event) {
+        prepareCreateTeam();
+    });
+
+
+</script>
+{% endblock %}
+
+{% block modals %}
+<div class="modal modal-blur fade" id="modal-new-team" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users-group" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1"></path><path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M17 10h2a2 2 0 0 1 2 2v1"></path><path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path><path d="M3 13v-1a2 2 0 0 1 2 -2h2"></path></svg>
+                </span>New Team
+            </h5>
+            <!-- Simple workaround to close this modal -->
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <form id="new-team-form" method="POST" action="{% url 'Teams' %}"
+            enctype="multipart/form-data" >
+            <div class="modal-body">
+
+                {% csrf_token %}
+                <input type="hidden" name="users" value="" id="team-users">
+                <input type="hidden" name="owner" value="{{user.pk}}">
+
+                <div class="row" id="new-team-content-step-0">
+                    <div class="row">
+                        <div class="col mb-2">
+                            <label class="form-label required">
+                                Name (min. 5 Characters)
+                            </label>
+                            <input class="form-control" type="text" name="name" id="team-input-name" value="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label required">Visibility</label>
+                                <select class="form-select" name="visibility">
+                                    <option value="Private" selected>Private</option>
+                                    <option value="Public">Public</option>
+                                </select>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="new-team-content-step-1" style="display: none;">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-3 border-end m-1 bg-secondary-lt">
+                                <div class="mt-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path d="M16 19h6"></path><path d="M19 16v6"></path><path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path></svg>
+                                    <span class="h3">
+                                        Assign Users
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row row-cols-1">
+                                    <div class="col">
+                                        <h4 class="subheader">Select Available Users</h4>
+                                    </div>
+                                    <div class="col">
+                                        <div class="table-responsive">
+                                            <table class="table datatable" id="table-modal-users">
+                                                <thead>
+                                                    <th class="w-1"><input type="checkbox" class="form-check-input m-0 align-middle" aria-label="Select all"></th>
+                                                    <th>Name</th>
+                                                </thead>
+                                                <tbody>
+                                                    {% for user in available %}
+                                                    <tr user-id="{{user.pk}}">
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <input type="checkbox" class="form-check-input m-0 align-middle"
+                                                            aria-label="Select one" id="chbx-team-{{user.pk}}">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="avatar avatar-sm me-2">{{user.username|capfirst|first}}</span>
+                                                                <div class="flex-fill">
+                                                                  <div class="font-weight-medium">{{ user.username }}</div>
+                                                                  <div class="text-muted"><a href="#" class="text-reset">
+                                                                    {% if user.email %}{{user.email}}{%else%}
+                                                                        No email set
+                                                                    {% endif %}
+                                                                  </a></div>
+                                                                </div>
+                                                              </div>
+
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                    <div class="col">
+                        <div class="steps mt-1 align-items-start">
+                            <a  href="#" class="step-item active" id="new-team-step-0" step="0"
+                                onclick="Steps.showStep(this, 'new-team');">
+                            Team Configuration
+                            </a>
+                            <a href="#" class="step-item disabled" id="new-team-step-1" step="1"
+                                onclick="Steps.showStep(this, 'new-team');" step-end="true">
+                            Select Users
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </a>
+                        <input type="submit" class="btn btn-primary" data-bs-dismiss="modal"
+                            id="team-submit" value="Create" style="display: none;">
+                        <a href="#" class="btn btn-primary" onclick="Steps.nextStep(this, 'new-team');"
+                            step-showonfinish="team-submit" id="new-team-next-step">Next</a>
+                    </div>
+
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}
