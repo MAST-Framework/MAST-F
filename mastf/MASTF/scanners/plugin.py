@@ -91,9 +91,10 @@ class AbstractInspector(metaclass=ABCMeta):
     def run_scan(self) -> None:
         for name, func in inspect.getmembers(self):
             if name.startswith("do"):
-                name = "-".join([x.capitalize() for x in name.split("-")[1:]])
+                name = "-".join([x.capitalize() for x in name.split("_")[1:]])
                 self.observer.update(
-                    "Started sub-task %s", name, do_log=True, log_level=logging.INFO
+                    "Started Sub-Task %s", name,
+                    do_log=True, log_level=logging.ERROR
                 )
                 try:
                     func()

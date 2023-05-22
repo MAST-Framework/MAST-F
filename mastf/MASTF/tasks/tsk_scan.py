@@ -42,7 +42,7 @@ __all__ = [
 def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     """Schedules the given scan."""
     # First, create the scan details and save the scan file
-    Details.objects.create(scan=scan)
+    Details.objects.create(scan=scan, file=uploaded_file)
     scan.file = uploaded_file
     for name in names:
         Scanner(name=name, scan=scan).save()

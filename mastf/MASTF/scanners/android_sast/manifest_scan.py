@@ -25,14 +25,14 @@ def get_manifest_info(inspector: AbstractInspector) -> None:
     # Collect detailed information about permissions, components and
     # intent filters
     content_dir = inspector.file_dir / "contents"
-    manifest_files = content_dir.glob("*/**/AndroidManifest.xml")
 
     inspector.observer.update("Running manifest analysis...", do_log=True)
-    for manifest in manifest_files:
-        run_manifest_scan(
-            inspector,
-            manifest,
-        )
+    for manifest in content_dir.iterdir():
+        if manifest.name == "AndroidManifest.xml":
+            run_manifest_scan(
+                inspector,
+                manifest,
+            )
 
 
 def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path):
@@ -55,6 +55,7 @@ def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path)
             return
 
         handler.link(visitor)
+        print("visit document...")
         visitor.visit_document(document)
     else:
         inspector.observer.update(
@@ -84,8 +85,11 @@ class AndroidManifestHandler:
             name = str(name).lower()
             if hasattr(visitor, name):
                 getattr(visitor, name).add("android:name", getattr(self, f"on_{name}"))
+            else:
+                print("Skipped:", name)
 
     def on_permission(self, element: Element, identifier: str) -> None:
+        print("on_permssion")
         queryset = AppPermission.objects.filter(identifier=identifier)
 
         protection_level = str(

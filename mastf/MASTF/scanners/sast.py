@@ -2,6 +2,7 @@ import re
 import pysast
 import pathlib
 
+from logging import WARNING, INFO
 from concurrent.futures import ThreadPoolExecutor
 
 from mastf.core.progress import Observer
@@ -28,20 +29,20 @@ class SastIntegration:
         try:
             if self.scanner.scan(file_path):
                 self.observer.update(
-                    "Inspecting results of %s", File.relative_path(file_path)
+                    "Inspecting results of `%s`", File.relative_path(file_path),
+                    do_log=True, log_level=INFO
                 )
                 for match in self.scanner.scan_results:
                     self.add_finding(match)
-
         except Exception as err:
             self.observer.logger.exception(
-                "(%s) Scan failed for %s:", type(err).__name__, file_path
+                "(%s) Scan failed for `%s`:", type(err).__name__, file_path
             )
             return False
 
     def is_excluded(self, path: str) -> bool:
         for val in self.excluded:
-            if isinstance(val, re.Pattern) and val.match(path) or val == path:
+            if (isinstance(val, re.Pattern) and val.match(path)) or val == path:
                 return True
 
     def scan_dir(self, dir_path: pathlib.Path, executor: ThreadPoolExecutor) -> bool:
@@ -50,6 +51,18 @@ class SastIntegration:
                 executor.submit(self.scan_file, str(file_path))
 
     def start(self, target: pathlib.Path) -> None:
+        if len(self.scanner.rules) == 0:
+            self.observer.update(
+                "Skipping pySAST scan due to no rules...",
+                do_log=True,
+                log_level=WARNING
+            )
+            return
+        # print rules
+        self.observer.pos = 0
+        self.observer.update("Enumerating file objects...", do_log=True)
+        total = len(list(target.rglob("*")))
+        self.observer.update("Starting pySAST Scan...", total=total, do_log=True)
         with ThreadPoolExecutor() as executor:
             self.scan_dir(target, executor)
 
@@ -60,10 +73,11 @@ class SastIntegration:
             self.observer.logger.error(
                 "Could not find template '%s' for rule '%s'!",
                 internal_id,
-                match[pysast.RESULT_KEY_RULE_ID],
+                match[pysast.RESULT_KEY_RULE_ID]
             )
             return
 
+        print("Finding Template:", internal_id)
         path = pathlib.Path(match[pysast.RESULT_KEY_ABS_PATH])
         template = template.first()
         snippet = Snippet.objects.create(

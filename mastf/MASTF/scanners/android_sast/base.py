@@ -37,10 +37,11 @@ class AndroidTask(AbstractInspector):
         sast = SastIntegration(
             self.observer,
             rules_dir=(settings.BASE_DIR / "android" / "rules"),
-            excluded=[],
+            excluded=["re:.*/android/.*"],
             scan_task=self.scan_task
         )
-        sast.start(self.file_dir)
+        self.observer.update("Running pySAST scan...", do_log=True)
+        sast.start(self.file_dir / "src")
 
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)

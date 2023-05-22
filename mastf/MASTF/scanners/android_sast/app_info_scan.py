@@ -50,7 +50,7 @@ def get_app_info(inspector: AbstractInspector) -> None:
 
 
 def get_app_net_info(inspector: AbstractInspector) -> None:
-    content_dir = scanner.file_dir / "contents"
+    content_dir = inspector.file_dir / "contents"
     visitor = AXmlVisitor()
     handler = NetworkSecurityHandler(inspector)
 

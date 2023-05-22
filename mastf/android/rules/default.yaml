@@ -83,7 +83,7 @@
 
 # Logging
 - rule-id: android-logging-sensitive-information
-  pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*\".*(?:password|api[_ ]key|pii|personally[_ ]identifiable[_ ]information).*\"
+  pattern: (Log\.([vdiew]|wtf)|System\.out\.println)\s*\(\s*\".*(?:password|api[_ ]key|pii|personally[_ ]identifiable[_ ]information).*\"
   meta:
     filter:
       file_ext: java, kt
@@ -101,13 +101,63 @@
     vulnerability: false
 
 - rule-id: android-logging-exceptions
-  pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*.*\bException\b.*
+  pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*.*\bException|Error\b.*
   meta:
     filter:
       file_ext: java, kt
     severity: medium
     template: insecure-logging-of-exceptions
     vulnerability: false
+
+- rule-id: android-logging
+  patterns:
+    - text: .*android\.util\.Log.*
+      mode: or
+    - text: android\.util\.Logcat.*
+      mode: or
+    - text: \b(Log\.[vdiew]|System\.out\.println)\s*\(
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: android-logging-detected
+    vulnerability: false
+
+- rule-id: android-hardcoded-ipv4
+  pattern: \d{1,3}(\.\d{1,3}){3}
+  meta:
+    filter:
+      file_ext: java
+    severity: Low
+    template: hardcoded-ip-address
+    vulnerability: false
+
+- rule-id: android-hidden-ui
+  patterns:
+    - text: setVisibility\s*\(\s*View.GONE
+      mode: or
+    - text: setVisibility\s*\(\s*View.INVISIBLE
+      mode: or
+    - text: setVisibility\(\s*View.GONE\s*\|\s*View.INVISIBLE
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: hidden-ui-detection
+    vulnerability: false
+
+- rule-id: android-external-file-loading
+  patterns:
+    - webkit\.WebView
+    - loadUrl\s*\(\s*getExternalStorageDirectory\s*\(?
+  meta:
+    filter:
+      file_ext: java
+    severity: High
+    template: external-file-loading-in-webview
+    vulnerability: true
 
 # temporary Files
 - rule-id: android-temporary-file-(java.io.file)
@@ -142,3 +192,89 @@
     severity: medium
     template: creation-of-temporary-file-(android.content.contextwrapper)
     vulnerability: false
+
+# additional rules
+- rule-id: android-external-directory-write
+  patterns:
+    - text: .*\.write.*\((?!.*Context\.getFilesDir)
+      mode: or
+    - text: .*\.openFileOutput.*\((?!.*Context\.getFilesDir)
+      mode: or
+    - text: \.getExternalStorage\s*\(
+      mode: or
+    - text: \.getExternalFilesDir\s*\(
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: external-directory-write
+    vulnerability: false
+
+- rule-id: android-tempfile-creation
+  patterns:
+    - text: .*File.createTempFile.*
+      mode: or
+    - text: .*File.createTempDirectory.*
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: creation-of-temporary-files
+    vulnerability: true
+
+- rule-id: android-webview-javascript-execution
+  patterns:
+    - text: .*setJavaScriptEnabled\(
+      mode: or
+    - text: .*getSettings\(\).setJavaScriptEnabled\(
+      mode: or
+    - text: .*addJavascriptInterface\(
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: High
+    template: webview-with-javascript-execution-enabled
+    vulnerability: false
+
+- rule-id: android-clipboard-listening
+  patterns:
+    - text: .*ClipboardManager\.addPrimaryClipChangedListener.*
+      mode: or
+    - text: .*ClipboardManagerCompat\.addPrimaryClipChangedListener.*
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: clipboard-listening
+    vulnerability: true
+
+- rule-id: android-clipboard-copy
+  patterns:
+    - text: .*ClipboardManager\.setPrimaryClip.*
+      mode: or
+    - text: .*ClipboardManagerCompat\.setPrimaryClip.*
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: clipboard-copy
+    vulnerability: true
+
+- rule-id: android-string-concatenation
+  patterns:
+    - text: "[\"]\\s*[^+\n]+[+].*[\"]"
+      mode: or
+    - text: \+=\s*\".*
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: Medium
+    template: string-concatenation
+    vulnerability: false
+

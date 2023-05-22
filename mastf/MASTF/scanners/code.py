@@ -19,6 +19,7 @@ import pathlib
 import logging
 import multiprocessing as mp
 
+from concurrent.futures import ThreadPoolExecutor
 from yara_scanner import scan_file
 
 from mastf.core.progress import Observer
@@ -170,7 +171,7 @@ def yara_code_analysis(
             # Reset the progres bar if
             if observer:
                 observer.update(
-                    "Scanning folder: %s ...",
+                    "Scanning folder: `%s` ...",
                     File.relative_path(directory),
                     do_log=True,
                     total=total,
@@ -188,10 +189,11 @@ def yara_code_analysis(
                     )
             else:
                 # As we can't use sub processes in a daemon process, we have to
-                # call the function in a simple loop
-                for child in directory.iterdir():
-                    if child.is_dir():
-                        continue
-                    # observer.update("Scanning file: <%s> ...", str(child.name), do_log=True, total=total)
+                # call the function with a ThreadPoolExecutor
+                with ThreadPoolExecutor() as executor:
+                    for child in directory.iterdir():
+                        if child.is_dir():
+                            continue
+                        # observer.update("Scanning file: <%s> ...", str(child.name), do_log=True, total=total)
+                        executor.submit(yara_scan_file, child, task, base_dir)
 
-                    yara_scan_file(child, task, base_dir)

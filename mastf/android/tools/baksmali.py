@@ -17,6 +17,7 @@
 Wrapper functions for JADX decompiler and dex-tools using subprocess. Note
 that these functions are designed to be used within docker containers.
 """
+import pathlib
 import subprocess
 import sys
 
@@ -89,6 +90,7 @@ def to_java(dex_dir: str, dex_path: str, dest_path: str, jadx_path: str, options
         jadx_path = f"{jadx_path}.bat"
 
     try:
+        dex_path = pathlib.Path(dex_path).name
         cmd = f"cd {dex_dir} && {jadx_path} -d {dest_path} {getopts(options)} {dex_path}"
         subprocess.run(
             f"{cmd} && mv -u {dest_path}/sources/* {dest_path} && rm -rf {dest_path}/sources",

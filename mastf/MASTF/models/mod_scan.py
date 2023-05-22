@@ -278,6 +278,7 @@ class Certificate(TimedModel):
 
 class Details(TimedModel):  # TODO
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
+    file = models.ForeignKey(File, models.CASCADE, null=True)
     cvss = models.FloatField(default=0)
     icon = models.CharField(max_length=1024, null=True, blank=True)
     tracker_count = models.IntegerField(default=0)

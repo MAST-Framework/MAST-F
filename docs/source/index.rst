@@ -26,6 +26,7 @@ Welcome to MAST-Framework's documentation!
 
    ref/guide
    ref/models/index
+   ref/templates
    ref/technologies
 
 .. toctree::
