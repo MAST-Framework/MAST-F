@@ -10,18 +10,6 @@
     template: insecure-implementation-of-ssl-with-allowallhostnameverifier
     vulnerability: true
 
-- rule-id: android-insecure-ssl-trustmanager-ignore-certificate-validation
-  patterns:
-    - javax\.net\.ssl
-    - public\s*X509Certificate\[\]\s*getAcceptedIssuers\s*\(\s*\)?
-    - return\s*null\s*
-  meta:
-    filter:
-      file_ext: java
-    severity: critical
-    template: insecure-implementation-of-ssl-with-trustmanager-ignoring-certificate-validation
-    vulnerability: false
-
 - rule-id: android-insecure-ssl-trustmanager-accept-all-certificates
   patterns:
     - javax\.net\.ssl
@@ -277,4 +265,19 @@
     severity: Medium
     template: string-concatenation
     vulnerability: false
+
+- rule-id: android-md5-hashes
+  patterns:
+    - text: .*MessageDigest\.getInstance\(\"MD5\"\).*
+      mode: or
+    - text: .*[Hh]ashUtil\.md5Hash\(.*\).*
+      mode: or
+    - text: DigestUtils\.md5\(
+      mode: or
+  meta:
+    filter:
+      file_ext: java
+    severity: High
+    template: usage-of-md5-hashes
+    vulnerability: true
 

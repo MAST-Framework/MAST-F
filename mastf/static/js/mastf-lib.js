@@ -236,19 +236,21 @@ Vulnerability = {
     },
 
     handleCode: function(data) {
-        $('#vuln-code').html(data?.code || "Not Found");
-
+        document.getElementById("vuln-code").textContent = data?.code || "Not Found";
         let theme_name = 'enlighter';
         if (Utils.isDarkLaf()) {
             theme_name = 'dracula';
         }
 
         if (data != null) {
-            EnlighterJS.init('pre', 'code.vuln_code', {
+            let element = document.getElementById("vuln-code");
+            EnlighterJS.enlight(element, false);
+            EnlighterJS.enlight(element, {
                 language : data?.snippet.language.toLowerCase() || "text",
                 theme: theme_name,
-                indent : 2,
-                textOverflow: 'scroll'
+                indent: 2,
+                textOverflow: 'scroll',
+                highlight: data?.snippet.lines
             });
         }
     },
@@ -316,18 +318,21 @@ Finding = {
     },
 
     handleCode: function(data) {
-        $('#finding-code').html(data?.code || "Not Found");
+        document.getElementById("finding-code").textContent = data?.code || "Not Found";
 
-        let theme_name = 'enlighter';
+        var theme_name = 'enlighter';
         if (Utils.isDarkLaf()) {
             theme_name = 'dracula';
         }
 
-        EnlighterJS.init('pre', 'code.finding_code', {
+        let element = document.getElementById("finding-code");
+        EnlighterJS.enlight(element, false);
+        EnlighterJS.enlight(element, {
             language : data?.snippet.language.toLowerCase() || "text",
             theme: theme_name,
             indent : 2,
-            textOverflow: 'scroll'
+            textOverflow: 'scroll',
+            highlight: data?.snippet.lines
         });
     },
 

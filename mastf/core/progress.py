@@ -13,11 +13,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-from logging import DEBUG, WARNING, ERROR, INFO, Logger
+import logging
+
 from celery.app.task import Task, states
 
 PROGRESS = "PROGRESS"
-
+logger = logging.getLogger(__name__)
 
 class Observer:
     """Represents an observer of a task.
@@ -50,12 +51,12 @@ class Observer:
     """
 
     def __init__(
-        self, task: Task, position: int = 0, scan_task=None, logger: Logger = None
+        self, task: Task, position: int = 0, scan_task=None, _logger: logging.Logger = None
     ) -> None:
         self._task = task
         self._pos = abs(position) % 100
         self._scan_task = scan_task
-        self._logger = logger
+        self._logger = _logger or logger
 
     @property
     def task(self) -> Task:
@@ -67,13 +68,17 @@ class Observer:
         return self._task
 
     @property
-    def logger(self) -> Logger:
+    def logger(self) -> logging.Logger:
         """Gets the underlying logger.
 
         :return: a linked task logger
         :rtype: Task
         """
         return self._logger
+
+    @logger.setter
+    def logger(self, value) -> None:
+        self._logger = value
 
     @property
     def pos(self) -> int:
@@ -121,7 +126,7 @@ class Observer:
         state: str = PROGRESS,
         meta: dict = None,
         do_log: bool = False,
-        log_level: str = DEBUG,
+        log_level: str = logging.DEBUG,
     ) -> tuple:
         """Update the current task state.
 
@@ -184,7 +189,7 @@ class Observer:
         """
         self._finish_scan_task()
         return self.update(
-            msg, *args, current=100, state=states.SUCCESS, do_log=True, log_level=INFO
+            msg, *args, current=100, state=states.SUCCESS, do_log=True, log_level=logging.INFO
         )
 
     def fail(self, msg: str, exc_type=RuntimeError, *args) -> tuple:
@@ -206,7 +211,7 @@ class Observer:
                 "exc_message": msg % args,
             },
             do_log=True,
-            log_level=WARNING,
+            log_level=logging.WARNING,
         )
 
     def exception(self, exception, msg: str, *args) -> tuple:
@@ -230,7 +235,7 @@ class Observer:
                 "exc_message": str(exception),
             },
             do_log=True,
-            log_level=ERROR,
+            log_level=logging.ERROR,
         )
 
     def _finish_scan_task(self):

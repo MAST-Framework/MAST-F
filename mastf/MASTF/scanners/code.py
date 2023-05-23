@@ -110,6 +110,9 @@ def yara_scan_file(
     base_dir=YARA_BASE_DIR,
     observer: Observer = None,
 ):
+    if observer:
+        observer.logger = logger
+
     rel_path = File.relative_path(str(file))
     for match in scan_file(str(file), str(base_dir)):
         result = YaraResult(match)

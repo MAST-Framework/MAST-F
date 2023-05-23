@@ -1,3 +1,5 @@
+import uuid
+
 from androguard.core.bytecodes import apk
 
 from mastf.MASTF import settings
@@ -13,14 +15,15 @@ from mastf.MASTF.scanners.plugin import (
     Plugin,
     ScannerPlugin,
     Extension,
-    AbstractInspector,
+    ScannerPluginTask,
 )
 
-from mastf.MASTF.scanners.sast import SastIntegration
+from mastf.MASTF.tasks import perform_async_sast
+from mastf.MASTF.models import ScanTask
 from mastf.MASTF.scanners.android_sast import get_manifest_info, get_app_info
 
 
-class AndroidTask(AbstractInspector):
+class AndroidTask(ScannerPluginTask):
     def prepare_scan(self) -> None:
         self["apk"] = apk.APK(self.scan.file.file_path)
 
@@ -34,14 +37,13 @@ class AndroidTask(AbstractInspector):
         get_app_info(self)
 
     def do_code_scan(self) -> None:
-        sast = SastIntegration(
-            self.observer,
-            rules_dir=(settings.BASE_DIR / "android" / "rules"),
-            excluded=["re:.*/android/.*"],
-            scan_task=self.scan_task
+        task = ScanTask.objects.create(
+            task_uuid=uuid.uuid4(),
+            scan=self.scan,
+            scanner=self.scan_task.scanner,
+            name=self.scan_task.name,
         )
-        self.observer.update("Running pySAST scan...", do_log=True)
-        sast.start(self.file_dir / "src")
+        perform_async_sast.delay(str(task.task_uuid), str(self.file_dir))
 
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)

@@ -23,9 +23,9 @@ The documentation for MAST-F is available on [Github-Pages](https://mast-framewo
 
 + **Multiple Scans at a Time**: MAST-F enables the execution of multiple scans simultaneously using the [Celery](https://docs.celeryq.dev/en/stable/getting-started/introduction.html) framework. This feature enhances productivity by allowing users to test multiple mobile applications concurrently.
 
-+ **Analysis for Android and iOS Apps**: The framework supports comprehensive security analysis for both Android and iOS applications. It includes a range of techniques and tools specific to each platform, ensuring thorough testing and identification of vulnerabilities.
++ **Analysis for Android and** `[proposed]` **iOS Apps**: The framework supports comprehensive security analysis for both Android and iOS applications. It includes a range of techniques and tools specific to each platform, ensuring thorough testing and identification of vulnerabilities.
 
-+ **Export to PDF using Pre-defined Templates**: MAST-F offers the ability to export scan reports to PDF format. It provides pre-defined templates based on Word or HTML, allowing users to generate professional and standardized reports for their security assessments.
++ `[proposed]` **Export to PDF using Pre-defined Templates**: MAST-F offers the ability to export scan reports to PDF format. It provides pre-defined templates based on Word or HTML, allowing users to generate professional and standardized reports for their security assessments.
 
 + **Support for Project Bundling**: The framework includes support for bundling multiple projects together. This feature enables users to create a bundle of related projects, providing a centralized view for more in-depth analytics and reporting.
 

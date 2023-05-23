@@ -5,7 +5,7 @@ from androguard.core.bytecodes import apk
 from xml.dom.minidom import Element, parse
 from mastf.android.axml import AXmlVisitor
 
-from mastf.MASTF.scanners.plugin import AbstractInspector
+from mastf.MASTF.scanners.plugin import ScannerPluginTask
 from mastf.MASTF.models import (
     Certificate,
     Details,
@@ -15,8 +15,9 @@ from mastf.MASTF.models import (
     Snippet,
 )
 
+apk.log.setLevel(logging.WARNING)
 
-def get_app_info(inspector: AbstractInspector) -> None:
+def get_app_info(inspector: ScannerPluginTask) -> None:
     apk_file: apk.APK = inspector[apk.APK]
     details = Details.objects.get(scan=inspector.scan)
 
@@ -29,9 +30,9 @@ def get_app_info(inspector: AbstractInspector) -> None:
     if apk_file.is_signed():
         for certificate in apk_file.get_certificates():
             version = "v1"
-            if certificate.is_signed_v2():
+            if apk_file.is_signed_v2():
                 version = "v2"
-            if certificate.is_signed_v3():
+            if apk_file.is_signed_v3():
                 version = "v3"
 
             cert = Certificate.objects.create(
@@ -49,7 +50,7 @@ def get_app_info(inspector: AbstractInspector) -> None:
     details.save()
 
 
-def get_app_net_info(inspector: AbstractInspector) -> None:
+def get_app_net_info(inspector: ScannerPluginTask) -> None:
     content_dir = inspector.file_dir / "contents"
     visitor = AXmlVisitor()
     handler = NetworkSecurityHandler(inspector)
@@ -81,7 +82,7 @@ def get_app_net_info(inspector: AbstractInspector) -> None:
 
 
 class NetworkSecurityHandler:
-    def __init__(self, inspector: AbstractInspector) -> None:
+    def __init__(self, inspector: ScannerPluginTask) -> None:
         self.inspector = inspector
         self._snippet = None
 

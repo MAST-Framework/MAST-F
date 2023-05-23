@@ -7,7 +7,7 @@ from xml.dom.minidom import Element, parse
 from mastf.android.axml import AXmlVisitor
 from mastf.core.progress import Observer
 
-from mastf.MASTF.scanners.plugin import AbstractInspector
+from mastf.MASTF.scanners.plugin import ScannerPluginTask
 from mastf.MASTF.models import (
     Scan,
     IntentFilter,
@@ -21,7 +21,8 @@ from mastf.MASTF.utils.enum import ProtectionLevel, Severity, ComponentCategory
 logger = logging.getLogger(__name__)
 
 
-def get_manifest_info(inspector: AbstractInspector) -> None:
+def get_manifest_info(inspector: ScannerPluginTask) -> None:
+    inspector.observer.logger = logger
     # Collect detailed information about permissions, components and
     # intent filters
     content_dir = inspector.file_dir / "contents"
@@ -35,7 +36,7 @@ def get_manifest_info(inspector: AbstractInspector) -> None:
             )
 
 
-def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path):
+def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path):
     visitor = AXmlVisitor()
     handler = AndroidManifestHandler(inspector, manifest_file)
 
@@ -44,8 +45,11 @@ def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path)
             with open(str(manifest_file), "rb") as mfp:
                 document = parse(mfp)
 
+            handler.link(visitor)
+            visitor.visit_document(document)
         except Exception as err:
-            inspector.observer.update(
+            logger.exception(str(err))
+            inspector.observer.fail(
                 "[%s] Skipping manifest due to parsing error: %s",
                 type(err).__name__,
                 str(err),
@@ -53,10 +57,6 @@ def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path)
                 log_level=logging.ERROR,
             )
             return
-
-        handler.link(visitor)
-        print("visit document...")
-        visitor.visit_document(document)
     else:
         inspector.observer.update(
             "Skipped %s due to non-existed file!", str(manifest_file), do_log=True
@@ -65,11 +65,11 @@ def run_manifest_scan(inspector: AbstractInspector, manifest_file: pathlib.Path)
 
 class AndroidManifestHandler:
     def __init__(
-        self, inspector: AbstractInspector, path: pathlib.Path, observer: Observer = None
+        self, inspector: ScannerPluginTask, path: pathlib.Path
     ) -> None:
         self.inspector = inspector
         self.path = path
-        self.observer = observer
+        self.observer = inspector.observer
         self.snippet = Snippet(language="xml", file_name=path.name)
         self._saved = False
 
@@ -78,18 +78,14 @@ class AndroidManifestHandler:
         return self.inspector.scan
 
     def link(self, visitor: AXmlVisitor) -> None:
-        # TODO: link visitor to instance methods
         visitor.uses_permission.add("android:name", self.on_permission)
 
         for name in list(ComponentCategory):
             name = str(name).lower()
             if hasattr(visitor, name):
                 getattr(visitor, name).add("android:name", getattr(self, f"on_{name}"))
-            else:
-                print("Skipped:", name)
 
     def on_permission(self, element: Element, identifier: str) -> None:
-        print("on_permssion")
         queryset = AppPermission.objects.filter(identifier=identifier)
 
         protection_level = str(
@@ -126,12 +122,13 @@ class AndroidManifestHandler:
             scan=self.scan,
             snippet=self.snippet,
             severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
-            inspector=self.inspector.scan_task.scanner,
+            scanner=self.inspector.scan_task.scanner,
             permission=permission,
         )
 
     def on_application(self, element: Element, name: str) -> None:
-        self.handle_component(element, "application", name)
+        # self.handle_component(element, "application", name)
+        pass
 
     def on_service(self, element: Element, name: str) -> None:
         self.handle_component(element, "service", name)
@@ -148,11 +145,13 @@ class AndroidManifestHandler:
     def handle_component(self, element: Element, ctype: str, name: str) -> None:
         component = Component.objects.create(
             cid=Component.make_uuid(),
-            inspector=self.inspector.scan_task.inspector,
+            scanner=self.inspector.scan_task.scanner,
             name=name,
             category=ctype.capitalize(),
-            is_exported=element.getAttribute("android:name") == "true",
+            is_exported=element.getAttribute("android:exported") == "true",
         )
+        self.observer.logger.debug("Created component instance %s", component)
+        component.save()
 
         # TODO: if exported add Finding
         for intent_filter in element.childNodes:
@@ -160,7 +159,7 @@ class AndroidManifestHandler:
                 action = intent_filter.getAttribute("android:name")
                 component.intent_filters.add(
                     IntentFilter.objects.create(
-                        name=action.split(".")[-2], action=action
+                        name=action.split(".")[-1], action=action
                     )
                 )
 
