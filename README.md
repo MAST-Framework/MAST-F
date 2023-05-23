@@ -15,7 +15,7 @@ MAST-F is a comprehensive Mobile Application Security Testing Framework designed
 
 ## Documentation & Help
 
-The documentation for MAST-F is available on [Github-Pages](https://mast-framework.github.io/mast-f). It contains detailed information about the framework, its usage, configuration options, and various testing techniques. We highly recommend referring to the documentation to get started with MAST-F. Please visit the [Discussions](https://github.com/orgs/MAST-Framework/discussions) tab to ask questions or get help.
+The documentation for MAST-F is available on [Github-Pages](https://mast-framework.github.io/MAST-F/). It contains detailed information about the framework, its usage, configuration options, and various testing techniques. We highly recommend referring to the documentation to get started with MAST-F. Please visit the [Discussions](https://github.com/orgs/MAST-Framework/discussions) tab to ask questions or get help.
 
 ## Key Features
 
@@ -49,7 +49,7 @@ The above diagram provides an overview of the MAST-F project architecture. It sh
 
 ## Setup
 
-To set up MAST-F, please follow the instructions provided in the documentation on [Github Pages](https://mast-framework.github.io/mast-f). The setup process involves configuring the required dependencies and performing necessary configurations before running the containers. You can find the setup commands and detailed guidelines on the documentation page.
+To set up MAST-F, please follow the instructions provided in the documentation on [Github Pages](https://mast-framework.github.io/MAST-F/). The setup process involves configuring the required dependencies and performing necessary configurations before running the containers. You can find the setup commands and detailed guidelines on the documentation page.
 
 ## Contributing and Questions
 
