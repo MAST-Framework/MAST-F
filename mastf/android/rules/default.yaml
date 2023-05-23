@@ -4,7 +4,7 @@
     - javax\.net\.ssl
     - AllTrustSSLSocketFactory\|NonValidatingSSLSocketFactory\|ALLOW_ALL_HOSTNAME_VERIFIER|\.setDefaultHostnameVerifier\(|NullHostnameVerifier\(
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: high
     template: insecure-implementation-of-ssl-with-allowallhostnameverifier
@@ -18,7 +18,7 @@
     - mode: or
       text: \.\s*setTrustAllCerts\s*\(\s*true\s*\)
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: critical
     template: insecure-implementation-of-ssl-with-trustmanager-accepting-all-certificates
@@ -29,7 +29,7 @@
     - javax\.net\.ssl
     - (SSLSocketFactory|HttpsURLConnection)\s*\.\s*setEnabledCipherSuites\s*\(\s*new\s*String\[\]\s*{\s*".*DES.*|.*RC4.*"
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: high
     template: insecure-implementation-of-ssl-with-weak-cipher-suites
@@ -40,7 +40,7 @@
     - javax\.net\.ssl
     - setEnabledProtocols\s*\(\s*new\s*String\[\]\s*{\s*("SSLv3"|.*TLSv1.*)
   meta:
-    filter:
+    filters:
       file_ext: java
     severity:
     template: insecure-implementation-of-ssl-with-sslv3-or-tlsv1
@@ -52,7 +52,7 @@
     - java\.util\.Random
     - new\s*Random\(
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: high
     template: insecure-use-of-random-number-generator-(java.util.random)
@@ -63,7 +63,7 @@
     - android\.util\.Random
     - new\s*Random\(
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: high
     template: insecure-use-of-random-number-generator-(android.util.random)
@@ -73,7 +73,7 @@
 - rule-id: android-logging-sensitive-information
   pattern: (Log\.([vdiew]|wtf)|System\.out\.println)\s*\(\s*\".*(?:password|api[_ ]key|pii|personally[_ ]identifiable[_ ]information).*\"
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: high
     template: insecure-logging-of-sensitive-information
@@ -82,7 +82,7 @@
 - rule-id: android-logging-debug-messages-in-release-build
   pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*\".*\"\s*,\s*.*\bBuildConfig\.DEBUG\b
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: high
     template: insecure-logging-of-debug-messages-in-release-build
@@ -91,7 +91,7 @@
 - rule-id: android-logging-exceptions
   pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*.*\bException|Error\b.*
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: medium
     template: insecure-logging-of-exceptions
@@ -106,7 +106,7 @@
     - text: \b(Log\.[vdiew]|System\.out\.println)\s*\(
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: android-logging-detected
@@ -115,7 +115,7 @@
 - rule-id: android-hardcoded-ipv4
   pattern: \d{1,3}(\.\d{1,3}){3}
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Low
     template: hardcoded-ip-address
@@ -130,7 +130,7 @@
     - text: setVisibility\(\s*View.GONE\s*\|\s*View.INVISIBLE
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: hidden-ui-detection
@@ -141,7 +141,7 @@
     - webkit\.WebView
     - loadUrl\s*\(\s*getExternalStorageDirectory\s*\(?
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: High
     template: external-file-loading-in-webview
@@ -153,7 +153,7 @@
     - java\.io\.File
     - \bnew\s+File\s*\(\s*.*(?:File|createNewFile|createTempFile)
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: medium
     template: creation-of-temporary-file-(java.io.file)
@@ -164,7 +164,7 @@
     - java\.io\.FileOutputStream
     - \bnew\s+FileOutputStream\s*\(\s*.*(?:File|createNewFile)
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: medium
     template: creation-of-temporary-file-(java.io.fileoutputstream)
@@ -175,7 +175,7 @@
     - android\.content\.ContextWrapper
     - \bnew\s+ContextWrapper\s*\(\s*.*(?:File|createNewFile).*\)
   meta:
-    filter:
+    filters:
       file_ext: java, kt
     severity: medium
     template: creation-of-temporary-file-(android.content.contextwrapper)
@@ -184,8 +184,6 @@
 # additional rules
 - rule-id: android-external-directory-write
   patterns:
-    - text: .*\.write.*\((?!.*Context\.getFilesDir)
-      mode: or
     - text: .*\.openFileOutput.*\((?!.*Context\.getFilesDir)
       mode: or
     - text: \.getExternalStorage\s*\(
@@ -193,7 +191,7 @@
     - text: \.getExternalFilesDir\s*\(
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: external-directory-write
@@ -206,7 +204,7 @@
     - text: .*File.createTempDirectory.*
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: creation-of-temporary-files
@@ -221,7 +219,7 @@
     - text: .*addJavascriptInterface\(
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: High
     template: webview-with-javascript-execution-enabled
@@ -234,11 +232,11 @@
     - text: .*ClipboardManagerCompat\.addPrimaryClipChangedListener.*
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: clipboard-listening
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-clipboard-copy
   patterns:
@@ -247,11 +245,11 @@
     - text: .*ClipboardManagerCompat\.setPrimaryClip.*
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: clipboard-copy
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-string-concatenation
   patterns:
@@ -260,7 +258,7 @@
     - text: \+=\s*\".*
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: Medium
     template: string-concatenation
@@ -275,9 +273,64 @@
     - text: DigestUtils\.md5\(
       mode: or
   meta:
-    filter:
+    filters:
       file_ext: java
     severity: High
     template: usage-of-md5-hashes
-    vulnerability: true
+    vulnerability: false
+
+# Class loading
+- rule-id: android-dynamic-class-loading-reflection
+  patterns:
+    - .*\.forName\(
+    - .*\.newInstance\(
+  meta:
+    filters:
+      file_ext: java
+    severity: High
+    template: dynamic-class-loading-(reflection)
+    vulnerability: false
+
+- rule-id: android-dynamic-class-loading-dexclassloader
+  patterns:
+    - text: new\s*DexClassLoader\(
+    - text: new\s*ClassLoader\(
+    - text: new\s*URLClassLoader\(
+    - text: new\s*SecureClassLoader\(
+  meta:
+    filters:
+      file_ext: java
+    severity: High
+    template: dynamic-class-loading-dexclassloader
+    vulnerability: false
+
+- rule-id: android-broadcast-intent-transmission
+  patterns:
+    - text: ".*sendBroadcast(AsUser)?\\(.*"
+      mode: or
+    - text: ".*sendOrderedBroadcast(AsUser)?\\(.*"
+      mode: or
+    - text: ".*sendStickyBroadcast(AsUser)?\\(.*"
+      mode: or
+  meta:
+    filters:
+      file_ext: "java, kotlin"
+    severity: "Medium"
+    template: "broadcast-intent-transmission"
+    vulnerability: false
+
+- rule-id: android-tcp-server-sockets
+  patterns:
+    - .*\.accept\(.*
+    - net\.ServerSocket
+    - new\s*ServerSocket
+  meta:
+    filters:
+      file_ext: "java, kotlin"
+    severity: "Medium"
+    template: "tcp-server-sockets"
+    vulnerability: false
+
+
+
 

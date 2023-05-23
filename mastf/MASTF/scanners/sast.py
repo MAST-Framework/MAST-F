@@ -40,7 +40,6 @@ class SastIntegration:
     def scan_file(self, file_path: str) -> bool:
         try:
             logger.warning("Starting scan on %s", file_path)
-
             if self.scanner.scan(file_path):
                 for match in self.scanner.scan_results:
                     add_finding(match, self.scan_task)
@@ -55,13 +54,13 @@ class SastIntegration:
             if (isinstance(val, re.Pattern) and val.match(path)) or val == path:
                 return True
 
-    def scan_dir(
-        self, dir_path: pathlib.Path, executor: ThreadPoolExecutor = None
-    ) -> bool:
+    def scan_dir(self, dir_path: pathlib.Path, total) -> bool:
         for file_path in dir_path.rglob("*"):
-            if file_path.is_file() and not self.is_excluded(str(file_path)):
-                logger.info("File-scan submitted: %s", file_path)
-                executor.submit(self.scan_file, str(file_path))
+            if not file_path.is_file() or self.is_excluded(str(file_path)):
+                continue
+
+            self.observer.update("Scanning File `%s`", File.relative_path(file_path), total=total)
+            self.scan_file(file_path)
 
     def start(self, target: pathlib.Path) -> None:
         if len(self.scanner.rules) == 0:
@@ -84,8 +83,7 @@ class SastIntegration:
         self.observer.update(
             "Starting pySAST Scan...", total=total, do_log=True, log_level=WARNING
         )
-        with ThreadPoolExecutor() as executor:
-            self.scan_dir(target, executor)
+        self.scan_dir(target, total)
 
 
 def add_finding(match: dict, scan_task: ScanTask) -> None:

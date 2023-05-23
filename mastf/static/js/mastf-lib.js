@@ -249,8 +249,9 @@ Vulnerability = {
                 language : data?.snippet.language.toLowerCase() || "text",
                 theme: theme_name,
                 indent: 2,
+                linehover: false,
                 textOverflow: 'scroll',
-                highlight: data?.snippet.lines
+                highlight: data?.snippet.lines,
             });
         }
     },

@@ -5,14 +5,17 @@
 <link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
 <link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
 <style>
+pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
 .enlighter-default{
-    overflow-y: scroll;
-    {% if active != "tabs-explorer" %}
-    height: 200px;
-    {% else %}
     height: 500px;
-    {% endif %}
-    resize: vertical;
+    overflow-x: auto;
 }
 .enlighter-btn-raw{
     display: none !important;

@@ -169,28 +169,6 @@
             "meta_masvs": "V9: Device Security - Implement runtime application self-protection (RASP) mechanisms."
         },
         {
-            "title": "Dynamic Class Loading (DexClassLoader)",
-            "description": "This rule detects the use of dynamic class loading through DexClassLoader and PathClassLoader in Android applications' source code.",
-            "risk": "Dynamic class loading using DexClassLoader or PathClassLoader can introduce security risks, such as loading malicious classes or executing arbitrary code. Attackers can leverage this technique to bypass static analysis and gain unauthorized access to sensitive functionalities.",
-            "mitigation": "To mitigate this security risk, carefully validate the sources of dynamically loaded classes when using DexClassLoader. Implement input validation and strict whitelisting of allowed class names to prevent the loading of unauthorized or malicious classes.",
-            "article": "android/security",
-            "default_severity": "Info",
-            "meta_cvss": "3.1 (Low)",
-            "meta_cwe": "CWE-470",
-            "meta_masvs": "V5: Attack Detection - Implement protections to detect and mitigate attacks."
-        },
-        {
-            "title": "Dynamic Class Loading (Reflection)",
-            "description": "This rule detects the use of dynamic class loading through reflection.",
-            "risk": "Dynamic class loading through reflection can introduce security risks, such as loading malicious classes or executing arbitrary code. This technique is often used to bypass static analysis and gain unauthorized access to sensitive functionalities.",
-            "mitigation": "To mitigate this security risk, carefully review and validate the sources of dynamically loaded classes. Consider using safer alternatives, such as static class loading or using well-defined interfaces instead of dynamically loading classes.",
-            "article": "android/security",
-            "default_severity": "Info",
-            "meta_cvss": "3.1 (Low)",
-            "meta_cwe": "CWE-470",
-            "meta_masvs": "V5: Attack Detection - Implement protections to detect and mitigate attacks."
-        },
-        {
             "title": "Android Logging Detected",
             "description": "The application uses Android logging, which may expose sensitive information.",
             "risk": "The usage of Android logging can lead to the exposure of sensitive information, including passwords, API keys, and user data.",
@@ -310,6 +288,53 @@
             "meta_cvss": "9.0",
             "meta_cwe": "CWE-327",
             "meta_masvs": "V7: Client Code Quality"
-        }
+        },
+        {
+            "title": "Dynamic Class Loading (Reflection)",
+            "description": "The application utilizes reflection to dynamically load classes, which can introduce security vulnerabilities and make the app prone to code injection attacks.",
+            "risk": "Using reflection for dynamic class loading can allow an attacker to inject malicious code or manipulate the behavior of the application at runtime, leading to unauthorized access, data breaches, and other security risks.",
+            "mitigation": "Avoid or minimize the use of reflection for dynamic class loading. If dynamic class loading is required, ensure proper input validation, and implement strong security controls to prevent code injection attacks.",
+            "article": "android/dynamic-class-loading-reflection",
+            "default_severity": "High",
+            "meta_cvss": "8.8",
+            "meta_cwe": "CWE-471",
+            "meta_masvs": "V7: Client Code Quality"
+        },
+        {
+            "title": "Dynamic Class Loading (DexClassLoader)",
+            "description": "The application uses DexClassLoader to dynamically load classes, which can introduce security vulnerabilities and make the app prone to code injection attacks.",
+            "risk": "Utilizing DexClassLoader for dynamic class loading can allow an attacker to inject malicious code or manipulate the application's behavior at runtime, leading to unauthorized access, data breaches, and other security risks.",
+            "mitigation": "Minimize the use of DexClassLoader for dynamic class loading. If its usage is necessary, ensure that the loaded classes come from trusted and verified sources. Implement strong input validation and security controls to mitigate code injection risks.",
+            "article": "android/dynamic-class-loading-dexclassloader",
+            "default_severity": "High",
+            "meta_cvss": "8.8",
+            "meta_cwe": "CWE-471",
+            "meta_masvs": "V7: Client Code Quality"
+        },
+        {
+            "title": "Broadcast Intent Transmission",
+            "description": "The app transmits broadcast intents without proper validation or restriction.",
+            "risk": "Transmitting broadcast intents without proper validation can lead to security vulnerabilities, such as unauthorized access or execution of sensitive actions by malicious apps.",
+            "mitigation": "Ensure that broadcast intents are transmitted securely and only to trusted components. Validate and sanitize input data before broadcasting intents.",
+            "article": "android/broadcast-intent-transmission",
+            "default_severity": "Medium",
+            "meta_cvss": "3.0",
+            "meta_cwe": "CWE-200",
+            "meta_masvs": "MASVS:2.0.1-M3"
+        },
+        {
+            "title": "TCP Server Sockets",
+            "description": "The app uses TCP server sockets without proper security measures.",
+            "risk": "Using TCP server sockets without proper security measures can expose sensitive data and create potential security vulnerabilities.",
+            "mitigation": "Ensure that TCP server sockets are implemented securely, including appropriate authentication, encryption, and input validation.",
+            "article": "android/tcp-server-sockets",
+            "default_severity": "Medium",
+            "meta_cvss": "3.0",
+            "meta_cwe": "CWE-319",
+            "meta_masvs": "MASVS:2.0.1-M10: \"Server-side Injection Verification\""
+          }
+
+
+
     ]
 }

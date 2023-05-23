@@ -1,0 +1,63 @@
+{
+    "title": "TCP Server Sockets",
+    "pretitle": "OWASP Mobile Top 10 2016: M7 - Poor Code Quality",
+    "short_summary": "This article discusses the use of TCP server sockets in Android apps, associated security risks, and recommended security measures.",
+    "sources": [
+        {
+            "value": "https://www.example.com/tcp-server-sockets",
+            "name": "Android Developers - TCP Server Sockets"
+        }
+    ],
+    "content": [
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Introduction"
+        },
+        "Android apps can utilize TCP server sockets to establish network communication with other devices or services. However, using TCP server sockets without proper security measures can lead to various security risks and vulnerabilities.",
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Security Risks"
+        },
+        "The use of TCP server sockets without adequate security measures can result in the following security risks:",
+        {
+            "type": "ul",
+            "content": [
+                "Unauthorized access: Insufficient security measures can allow unauthorized parties to access sensitive data or services exposed through TCP server sockets.",
+                "Data interception: Lack of encryption or weak encryption can expose transmitted data to interception and unauthorized viewing.",
+                "Denial of Service (DoS) attacks: Poorly implemented TCP server sockets may be susceptible to DoS attacks, leading to service unavailability.",
+                "Server-side injection: Inadequate input validation and verification can open avenues for server-side injection attacks."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Mitigation"
+        },
+        "To mitigate the security risks associated with TCP server sockets, consider the following security measures:",
+        {
+            "type": "ol",
+            "content": [
+                "Implement strong authentication: Employ secure authentication mechanisms to verify the identity of clients connecting to the TCP server socket.",
+                "Enable encryption: Use strong encryption protocols and algorithms to protect the confidentiality and integrity of transmitted data.",
+                "Implement input validation: Apply strict input validation and verification mechanisms to prevent server-side injection attacks.",
+                "Implement rate limiting and throttling: Enforce limits on the frequency and volume of requests to mitigate DoS attacks.",
+                "Monitor network traffic: Regularly monitor network traffic to detect and respond to suspicious or malicious activities.",
+                "Keep software and libraries up to date: Stay updated with security patches and best practices for the software and libraries used in the implementation of TCP server sockets."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "References"
+        },
+        {
+            "type": "ul",
+            "content": [
+                "OWASP Mobile Top 10 2016: M7 - Poor Code Quality - [Link](https://www.example.com/owasp-top10)",
+                "Android Developers - TCP Server Sockets - [Link](https://www.example.com/tcp-server-sockets)"
+            ]
+        }
+    ]
+}

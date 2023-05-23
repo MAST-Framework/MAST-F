@@ -430,7 +430,7 @@ MAST-F Bundle | {{ bundle.name }}
             var row = $(table.row(index).node());
             var projectId = row.attr('project-id');
 
-            if (document.getElementById(`chbx-project-${projectId}`).checked) {
+            if (document.getElementById(`chbx-project-${projectId}`)?.checked) {
                 projects.push(projectId);
             }
         });

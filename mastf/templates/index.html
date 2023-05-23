@@ -92,7 +92,7 @@ Dashboard | MAST-Framework
             <div class="col-md-4 mt-1">
                 <div class="card">
                     <div class="card-body">
-                        <div class="container-fluid d-flex flex-column justify-content-center" id="no-vulnerabilties-data">
+                        <div class="container-fluid d-flex flex-column justify-content-center" id="no-vulnerabilities-data">
                             <div class="empty">
                                 <p class="empty-title">No Vulnerability-data available</p>
                                 <p class="empty-subtitle text-muted">
@@ -100,7 +100,7 @@ Dashboard | MAST-Framework
                                 </p>
                             </div>
                         </div>
-                        <div class="chart-vuln-timeline"></div>
+                        <div id="chart-vuln-timeline"></div>
                     </div>
                 </div>
             </div>
@@ -115,7 +115,7 @@ Dashboard | MAST-Framework
                                 </p>
                             </div>
                         </div>
-                        <div class="chart-finding-timeline"></div>
+                        <div id="chart-finding-timeline"></div>
                     </div>
                 </div>
             </div>
@@ -343,7 +343,7 @@ Dashboard | MAST-Framework
         prepareTimeline("Findings", [
         {% for row in finding_timeline.objects %}
         {% if row.discovery_date %}{% endif %}[ {{ row.discovery_date|timestamp }}, {{ row.total }}],{% endfor %}
-        ], {% with finding_timeline.objects|first as finding %}{{ finding.discovery_date|timestamp }}{% endwith %}, "finding-vuln-timeline", "{{finding_timeline.count}}");
+        ], {% with finding_timeline.objects|first as finding %}{{ finding.discovery_date|timestamp }}{% endwith %}, "chart-finding-timeline", "{{finding_timeline.count}}");
 
         {% if scan_timeline|length > 0 %}
         $('#no-scan-data').remove();
@@ -361,7 +361,9 @@ Dashboard | MAST-Framework
                 name: "Findings",
                 data: [
                 {% for row in scan_timeline %}
+                {% if row.findings > 0 %}
                 [ {{ row.scan.start_date|timestamp }}, {{ row.findings }}],
+                {% endif %}
                 {% endfor %}
                 ]
             }],

@@ -31,7 +31,7 @@ def perform_async_sast(self, scan_task_id: str, file_dir) -> None:
         sast = SastIntegration(
             observer=observer,
             rules_dir=(settings.BASE_DIR / "android" / "rules"),
-            excluded=["re:.*/android/.*"],
+            excluded=["re:.*/android/.*", "re:.*/smali/.*"],
             scan_task=scan_task
         )
         observer.update("Running pySAST scan...", do_log=True)
