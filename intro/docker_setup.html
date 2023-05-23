@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup with Docker Compose &mdash; MAST-Framework 0.0.2-alpha documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Development Setup" href="dev_setup.html" />
+    <link rel="prev" title="Welcome to MAST-Framework’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MAST-Framework
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setup with Docker Compose</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#local-development">Local Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-configuration">Service Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#database">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#broker">Broker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nginx">Nginx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configuration-steps">Configuration Steps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#environment-options">Environment Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#django">Django</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_DEBUG"><code class="docutils literal notranslate"><span class="pre">DJANGO_DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_SECRET_KEY"><code class="docutils literal notranslate"><span class="pre">DJANGO_SECRET_KEY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_ALLOWED_HOSTS"><code class="docutils literal notranslate"><span class="pre">DJANGO_ALLOWED_HOSTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_CSRF_TRUSTED_ORIGINS"><code class="docutils literal notranslate"><span class="pre">DJANGO_CSRF_TRUSTED_ORIGINS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE"><code class="docutils literal notranslate"><span class="pre">DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_SESSION_COOKIE_AGE"><code class="docutils literal notranslate"><span class="pre">DJANGO_SESSION_COOKIE_AGE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_HTTPS"><code class="docutils literal notranslate"><span class="pre">DJANGO_HTTPS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_STORAGE_URL"><code class="docutils literal notranslate"><span class="pre">DJANGO_STORAGE_URL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_STORAGE_ROOT"><code class="docutils literal notranslate"><span class="pre">DJANGO_STORAGE_ROOT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#DJANGO_PORT"><code class="docutils literal notranslate"><span class="pre">DJANGO_PORT</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev_setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scaling.html">Scaling Container Images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scaling.html#scaling-django-application-containers">Scaling Django Application Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scaling.html#scaling-celery-worker-instances">Scaling Celery Worker Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scaling.html#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ref/guide.html">Visual Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#project-directory-structure">Project-Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#scantask-design">ScanTask design</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/models/index.html">Model Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/base_models.html">Core Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.namespace"><code class="docutils literal notranslate"><span class="pre">namespace</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment"><code class="docutils literal notranslate"><span class="pre">Environment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.allow_registration"><code class="docutils literal notranslate"><span class="pre">Environment.allow_registration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.allow_teams"><code class="docutils literal notranslate"><span class="pre">Environment.allow_teams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.env"><code class="docutils literal notranslate"><span class="pre">Environment.env()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.env_id"><code class="docutils literal notranslate"><span class="pre">Environment.env_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.first_start"><code class="docutils literal notranslate"><span class="pre">Environment.first_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.max_bundles"><code class="docutils literal notranslate"><span class="pre">Environment.max_bundles</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.max_projects"><code class="docutils literal notranslate"><span class="pre">Environment.max_projects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.max_teams"><code class="docutils literal notranslate"><span class="pre">Environment.max_teams</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team"><code class="docutils literal notranslate"><span class="pre">Team</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.get"><code class="docutils literal notranslate"><span class="pre">Team.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.get_by_owner"><code class="docutils literal notranslate"><span class="pre">Team.get_by_owner()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.name"><code class="docutils literal notranslate"><span class="pre">Team.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.owner"><code class="docutils literal notranslate"><span class="pre">Team.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.users"><code class="docutils literal notranslate"><span class="pre">Team.users</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.visibility"><code class="docutils literal notranslate"><span class="pre">Team.visibility</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project"><code class="docutils literal notranslate"><span class="pre">Project</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.dir"><code class="docutils literal notranslate"><span class="pre">Project.dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.directory"><code class="docutils literal notranslate"><span class="pre">Project.directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.get_by_user"><code class="docutils literal notranslate"><span class="pre">Project.get_by_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.inspection_type"><code class="docutils literal notranslate"><span class="pre">Project.inspection_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.name"><code class="docutils literal notranslate"><span class="pre">Project.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.owner"><code class="docutils literal notranslate"><span class="pre">Project.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.project_uuid"><code class="docutils literal notranslate"><span class="pre">Project.project_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.risk_level"><code class="docutils literal notranslate"><span class="pre">Project.risk_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.stats"><code class="docutils literal notranslate"><span class="pre">Project.stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.tags"><code class="docutils literal notranslate"><span class="pre">Project.tags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.team"><code class="docutils literal notranslate"><span class="pre">Project.team</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.visibility"><code class="docutils literal notranslate"><span class="pre">Project.visibility</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File"><code class="docutils literal notranslate"><span class="pre">File</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.file_name"><code class="docutils literal notranslate"><span class="pre">File.file_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.file_path"><code class="docutils literal notranslate"><span class="pre">File.file_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.file_size"><code class="docutils literal notranslate"><span class="pre">File.file_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.internal_name"><code class="docutils literal notranslate"><span class="pre">File.internal_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.md5"><code class="docutils literal notranslate"><span class="pre">File.md5</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.sha1"><code class="docutils literal notranslate"><span class="pre">File.sha1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.sha256"><code class="docutils literal notranslate"><span class="pre">File.sha256</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Account"><code class="docutils literal notranslate"><span class="pre">Account</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle"><code class="docutils literal notranslate"><span class="pre">Bundle</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.bundle_id"><code class="docutils literal notranslate"><span class="pre">Bundle.bundle_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.get_by_owner"><code class="docutils literal notranslate"><span class="pre">Bundle.get_by_owner()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.name"><code class="docutils literal notranslate"><span class="pre">Bundle.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.owner"><code class="docutils literal notranslate"><span class="pre">Bundle.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.projects"><code class="docutils literal notranslate"><span class="pre">Bundle.projects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.risk_level"><code class="docutils literal notranslate"><span class="pre">Bundle.risk_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.stats"><code class="docutils literal notranslate"><span class="pre">Bundle.stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.tags"><code class="docutils literal notranslate"><span class="pre">Bundle.tags</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/scan_models.html">Scan Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan"><code class="docutils literal notranslate"><span class="pre">Scan</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.end_date"><code class="docutils literal notranslate"><span class="pre">Scan.end_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.file"><code class="docutils literal notranslate"><span class="pre">Scan.file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.files"><code class="docutils literal notranslate"><span class="pre">Scan.files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.finished"><code class="docutils literal notranslate"><span class="pre">Scan.finished</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.initiator"><code class="docutils literal notranslate"><span class="pre">Scan.initiator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.is_active"><code class="docutils literal notranslate"><span class="pre">Scan.is_active</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.last_scan"><code class="docutils literal notranslate"><span class="pre">Scan.last_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.origin"><code class="docutils literal notranslate"><span class="pre">Scan.origin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.project"><code class="docutils literal notranslate"><span class="pre">Scan.project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.risk_level"><code class="docutils literal notranslate"><span class="pre">Scan.risk_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.scan_type"><code class="docutils literal notranslate"><span class="pre">Scan.scan_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.scan_uuid"><code class="docutils literal notranslate"><span class="pre">Scan.scan_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.source"><code class="docutils literal notranslate"><span class="pre">Scan.source</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.start_date"><code class="docutils literal notranslate"><span class="pre">Scan.start_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.status"><code class="docutils literal notranslate"><span class="pre">Scan.status</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask"><code class="docutils literal notranslate"><span class="pre">ScanTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.active"><code class="docutils literal notranslate"><span class="pre">ScanTask.active</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.active_tasks"><code class="docutils literal notranslate"><span class="pre">ScanTask.active_tasks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.celery_id"><code class="docutils literal notranslate"><span class="pre">ScanTask.celery_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.finish_scan"><code class="docutils literal notranslate"><span class="pre">ScanTask.finish_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.name"><code class="docutils literal notranslate"><span class="pre">ScanTask.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.scan"><code class="docutils literal notranslate"><span class="pre">ScanTask.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.scanner"><code class="docutils literal notranslate"><span class="pre">ScanTask.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.task_uuid"><code class="docutils literal notranslate"><span class="pre">ScanTask.task_uuid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate"><code class="docutils literal notranslate"><span class="pre">Certificate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.hash_algorithm"><code class="docutils literal notranslate"><span class="pre">Certificate.hash_algorithm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.issuer"><code class="docutils literal notranslate"><span class="pre">Certificate.issuer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.serial_number"><code class="docutils literal notranslate"><span class="pre">Certificate.serial_number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.sha1"><code class="docutils literal notranslate"><span class="pre">Certificate.sha1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.sha256"><code class="docutils literal notranslate"><span class="pre">Certificate.sha256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.signature_algorithm"><code class="docutils literal notranslate"><span class="pre">Certificate.signature_algorithm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.subject"><code class="docutils literal notranslate"><span class="pre">Certificate.subject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.version"><code class="docutils literal notranslate"><span class="pre">Certificate.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Details"><code class="docutils literal notranslate"><span class="pre">Details</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/finding_models.html">Finding Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet"><code class="docutils literal notranslate"><span class="pre">Snippet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.file_name"><code class="docutils literal notranslate"><span class="pre">Snippet.file_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.file_size"><code class="docutils literal notranslate"><span class="pre">Snippet.file_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.language"><code class="docutils literal notranslate"><span class="pre">Snippet.language</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.lines"><code class="docutils literal notranslate"><span class="pre">Snippet.lines</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.sys_path"><code class="docutils literal notranslate"><span class="pre">Snippet.sys_path</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate"><code class="docutils literal notranslate"><span class="pre">FindingTemplate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.article"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.article</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.default_severity"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.default_severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.description"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.internal_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.is_html"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.is_html</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_internal_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_uuid"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.meta_cvss"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.meta_cvss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.meta_cwe"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.meta_cwe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.meta_masvs"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.meta_masvs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.mitigation"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.mitigation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.risk"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.risk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.template_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.template_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.title"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.title</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.discovery_date"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.finding_id"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.scan"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.scanner"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.severity"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.snippet"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.stats"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.template"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.template</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding"><code class="docutils literal notranslate"><span class="pre">Finding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.custom_text"><code class="docutils literal notranslate"><span class="pre">Finding.custom_text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.discovery_date"><code class="docutils literal notranslate"><span class="pre">Finding.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.finding_id"><code class="docutils literal notranslate"><span class="pre">Finding.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.is_custom"><code class="docutils literal notranslate"><span class="pre">Finding.is_custom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.make_uuid"><code class="docutils literal notranslate"><span class="pre">Finding.make_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.scan"><code class="docutils literal notranslate"><span class="pre">Finding.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.scanner"><code class="docutils literal notranslate"><span class="pre">Finding.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.severity"><code class="docutils literal notranslate"><span class="pre">Finding.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.snippet"><code class="docutils literal notranslate"><span class="pre">Finding.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.template"><code class="docutils literal notranslate"><span class="pre">Finding.template</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability"><code class="docutils literal notranslate"><span class="pre">Vulnerability</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.discovery_date"><code class="docutils literal notranslate"><span class="pre">Vulnerability.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.finding_id"><code class="docutils literal notranslate"><span class="pre">Vulnerability.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.make_uuid"><code class="docutils literal notranslate"><span class="pre">Vulnerability.make_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.scan"><code class="docutils literal notranslate"><span class="pre">Vulnerability.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.scanner"><code class="docutils literal notranslate"><span class="pre">Vulnerability.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.severity"><code class="docutils literal notranslate"><span class="pre">Vulnerability.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.snippet"><code class="docutils literal notranslate"><span class="pre">Vulnerability.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.state"><code class="docutils literal notranslate"><span class="pre">Vulnerability.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.status"><code class="docutils literal notranslate"><span class="pre">Vulnerability.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.template"><code class="docutils literal notranslate"><span class="pre">Vulnerability.template</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/permission_models.html">App Permission Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission"><code class="docutils literal notranslate"><span class="pre">AppPermission</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.create_unknown"><code class="docutils literal notranslate"><span class="pre">AppPermission.create_unknown()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.dangerous"><code class="docutils literal notranslate"><span class="pre">AppPermission.dangerous</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.description"><code class="docutils literal notranslate"><span class="pre">AppPermission.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.group"><code class="docutils literal notranslate"><span class="pre">AppPermission.group</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.identifier"><code class="docutils literal notranslate"><span class="pre">AppPermission.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.name"><code class="docutils literal notranslate"><span class="pre">AppPermission.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.permission_uuid"><code class="docutils literal notranslate"><span class="pre">AppPermission.permission_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.plevel_status"><code class="docutils literal notranslate"><span class="pre">AppPermission.plevel_status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.protection_level"><code class="docutils literal notranslate"><span class="pre">AppPermission.protection_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.risk"><code class="docutils literal notranslate"><span class="pre">AppPermission.risk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.short_description"><code class="docutils literal notranslate"><span class="pre">AppPermission.short_description</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding"><code class="docutils literal notranslate"><span class="pre">PermissionFinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.discovery_date"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.finding_id"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.permission"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.permission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.scan"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.scanner"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.severity"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.snippet"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.template"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.template</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/package_models.html">Dependency Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package"><code class="docutils literal notranslate"><span class="pre">Package</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.artifact_id"><code class="docutils literal notranslate"><span class="pre">Package.artifact_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.group_id"><code class="docutils literal notranslate"><span class="pre">Package.group_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.name"><code class="docutils literal notranslate"><span class="pre">Package.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_type"><code class="docutils literal notranslate"><span class="pre">Package.package_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_uuid"><code class="docutils literal notranslate"><span class="pre">Package.package_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.platform"><code class="docutils literal notranslate"><span class="pre">Package.platform</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.cve_id"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.cve_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.identifier"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.package"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.package</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.severity"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.version"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency"><code class="docutils literal notranslate"><span class="pre">Dependency</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.dependency_uuid"><code class="docutils literal notranslate"><span class="pre">Dependency.dependency_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.license"><code class="docutils literal notranslate"><span class="pre">Dependency.license</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.outdated"><code class="docutils literal notranslate"><span class="pre">Dependency.outdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.package"><code class="docutils literal notranslate"><span class="pre">Dependency.package</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.project"><code class="docutils literal notranslate"><span class="pre">Dependency.project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.relation"><code class="docutils literal notranslate"><span class="pre">Dependency.relation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.scanner"><code class="docutils literal notranslate"><span class="pre">Dependency.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.version"><code class="docutils literal notranslate"><span class="pre">Dependency.version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.vulnerabilities"><code class="docutils literal notranslate"><span class="pre">Dependency.vulnerabilities</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/templates.html">HTML Templates Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/technologies.html">List of used Frameworks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/rest/index.html">REST API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/forms.html">Enhanced Forms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/forms.html#enhanced-fields">Enhanced Fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/forms.html#mastf.MASTF.forms.ModelField"><code class="docutils literal notranslate"><span class="pre">ModelField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/forms.html#mastf.MASTF.forms.ModelField.clean"><code class="docutils literal notranslate"><span class="pre">ModelField.clean()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/forms.html#mastf.MASTF.forms.ManyToManyField"><code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/forms.html#mastf.MASTF.forms.ManyToManyField.clean"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.clean()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/forms.html#mastf.MASTF.forms.ManyToManyField.convert_id"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.convert_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/serializers.html">Serializer Extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/serializers.html#enhanced-fields-and-serializers">Enhanced Fields and Serializers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/serializers.html#mastf.MASTF.serializers.ManyToManyField"><code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/serializers.html#mastf.MASTF.serializers.ManyToManyField.to_internal_value"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.to_internal_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/serializers.html#mastf.MASTF.serializers.ManyToManyField.to_representation"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.to_representation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/serializers.html#mastf.MASTF.serializers.ManyToManySerializer"><code class="docutils literal notranslate"><span class="pre">ManyToManySerializer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/serializers.html#mastf.MASTF.serializers.ManyToManySerializer.rel_fields"><code class="docutils literal notranslate"><span class="pre">ManyToManySerializer.rel_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/permissions.html">Permission System</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/permissions.html#classes">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions._Method"><code class="docutils literal notranslate"><span class="pre">_Method</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions._Method.has_permission"><code class="docutils literal notranslate"><span class="pre">_Method.has_permission()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission"><code class="docutils literal notranslate"><span class="pre">BoundPermission</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.assign_to"><code class="docutils literal notranslate"><span class="pre">BoundPermission.assign_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.codename"><code class="docutils literal notranslate"><span class="pre">BoundPermission.codename</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.create"><code class="docutils literal notranslate"><span class="pre">BoundPermission.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.errors"><code class="docutils literal notranslate"><span class="pre">BoundPermission.errors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.get"><code class="docutils literal notranslate"><span class="pre">BoundPermission.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.has_object_permission"><code class="docutils literal notranslate"><span class="pre">BoundPermission.has_object_permission()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.is_runtime"><code class="docutils literal notranslate"><span class="pre">BoundPermission.is_runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.model"><code class="docutils literal notranslate"><span class="pre">BoundPermission.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.name"><code class="docutils literal notranslate"><span class="pre">BoundPermission.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/permissions.html#mastf.MASTF.permissions.BoundPermission.remove_from"><code class="docutils literal notranslate"><span class="pre">BoundPermission.remove_from()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/converters.html">Converters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/converters.html#components">Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/converters.html#mastf.MASTF.converters.StringConverter"><code class="docutils literal notranslate"><span class="pre">StringConverter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/converters.html#mastf.MASTF.converters.listconverters"><code class="docutils literal notranslate"><span class="pre">listconverters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/middleware.html">Middleware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/middleware.html#mastf.MASTF.middleware.FirstTimeMiddleware"><code class="docutils literal notranslate"><span class="pre">FirstTimeMiddleware</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/mixins.html">Web Mixins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/mixins.html#view-classes">View Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.check_object_permissions"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.check_object_permissions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.check_permissions"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.check_permissions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.default_redirect"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.default_redirect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.get_object"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.get_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.on_dispatch_error"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.on_dispatch_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.permission_classes"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.permission_classes</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/mixins.html#mixin-classes">Mixin Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.ContextMixinBase"><code class="docutils literal notranslate"><span class="pre">ContextMixinBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.ContextMixinBase.login_url"><code class="docutils literal notranslate"><span class="pre">ContextMixinBase.login_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.ContextMixinBase.prepare_context_data"><code class="docutils literal notranslate"><span class="pre">ContextMixinBase.prepare_context_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.VulnContextMixin"><code class="docutils literal notranslate"><span class="pre">VulnContextMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.VulnContextMixin.apply_vuln_context"><code class="docutils literal notranslate"><span class="pre">VulnContextMixin.apply_vuln_context()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.VulnContextMixin.get_vuln_context"><code class="docutils literal notranslate"><span class="pre">VulnContextMixin.get_vuln_context()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.UserProjectMixin"><code class="docutils literal notranslate"><span class="pre">UserProjectMixin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TopVulnerableProjectsMixin"><code class="docutils literal notranslate"><span class="pre">TopVulnerableProjectsMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TopVulnerableProjectsMixin.get_top_vulnerable_projects"><code class="docutils literal notranslate"><span class="pre">TopVulnerableProjectsMixin.get_top_vulnerable_projects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.ScanTimelineMixin"><code class="docutils literal notranslate"><span class="pre">ScanTimelineMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.ScanTimelineMixin.get_scan_timeline"><code class="docutils literal notranslate"><span class="pre">ScanTimelineMixin.get_scan_timeline()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/index.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/utils/datatables.html">DataTables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.apply"><code class="docutils literal notranslate"><span class="pre">apply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest"><code class="docutils literal notranslate"><span class="pre">DataTableRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.columns"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.columns</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.length"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.order_column"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.order_column</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.order_direction"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.order_direction</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.search_value"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.search_value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.start"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.start</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/utils/enum.html">Enums</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.StringEnum"><code class="docutils literal notranslate"><span class="pre">StringEnum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/enum.html#user-related-classes">User-Related Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.Visibility"><code class="docutils literal notranslate"><span class="pre">Visibility</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/enum.html#finding-related-classes">Finding-Related Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.Severity"><code class="docutils literal notranslate"><span class="pre">Severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.State"><code class="docutils literal notranslate"><span class="pre">State</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/enum.html#dependency-related-classes">Dependency-Related Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.Platform"><code class="docutils literal notranslate"><span class="pre">Platform</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.PackageType"><code class="docutils literal notranslate"><span class="pre">PackageType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.Relation"><code class="docutils literal notranslate"><span class="pre">Relation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/enum.html#other-enum-classes">Other Enum Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.HostType"><code class="docutils literal notranslate"><span class="pre">HostType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.DataProtectionLevel"><code class="docutils literal notranslate"><span class="pre">DataProtectionLevel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/enum.html#mastf.MASTF.utils.enum.ProtectionLevel"><code class="docutils literal notranslate"><span class="pre">ProtectionLevel</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/utils/filetree.html">FileTree Plugin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/filetree.html#mastf.MASTF.utils.filetree.visitor"><code class="docutils literal notranslate"><span class="pre">visitor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/filetree.html#mastf.MASTF.utils.filetree.apply_rules"><code class="docutils literal notranslate"><span class="pre">apply_rules()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/filetree.html#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/filetree.html#mastf.MASTF.utils.filetree._Visitor"><code class="docutils literal notranslate"><span class="pre">_Visitor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/utils/filetree.html#mastf.MASTF.utils.filetree._FileDesc"><code class="docutils literal notranslate"><span class="pre">_FileDesc</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/utils/upload.html">File Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/upload.html#mastf.MASTF.utils.upload.checksum_from_path"><code class="docutils literal notranslate"><span class="pre">checksum_from_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/upload.html#mastf.MASTF.utils.upload.get_file_checksum"><code class="docutils literal notranslate"><span class="pre">get_file_checksum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/utils/upload.html#mastf.MASTF.utils.upload.handle_scan_file_upload"><code class="docutils literal notranslate"><span class="pre">handle_scan_file_upload()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Core API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core_api/progress.html">Progress Observer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/progress.html#usage-example">Usage Example:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer"><code class="docutils literal notranslate"><span class="pre">Observer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.create_meta"><code class="docutils literal notranslate"><span class="pre">Observer.create_meta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.exception"><code class="docutils literal notranslate"><span class="pre">Observer.exception()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.fail"><code class="docutils literal notranslate"><span class="pre">Observer.fail()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.increment"><code class="docutils literal notranslate"><span class="pre">Observer.increment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.logger"><code class="docutils literal notranslate"><span class="pre">Observer.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.pos"><code class="docutils literal notranslate"><span class="pre">Observer.pos</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.success"><code class="docutils literal notranslate"><span class="pre">Observer.success()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.task"><code class="docutils literal notranslate"><span class="pre">Observer.task</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.update"><code class="docutils literal notranslate"><span class="pre">Observer.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../core_api/file_handler.html">Task File Handlers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/file_handler.html#apk-files">APK Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/file_handler.html#ipa-files">IPA Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/file_handler.html#mastf.core.files.handler.TaskFileHandler"><code class="docutils literal notranslate"><span class="pre">TaskFileHandler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/file_handler.html#mastf.core.files.handler.TaskFileHandler.apply"><code class="docutils literal notranslate"><span class="pre">TaskFileHandler.apply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/file_handler.html#mastf.core.files.handler.TaskFileHandler.from_scan"><code class="docutils literal notranslate"><span class="pre">TaskFileHandler.from_scan()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Android API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../android_api/manifest.html">Android Manifest Visitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../android_api/permission.html">ADB Permissions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#key-features">Key Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#import-format">Import Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.all"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.kwargs"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.kwargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.load"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.load()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.make_cmd"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.make_cmd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.re_package"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.re_package</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.ungrouped"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.ungrouped</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../android_api/tools.html">Android Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/tools.html#module-mastf.android.tools.apktool">Apktool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.apktool.run_apktool_decode"><code class="docutils literal notranslate"><span class="pre">run_apktool_decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.apktool.extractrsc"><code class="docutils literal notranslate"><span class="pre">extractrsc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/tools.html#module-mastf.android.tools.baksmali">Baksmali</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.baksmali.decompile"><code class="docutils literal notranslate"><span class="pre">decompile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.baksmali.to_java"><code class="docutils literal notranslate"><span class="pre">to_java()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MAST-Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setup with Docker Compose</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/intro/docker_setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setup-with-docker-compose">
+<span id="intro-docker-setup"></span><h1>Setup with Docker Compose<a class="headerlink" href="#setup-with-docker-compose" title="Permalink to this heading"></a></h1>
+<p>This project uses Docker Compose to manage its container environment. With Docker Compose, you
+can easily set up and run all the required services and dependencies for this project with a
+single command.</p>
+<p>The following figure illustrates how the default costellation of muliple containers is meant to
+be reviewed. The compose file is named <code class="docutils literal notranslate"><span class="pre">docker-compose.local.yml</span></code> and all relevant configuration
+files are located in the <code class="docutils literal notranslate"><span class="pre">/compose/local/</span></code> directory.</p>
+<figure class="align-default" id="id1">
+<img alt="Overview of container architecture" src="../_images/container-view.svg" /><figcaption>
+<p><span class="caption-text">Figure 1: Overview of container architecture. Note that our Django container will be able to
+comunicate with containers in the backend network. Note also that the storage network is still
+under development and can’t be integrated yet.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="local-development">
+<h2>Local Development<a class="headerlink" href="#local-development" title="Permalink to this heading"></a></h2>
+<p>To get started <strong>locally</strong>, follow these steps:</p>
+<ol class="arabic">
+<li><p>Ensure that you have Docker and Docker Compose installed on your machine. If you do not have them installed, please refer to the official Docker documentation for installation instructions at <a class="reference external" href="https://www.docker.com/">Docker.com</a>.</p></li>
+<li><p>Open the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> file in the root directory of the project to review the available services and their configuration.</p></li>
+<li><p>Generate a self signed certificate and private key to enable HTTPS. Save the generated files to <code class="docutils literal notranslate"><span class="pre">/compose/local/nginx/</span></code>:</p>
+<blockquote>
+<div><div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">On Linux and Mac</span><a class="headerlink" href="#id2" title="Permalink to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-newkey<span class="w"> </span>rsa:4096<span class="w"> </span>-keyout<span class="w"> </span>key.pem<span class="w"> </span>-out<span class="w"> </span>cert.pem<span class="w"> </span>-sha256<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you have Git installed on your Windows system, open Git Bash, navigate to the
+project’s directory and execute the command above.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Run the following command to start all the required services and dependencies:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The first time you run this command, Docker Compose will build the required images
+for your services, which may take some time depending on your internet speed and
+system resources. Subsequent runs will use the pre-built images.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Once the services are running, you can access your application by navigating to <a class="reference external" href="https://localhost">https://localhost</a>:&lt;port&gt; in your web browser, where &lt;port&gt; is the port number specified in the docker-compose.yml file (default <code class="docutils literal notranslate"><span class="pre">8443</span></code>).</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the port you specified in the docker-compose.yml file is already in use by
+another application on your machine, you may need to change it to a different
+port number.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p>You now have a fully functional development environment for this project, powered by Docker
+Compose. Before setting up a production environment, consider reading the following sections
+which address different configuration options.</p>
+</section>
+<section id="service-configuration">
+<h2>Service Configuration<a class="headerlink" href="#service-configuration" title="Permalink to this heading"></a></h2>
+<section id="database">
+<h3>Database<a class="headerlink" href="#database" title="Permalink to this heading"></a></h3>
+<p>As per default, there is a container named <code class="docutils literal notranslate"><span class="pre">backend-db</span></code> which is basically a PostgreSQL server
+within the backend Docker network. The following code snippet shows what configurations should
+be applied to the service:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos">40</span><span class="nt">backend-db</span><span class="p">:</span>
+<span class="linenos">41</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:13.0-alpine</span>
+<span class="linenos">42</span><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="linenos">43</span><span class="w">        </span><span class="c1"># The target data volume (may be a shared directory)</span>
+<span class="linenos">44</span><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres_data:/var/lib/postgresql/data/</span>
+<span class="linenos">45</span><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="linenos">46</span><span class="w">        </span><span class="c1"># Specify environment variables here or place them in an</span>
+<span class="linenos">47</span><span class="w">        </span><span class="c1"># environment file. Make sure to keep the password private</span>
+<span class="linenos">48</span><span class="w">        </span><span class="c1"># in production environments!</span>
+<span class="linenos">49</span><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSTGRES_USER=mastf_django</span>
+<span class="linenos">50</span><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSTGRES_PASSWORD=supersecretpassword</span>
+<span class="linenos">51</span><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSTGRES_DB=mastf_backend_db</span>
+<span class="linenos">52</span><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="linenos">53</span><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">POSTGRES_USER=mastf_django</span></code>:</dt><dd><p>Sets the username of the default PostgreSQL user that will be used by the application. The value of this
+variable is set to <em>mastf_django</em>, which is the default user used by the django application.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">POSTGRES_PASSWORD=supersecretpassword</span></code>:</dt><dd><p>This configuration variable sets the password for the default PostgreSQL user that will be used by the
+application. The default value is set to <em>supersecretpassword</em>, which is a strong password that should
+be replaced with a unique and secure password before deploying the application.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">POSTGRES_DB=mastf_backend_db</span></code>:</dt><dd><p>Sets the name of the default PostgreSQL database that will be used by the application. The value of this
+variable is set to <code class="docutils literal notranslate"><span class="pre">mastf_backend_db</span></code>, which is the name of the default database used by the django
+backend application.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Note that these configuration variables are used to set up the PostgreSQL database for the django application.
+It is important to keep these configuration variables secure and not share them with unauthorized users.
+Additionally, it is recommended to replace the default values of these configuration variables with unique and
+secure values before deploying the project.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The environment variables <code class="docutils literal notranslate"><span class="pre">POSTGRES_USER</span></code> and <code class="docutils literal notranslate"><span class="pre">POSTGRES_DB</span></code> must point to the same value
+as <code class="docutils literal notranslate"><span class="pre">DB_USER</span></code> and <code class="docutils literal notranslate"><span class="pre">DB_NAME</span></code> do defined in your environment file.</p>
+<p>By default, the following section of the configuration file describes how to place the mentioned environment
+variables:</p>
+<div class="highlight-properties notranslate"><div class="highlight"><pre><span></span><span class="c1"># Specify user and password only once</span>
+<span class="na">DB_DATABASE</span><span class="o">=</span><span class="s">mastf_backend_db</span>
+<span class="na">DB_USER</span><span class="o">=</span><span class="s">mastf_django</span>
+<span class="na">DB_PASSWORD</span><span class="o">=</span><span class="s">supersecretpassword</span>
+
+<span class="na">POSTGRES_USER</span><span class="o">=</span><span class="s">${DB_USER}</span>
+<span class="na">POSTGRES_PASSWORD</span><span class="o">=</span><span class="s">${DB_PASSWORD}</span>
+<span class="na">POSTGRES_DB</span><span class="o">=</span><span class="s">${DB_DATABASE}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="broker">
+<h3>Broker<a class="headerlink" href="#broker" title="Permalink to this heading"></a></h3>
+<p>We use a <a class="reference external" href="https://redis.io/">Redis</a> service instance as our message broker and result backend. Configuration variables
+used wihtin the django application should be set in the environment file of this project:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">CELERY_BROKER_URL</span> <span class="pre">=</span> <span class="pre">&quot;redis://redis:6379/0&quot;</span></code>:</dt><dd><p>This environment variable sets the URL of the Redis instance that will be used as the broker for Celery tasks. The value
+of this variable is set to <code class="docutils literal notranslate"><span class="pre">redis://redis:6379/0</span></code>, which indicates that the Redis instance is running on the same Docker
+network as the Celery worker container and that it is accessible at the address <code class="docutils literal notranslate"><span class="pre">redis:6379</span></code>. The <code class="docutils literal notranslate"><span class="pre">/0</span></code> at the end of
+the URL specifies the Redis database that will be used for Celery tasks.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">CELERY_RESULT_BACKEND=&quot;redis://redis:6379/0&quot;</span></code>:</dt><dd><p>This environment variable sets the URL of the Redis instance that will be used as the backend for storing Celery task
+results. The value of this variable is also set to <code class="docutils literal notranslate"><span class="pre">redis://redis:6379/0</span></code>, which indicates that the same Redis instance that
+is used as the broker will also be used as the backend for storing task results.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="nginx">
+<h3>Nginx<a class="headerlink" href="#nginx" title="Permalink to this heading"></a></h3>
+<p>The Nginx reverse proxy is a powerful tool for directing incoming network traffic to backend servers. This chapter provides a
+detailed guide on configuring the Nginx service using the available configuration variables. It also includes recommendations
+for accepting only HTTPS traffic and generating a self-signed certificate and private key for the Nginx server.</p>
+<section id="configuration-steps">
+<h4>Configuration Steps<a class="headerlink" href="#configuration-steps" title="Permalink to this heading"></a></h4>
+<ol class="arabic">
+<li><dl>
+<dt>Install Nginx:</dt><dd><p>Ensure that Nginx is installed on your server or local machine if you don’t want to use docker. Otherwise, take a quick look
+at the pre-defined docker-compose configuration</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">nginx</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># build context with configuration files</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./compose/local/nginx/</span>
+<span class="w">    </span><span class="nt">env_file</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># environment variables</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./.env/.dev-example</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${NGINX_HTTP_PORT}:80</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${NGINX_HTTPS_PORT}:443</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">NGINX_ENVSUBST_TEMPLATE_SUFFIX</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;.conf&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-django</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>Nginx Configuration File:</dt><dd><p>There are two pre-defined nginx configuration files: one for HTTP-only servers and one for strict HTTPS servers. Note that
+there will be only HTTPS-traffic allowed with the default configuration (recommended).</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You can use environment variables declared in your environment file <code class="docutils literal notranslate"><span class="pre">./.env/.dev-example</span></code> in the Nginx configuration
+file:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">upstream</span><span class="w"> </span><span class="s">django</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="s">web-django:</span><span class="nv">${DJANGO_PORT}</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>However, if you want to enforce HTTP traffic, you have to apply the following changes to the Dockerfile placed in
+<code class="docutils literal notranslate"><span class="pre">compose/nginx</span></code>:</p>
+<div class="highlight-dockerfile notranslate"><div class="highlight"><pre><span></span><span class="c"># Instead of preparing SSL (remove the following directives)</span>
+<span class="k">COPY</span><span class="w"> </span>default.conf.conf<span class="w"> </span>/etc/nginx/templates/default.conf.conf
+<span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/ssl/
+<span class="k">COPY</span><span class="w"> </span>cert.pem<span class="w"> </span>/etc/ssl/cert.pem
+<span class="k">COPY</span><span class="w"> </span>key.pem<span class="w"> </span>/etc/ssl/key.pem
+
+<span class="c"># Just copy the HTTP configuration (add thid line)</span>
+<span class="k">COPY</span><span class="w"> </span>nginx.http.conf<span class="w"> </span>/etc/nginx/conf.d/default.conf
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><p>Generate Self-Signed Certificate</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ensure that OpenSSL is installed on your system. Use the package manager or download it from the official website.
+For Windows users: If you have git installed on your system, make sure that you have also installed Git Bash. Run
+Git Bash in order to start a new window with a bash shell in it. You can now execute the command described below.</p>
+</div>
+<p>In a new terminal, run the following commands to generate a self-signed certificate and private key:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openssl<span class="w"> </span>req<span class="w"> </span>-x509<span class="w"> </span>-nodes<span class="w"> </span>-days<span class="w"> </span><span class="m">365</span><span class="w"> </span>-newkey<span class="w"> </span>rsa:4096<span class="w"> </span>-keyout<span class="w"> </span>/path/to/key.pem<span class="w"> </span>-out<span class="w"> </span>/path/to/cert.pem
+</pre></div>
+</div>
+<p>In order to use the generated private key and certificate, copy them into the <code class="docutils literal notranslate"><span class="pre">compose/nginx/</span></code> directory of this
+repository.</p>
+</div></blockquote>
+</li>
+</ol>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>These steps provide a simplistic overview of how HTTPS can be enabled via a nginx reverse proxy. It is not meant to be
+complete in any ways. For more HTTPS security related information, please refer to the <a class="reference external" href="https://www.nginx.com/resources/wiki/start/topics/examples/full/">NGINX Guide</a>.</p>
+</div>
+</section>
+<section id="environment-options">
+<h4>Environment Options<a class="headerlink" href="#environment-options" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">NGINX_HTTP_PORT=8080</span></code>:</dt><dd><p>This configuration variable specifies the port number on which the Nginx server listens for incoming HTTP
+connections. The default value is set to <code class="docutils literal notranslate"><span class="pre">8080</span></code>, but it can be modified to any available port number.</p>
+<ul>
+<li><p>Any HTTP traffic received on this port will be directed to the backend servers configured in the Nginx reverse proxy.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">NGINX_HTTPS_PORT=8443</span></code>:</dt><dd><p>This configuration variable defines the port number on which the Nginx server listens for incoming HTTPS
+connections. The default value is set to <code class="docutils literal notranslate"><span class="pre">8443</span></code>, but it can be changed to any available port number.</p>
+<ul>
+<li><p>HTTPS traffic received on this port will be securely handled by the Nginx server using SSL/TLS encryption.</p></li>
+<li><p>It is important to configure the Nginx server with a valid SSL/TLS certificate and private key to enable HTTPS communication on this port.</p></li>
+<li><p>Typically, the backend servers behind the Nginx reverse proxy will communicate over plain HTTP, while the Nginx server itself handles the SSL/TLS encryption for incoming HTTPS requests.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+<section id="django">
+<h3>Django<a class="headerlink" href="#django" title="Permalink to this heading"></a></h3>
+<p>The following environment variables apply to all services using the environment file. For frontend specific configurations,
+please refer to the <span class="xref std std-doc">Django Settings</span> documentation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All described environment variables cannot be used in local development.</p>
+</div>
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_DEBUG">
+<span class="sig-name descname"><span class="pre">DJANGO_DEBUG</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#DJANGO_DEBUG" title="Permalink to this definition"></a></dt>
+<dd><p>Control whether the web instance should be running in debug mode to provide detailed exception descriptions.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Never enable this option in production environments as it would potentially leak important and sensitive
+configuration vairables.</p>
+</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_SECRET_KEY">
+<span class="sig-name descname"><span class="pre">DJANGO_SECRET_KEY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#DJANGO_SECRET_KEY" title="Permalink to this definition"></a></dt>
+<dd><p>Specifies the secret key that Django will use. For more information about secret keys in Django, please refer to the
+chapter <a class="reference external" href="https://docs.djangoproject.com/en/4.2/topics/signing/">Cryptographic signing</a> of the Django documentation.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_ALLOWED_HOSTS">
+<span class="sig-name descname"><span class="pre">DJANGO_ALLOWED_HOSTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;*&quot;</span></em><a class="headerlink" href="#DJANGO_ALLOWED_HOSTS" title="Permalink to this definition"></a></dt>
+<dd><p>Make sure to edit the allowed host variable to specify which host should be able to connect to your web instance. Sperate
+them with <code class="docutils literal notranslate"><span class="pre">:</span></code> to add multiple hosts.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_CSRF_TRUSTED_ORIGINS">
+<span class="sig-name descname"><span class="pre">DJANGO_CSRF_TRUSTED_ORIGINS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;https://localhost:8443|https://127.0.0.1:8443&quot;</span></em><a class="headerlink" href="#DJANGO_CSRF_TRUSTED_ORIGINS" title="Permalink to this definition"></a></dt>
+<dd><p>Trusted origins when configuring Django to run with HTTPS.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Configure the trusted hosts if you are using a reverse proxy like nginx. Replace hostnames of the given URLs to match
+your own ones.</p>
+</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE">
+<span class="sig-name descname"><span class="pre">DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE" title="Permalink to this definition"></a></dt>
+<dd><p>Use this configuration to control whether django should remove active sessions when the browser is closed.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_SESSION_COOKIE_AGE">
+<span class="sig-name descname"><span class="pre">DJANGO_SESSION_COOKIE_AGE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3600</span></em><a class="headerlink" href="#DJANGO_SESSION_COOKIE_AGE" title="Permalink to this definition"></a></dt>
+<dd><p>Control the TTL of a session cookie default will be 3600s = 1h</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_HTTPS">
+<span class="sig-name descname"><span class="pre">DJANGO_HTTPS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#DJANGO_HTTPS" title="Permalink to this definition"></a></dt>
+<dd><p>Control whether you want to start your services with HTTPS enabled. Enable this option only if you want
+to use HTTPS.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_STORAGE_URL">
+<span class="sig-name descname"><span class="pre">DJANGO_STORAGE_URL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;/app_storage/&quot;</span></em><a class="headerlink" href="#DJANGO_STORAGE_URL" title="Permalink to this definition"></a></dt>
+<dd><p>The storage URL where all project data should be saved separately. Note the trailing <code class="docutils literal notranslate"><span class="pre">/</span></code> that is needed
+by Django. Remove this connfiguration if you work locally.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_STORAGE_ROOT">
+<span class="sig-name descname"><span class="pre">DJANGO_STORAGE_ROOT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;/app_storage&quot;</span></em><a class="headerlink" href="#DJANGO_STORAGE_ROOT" title="Permalink to this definition"></a></dt>
+<dd><p>Same as described in <a class="reference internal" href="#DJANGO_STORAGE_URL" title="DJANGO_STORAGE_URL"><code class="xref py py-data docutils literal notranslate"><span class="pre">DJANGO_STORAGE_URL</span></code></a> without traling slash.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="DJANGO_PORT">
+<span class="sig-name descname"><span class="pre">DJANGO_PORT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8000</span></em><a class="headerlink" href="#DJANGO_PORT" title="Permalink to this definition"></a></dt>
+<dd><p>The port django should be served on.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to MAST-Framework’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dev_setup.html" class="btn btn-neutral float-right" title="Development Setup" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MatrixEditor.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
