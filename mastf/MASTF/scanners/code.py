@@ -19,6 +19,8 @@ import pathlib
 import logging
 import multiprocessing as mp
 
+import pysast
+
 from concurrent.futures import ThreadPoolExecutor
 from yara_scanner import scan_file
 
@@ -26,7 +28,14 @@ from mastf.core.progress import Observer
 
 from mastf.MASTF.utils.enum import Severity
 from mastf.MASTF.settings import YARA_BASE_DIR
-from mastf.MASTF.models import ScanTask, Finding, FindingTemplate, Snippet, File
+from mastf.MASTF.models import (
+    Finding,
+    FindingTemplate,
+    Snippet,
+    File,
+    ScanTask,
+    Vulnerability,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +180,6 @@ def yara_code_analysis(
             observer.update("Starting YARA Scan...", total=total, do_log=True)
 
         for directory in path.glob("*/**"):
-            # Reset the progres bar if
             if observer:
                 observer.update(
                     "Scanning folder: `%s` ...",
@@ -200,3 +208,125 @@ def yara_code_analysis(
                         # observer.update("Scanning file: <%s> ...", str(child.name), do_log=True, total=total)
                         executor.submit(yara_scan_file, child, task, base_dir)
 
+
+# SAST
+def sast_scan_file(
+    file_path: pathlib.Path,
+    task: ScanTask,
+    rules: list,
+) -> None:
+    try:
+        # Rather create a new scanner instance every time as it only accesses
+        # the rules' internal values
+        scanner = pysast.SastScanner(rules=rules, use_mime_type=False)
+
+        if scanner.scan(str(file_path)):
+            for match in scanner.scan_results:
+                add_finding(match, task)
+    except Exception as error:
+        logger.exception(str(error))
+
+
+def sast_code_analysis(
+    scan_task: ScanTask,
+    target_dir: pathlib.Path,
+    observer: Observer,
+    excluded: list,
+    rules_dirs: list,
+) -> None:
+    # make sure we use the right logger instance
+    observer.logger = logger
+
+    if not target_dir.exists():
+        # Make sure the task fails by raising an appropriate exception
+        raise FileNotFoundError("Could not validate start directory: %s" % target_dir)
+
+    # Prepare excluded values:
+    for i, val in enumerate(excluded):
+        if val.startswith("re:"):
+            excluded[i] = re.compile(val[3:])
+
+    def is_excluded(path: str) -> bool:
+        for val in excluded:
+            if (isinstance(val, re.Pattern) and val.match(path)) or val == path:
+                return True
+
+    # prepare ruleset
+    rules = []
+    for directory in rules_dirs:
+        for file_path in directory.rglob("*"):
+            if pysast.is_rule_file(str(file_path)):
+                rules.extend(pysast.load_sast_rules(str(file_path)))
+
+    if len(rules) == 0:
+        # We don't want to waste time on a scan with no rules.
+        observer.update(
+            "Skipping pySAST scan due to no rules...",
+            do_log=True,
+            log_level=logging.WARNING,
+        )
+        return
+
+    # REVISIT: the update() method of an observer should not be called if the
+    # target has more than 1000 files.
+    observer.pos = 0
+    observer.update("Enumerating file objects...", do_log=True, log_level=logging.INFO)
+    total = len(list(target_dir.glob("*/**")))
+
+    observer.update(
+        "Starting pySAST Scan...", total=total, do_log=True, log_level=logging.INFO
+    )
+
+    with ThreadPoolExecutor() as executor:
+        for directory in target_dir.glob("*/**"):
+            observer.update(
+                "Scanning folder: `%s` ...",
+                File.relative_path(directory),
+                do_log=True,
+                total=total,
+            )
+            for child in directory.iterdir():
+                if not child.is_file() or is_excluded(str(child)):
+                    continue
+
+                executor.submit(sast_scan_file, child, scan_task, rules)
+
+
+def add_finding(match: dict, scan_task: ScanTask) -> None:
+    internal_id = match[pysast.RESULT_KEY_META].get("template")
+    template = FindingTemplate.objects.filter(internal_id=internal_id)
+    if not template.exists():
+        logger.error(
+            "Could not find template '%s' for rule '%s'!",
+            internal_id,
+            match[pysast.RESULT_KEY_RULE_ID],
+        )
+        return
+
+    path = pathlib.Path(match[pysast.RESULT_KEY_ABS_PATH])
+    template = template.first()
+    snippet = Snippet.objects.create(
+        lines=",".join(map(str, match[pysast.RESULT_KEY_LINES])),
+        language=path.suffix[1:],
+        file_name=File.relative_path(str(path)),
+        sys_path=str(path),
+    )
+    meta = match[pysast.RESULT_KEY_META]
+    if meta.get("vulnerability", False):
+        # Create a vulnerability instead (if not already present)
+        Vulnerability.objects.create(
+            finding_id=Vulnerability.make_uuid(),
+            template=template,
+            snippet=snippet,
+            scan=scan_task.scan,
+            scanner=scan_task.scanner,
+            severity=meta.get("severity", template.default_severity),
+        )
+    else:
+        Finding.create(
+            template,
+            snippet,
+            scan_task.scanner,
+            severity=meta.get("severity", template.default_severity),
+            text=meta.get("text"),
+        )

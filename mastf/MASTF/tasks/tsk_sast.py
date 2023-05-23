@@ -14,7 +14,7 @@ from mastf.core.progress import Observer
 from mastf.MASTF import settings
 from mastf.MASTF.models import Scan, ScanTask, Scanner, File, Details
 from mastf.MASTF.scanners.plugin import ScannerPlugin
-from mastf.MASTF.scanners.sast import SastIntegration
+from mastf.MASTF.scanners import code
 
 logger = get_task_logger(__name__)
 
@@ -28,14 +28,14 @@ def perform_async_sast(self, scan_task_id: str, file_dir) -> None:
     observer = Observer(self, scan_task=scan_task)
 
     try:
-        sast = SastIntegration(
-            observer=observer,
-            rules_dir=(settings.BASE_DIR / "android" / "rules"),
-            excluded=["re:.*/android/.*", "re:.*/smali/.*"],
-            scan_task=scan_task
-        )
         observer.update("Running pySAST scan...", do_log=True)
-        sast.start(pathlib.Path(file_dir) / "src")
+        code.sast_code_analysis(
+            scan_task=scan_task,
+            target_dir=pathlib.Path(file_dir) / "src",
+            observer=observer,
+            excluded=["re:.*/(android[x]?|kotlin[x]?)/.*"],
+            rules_dirs=[settings.BASE_DIR / "android" / "rules"]
+        )
         _, meta = observer.success("Finished pySAST scan!")
         return meta
     except Exception as err:

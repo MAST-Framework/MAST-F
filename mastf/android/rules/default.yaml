@@ -88,15 +88,6 @@
     template: insecure-logging-of-debug-messages-in-release-build
     vulnerability: false
 
-- rule-id: android-logging-exceptions
-  pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*.*\bException|Error\b.*
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: medium
-    template: insecure-logging-of-exceptions
-    vulnerability: false
-
 - rule-id: android-logging
   patterns:
     - text: .*android\.util\.Log.*
