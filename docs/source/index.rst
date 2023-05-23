@@ -6,6 +6,11 @@
 Welcome to MAST-Framework's documentation!
 ==========================================
 
+.. important::
+   This software is in *alpha* status and is NOT stable. It is intended for testing purposes only. Please use with caution and expect bugs and frequent changes.
+   Please refer to the sidebar for necessary information about documentation status and internal
+   architecture overview.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

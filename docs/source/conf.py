@@ -16,8 +16,8 @@ author = 'MatrixEditor'
 language = "en"
 
 
-version = '0.1'
-release = '0.0.1-alpha'
+version = '0.0'
+release = '0.0.2-alpha'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

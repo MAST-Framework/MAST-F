@@ -260,7 +260,9 @@ MASTF | Scans
                 name: "Findings",
                 data: [
                 {% for row in scan_table_data %}
+                {% if row.findings > 0 %}
                 [ {{ row.scan.start_date|timestamp }}, {{ row.findings }}],
+                {% endif %}
                 {% endfor %}
                 ]
             }],

@@ -5,14 +5,17 @@
 <link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
 <link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
 <style>
+pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
 .enlighter-default{
-    overflow-y: scroll;
-    {% if active != "tabs-explorer" %}
-    height: 200px;
-    {% else %}
     height: 500px;
-    {% endif %}
-    resize: vertical;
+    overflow-x: auto;
 }
 .enlighter-btn-raw{
     display: none !important;
@@ -89,7 +92,7 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="tab-pane active show" id="tabs-language">
-                                        <pre class="finding_code" style="resize: vertical; margin-bottom: 0px;" id="finding-code">##</pre>
+                                        <pre class="finding_code" style="margin-bottom: 0px;" id="finding-code">##</pre>
                                     </div>
                                     <div class="tab-pane" id="tabs-file-details">
                                         <div class="card-body">
@@ -140,11 +143,11 @@
             <div class="accordion-item">
                 <h2 class="accordion-header bg-secondary-lt">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse-{{ category.name.trim|lower }}-acc" aria-expanded="false">
+                        data-bs-target="#collapse-{{ category.internal_id }}-acc" aria-expanded="false">
                         {{ category.name }} ({{ category.count }})
                     </button>
                 </h2>
-                <div id="collapse-{{ category.name.trim|lower }}-acc" class="accordion-collapse collapse"
+                <div id="collapse-{{ category.internal_id }}-acc" class="accordion-collapse collapse"
                     data-bs-parent="#acc-parent">
 
                     <div class="accordion-body pt-0">
@@ -152,7 +155,7 @@
                             <div class="row mt-2">
                                 <div class="col">
                                     <div class="table-responsive">
-                                        <table id="table-{{ category.name.trim|lower }}-{{ forloop.counter }}"
+                                        <table id="table-{{ category.internal_id }}-{{ forloop.counter }}"
                                             class="table card-table text-nowrap datatable" style="width:100%">
                                             <thead>
                                                 <th class="w-1">
@@ -275,10 +278,9 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         {% for category in data %}
-        $('#table-{{ category.name.trim|lower }}-{{ forloop.counter }}').DataTable();
+        $('#table-{{ category.internal_id }}-{{ forloop.counter }}').DataTable();
         {% endfor %}
     });
-
 
 </script>
 {% endblock js_extended %}

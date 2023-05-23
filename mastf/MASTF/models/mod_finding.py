@@ -316,6 +316,9 @@ class Finding(AbstractBaseFinding):
     ) -> "Finding":
         assert template, "The template should not be null on a new Finding!"
 
+        if not text:
+            text = ""
+
         return Finding.objects.create(
             pk=Finding.make_uuid(),
             scan=scanner.scan,

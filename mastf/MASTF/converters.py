@@ -17,9 +17,9 @@ __doc__ = """
 Converters are used within URL definitions of Django. They can be used
 to add additional custom path components to URLs.
 
-New converter classes will be added automatically when django load defined
-URLs. To create a new string-based converter, just add code following a
-simple structure in this file:
+New converter classes will be automatically added when Django loads the
+defined URLs.To create a new string-based converter, just follow a simple
+structure and add the code to the specified file.
 
 .. code-block:: python
     :caption: converters.py

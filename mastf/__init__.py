@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-__version__ = (0, 0, "1-alpha")
+__version__ = "0.0.2-alpha"
 
 def version_string() -> str:
-    return ".".join([str(x) for x in __version__])
+    return __version__

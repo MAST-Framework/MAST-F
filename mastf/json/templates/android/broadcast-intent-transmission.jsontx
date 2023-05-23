@@ -1,0 +1,60 @@
+{
+    "title": "Broadcast Intent Transmission",
+    "pretitle": "OWASP Mobile Top 10 2016: M4 - Insecure Authentication and Authorization",
+    "short_summary": "This article provides an overview of the transmission of broadcast intents in Android apps and the associated security risks.",
+    "sources": [
+        {
+            "value": "https://developer.android.com/guide/components/broadcasts",
+            "name": "Android Developers - Broadcasts"
+        }
+    ],
+    "content": [
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Introduction"
+        },
+        "Android apps often use broadcast intents to communicate between different components within the app or with other apps on the device. While broadcast intents provide a convenient way to send and receive messages, transmitting them without proper validation or restriction can introduce security vulnerabilities.",
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Security Risks"
+        },
+        "Transmitting broadcast intents without proper validation can lead to the following security risks:",
+        {
+            "type": "ul",
+            "content": [
+                "Unauthorized access: Malicious apps can intercept and receive sensitive broadcast intents, potentially gaining unauthorized access to privileged information or actions.",
+                "Execution of sensitive actions: If broadcast intents are not properly validated, an attacker can broadcast malicious intents to trigger sensitive actions in other components or apps.",
+                "Data leakage: Insecurely transmitting broadcast intents may expose sensitive data to unauthorized parties."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Mitigation"
+        },
+        "To mitigate the risks associated with broadcast intent transmission, follow these recommendations:",
+        {
+            "type": "ol",
+            "content": [
+                "Validate and sanitize input data: Before broadcasting intents, ensure that input data is properly validated and sanitized to prevent injection attacks.",
+                "Restrict intent receivers: Only broadcast intents to trusted components and avoid using implicit intents whenever possible.",
+                "Use permissions and permissions checks: Enforce proper permissions for broadcast receivers and perform permission checks before processing sensitive intents.",
+                "Encrypt sensitive data: If broadcast intents contain sensitive data, consider encrypting the data to protect it from unauthorized access."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "References"
+        },
+        {
+            "type": "ul",
+            "content": [
+                "OWASP Mobile Top 10 2016: M4 - Insecure Authentication and Authorization - [Link](https://www.example.com/masvs-top10)",
+                "Android Developers - Broadcast Intents - [Link](https://www.example.com/broadcast-intents)"
+            ]
+        }
+    ]
+}

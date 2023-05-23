@@ -21,11 +21,18 @@ from re import sub
 from pathlib import Path
 
 
-from mastf.core.progress import Observer
+from mastf.core.progress import Observer, logger
 
 from mastf.MASTF.utils.enum import StringEnum
 from mastf.MASTF.models import Project, Scanner, Scan, File, ScanTask
 
+
+__all__ = [
+    "Plugin",
+    "Extension",
+    "ScannerPluginTask",
+    "ScannerPlugin",
+]
 __scanners__ = {}
 
 
@@ -52,7 +59,7 @@ class Extension(StringEnum):
     EXPLORER = "explorer"
 
 
-class AbstractInspector(metaclass=ABCMeta):
+class ScannerPluginTask(metaclass=ABCMeta):
     def __init__(self) -> None:
         self._task = None
         self._observer = None
@@ -72,6 +79,7 @@ class AbstractInspector(metaclass=ABCMeta):
         # Prepare internal values
         self._task = scan_task
         self._observer = observer
+        self._observer.logger = logger
 
         project: Project = scan_task.scan.project
         self._file_dir = project.dir(scan_task.scan.file.internal_name, False)
@@ -94,7 +102,7 @@ class AbstractInspector(metaclass=ABCMeta):
                 name = "-".join([x.capitalize() for x in name.split("_")[1:]])
                 self.observer.update(
                     "Started Sub-Task %s", name,
-                    do_log=True, log_level=logging.ERROR
+                    do_log=True, log_level=logging.INFO
                 )
                 try:
                     func()
@@ -105,6 +113,7 @@ class AbstractInspector(metaclass=ABCMeta):
                         name,
                         str(err),
                     )
+                    self.observer.logger.exception(str(err))
 
     @property
     def scan_task(self) -> ScanTask:

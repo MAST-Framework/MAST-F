@@ -180,6 +180,7 @@ class FindingsMixins:
             data.append(
                 {
                     "name": template.title if template else "Untitled",
+                    "internal_id": template.template_id,
                     "count": category["tcount"],
                     "finding_data": FindingSerializer(filtered, many=True).data,
                 }
