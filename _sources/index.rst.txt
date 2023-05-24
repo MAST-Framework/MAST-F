@@ -46,6 +46,7 @@ Welcome to MAST-Framework's documentation!
    api/converters
    api/middleware
    api/mixins
+   api/scanner_plugin
    api/utils/index
 
 .. toctree::

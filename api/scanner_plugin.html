@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scanner Plugin &mdash; MAST-Framework 0.0.2-alpha documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utilities" href="utils/index.html" />
+    <link rel="prev" title="Web Mixins" href="mixins.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MAST-Framework
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/docker_setup.html">Setup with Docker Compose</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/docker_setup.html#local-development">Local Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/docker_setup.html#service-configuration">Service Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../intro/docker_setup.html#database">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../intro/docker_setup.html#broker">Broker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../intro/docker_setup.html#nginx">Nginx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#configuration-steps">Configuration Steps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#environment-options">Environment Options</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../intro/docker_setup.html#django">Django</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_DEBUG"><code class="docutils literal notranslate"><span class="pre">DJANGO_DEBUG</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_SECRET_KEY"><code class="docutils literal notranslate"><span class="pre">DJANGO_SECRET_KEY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_ALLOWED_HOSTS"><code class="docutils literal notranslate"><span class="pre">DJANGO_ALLOWED_HOSTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_CSRF_TRUSTED_ORIGINS"><code class="docutils literal notranslate"><span class="pre">DJANGO_CSRF_TRUSTED_ORIGINS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE"><code class="docutils literal notranslate"><span class="pre">DJANGO_SESSION_EXPIRE_AT_BROWSER_CLOSE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_SESSION_COOKIE_AGE"><code class="docutils literal notranslate"><span class="pre">DJANGO_SESSION_COOKIE_AGE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_HTTPS"><code class="docutils literal notranslate"><span class="pre">DJANGO_HTTPS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_STORAGE_URL"><code class="docutils literal notranslate"><span class="pre">DJANGO_STORAGE_URL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_STORAGE_ROOT"><code class="docutils literal notranslate"><span class="pre">DJANGO_STORAGE_ROOT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../intro/docker_setup.html#DJANGO_PORT"><code class="docutils literal notranslate"><span class="pre">DJANGO_PORT</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/dev_setup.html">Development Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/scaling.html">Scaling Container Images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../intro/scaling.html#scaling-django-application-containers">Scaling Django Application Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/scaling.html#scaling-celery-worker-instances">Scaling Celery Worker Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intro/scaling.html#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ref/guide.html">Visual Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#project-directory-structure">Project-Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#scantask-design">ScanTask design</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/models/index.html">Model Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/base_models.html">Core Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.namespace"><code class="docutils literal notranslate"><span class="pre">namespace</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment"><code class="docutils literal notranslate"><span class="pre">Environment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.allow_registration"><code class="docutils literal notranslate"><span class="pre">Environment.allow_registration</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.allow_teams"><code class="docutils literal notranslate"><span class="pre">Environment.allow_teams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.env"><code class="docutils literal notranslate"><span class="pre">Environment.env()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.env_id"><code class="docutils literal notranslate"><span class="pre">Environment.env_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.first_start"><code class="docutils literal notranslate"><span class="pre">Environment.first_start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.max_bundles"><code class="docutils literal notranslate"><span class="pre">Environment.max_bundles</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.max_projects"><code class="docutils literal notranslate"><span class="pre">Environment.max_projects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Environment.max_teams"><code class="docutils literal notranslate"><span class="pre">Environment.max_teams</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team"><code class="docutils literal notranslate"><span class="pre">Team</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.get"><code class="docutils literal notranslate"><span class="pre">Team.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.get_by_owner"><code class="docutils literal notranslate"><span class="pre">Team.get_by_owner()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.name"><code class="docutils literal notranslate"><span class="pre">Team.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.owner"><code class="docutils literal notranslate"><span class="pre">Team.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.users"><code class="docutils literal notranslate"><span class="pre">Team.users</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Team.visibility"><code class="docutils literal notranslate"><span class="pre">Team.visibility</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project"><code class="docutils literal notranslate"><span class="pre">Project</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.dir"><code class="docutils literal notranslate"><span class="pre">Project.dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.directory"><code class="docutils literal notranslate"><span class="pre">Project.directory</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.get_by_user"><code class="docutils literal notranslate"><span class="pre">Project.get_by_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.inspection_type"><code class="docutils literal notranslate"><span class="pre">Project.inspection_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.name"><code class="docutils literal notranslate"><span class="pre">Project.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.owner"><code class="docutils literal notranslate"><span class="pre">Project.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.project_uuid"><code class="docutils literal notranslate"><span class="pre">Project.project_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.risk_level"><code class="docutils literal notranslate"><span class="pre">Project.risk_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.stats"><code class="docutils literal notranslate"><span class="pre">Project.stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.tags"><code class="docutils literal notranslate"><span class="pre">Project.tags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.team"><code class="docutils literal notranslate"><span class="pre">Project.team</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project.visibility"><code class="docutils literal notranslate"><span class="pre">Project.visibility</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File"><code class="docutils literal notranslate"><span class="pre">File</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.file_name"><code class="docutils literal notranslate"><span class="pre">File.file_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.file_path"><code class="docutils literal notranslate"><span class="pre">File.file_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.file_size"><code class="docutils literal notranslate"><span class="pre">File.file_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.internal_name"><code class="docutils literal notranslate"><span class="pre">File.internal_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.md5"><code class="docutils literal notranslate"><span class="pre">File.md5</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.sha1"><code class="docutils literal notranslate"><span class="pre">File.sha1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File.sha256"><code class="docutils literal notranslate"><span class="pre">File.sha256</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Account"><code class="docutils literal notranslate"><span class="pre">Account</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle"><code class="docutils literal notranslate"><span class="pre">Bundle</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.bundle_id"><code class="docutils literal notranslate"><span class="pre">Bundle.bundle_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.get_by_owner"><code class="docutils literal notranslate"><span class="pre">Bundle.get_by_owner()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.name"><code class="docutils literal notranslate"><span class="pre">Bundle.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.owner"><code class="docutils literal notranslate"><span class="pre">Bundle.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.projects"><code class="docutils literal notranslate"><span class="pre">Bundle.projects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.risk_level"><code class="docutils literal notranslate"><span class="pre">Bundle.risk_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.stats"><code class="docutils literal notranslate"><span class="pre">Bundle.stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Bundle.tags"><code class="docutils literal notranslate"><span class="pre">Bundle.tags</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/scan_models.html">Scan Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan"><code class="docutils literal notranslate"><span class="pre">Scan</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.end_date"><code class="docutils literal notranslate"><span class="pre">Scan.end_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.file"><code class="docutils literal notranslate"><span class="pre">Scan.file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.files"><code class="docutils literal notranslate"><span class="pre">Scan.files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.finished"><code class="docutils literal notranslate"><span class="pre">Scan.finished</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.initiator"><code class="docutils literal notranslate"><span class="pre">Scan.initiator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.is_active"><code class="docutils literal notranslate"><span class="pre">Scan.is_active</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.last_scan"><code class="docutils literal notranslate"><span class="pre">Scan.last_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.origin"><code class="docutils literal notranslate"><span class="pre">Scan.origin</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.project"><code class="docutils literal notranslate"><span class="pre">Scan.project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.risk_level"><code class="docutils literal notranslate"><span class="pre">Scan.risk_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.scan_type"><code class="docutils literal notranslate"><span class="pre">Scan.scan_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.scan_uuid"><code class="docutils literal notranslate"><span class="pre">Scan.scan_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.source"><code class="docutils literal notranslate"><span class="pre">Scan.source</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.start_date"><code class="docutils literal notranslate"><span class="pre">Scan.start_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan.status"><code class="docutils literal notranslate"><span class="pre">Scan.status</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask"><code class="docutils literal notranslate"><span class="pre">ScanTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.active"><code class="docutils literal notranslate"><span class="pre">ScanTask.active</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.active_tasks"><code class="docutils literal notranslate"><span class="pre">ScanTask.active_tasks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.celery_id"><code class="docutils literal notranslate"><span class="pre">ScanTask.celery_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.finish_scan"><code class="docutils literal notranslate"><span class="pre">ScanTask.finish_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.name"><code class="docutils literal notranslate"><span class="pre">ScanTask.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.scan"><code class="docutils literal notranslate"><span class="pre">ScanTask.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.scanner"><code class="docutils literal notranslate"><span class="pre">ScanTask.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask.task_uuid"><code class="docutils literal notranslate"><span class="pre">ScanTask.task_uuid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate"><code class="docutils literal notranslate"><span class="pre">Certificate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.hash_algorithm"><code class="docutils literal notranslate"><span class="pre">Certificate.hash_algorithm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.issuer"><code class="docutils literal notranslate"><span class="pre">Certificate.issuer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.serial_number"><code class="docutils literal notranslate"><span class="pre">Certificate.serial_number</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.sha1"><code class="docutils literal notranslate"><span class="pre">Certificate.sha1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.sha256"><code class="docutils literal notranslate"><span class="pre">Certificate.sha256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.signature_algorithm"><code class="docutils literal notranslate"><span class="pre">Certificate.signature_algorithm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.subject"><code class="docutils literal notranslate"><span class="pre">Certificate.subject</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Certificate.version"><code class="docutils literal notranslate"><span class="pre">Certificate.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Details"><code class="docutils literal notranslate"><span class="pre">Details</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/finding_models.html">Finding Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet"><code class="docutils literal notranslate"><span class="pre">Snippet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.file_name"><code class="docutils literal notranslate"><span class="pre">Snippet.file_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.file_size"><code class="docutils literal notranslate"><span class="pre">Snippet.file_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.language"><code class="docutils literal notranslate"><span class="pre">Snippet.language</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.lines"><code class="docutils literal notranslate"><span class="pre">Snippet.lines</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Snippet.sys_path"><code class="docutils literal notranslate"><span class="pre">Snippet.sys_path</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate"><code class="docutils literal notranslate"><span class="pre">FindingTemplate</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.article"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.article</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.default_severity"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.default_severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.description"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.internal_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.is_html"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.is_html</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_internal_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_uuid"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.meta_cvss"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.meta_cvss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.meta_cwe"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.meta_cwe</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.meta_masvs"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.meta_masvs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.mitigation"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.mitigation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.risk"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.risk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.template_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.template_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.title"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.title</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.discovery_date"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.finding_id"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.scan"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.scanner"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.severity"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.snippet"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.stats"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.AbstractBaseFinding.template"><code class="docutils literal notranslate"><span class="pre">AbstractBaseFinding.template</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding"><code class="docutils literal notranslate"><span class="pre">Finding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.custom_text"><code class="docutils literal notranslate"><span class="pre">Finding.custom_text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.discovery_date"><code class="docutils literal notranslate"><span class="pre">Finding.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.finding_id"><code class="docutils literal notranslate"><span class="pre">Finding.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.is_custom"><code class="docutils literal notranslate"><span class="pre">Finding.is_custom</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.make_uuid"><code class="docutils literal notranslate"><span class="pre">Finding.make_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.scan"><code class="docutils literal notranslate"><span class="pre">Finding.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.scanner"><code class="docutils literal notranslate"><span class="pre">Finding.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.severity"><code class="docutils literal notranslate"><span class="pre">Finding.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.snippet"><code class="docutils literal notranslate"><span class="pre">Finding.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Finding.template"><code class="docutils literal notranslate"><span class="pre">Finding.template</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability"><code class="docutils literal notranslate"><span class="pre">Vulnerability</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.discovery_date"><code class="docutils literal notranslate"><span class="pre">Vulnerability.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.finding_id"><code class="docutils literal notranslate"><span class="pre">Vulnerability.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.make_uuid"><code class="docutils literal notranslate"><span class="pre">Vulnerability.make_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.scan"><code class="docutils literal notranslate"><span class="pre">Vulnerability.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.scanner"><code class="docutils literal notranslate"><span class="pre">Vulnerability.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.severity"><code class="docutils literal notranslate"><span class="pre">Vulnerability.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.snippet"><code class="docutils literal notranslate"><span class="pre">Vulnerability.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.state"><code class="docutils literal notranslate"><span class="pre">Vulnerability.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.status"><code class="docutils literal notranslate"><span class="pre">Vulnerability.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.Vulnerability.template"><code class="docutils literal notranslate"><span class="pre">Vulnerability.template</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/permission_models.html">App Permission Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission"><code class="docutils literal notranslate"><span class="pre">AppPermission</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.create_unknown"><code class="docutils literal notranslate"><span class="pre">AppPermission.create_unknown()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.dangerous"><code class="docutils literal notranslate"><span class="pre">AppPermission.dangerous</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.description"><code class="docutils literal notranslate"><span class="pre">AppPermission.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.group"><code class="docutils literal notranslate"><span class="pre">AppPermission.group</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.identifier"><code class="docutils literal notranslate"><span class="pre">AppPermission.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.name"><code class="docutils literal notranslate"><span class="pre">AppPermission.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.permission_uuid"><code class="docutils literal notranslate"><span class="pre">AppPermission.permission_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.plevel_status"><code class="docutils literal notranslate"><span class="pre">AppPermission.plevel_status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.protection_level"><code class="docutils literal notranslate"><span class="pre">AppPermission.protection_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.risk"><code class="docutils literal notranslate"><span class="pre">AppPermission.risk</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission.short_description"><code class="docutils literal notranslate"><span class="pre">AppPermission.short_description</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding"><code class="docutils literal notranslate"><span class="pre">PermissionFinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.discovery_date"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.discovery_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.finding_id"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.finding_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.permission"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.permission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.scan"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.scan</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.scanner"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.severity"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.snippet"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.snippet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.PermissionFinding.template"><code class="docutils literal notranslate"><span class="pre">PermissionFinding.template</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/models/package_models.html">Dependency Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package"><code class="docutils literal notranslate"><span class="pre">Package</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.artifact_id"><code class="docutils literal notranslate"><span class="pre">Package.artifact_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.group_id"><code class="docutils literal notranslate"><span class="pre">Package.group_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.name"><code class="docutils literal notranslate"><span class="pre">Package.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_type"><code class="docutils literal notranslate"><span class="pre">Package.package_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_uuid"><code class="docutils literal notranslate"><span class="pre">Package.package_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.platform"><code class="docutils literal notranslate"><span class="pre">Package.platform</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.cve_id"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.cve_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.identifier"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.package"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.package</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.severity"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.PackageVulnerability.version"><code class="docutils literal notranslate"><span class="pre">PackageVulnerability.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency"><code class="docutils literal notranslate"><span class="pre">Dependency</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.dependency_uuid"><code class="docutils literal notranslate"><span class="pre">Dependency.dependency_uuid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.license"><code class="docutils literal notranslate"><span class="pre">Dependency.license</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.outdated"><code class="docutils literal notranslate"><span class="pre">Dependency.outdated</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.package"><code class="docutils literal notranslate"><span class="pre">Dependency.package</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.project"><code class="docutils literal notranslate"><span class="pre">Dependency.project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.relation"><code class="docutils literal notranslate"><span class="pre">Dependency.relation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.scanner"><code class="docutils literal notranslate"><span class="pre">Dependency.scanner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.version"><code class="docutils literal notranslate"><span class="pre">Dependency.version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.vulnerabilities"><code class="docutils literal notranslate"><span class="pre">Dependency.vulnerabilities</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/templates.html">HTML Templates Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/technologies.html">List of used Frameworks</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="rest/index.html">REST API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forms.html">Enhanced Forms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#enhanced-fields">Enhanced Fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="forms.html#mastf.MASTF.forms.ModelField"><code class="docutils literal notranslate"><span class="pre">ModelField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="forms.html#mastf.MASTF.forms.ModelField.clean"><code class="docutils literal notranslate"><span class="pre">ModelField.clean()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="forms.html#mastf.MASTF.forms.ManyToManyField"><code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="forms.html#mastf.MASTF.forms.ManyToManyField.clean"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.clean()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="forms.html#mastf.MASTF.forms.ManyToManyField.convert_id"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.convert_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serializers.html">Serializer Extensions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serializers.html#enhanced-fields-and-serializers">Enhanced Fields and Serializers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="serializers.html#mastf.MASTF.serializers.ManyToManyField"><code class="docutils literal notranslate"><span class="pre">ManyToManyField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="serializers.html#mastf.MASTF.serializers.ManyToManyField.to_internal_value"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.to_internal_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="serializers.html#mastf.MASTF.serializers.ManyToManyField.to_representation"><code class="docutils literal notranslate"><span class="pre">ManyToManyField.to_representation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="serializers.html#mastf.MASTF.serializers.ManyToManySerializer"><code class="docutils literal notranslate"><span class="pre">ManyToManySerializer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="serializers.html#mastf.MASTF.serializers.ManyToManySerializer.rel_fields"><code class="docutils literal notranslate"><span class="pre">ManyToManySerializer.rel_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="permissions.html">Permission System</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="permissions.html#classes">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions._Method"><code class="docutils literal notranslate"><span class="pre">_Method</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions._Method.has_permission"><code class="docutils literal notranslate"><span class="pre">_Method.has_permission()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission"><code class="docutils literal notranslate"><span class="pre">BoundPermission</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.assign_to"><code class="docutils literal notranslate"><span class="pre">BoundPermission.assign_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.codename"><code class="docutils literal notranslate"><span class="pre">BoundPermission.codename</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.create"><code class="docutils literal notranslate"><span class="pre">BoundPermission.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.errors"><code class="docutils literal notranslate"><span class="pre">BoundPermission.errors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.get"><code class="docutils literal notranslate"><span class="pre">BoundPermission.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.has_object_permission"><code class="docutils literal notranslate"><span class="pre">BoundPermission.has_object_permission()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.is_runtime"><code class="docutils literal notranslate"><span class="pre">BoundPermission.is_runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.model"><code class="docutils literal notranslate"><span class="pre">BoundPermission.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.name"><code class="docutils literal notranslate"><span class="pre">BoundPermission.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="permissions.html#mastf.MASTF.permissions.BoundPermission.remove_from"><code class="docutils literal notranslate"><span class="pre">BoundPermission.remove_from()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="converters.html">Converters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="converters.html#components">Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="converters.html#mastf.MASTF.converters.StringConverter"><code class="docutils literal notranslate"><span class="pre">StringConverter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="converters.html#mastf.MASTF.converters.listconverters"><code class="docutils literal notranslate"><span class="pre">listconverters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="middleware.html">Middleware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#mastf.MASTF.middleware.FirstTimeMiddleware"><code class="docutils literal notranslate"><span class="pre">FirstTimeMiddleware</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mixins.html">Web Mixins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mixins.html#view-classes">View Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.check_object_permissions"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.check_object_permissions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.check_permissions"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.check_permissions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.default_redirect"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.default_redirect</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.get_object"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.get_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.on_dispatch_error"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.on_dispatch_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.permission_classes"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.permission_classes</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mixins.html#mixin-classes">Mixin Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.ContextMixinBase"><code class="docutils literal notranslate"><span class="pre">ContextMixinBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.ContextMixinBase.login_url"><code class="docutils literal notranslate"><span class="pre">ContextMixinBase.login_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.ContextMixinBase.prepare_context_data"><code class="docutils literal notranslate"><span class="pre">ContextMixinBase.prepare_context_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.VulnContextMixin"><code class="docutils literal notranslate"><span class="pre">VulnContextMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.VulnContextMixin.apply_vuln_context"><code class="docutils literal notranslate"><span class="pre">VulnContextMixin.apply_vuln_context()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.VulnContextMixin.get_vuln_context"><code class="docutils literal notranslate"><span class="pre">VulnContextMixin.get_vuln_context()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.UserProjectMixin"><code class="docutils literal notranslate"><span class="pre">UserProjectMixin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TopVulnerableProjectsMixin"><code class="docutils literal notranslate"><span class="pre">TopVulnerableProjectsMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TopVulnerableProjectsMixin.get_top_vulnerable_projects"><code class="docutils literal notranslate"><span class="pre">TopVulnerableProjectsMixin.get_top_vulnerable_projects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.ScanTimelineMixin"><code class="docutils literal notranslate"><span class="pre">ScanTimelineMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.ScanTimelineMixin.get_scan_timeline"><code class="docutils literal notranslate"><span class="pre">ScanTimelineMixin.get_scan_timeline()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scanner Plugin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.Extension"><code class="docutils literal notranslate"><span class="pre">Extension</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.context"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.context()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.extensions"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.extensions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.help"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.help</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.name"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.task"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.task</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.title"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.title</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask"><code class="docutils literal notranslate"><span class="pre">ScannerPluginTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask.get_item"><code class="docutils literal notranslate"><span class="pre">ScannerPluginTask.get_item()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask.prepare_scan"><code class="docutils literal notranslate"><span class="pre">ScannerPluginTask.prepare_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask.run_scan"><code class="docutils literal notranslate"><span class="pre">ScannerPluginTask.run_scan()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#default-mixins">Default Mixins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.DetailsMixin"><code class="docutils literal notranslate"><span class="pre">DetailsMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.DetailsMixin.charts"><code class="docutils literal notranslate"><span class="pre">DetailsMixin.charts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.DetailsMixin.ctx_details"><code class="docutils literal notranslate"><span class="pre">DetailsMixin.ctx_details()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.PermissionsMixin"><code class="docutils literal notranslate"><span class="pre">PermissionsMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.PermissionsMixin.ctx_permissions"><code class="docutils literal notranslate"><span class="pre">PermissionsMixin.ctx_permissions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.VulnerabilitiesMixin"><code class="docutils literal notranslate"><span class="pre">VulnerabilitiesMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.VulnerabilitiesMixin.ctx_vulnerabilities"><code class="docutils literal notranslate"><span class="pre">VulnerabilitiesMixin.ctx_vulnerabilities()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.FindingsMixins"><code class="docutils literal notranslate"><span class="pre">FindingsMixins</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.FindingsMixins.ctx_findings"><code class="docutils literal notranslate"><span class="pre">FindingsMixins.ctx_findings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.HostsMixin"><code class="docutils literal notranslate"><span class="pre">HostsMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.HostsMixin.ctx_hosts"><code class="docutils literal notranslate"><span class="pre">HostsMixin.ctx_hosts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.HostsMixin.res_hosts"><code class="docutils literal notranslate"><span class="pre">HostsMixin.res_hosts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.ComponentsMixin"><code class="docutils literal notranslate"><span class="pre">ComponentsMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.ComponentsMixin.ctx_components"><code class="docutils literal notranslate"><span class="pre">ComponentsMixin.ctx_components()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.mixins.ComponentsMixin.res_hosts"><code class="docutils literal notranslate"><span class="pre">ComponentsMixin.res_hosts()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#android-plugin">Android Plugin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask"><code class="docutils literal notranslate"><span class="pre">AndroidTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_app_info_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_app_info_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_code_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_code_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_manifest_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_yara_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_yara_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.prepare_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.prepare_scan()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin"><code class="docutils literal notranslate"><span class="pre">AndroidScannerPlugin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.extensions"><code class="docutils literal notranslate"><span class="pre">AndroidScannerPlugin.extensions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.help"><code class="docutils literal notranslate"><span class="pre">AndroidScannerPlugin.help</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.name"><code class="docutils literal notranslate"><span class="pre">AndroidScannerPlugin.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.task"><code class="docutils literal notranslate"><span class="pre">AndroidScannerPlugin.task</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.title"><code class="docutils literal notranslate"><span class="pre">AndroidScannerPlugin.title</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#android-scan-tasks">Android Scan Tasks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler"><code class="docutils literal notranslate"><span class="pre">NetworkSecurityHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler"><code class="docutils literal notranslate"><span class="pre">AndroidManifestHandler</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sast-interface">SAST Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.code.yara_scan_file"><code class="docutils literal notranslate"><span class="pre">yara_scan_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.code.yara_code_analysis"><code class="docutils literal notranslate"><span class="pre">yara_code_analysis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.code.sast_scan_file"><code class="docutils literal notranslate"><span class="pre">sast_scan_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.code.sast_code_analysis"><code class="docutils literal notranslate"><span class="pre">sast_code_analysis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.code.add_finding"><code class="docutils literal notranslate"><span class="pre">add_finding()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.code.YaraResult"><code class="docutils literal notranslate"><span class="pre">YaraResult</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.code.YaraResult.get_template"><code class="docutils literal notranslate"><span class="pre">YaraResult.get_template()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.code.YaraResult.get_template_data"><code class="docutils literal notranslate"><span class="pre">YaraResult.get_template_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.code.YaraResult.internal_id"><code class="docutils literal notranslate"><span class="pre">YaraResult.internal_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.code.YaraResult.severity"><code class="docutils literal notranslate"><span class="pre">YaraResult.severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.code.YaraResult.template_id"><code class="docutils literal notranslate"><span class="pre">YaraResult.template_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils/index.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils/datatables.html">DataTables</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.apply"><code class="docutils literal notranslate"><span class="pre">apply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest"><code class="docutils literal notranslate"><span class="pre">DataTableRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.columns"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.columns</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.length"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.order_column"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.order_column</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.order_direction"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.order_direction</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.search_value"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.search_value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/datatables.html#mastf.MASTF.utils.datatable.DataTableRequest.start"><code class="docutils literal notranslate"><span class="pre">DataTableRequest.start</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils/enum.html">Enums</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.StringEnum"><code class="docutils literal notranslate"><span class="pre">StringEnum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils/enum.html#user-related-classes">User-Related Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.Visibility"><code class="docutils literal notranslate"><span class="pre">Visibility</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="utils/enum.html#finding-related-classes">Finding-Related Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.Severity"><code class="docutils literal notranslate"><span class="pre">Severity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.State"><code class="docutils literal notranslate"><span class="pre">State</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="utils/enum.html#dependency-related-classes">Dependency-Related Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.Platform"><code class="docutils literal notranslate"><span class="pre">Platform</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.PackageType"><code class="docutils literal notranslate"><span class="pre">PackageType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.Relation"><code class="docutils literal notranslate"><span class="pre">Relation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="utils/enum.html#other-enum-classes">Other Enum Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.HostType"><code class="docutils literal notranslate"><span class="pre">HostType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.DataProtectionLevel"><code class="docutils literal notranslate"><span class="pre">DataProtectionLevel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.ProtectionLevel"><code class="docutils literal notranslate"><span class="pre">ProtectionLevel</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils/filetree.html">FileTree Plugin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils/filetree.html#mastf.MASTF.utils.filetree.visitor"><code class="docutils literal notranslate"><span class="pre">visitor()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils/filetree.html#mastf.MASTF.utils.filetree.apply_rules"><code class="docutils literal notranslate"><span class="pre">apply_rules()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils/filetree.html#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="utils/filetree.html#mastf.MASTF.utils.filetree._Visitor"><code class="docutils literal notranslate"><span class="pre">_Visitor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="utils/filetree.html#mastf.MASTF.utils.filetree._FileDesc"><code class="docutils literal notranslate"><span class="pre">_FileDesc</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils/upload.html">File Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils/upload.html#mastf.MASTF.utils.upload.checksum_from_path"><code class="docutils literal notranslate"><span class="pre">checksum_from_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils/upload.html#mastf.MASTF.utils.upload.get_file_checksum"><code class="docutils literal notranslate"><span class="pre">get_file_checksum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils/upload.html#mastf.MASTF.utils.upload.handle_scan_file_upload"><code class="docutils literal notranslate"><span class="pre">handle_scan_file_upload()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Core API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core_api/progress.html">Progress Observer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/progress.html#usage-example">Usage Example:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer"><code class="docutils literal notranslate"><span class="pre">Observer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.create_meta"><code class="docutils literal notranslate"><span class="pre">Observer.create_meta()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.exception"><code class="docutils literal notranslate"><span class="pre">Observer.exception()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.fail"><code class="docutils literal notranslate"><span class="pre">Observer.fail()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.increment"><code class="docutils literal notranslate"><span class="pre">Observer.increment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.logger"><code class="docutils literal notranslate"><span class="pre">Observer.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.pos"><code class="docutils literal notranslate"><span class="pre">Observer.pos</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.success"><code class="docutils literal notranslate"><span class="pre">Observer.success()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.task"><code class="docutils literal notranslate"><span class="pre">Observer.task</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer.update"><code class="docutils literal notranslate"><span class="pre">Observer.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../core_api/file_handler.html">Task File Handlers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/file_handler.html#apk-files">APK Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/file_handler.html#ipa-files">IPA Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/file_handler.html#mastf.core.files.handler.TaskFileHandler"><code class="docutils literal notranslate"><span class="pre">TaskFileHandler</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/file_handler.html#mastf.core.files.handler.TaskFileHandler.apply"><code class="docutils literal notranslate"><span class="pre">TaskFileHandler.apply()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/file_handler.html#mastf.core.files.handler.TaskFileHandler.from_scan"><code class="docutils literal notranslate"><span class="pre">TaskFileHandler.from_scan()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Android API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../android_api/manifest.html">Android Manifest Visitor</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml._AXmlElement"><code class="docutils literal notranslate"><span class="pre">_AXmlElement</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml._AXmlElement.add"><code class="docutils literal notranslate"><span class="pre">_AXmlElement.add()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitorBase"><code class="docutils literal notranslate"><span class="pre">AXmlVisitorBase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.end"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.end</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.start"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.start</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.visit_document"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.visit_document()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.visit_element"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.visit_element()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../android_api/permission.html">ADB Permissions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#key-features">Key Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#import-format">Import Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.all"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.kwargs"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.kwargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.load"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.load()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.make_cmd"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.make_cmd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.re_package"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.re_package</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.ungrouped"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.ungrouped</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../android_api/tools.html">Android Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/tools.html#module-mastf.android.tools.apktool">Apktool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.apktool.run_apktool_decode"><code class="docutils literal notranslate"><span class="pre">run_apktool_decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.apktool.extractrsc"><code class="docutils literal notranslate"><span class="pre">extractrsc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../android_api/tools.html#module-mastf.android.tools.baksmali">Baksmali</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.baksmali.decompile"><code class="docutils literal notranslate"><span class="pre">decompile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../android_api/tools.html#mastf.android.tools.baksmali.to_java"><code class="docutils literal notranslate"><span class="pre">to_java()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MAST-Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Scanner Plugin</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/scanner_plugin.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scanner-plugin">
+<h1>Scanner Plugin<a class="headerlink" href="#scanner-plugin" title="Permalink to this heading"></a></h1>
+<section id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.Extension">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.plugin.</span></span><span class="sig-name descname"><span class="pre">Extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.Extension" title="Permalink to this definition"></a></dt>
+<dd><p>Enumeration class representing extensions.</p>
+<p>This class defines different extensions as string values using the <code class="xref py py-class docutils literal notranslate"><span class="pre">StringEnum</span></code>
+base class. Each extension represents a specific category or functionality.</p>
+<section id="available-extensions">
+<h3>Available Extensions:<a class="headerlink" href="#available-extensions" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>DETAILS: Represents details.</p></li>
+<li><p>PERMISSIONS: Represents permissions.</p></li>
+<li><p>HOSTS: Represents hosts.</p></li>
+<li><p>VULNERABILITIES: Represents vulnerabilities.</p></li>
+<li><p>FINDINGS: Represents findings.</p></li>
+<li><p>COMPONENTS: Represents components.</p></li>
+<li><p>EXPLORER: Represents explorer.</p></li>
+</ul>
+</section>
+<section id="example">
+<h3>Example:<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<p>To use an extension, simply access its value using dot notation, e.g.
+<code class="docutils literal notranslate"><span class="pre">Extension.DETAILS</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Accessing the extension values</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Extension</span><span class="o">.</span><span class="n">DETAILS</span><span class="p">)</span>  <span class="c1"># Output: &quot;details&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Extension</span><span class="o">.</span><span class="n">PERMISSIONS</span><span class="p">)</span>  <span class="c1"># Output: &quot;permissions&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Extension</span><span class="o">.</span><span class="n">HOSTS</span><span class="p">)</span>  <span class="c1"># Output: &quot;hosts&quot;</span>
+<span class="c1"># ...and so on</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The values of the extensions should not be modified as they are used
+internally by the system.</p>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.plugin.</span></span><span class="sig-name descname"><span class="pre">ScannerPlugin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin.context">
+<span class="sig-name descname"><span class="pre">context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.context" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the rendering context for the given extension</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extension</strong> (<em>str</em>) – the extension to render</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the final context</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin.extensions">
+<span class="sig-name descname"><span class="pre">extensions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.extensions" title="Permalink to this definition"></a></dt>
+<dd><p>The list of extensions this scanner supports</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin.help">
+<span class="sig-name descname"><span class="pre">help</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.help" title="Permalink to this definition"></a></dt>
+<dd><p>The help that will be displayed on the WebUI</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.name" title="Permalink to this definition"></a></dt>
+<dd><p>The name (slug) of this scanner type (should contain no whitespace characters)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin.task">
+<span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.task" title="Permalink to this definition"></a></dt>
+<dd><p>The task to perform asynchronously</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPlugin.title">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.title" title="Permalink to this definition"></a></dt>
+<dd><p>Actual name (more details than <code class="docutils literal notranslate"><span class="pre">name</span></code>)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPluginTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.plugin.</span></span><span class="sig-name descname"><span class="pre">ScannerPluginTask</span></span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for scanner plugin tasks.</p>
+<p>This class defines the common behavior and attributes of scanner plugin tasks.
+Subclasses should inherit from this class and override the appropriate methods
+to implement specific scanning functionality.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPluginTask.get_item">
+<span class="sig-name descname"><span class="pre">get_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">object</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask.get_item" title="Permalink to this definition"></a></dt>
+<dd><p>Get an item from the metadata.</p>
+<p>This method retrieves an item from the metadata dictionary based on its
+type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>type</em><em> | </em><em>str</em>) – The type of the item to retrieve.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value associated with the type, or None if not found.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPluginTask.prepare_scan">
+<span class="sig-name descname"><span class="pre">prepare_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask.prepare_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare the scan.</p>
+<p>This method is called before running the scan and can be overridden
+in subclasses to perform any necessary preparation steps.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.ScannerPluginTask.run_scan">
+<span class="sig-name descname"><span class="pre">run_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask.run_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Run the scan.</p>
+<p>This method runs the scan by iterating over the methods starting with ‘do’
+and executing them as sub-tasks. Each sub-task is logged, and any exceptions
+that occur are caught and logged as well.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="default-mixins">
+<h2>Default Mixins<a class="headerlink" href="#default-mixins" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.DetailsMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.mixins.</span></span><span class="sig-name descname"><span class="pre">DetailsMixin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.DetailsMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Add-on to generate app details</p>
+<p>If you use this mixin and you enable chart-rendering, they will
+be displayed on the front page of scan results.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.DetailsMixin.charts">
+<span class="sig-name descname"><span class="pre">charts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#mastf.MASTF.scanners.mixins.DetailsMixin.charts" title="Permalink to this definition"></a></dt>
+<dd><p>Defines whether summary charts should be displayed on the
+details page.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.DetailsMixin.ctx_details">
+<span class="sig-name descname"><span class="pre">ctx_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.DetailsMixin.ctx_details" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the details context for the desired extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scan</strong> (<a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.Scan"><em>Scan</em></a>) – the scan to view</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>all relevant context information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.PermissionsMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.mixins.</span></span><span class="sig-name descname"><span class="pre">PermissionsMixin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.PermissionsMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Add-on to generate permission lists according to the selected file</p>
+<p>The returned data will be a list of <code class="docutils literal notranslate"><span class="pre">PermissionFinding</span></code> instances that store
+information where the permission has been found and the actual <code class="docutils literal notranslate"><span class="pre">AppPermission</span></code>
+reference.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.PermissionsMixin.ctx_permissions">
+<span class="sig-name descname"><span class="pre">ctx_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.PermissionsMixin.ctx_permissions" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all permissions mapped to a specific file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.VulnerabilitiesMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.mixins.</span></span><span class="sig-name descname"><span class="pre">VulnerabilitiesMixin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.VulnerabilitiesMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Add-on to generate vulnerabilites according to the selected file.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.VulnerabilitiesMixin.ctx_vulnerabilities">
+<span class="sig-name descname"><span class="pre">ctx_vulnerabilities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.VulnerabilitiesMixin.ctx_vulnerabilities" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all vulnerabilities that have been identified in the scan target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project" title="mastf.MASTF.models.Project"><em>Project</em></a>) – the project instance</p></li>
+<li><p><strong>file</strong> (<a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.File"><em>File</em></a>) – the scan target</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of vulnerabilities</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.FindingsMixins">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.mixins.</span></span><span class="sig-name descname"><span class="pre">FindingsMixins</span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.FindingsMixins" title="Permalink to this definition"></a></dt>
+<dd><p>Add-on to generate a finding list according to the selected file.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.FindingsMixins.ctx_findings">
+<span class="sig-name descname"><span class="pre">ctx_findings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.FindingsMixins.ctx_findings" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all findings that have been identified in the scan target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.Project" title="mastf.MASTF.models.Project"><em>Project</em></a>) – the project instance</p></li>
+<li><p><strong>file</strong> (<a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.File"><em>File</em></a>) – the scan target</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of vulnerabilities</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.HostsMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.mixins.</span></span><span class="sig-name descname"><span class="pre">HostsMixin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.HostsMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Mixin class for working with hosts in a scan.</p>
+<p>This mixin provides methods for retrieving and manipulating hosts within a scan.</p>
+<section id="usage">
+<h3>Usage:<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">ctx_hosts()</span></code> to get all hosts identified within the scan target.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">res_hosts()</span></code> to get a serialized representation of hosts within the scan.</p></li>
+</ul>
+</section>
+<section id="id1">
+<h3>Example:<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mixin</span> <span class="o">=</span> <span class="n">HostsMixin</span><span class="p">()</span>
+<span class="n">ctx_hosts_data</span> <span class="o">=</span> <span class="n">mixin</span><span class="o">.</span><span class="n">ctx_hosts</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">scanner</span><span class="p">)</span>
+<span class="n">res_hosts_data</span> <span class="o">=</span> <span class="n">mixin</span><span class="o">.</span><span class="n">res_hosts</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">scanner</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.HostsMixin.ctx_hosts">
+<span class="sig-name descname"><span class="pre">ctx_hosts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.HostsMixin.ctx_hosts" title="Permalink to this definition"></a></dt>
+<dd><p>Get all hosts identified within the scan target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scan</strong> (<a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.Scan"><em>Scan</em></a>) – The scan instance.</p></li>
+<li><p><strong>file</strong> (<a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.File"><em>File</em></a>) – The scan target.</p></li>
+<li><p><strong>scanner</strong> (<em>Scanner</em>) – The scanner instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of hosts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.HostsMixin.res_hosts">
+<span class="sig-name descname"><span class="pre">res_hosts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.HostsMixin.res_hosts" title="Permalink to this definition"></a></dt>
+<dd><p>Get a serialized representation of hosts within the scan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scan</strong> (<a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.Scan"><em>Scan</em></a>) – The scan instance.</p></li>
+<li><p><strong>scanner</strong> (<em>Scanner</em>) – The scanner instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of serialized hosts.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.ComponentsMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.mixins.</span></span><span class="sig-name descname"><span class="pre">ComponentsMixin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.ComponentsMixin" title="Permalink to this definition"></a></dt>
+<dd><p>Mixin class for working with components in a scan.</p>
+<p>This mixin provides methods for retrieving and manipulating components within
+a scan.</p>
+<section id="id2">
+<h3>Usage:<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">ctx_components()</span></code> to get components statistics and elements for a scan.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">res_components()</span></code> to get a serialized representation of components within the scan.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>Example:<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mixin</span> <span class="o">=</span> <span class="n">ComponentsMixin</span><span class="p">()</span>
+<span class="n">ctx_components_data</span> <span class="o">=</span> <span class="n">mixin</span><span class="o">.</span><span class="n">ctx_components</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">scanner</span><span class="p">)</span>
+<span class="n">res_components_data</span> <span class="o">=</span> <span class="n">mixin</span><span class="o">.</span><span class="n">res_components</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">scanner</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.ComponentsMixin.ctx_components">
+<span class="sig-name descname"><span class="pre">ctx_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.base.File"><span class="pre">File</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.ComponentsMixin.ctx_components" title="Permalink to this definition"></a></dt>
+<dd><p>Get components statistics and elements for a scan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scan</strong> (<a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.Scan"><em>Scan</em></a>) – The scan instance.</p></li>
+<li><p><strong>file</strong> (<a class="reference internal" href="../ref/models/base_models.html#mastf.MASTF.models.File" title="mastf.MASTF.models.File"><em>File</em></a>) – The scan target.</p></li>
+<li><p><strong>scanner</strong> (<em>Scanner</em>) – The scanner instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A namespace object containing component statistics and elements.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.mixins.ComponentsMixin.res_hosts">
+<span class="sig-name descname"><span class="pre">res_hosts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scanner</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Scanner</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.mixins.ComponentsMixin.res_hosts" title="Permalink to this definition"></a></dt>
+<dd><p>Get a serialized representation of components within the scan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scan</strong> (<a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.Scan"><em>Scan</em></a>) – The scan instance.</p></li>
+<li><p><strong>scanner</strong> (<em>Scanner</em>) – The scanner instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of serialized components.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="android-plugin">
+<h2>Android Plugin<a class="headerlink" href="#android-plugin" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.</span></span><span class="sig-name descname"><span class="pre">AndroidTask</span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask" title="Permalink to this definition"></a></dt>
+<dd><p>Scanner task for performing Android-related scans.</p>
+<p>This task is specifically designed for scanning Android applications and performs various scans
+such as YARA scan, manifest scan, app info scan, and code scan.</p>
+<section id="id4">
+<h3>Example:<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">android_task</span> <span class="o">=</span> <span class="n">AndroidTask</span><span class="p">()</span>
+<span class="n">android_task</span><span class="p">(</span><span class="n">scan_task</span><span class="p">,</span> <span class="n">observer</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_app_info_scan">
+<span class="sig-name descname"><span class="pre">do_app_info_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_app_info_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a manifest scan on the Android application.</p>
+<p>This method retrieves the manifest information of the Android application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_code_scan">
+<span class="sig-name descname"><span class="pre">do_code_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_code_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a code scan on the Android application.</p>
+<p>This method creates a new scan task and initiates an asynchronous code scan.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan">
+<span class="sig-name descname"><span class="pre">do_manifest_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a manifest scan on the Android application.</p>
+<p>This method retrieves the manifest information of the Android application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_yara_scan">
+<span class="sig-name descname"><span class="pre">do_yara_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_yara_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Perform YARA scan on the Android application.</p>
+<p>This method executes the YARA code analysis on the scan task’s package directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.prepare_scan">
+<span class="sig-name descname"><span class="pre">prepare_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.prepare_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Prepare the scan by setting up the APK object.</p>
+<p>This method initializes the APK object by loading the APK file associated with the scan.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidScannerPlugin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.</span></span><span class="sig-name descname"><span class="pre">AndroidScannerPlugin</span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin" title="Permalink to this definition"></a></dt>
+<dd><p>Android SAST Engine Plugin.</p>
+<p>This scanner plugin provides basic security checks for Android apps. It utilizes
+various mixins for different functionalities such as details, permissions, hosts,
+findings, and components.</p>
+<section id="id5">
+<h3>Example:<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">android_plugin</span> <span class="o">=</span> <span class="n">AndroidScannerPlugin</span><span class="p">()</span>
+<span class="n">android_plugin</span><span class="o">.</span><span class="n">run_scan</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to properly configure the scanner plugin before running the scan.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.extensions">
+<span class="sig-name descname"><span class="pre">extensions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;Extension.DETAILS:</span> <span class="pre">'details'&gt;,</span> <span class="pre">&lt;Extension.PERMISSIONS:</span> <span class="pre">'permissions'&gt;,</span> <span class="pre">&lt;Extension.HOSTS:</span> <span class="pre">'hosts'&gt;,</span> <span class="pre">&lt;Extension.FINDINGS:</span> <span class="pre">'findings'&gt;,</span> <span class="pre">&lt;Extension.EXPLORER:</span> <span class="pre">'explorer'&gt;,</span> <span class="pre">&lt;Extension.COMPONENTS:</span> <span class="pre">'components'&gt;]</span></em><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.extensions" title="Permalink to this definition"></a></dt>
+<dd><p>The list of extensions this scanner supports</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.help">
+<span class="sig-name descname"><span class="pre">help</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Basic</span> <span class="pre">security</span> <span class="pre">checks</span> <span class="pre">for</span> <span class="pre">Android</span> <span class="pre">apps.'</span></em><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.help" title="Permalink to this definition"></a></dt>
+<dd><p>The help that will be displayed on the WebUI</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Android</span> <span class="pre">Plugin'</span></em><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.name" title="Permalink to this definition"></a></dt>
+<dd><p>The name (slug) of this scanner type (should contain no whitespace characters)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.task">
+<span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.task" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask" title="mastf.MASTF.scanners.android_sast.base.AndroidTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">AndroidTask</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.title">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Android</span> <span class="pre">SAST</span> <span class="pre">Engine'</span></em><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidScannerPlugin.title" title="Permalink to this definition"></a></dt>
+<dd><p>Actual name (more details than <code class="docutils literal notranslate"><span class="pre">name</span></code>)</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<section id="android-scan-tasks">
+<h3>Android Scan Tasks<a class="headerlink" href="#android-scan-tasks" title="Permalink to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.app_info_scan.</span></span><span class="sig-name descname"><span class="pre">NetworkSecurityHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.manifest_scan.</span></span><span class="sig-name descname"><span class="pre">AndroidManifestHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Inspects AndroidManifest files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inspector</strong> – The ScannerPluginTask object for scanning.</p></li>
+<li><p><strong>path</strong> – The path to the AndroidManifest.xml file.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.handle_component">
+<span class="sig-name descname"><span class="pre">handle_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.handle_component" title="Permalink to this definition"></a></dt>
+<dd><p>Handles a component element in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The component element.</p></li>
+<li><p><strong>ctype</strong> – The component type (e.g., service, provider, receiver).</p></li>
+<li><p><strong>name</strong> – The name of the component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.link">
+<span class="sig-name descname"><span class="pre">link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visitor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor" title="mastf.android.axml.AXmlVisitor"><span class="pre">AXmlVisitor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.link" title="Permalink to this definition"></a></dt>
+<dd><p>Links the AndroidManifestHandler with an AXmlVisitor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>visitor</strong> – The AXmlVisitor to link with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_activity">
+<span class="sig-name descname"><span class="pre">on_activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_activity" title="Permalink to this definition"></a></dt>
+<dd><p>Event handler for activity elements in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The activity element.</p></li>
+<li><p><strong>name</strong> – The name of the activity.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_application">
+<span class="sig-name descname"><span class="pre">on_application</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_application" title="Permalink to this definition"></a></dt>
+<dd><p>Event handler for application elements in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The application element.</p></li>
+<li><p><strong>name</strong> – The name of the application.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_permission">
+<span class="sig-name descname"><span class="pre">on_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_permission" title="Permalink to this definition"></a></dt>
+<dd><p>Event handler for permission elements in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The permission element.</p></li>
+<li><p><strong>identifier</strong> – The identifier of the permission.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_provider">
+<span class="sig-name descname"><span class="pre">on_provider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_provider" title="Permalink to this definition"></a></dt>
+<dd><p>Event handler for provider elements in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The provider element.</p></li>
+<li><p><strong>name</strong> – The name of the provider.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_receiver">
+<span class="sig-name descname"><span class="pre">on_receiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_receiver" title="Permalink to this definition"></a></dt>
+<dd><p>Event handler for receiver elements in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The receiver element.</p></li>
+<li><p><strong>name</strong> – The name of the receiver.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_service">
+<span class="sig-name descname"><span class="pre">on_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_service" title="Permalink to this definition"></a></dt>
+<dd><p>Event handler for service elements in the AndroidManifest.xml.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>element</strong> – The service element.</p></li>
+<li><p><strong>name</strong> – The name of the service.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.scan">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scan</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.Scan" title="mastf.MASTF.models.mod_scan.Scan"><span class="pre">Scan</span></a></em><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.scan" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the scan object associated with the inspector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Scan object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="sast-interface">
+<h2>SAST Interface<a class="headerlink" href="#sast-interface" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.yara_scan_file">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.code.</span></span><span class="sig-name descname"><span class="pre">yara_scan_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask" title="mastf.MASTF.models.mod_scan.ScanTask"><span class="pre">ScanTask</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer" title="mastf.core.progress.Observer"><span class="pre">Observer</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.code.yara_scan_file" title="Permalink to this definition"></a></dt>
+<dd><p>Perform YARA scan on a file.</p>
+<p>This function performs YARA scan on the specified file using the YARA rules
+in the given base directory. It creates YaraResult objects for each match
+found and creates corresponding <code class="docutils literal notranslate"><span class="pre">Snippet</span></code> and <code class="docutils literal notranslate"><span class="pre">Finding</span></code> objects to store
+the scan results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> – The file path to scan.</p></li>
+<li><p><strong>task</strong> – The ScanTask associated with the scan.</p></li>
+<li><p><strong>base_dir</strong> – The base directory containing the YARA rules.</p></li>
+<li><p><strong>observer</strong> – The observer object for tracking the progress and logging.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.yara_code_analysis">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.code.</span></span><span class="sig-name descname"><span class="pre">yara_code_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_task_pk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer" title="mastf.core.progress.Observer"><span class="pre">Observer</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.code.yara_code_analysis" title="Permalink to this definition"></a></dt>
+<dd><p>Perform YARA code analysis on files within a directory.</p>
+<p>This function performs YARA code analysis on the files within the specified
+start directory using the provided scan task, base directory, and observer.
+It scans the files in parallel using multiprocessing or a ThreadPoolExecutor
+based on the availability of the current process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scan_task_pk</strong> – The primary key of the ScanTask associated with the code analysis.</p></li>
+<li><p><strong>start_dir</strong> – The directory path where the code analysis will be performed.</p></li>
+<li><p><strong>observer</strong> – The observer object for tracking the progress and logging.</p></li>
+<li><p><strong>base_dir</strong> – The base directory containing the YARA rules.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<section id="id6">
+<h3>Usage:<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scan_task_pk</span> <span class="o">=</span> <span class="s2">&quot;task123&quot;</span>
+<span class="n">start_dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/start_directory&quot;</span>
+<span class="n">observer</span> <span class="o">=</span> <span class="n">Observer</span><span class="p">()</span>
+<span class="n">base_dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/yara_base_directory&quot;</span>
+
+<span class="n">yara_code_analysis</span><span class="p">(</span><span class="n">scan_task_pk</span><span class="p">,</span> <span class="n">start_dir</span><span class="p">,</span> <span class="n">observer</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.sast_scan_file">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.code.</span></span><span class="sig-name descname"><span class="pre">sast_scan_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask" title="mastf.MASTF.models.mod_scan.ScanTask"><span class="pre">ScanTask</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.code.sast_scan_file" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a static application security testing (SAST) scan on a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>pathlib.Path</em>) – The path to the file to be scanned.</p></li>
+<li><p><strong>task</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ScanTask</span></code>) – The scan task associated with the file.</p></li>
+<li><p><strong>rules</strong> (<em>list</em><em>[</em><em>pysast.SastRule</em><em>]</em>) – A list of rules to be used for the scan.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function performs a SAST scan on the specified file using the provided rules.
+It creates a new instance of the SAST scanner for each scan to ensure that it
+accesses the rules’ internal values correctly.</p>
+<p>The scan is performed by calling the <code class="docutils literal notranslate"><span class="pre">scan</span></code> method of the scanner instance and
+passing the file path as a string argument. If the scan is successful, the function
+iterates over the scan results and calls the <code class="docutils literal notranslate"><span class="pre">add_finding</span></code> function to add each
+finding to the associated scan task.</p>
+<p>If an exception occurs during the scan, the error is logged using the global <code class="docutils literal notranslate"><span class="pre">logger</span></code>
+instance and the exception is <strong>not</strong> re-raised.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.sast_code_analysis">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.code.</span></span><span class="sig-name descname"><span class="pre">sast_code_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask" title="mastf.MASTF.models.mod_scan.ScanTask"><span class="pre">ScanTask</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core_api/progress.html#mastf.core.progress.Observer" title="mastf.core.progress.Observer"><span class="pre">Observer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rules_dirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.code.sast_code_analysis" title="Permalink to this definition"></a></dt>
+<dd><p>Perform static application security testing (SAST) code analysis on files
+within a target directory.</p>
+<p>This function scans the files within the specified target directory for
+potential security vulnerabilities using the pySAST library. It applies the
+provided scan task, rules directories, and exclusion patterns to determine
+the files to include or exclude from the analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scan_task</strong> – The scan task to apply during the code analysis.</p></li>
+<li><p><strong>target_dir</strong> – The directory path where the code analysis will be performed.</p></li>
+<li><p><strong>observer</strong> – The observer object for tracking the progress and logging.</p></li>
+<li><p><strong>excluded</strong> – A list of patterns or regular expressions to exclude specific
+files or directories from the analysis.</p></li>
+<li><p><strong>rules_dirs</strong> – A list of directories containing the pySAST rules files to
+use during the analysis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If the target directory does not exist.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<section id="id7">
+<h3>Usage:<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">scan_task</span> <span class="o">=</span> <span class="n">ScanTask</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="linenos">2</span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/path/to/target/directory&quot;</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">observer</span> <span class="o">=</span> <span class="n">Observer</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="linenos">4</span><span class="n">excluded</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="s2">&quot;re:test_.*&quot;</span><span class="p">]</span>
+<span class="linenos">5</span><span class="n">rules_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/path/to/rules/directory&quot;</span><span class="p">)]</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="n">sast_code_analysis</span><span class="p">(</span><span class="n">scan_task</span><span class="p">,</span> <span class="n">target_dir</span><span class="p">,</span> <span class="n">observer</span><span class="p">,</span> <span class="n">excluded</span><span class="p">,</span> <span class="n">rules_dirs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.add_finding">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.code.</span></span><span class="sig-name descname"><span class="pre">add_finding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan_task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask" title="mastf.MASTF.models.mod_scan.ScanTask"><span class="pre">ScanTask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.code.add_finding" title="Permalink to this definition"></a></dt>
+<dd><p>Add a finding to the scan task based on the match information.</p>
+<p>This function retrieves the necessary information from the match dictionary
+to create a finding or vulnerability object and associates it with the provided
+scan task.</p>
+<p>The match dictionary contains information about the finding, such as the internal
+ID, rule ID, absolute path, lines, and metadata.</p>
+<p>First, the function extracts the internal ID from the metadata and tries to find
+the corresponding :class`FindingTemplate` object in the database. If the template
+does not exist, an error is logged and the function returns.</p>
+<p>The absolute path is converted to a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> object, and a <code class="xref py py-class docutils literal notranslate"><span class="pre">Snippet</span></code>
+object is created using information from the match dictionary, such as lines,
+language, file name, and system path.</p>
+<p>If the metadata indicates that it is a vulnerability, a <code class="xref py py-class docutils literal notranslate"><span class="pre">Vulnerability</span></code> object
+is created with the corresponding template, snippet, scan, scanner, and severity.
+Otherwise, a Finding object is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>match</strong> (<em>dict</em>) – A dictionary containing the match information.</p></li>
+<li><p><strong>scan_task</strong> (<a class="reference internal" href="../ref/models/scan_models.html#mastf.MASTF.models.ScanTask" title="mastf.MASTF.models.ScanTask"><em>ScanTask</em></a>) – The scan task to associate the finding with.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.YaraResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.code.</span></span><span class="sig-name descname"><span class="pre">YaraResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.code.YaraResult" title="Permalink to this definition"></a></dt>
+<dd><p>Represents the result of a YARA match.</p>
+<p>This class encapsulates the information extracted from a YARA match and
+provides convenient properties and methods to access and manipulate the
+match data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>match</strong> – The dictionary containing the YARA match data.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.YaraResult.get_template">
+<span class="sig-name descname"><span class="pre">get_template</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate" title="mastf.MASTF.models.mod_finding.FindingTemplate"><span class="pre">FindingTemplate</span></a></span></span><a class="headerlink" href="#mastf.MASTF.scanners.code.YaraResult.get_template" title="Permalink to this definition"></a></dt>
+<dd><p>Get the associated finding template.</p>
+<p>This method retrieves the associated finding template for the YARA result. It
+first checks if a template with the specified ID or internal ID exists. If not,
+it creates a new template using the YARA match metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The associated FindingTemplate object, or None if it couldn’t be
+retrieved or created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.YaraResult.get_template_data">
+<span class="sig-name descname"><span class="pre">get_template_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.code.YaraResult.get_template_data" title="Permalink to this definition"></a></dt>
+<dd><p>Get the data for creating a finding template.</p>
+<p>This method returns a dictionary containing the data required for creating a
+finding template based on the YARA match metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The data dictionary for creating a finding template.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.YaraResult.internal_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">internal_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mastf.MASTF.scanners.code.YaraResult.internal_id" title="Permalink to this definition"></a></dt>
+<dd><p>Get the internal ID of the associated finding template.</p>
+<p>This property returns the internal ID of the associated finding template from
+the YARA match metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The internal ID of the finding template.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.YaraResult.severity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">severity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="utils/enum.html#mastf.MASTF.utils.enum.Severity" title="mastf.MASTF.utils.enum.Severity"><span class="pre">Severity</span></a></em><a class="headerlink" href="#mastf.MASTF.scanners.code.YaraResult.severity" title="Permalink to this definition"></a></dt>
+<dd><p>Get the severity of the YARA result.</p>
+<p>This property returns the severity of the YARA result. It checks the “severity”
+field in the match metadata and maps it to the corresponding Severity enum value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Severity enum value representing the severity of the result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.code.YaraResult.template_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">template_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#mastf.MASTF.scanners.code.YaraResult.template_id" title="Permalink to this definition"></a></dt>
+<dd><p>Get the ID of the associated finding template.</p>
+<p>This property returns the ID of the associated finding template from the YARA
+match metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The ID of the finding template.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mixins.html" class="btn btn-neutral float-left" title="Web Mixins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils/index.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MatrixEditor.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
