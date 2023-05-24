@@ -70,10 +70,10 @@ class FindingTemplate(TimedModel):
     >>> template.delete()
     """
 
-    template_id = models.CharField(max_length=128, null=True, unique=True)
+    template_id = models.CharField(max_length=128, blank=True, unique=True)
     """A unique ID assigned to the template."""
 
-    internal_id = models.CharField(max_length=256, null=True, unique=True)
+    internal_id = models.CharField(max_length=256, blank=True, unique=True)
     """
     A unique internal ID assigned to the template used as a key for finding the
     template in the database.
@@ -102,16 +102,16 @@ class FindingTemplate(TimedModel):
     mitigation = models.TextField()
     """A description of the mitigation steps that can be taken to resolve the finding."""
 
-    article = models.CharField(max_length=256, null=True)
+    article = models.CharField(max_length=256)
     """A link to an article associated with the finding."""
 
-    meta_cvss = models.CharField(max_length=32, null=True, blank=True)
+    meta_cvss = models.CharField(max_length=256, blank=True)
     """Default CVSS score associated with this finding."""
 
-    meta_cwe = models.CharField(max_length=32, null=True, blank=True)
+    meta_cwe = models.CharField(max_length=32, blank=True)
     """CWE identifier assigned to this template."""
 
-    meta_masvs = models.CharField(max_length=256, null=True, blank=True)
+    meta_masvs = models.CharField(max_length=256, blank=True)
     """Additional reference to the mobile verification standard."""
 
     @staticmethod
@@ -145,16 +145,16 @@ class Snippet(TimedModel):
     lines = models.CharField(max_length=2048, blank=True)
     """Stores lines that should be highlighted."""
 
-    sys_path = models.CharField(max_length=1024, null=True)
+    sys_path = models.CharField(max_length=1024, blank=True)
     """Stores the path to the file where the snippet was found (optional, internal)."""
 
-    language = models.CharField(max_length=32, null=True)
+    language = models.CharField(max_length=32, blank=True)
     """Specifies the programming language this finding was found in (optional)"""
 
-    file_name = models.CharField(max_length=512, null=True)
+    file_name = models.CharField(max_length=512, blank=True)
     """Stores the name of the file where the snippet was found (optional)."""
 
-    file_size = models.CharField(max_length=256, null=True)
+    file_size = models.CharField(max_length=256, blank=True)
     """Stores the size of the file where the snippet was found (optional)."""
 
 
@@ -293,7 +293,7 @@ class Finding(AbstractBaseFinding):
     is_custom = models.BooleanField(default=False)
     """A boolean indicating if the finding is custom or not."""
 
-    custom_text = models.TextField(null=True, blank=True)
+    custom_text = models.TextField(blank=True)
     """Stores custom text for a finding."""
 
     @staticmethod
@@ -344,7 +344,7 @@ class Vulnerability(AbstractBaseFinding):
     about the current state of a vulnerability.
     """
 
-    status = models.CharField(null=True, max_length=256)
+    status = models.CharField(blank=True, max_length=256)
     """The status of this vulnerability"""
 
     @staticmethod

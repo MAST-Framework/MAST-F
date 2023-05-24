@@ -1,0 +1,79 @@
+{
+    "title": "Root Detection",
+    "pretitle": "OWASP Mobile Top 10 2016: M4 - Insecure Authentication and Authorization",
+    "short_summary": "This article discusses the use of root detection mechanisms in Android apps, their limitations, and alternative security measures.",
+    "sources": [
+        {
+            "value": "https://github.com/MobSF/owasp-mstg/blob/master/Document/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md#testing-root-detection-mstg-resilience-1",
+            "name": "OWASP MASTG - Testing Resilience"
+        }
+    ],
+    "content": [
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Introduction"
+        },
+        "Root detection mechanisms are often employed in Android apps to identify whether the device has been rooted. While the intention behind such measures is to enhance security, it is important to understand their limitations and potential drawbacks.",
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Limitations of Root Detection"
+        },
+        "Root detection techniques can have the following limitations:",
+        {
+            "type": "ul",
+            "content": [
+                "Effectiveness: Determined attackers can bypass or trick root detection mechanisms, rendering them ineffective.",
+                "False negatives: Root detection may produce false negatives, failing to detect rooted devices due to evolving root-hiding techniques.",
+                "False positives: Legitimate users may be denied access or functionality if root detection incorrectly identifies their devices as rooted.",
+                "Maintenance overhead: Root detection mechanisms require regular updates and maintenance to keep up with new rooting methods.",
+                "Compatibility issues: Root detection techniques may not be compatible with all Android device models or custom ROMs.",
+                "User experience impact: Over-reliance on root detection can lead to a poor user experience and potential exclusion of legitimate users."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Alternative Security Measures"
+        },
+        "Rather than relying solely on root detection, consider implementing the following alternative security measures:",
+        {
+            "type": "ol",
+            "content": [
+                "Secure API usage: Implement proper authentication and authorization mechanisms to secure API endpoints and sensitive data.",
+                "Secure data storage: Encrypt sensitive data at rest and implement secure storage practices to protect user data.",
+                "Input validation: Implement robust input validation and output encoding to prevent common security vulnerabilities, such as injection attacks.",
+                "Code obfuscation: Employ code obfuscation techniques to make reverse engineering and tampering more difficult.",
+                "Anti-tampering measures: Implement integrity checks, such as checksum verification or digital signatures, to detect and prevent tampering attempts."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Code Example"
+        },
+        {
+            "type": "code",
+            "language": "java",
+            "content": "boolean isRootedDevice() {\n    return Build.TAGS.contains(\"test-keys\") || new File(\"/system/app/Superuser.apk\").exists();\n}"
+        },
+        {
+            "type": "html",
+            "tag": "p",
+            "content": "The code example above demonstrates a simple root detection check that examines the system tags and checks for the existence of the Superuser.apk file in the system."
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "References"
+        },
+        {
+            "type": "ul",
+            "content": [
+                "OWASP Mobile Top 10 2016: M4 - Insecure Authentication and Authorization",
+                "Android Developers - Root Detection"
+            ]
+        }
+    ]
+}

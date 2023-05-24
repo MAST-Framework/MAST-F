@@ -39,7 +39,7 @@ class AppPermission(TimedModel):
         package name will be added: ``!apple.permission``.
     """
 
-    name = models.CharField(max_length=256, null=True)
+    name = models.CharField(max_length=256, blank=True)
     """The name of the permission. Can be null."""
 
     protection_level = models.TextField(blank=True)
@@ -48,7 +48,7 @@ class AppPermission(TimedModel):
     dangerous = models.BooleanField(default=False)
     """A flag indicating whether the permission is dangerous or not."""
 
-    group = models.CharField(max_length=256, null=True, blank=True)
+    group = models.CharField(max_length=256, blank=True)
     """The group to which the permission belongs. Can be null."""
 
     short_description = models.CharField(max_length=256, blank=True)

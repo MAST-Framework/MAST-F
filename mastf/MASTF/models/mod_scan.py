@@ -34,7 +34,7 @@ class Scan(TimedModel):
     scan_uuid = models.CharField(primary_key=True, max_length=256)
     """Stores the identifier for this scan."""
 
-    origin = models.CharField(null=True, max_length=32)
+    origin = models.CharField(blank=True, max_length=32)
     """Stores the scan origin of the scan. The origin can point to the following values:
 
         - Play-Store
@@ -44,7 +44,7 @@ class Scan(TimedModel):
         - ...
     """
 
-    source = models.CharField(null=True, max_length=256)
+    source = models.CharField(blank=True, max_length=256)
     """Stores the file source.
 
     The source of an uploaded file can be one of the following:
@@ -58,7 +58,7 @@ class Scan(TimedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     """The project of this scan"""
 
-    scan_type = models.CharField(null=True, max_length=50)
+    scan_type = models.CharField(blank=True, max_length=50)
     """Stores the name of the scan type"""
 
     start_date = models.DateField(default=datetime.datetime.now)
@@ -67,7 +67,7 @@ class Scan(TimedModel):
     end_date = models.DateField(null=True)
     """Stores the ent datetime of the scan"""
 
-    status = models.CharField(null=True, max_length=256)
+    status = models.CharField(blank=True, max_length=256)
     """Stores information about the current scan's status"""
 
     risk_level = models.CharField(
@@ -186,10 +186,10 @@ class ScanTask(TimedModel):
     able to allow null values.
     """
 
-    name = models.CharField(max_length=256, blank=True, null=True)
+    name = models.CharField(max_length=256, blank=True)
     """The task's name (primarily used in HTML representation)"""
 
-    celery_id = models.CharField(max_length=256, null=True)
+    celery_id = models.CharField(max_length=256, blank=True)
     """The assigned celery id (may be null on creation)."""
 
     active = models.BooleanField(default=True)
@@ -244,7 +244,7 @@ class Certificate(TimedModel):
     :type details: ``ManyToManyField``
     """
 
-    version = models.CharField(max_length=12, blank=True, null=True)
+    version = models.CharField(max_length=12, blank=True)
     """Indicates whether the Certificate is signed using APK signature scheme version X.
 
     Note that version values are stored in the format ``vX`` where ``X`` represents the
@@ -280,14 +280,14 @@ class Details(TimedModel):  # TODO
     scan = models.ForeignKey(Scan, models.CASCADE, null=True)
     file = models.ForeignKey(File, models.CASCADE, null=True)
     cvss = models.FloatField(default=0)
-    icon = models.CharField(max_length=1024, null=True, blank=True)
+    icon = models.CharField(max_length=1024, blank=True)
     tracker_count = models.IntegerField(default=0)
 
-    app_name = models.CharField(max_length=512, null=True, blank=True)
-    app_id = models.CharField(max_length=512, blank=True, null=True)
-    app_version = models.CharField(max_length=512, blank=True, null=True)
+    app_name = models.CharField(max_length=512, blank=True)
+    app_id = models.CharField(max_length=512, blank=True)
+    app_version = models.CharField(max_length=512, blank=True)
 
-    target_sdk = models.CharField(max_length=32, blank=True, null=True)
+    target_sdk = models.CharField(max_length=32, blank=True)
 
     # Many-To-Many relationships here
     certificates = models.ManyToManyField(Certificate, related_name="details")
