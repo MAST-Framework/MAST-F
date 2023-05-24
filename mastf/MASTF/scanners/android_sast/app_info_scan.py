@@ -31,7 +31,6 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
     details.app_version = apk_file.get_androidversion_name()
     details.target_sdk = apk_file.get_target_sdk_version()
 
-    certs = []
     if apk_file.is_signed():
         for certificate in apk_file.get_certificates():
             version = "v1"
@@ -40,7 +39,7 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
             if apk_file.is_signed_v3():
                 version = "v3"
 
-            certs.append(Certificate(
+            details.certificates.add(Certificate.objects.create(
                 version=version,
                 sha1=certificate.sha1,
                 sha256=certificate.sha256,
@@ -51,7 +50,6 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
                 serial_number=certificate.serial_number,
             ))
 
-    details.certificates.add(Certificate.objects.bulk_create(certs))
     details.save()
 
 
