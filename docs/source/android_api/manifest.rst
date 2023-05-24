@@ -4,14 +4,14 @@
 Android Manifest Visitor
 ************************
 
-.. automodule:: mastf.android.manifest
+.. automodule:: mastf.android.axml
 
 
-.. autoclass:: mastf.android.manifest._AXmlElement
+.. autoclass:: mastf.android.axml._AXmlElement
     :members:
 
-.. autoclass:: mastf.android.manifest.AXmlVisitorBase
+.. autoclass:: mastf.android.axml.AXmlVisitorBase
     :members:
 
-.. autoclass:: mastf.android.manifest.AXmlVisitor
+.. autoclass:: mastf.android.axml.AXmlVisitor
     :members:

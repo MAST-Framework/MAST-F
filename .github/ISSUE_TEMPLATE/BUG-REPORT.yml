@@ -1,6 +1,6 @@
 # Credits to https://github.com/stevemao/github-issue-templates
 name: "Bug Report"
-description: Create a ticker for a recently discovered bug.
+description: Create a ticket for a recently discovered bug.
 title: "[BUG] - <Title>"
 labels: [
   "bug"
@@ -12,7 +12,7 @@ body:
       label: "Bug Description"
       description: Please enter an explicit description of your issue
       placeholder: Short and explicit description of your incident...
-    validators:
+    validations:
       required: True
 
   - type: textarea

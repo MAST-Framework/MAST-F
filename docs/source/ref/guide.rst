@@ -12,6 +12,7 @@ Project-Directory Structure
 The directory structure of a simple project can be summarized to the following:
 
 .. code-block:: text
+
     projects/
         <uuid:project_uuid>/
             uploadedFile.[apk|ipa]

@@ -193,14 +193,37 @@ class FindingsMixins:
 
 
 class HostsMixin:
-    def ctx_hosts(self, scan: Scan, file: File, scanner: Scanner) -> list:
-        """Returns all host that have been identified within the scan target.
+    """Mixin class for working with hosts in a scan.
 
-        :param project: the project instance
-        :type project: Project
-        :param file: the scan target
+    This mixin provides methods for retrieving and manipulating hosts within a scan.
+
+    Usage:
+    ~~~~~~
+
+    - Use ``ctx_hosts()`` to get all hosts identified within the scan target.
+    - Use ``res_hosts()`` to get a serialized representation of hosts within the scan.
+
+    Example:
+    ~~~~~~~~
+
+    .. code-block:: python
+
+        mixin = HostsMixin()
+        ctx_hosts_data = mixin.ctx_hosts(scan, file, scanner)
+        res_hosts_data = mixin.res_hosts(scan, scanner)
+    """
+
+    def ctx_hosts(self, scan: Scan, file: File, scanner: Scanner) -> list:
+        """
+        Get all hosts identified within the scan target.
+
+        :param scan: The scan instance.
+        :type scan: Scan
+        :param file: The scan target.
         :type file: File
-        :return: a list of vulnerabilities
+        :param scanner: The scanner instance.
+        :type scanner: Scanner
+        :return: A list of hosts.
         :rtype: list
         """
         data = namespace()
@@ -209,16 +232,67 @@ class HostsMixin:
         return data
 
     def res_hosts(self, scan: Scan, scanner: Scanner) -> list:
+        """
+        Get a serialized representation of hosts within the scan.
+
+        :param scan: The scan instance.
+        :type scan: Scan
+        :param scanner: The scanner instance.
+        :type scanner: Scanner
+        :return: A list of serialized hosts.
+        :rtype: list
+        """
         data = Host.objects.filter(scan=scan, scanner=scanner)
         return HostSerializer(data, many=True).data
 
 
 class ComponentsMixin:
+    """Mixin class for working with components in a scan.
+
+    This mixin provides methods for retrieving and manipulating components within
+    a scan.
+
+    Usage:
+    ~~~~~~
+
+    - Use ``ctx_components()`` to get components statistics and elements for a scan.
+    - Use ``res_components()`` to get a serialized representation of components within the scan.
+
+    Example:
+    ~~~~~~~~
+
+    .. code-block:: python
+
+        mixin = ComponentsMixin()
+        ctx_components_data = mixin.ctx_components(scan, file, scanner)
+        res_components_data = mixin.res_components(scan, scanner)
+    """
     def ctx_components(self, scan: Scan, file: File, scanner: Scanner):
+        """
+        Get components statistics and elements for a scan.
+
+        :param scan: The scan instance.
+        :type scan: Scan
+        :param file: The scan target.
+        :type file: File
+        :param scanner: The scanner instance.
+        :type scanner: Scanner
+        :return: A namespace object containing component statistics and elements.
+        """
         data = namespace(stats=Component.stats(scan))
         data.elements = Component.objects.filter(scanner=scanner)
         return data
 
     def res_hosts(self, scan: Scan, scanner: Scanner) -> list:
+        """
+        Get a serialized representation of components within the scan.
+
+        :param scan: The scan instance.
+        :type scan: Scan
+        :param scanner: The scanner instance.
+        :type scanner: Scanner
+        :return: A list of serialized components.
+        :rtype: list
+        """
         data = Component.objects.filter(scanner=scanner)
         return ComponentSerializer(data, many=True).data

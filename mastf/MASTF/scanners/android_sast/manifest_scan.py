@@ -5,7 +5,6 @@ import uuid
 from xml.dom.minidom import Element, parse
 
 from mastf.android.axml import AXmlVisitor
-from mastf.core.progress import Observer
 
 from mastf.MASTF.scanners.plugin import ScannerPluginTask
 from mastf.MASTF.models import (
@@ -22,6 +21,14 @@ logger = logging.getLogger(__name__)
 
 
 def get_manifest_info(inspector: ScannerPluginTask) -> None:
+    """Get manifest information from the Android app.
+
+    This function collects detailed information about permissions, components, and intent filters
+    from the AndroidManifest.xml file of the app.
+
+    :param inspector: The scanner plugin task inspector.
+    :type inspector: ScannerPluginTask
+    """
     inspector.observer.logger = logger
     # Collect detailed information about permissions, components and
     # intent filters
@@ -37,6 +44,17 @@ def get_manifest_info(inspector: ScannerPluginTask) -> None:
 
 
 def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path):
+    """
+    Run manifest scan on the AndroidManifest.xml file.
+
+    This function parses the AndroidManifest.xml file and performs a scan using the specified
+    handler and visitor.
+
+    :param inspector: The scanner plugin task inspector.
+    :type inspector: ScannerPluginTask
+    :param manifest_file: Path to the AndroidManifest.xml file.
+    :type manifest_file: pathlib.Path
+    """
     visitor = AXmlVisitor()
     handler = AndroidManifestHandler(inspector, manifest_file)
 
@@ -64,6 +82,11 @@ def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path)
 
 
 class AndroidManifestHandler:
+    """Inspects AndroidManifest files.
+
+    :param inspector: The ScannerPluginTask object for scanning.
+    :param path: The path to the AndroidManifest.xml file.
+    """
     def __init__(
         self, inspector: ScannerPluginTask, path: pathlib.Path
     ) -> None:
@@ -75,9 +98,19 @@ class AndroidManifestHandler:
 
     @property
     def scan(self) -> Scan:
+        """
+        Returns the scan object associated with the inspector.
+
+        :return: The Scan object.
+        """
         return self.inspector.scan
 
     def link(self, visitor: AXmlVisitor) -> None:
+        """
+        Links the AndroidManifestHandler with an AXmlVisitor.
+
+        :param visitor: The AXmlVisitor to link with.
+        """
         visitor.uses_permission.add("android:name", self.on_permission)
 
         for name in list(ComponentCategory):
@@ -86,6 +119,12 @@ class AndroidManifestHandler:
                 getattr(visitor, name).add("android:name", getattr(self, f"on_{name}"))
 
     def on_permission(self, element: Element, identifier: str) -> None:
+        """
+        Event handler for permission elements in the AndroidManifest.xml.
+
+        :param element: The permission element.
+        :param identifier: The identifier of the permission.
+        """
         queryset = AppPermission.objects.filter(identifier=identifier)
 
         protection_level = str(
@@ -127,22 +166,59 @@ class AndroidManifestHandler:
         )
 
     def on_application(self, element: Element, name: str) -> None:
+        """
+        Event handler for application elements in the AndroidManifest.xml.
+
+        :param element: The application element.
+        :param name: The name of the application.
+        """
         # self.handle_component(element, "application", name)
         pass
 
     def on_service(self, element: Element, name: str) -> None:
+        """
+        Event handler for service elements in the AndroidManifest.xml.
+
+        :param element: The service element.
+        :param name: The name of the service.
+        """
         self.handle_component(element, "service", name)
 
     def on_provider(self, element: Element, name: str) -> None:
+        """
+        Event handler for provider elements in the AndroidManifest.xml.
+
+        :param element: The provider element.
+        :param name: The name of the provider.
+        """
         self.handle_component(element, "provider", name)
 
     def on_receiver(self, element: Element, name: str) -> None:
+        """
+        Event handler for receiver elements in the AndroidManifest.xml.
+
+        :param element: The receiver element.
+        :param name: The name of the receiver.
+        """
         self.handle_component(element, "receiver", name)
 
     def on_activity(self, element: Element, name: str) -> None:
+        """
+        Event handler for activity elements in the AndroidManifest.xml.
+
+        :param element: The activity element.
+        :param name: The name of the activity.
+        """
         self.handle_component(element, "activity", name)
 
     def handle_component(self, element: Element, ctype: str, name: str) -> None:
+        """
+        Handles a component element in the AndroidManifest.xml.
+
+        :param element: The component element.
+        :param ctype: The component type (e.g., service, provider, receiver).
+        :param name: The name of the component.
+        """
         component = Component.objects.create(
             cid=Component.make_uuid(),
             scanner=self.inspector.scan_task.scanner,

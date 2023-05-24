@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -23,9 +38,19 @@ __all__ = [
 
 
 class UserProfileView(ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying the user profile settings.
+    """
+
     template_name = "user/settings/settings-account.html"
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieve and prepare the context data for rendering the user profile view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         context["account"] = Account.objects.get(user=self.request.user)
         context["active"] = "account"
@@ -34,9 +59,19 @@ class UserProfileView(ContextMixinBase, TemplateAPIView):
 
 
 class UserTeamsView(ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying the user's teams and team settings.
+    """
+
     template_name = "user/settings/settings-teams.html"
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieve and prepare the context data for rendering the user's teams view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         context["teams"] = self.request.user.teams.all()
         context["active"] = "teams"
@@ -47,6 +82,14 @@ class UserTeamsView(ContextMixinBase, TemplateAPIView):
         return context
 
     def post(self, request, *args, **kwargs):
+        """
+        Handle the POST request for creating a new team.
+
+        :param request: The HTTP request object.
+        :param args: Additional positional arguments.
+        :param kwargs: Additional keyword arguments.
+        :return: A redirect response.
+        """
         view = TeamCreationView.as_view()
         response = view(request, **self.kwargs)
         if response.status_code != 201:
@@ -60,11 +103,21 @@ class UserTeamsView(ContextMixinBase, TemplateAPIView):
 
 
 class UserTeamView(ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying the details of a specific team.
+    """
+
     template_name = "user/team.html"
     permission_classes = [CanViewTeam]
     default_redirect = "Teams"
 
     def get_context_data(self, **kwargs: dict) -> dict:
+        """
+        Retrieve and prepare the context data for rendering the team view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         context["team"] = self.get_object(Team, "pk")
         return context
