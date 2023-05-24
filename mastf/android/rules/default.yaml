@@ -322,6 +322,70 @@
     template: "tcp-server-sockets"
     vulnerability: false
 
+- rule-id: android-weak-cryptographic-hashing
+  patterns:
+    - ".*MessageDigest\\.getInstance\\(\"(MD5|SHA-1)\"\\).*"
+  meta:
+    filter:
+      file_ext: "java, kotlin"
+    severity: "High"
+    template: "weak-cryptographic-hashing"
+    vulnerability: false
 
+- rule-id: android-root-detection
+  patterns:
+    - text: ".*Build\\.TAGS\\.contains\\(\"test-keys\"\\).*"
+      mode: or
+    - text: ".*new\\s+File\\(\"/system/app/Superuser\\.apk\"\\).*"
+      mode: or
+    - text: \/system\/app\/Superuser.apk
+      mode: or
+    - text: isDeviceRooted\(\s*\)
+      mode: or
+    - text: \/system\/bin\/failsafe\/su
+      mode: or
+    - text: \/system\/bin\/su
+      mode: or
+    - text: \/system\/xbin\/su
+      mode: or
+    - text: \/sbin\/su
+      mode: or
+    - text: \/system\/sd\/xbin\/su
+      mode: or
+    - text: \"\/system\/xbin\/which\".*\"su\"
+      mode: or
+    - text: RootTools\.isAccessGiven\(
+      mode: or
+  meta:
+    filter:
+      file_ext: "java, kotlin"
+    severity: "Medium"
+    template: "root-detection"
+    vulnerability: true
 
+- rule-id: android-raw-sql-queries
+  patterns:
+    - android\.database\.sqlite
+    - text: ".*execute\\s*\\(\\s*\"SELECT\\s*\\*\\s*FROM\\s*\\w+\"\\s*\\).*"
+      mode: or
+    - text: "rawQuery\\(|execSQL\\("
+      mode: or
+  meta:
+    filter:
+      file_ext: "java, kotlin"
+    severity: "High"
+    template: "raw-sql-queries"
+    vulnerability: true
+
+- rule-id: android-loading-native-libraries
+  patterns:
+    - text: ".*System\\.loadLibrary\\(\\s*\"\\w+\"\\s*\\).*"
+      mode: or
+    - System\.load\(
+  meta:
+    filter:
+      file_ext: "java, kotlin"
+    severity: "Medium"
+    template: "loading-native-libraries"
+    vulnerability: true
 

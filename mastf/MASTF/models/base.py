@@ -164,10 +164,10 @@ class Project(TimedModel):
     project_uuid = models.CharField(primary_key=True, null=False, max_length=256)
     """Stores the UUID of this project."""
 
-    name = models.CharField(null=True, max_length=256, unique=True)
+    name = models.CharField(blank=True, max_length=256, unique=True)
     """Stores the display name of this application."""
 
-    tags = models.CharField(max_length=4096, null=True, blank=True)
+    tags = models.CharField(max_length=4096, blank=True)
     """Stores tags for this project (comma-spearated)"""
 
     visibility = models.CharField(
@@ -288,7 +288,7 @@ class File(TimedModel):
     file_size = models.CharField(max_length=50, default="")
     """The available disk space needed to save the uploaded file"""
 
-    file_path = models.CharField(max_length=2048, null=True)
+    file_path = models.CharField(max_length=2048, blank=True)
     """Stores the internal file path. (will be localized separately)"""
 
     internal_name = models.CharField(max_length=32, default="")
@@ -322,7 +322,7 @@ class Account(TimedModel):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=256, choices=Role.choices, default=Role.REGULAR)
-    description = models.CharField(max_length=256, blank=True, null=True)
+    description = models.CharField(max_length=256, blank=True)
 
 
 class Bundle(TimedModel):

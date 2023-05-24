@@ -8,6 +8,7 @@
 ![Platform](https://img.shields.io:/static/v1?label=Docker&message=v23.0.5&color=blue&logo=docker)
 ![Codestyle](https://img.shields.io:/static/v1?label=Codestyle&message=black&color=black)
 ![License](https://img.shields.io:/static/v1?label=License&message=GNU-GPLv3&color=blue)
+[![pages-build-deployment](https://github.com/MAST-Framework/MAST-F/actions/workflows/pages/pages-build-deployment/badge.svg)](https://mast-framework.github.io/MAST-F/)
 
 MAST-F is a comprehensive Mobile Application Security Testing Framework designed to test the security of iOS and Android mobile applications. It provides a wide range of tools and features to identify vulnerabilities and weaknesses in mobile apps, helping developers and security professionals ensure the robustness and integrity of their applications.
 

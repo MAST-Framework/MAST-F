@@ -36,20 +36,84 @@ __all__ = [
 __scanners__ = {}
 
 
-def Plugin(clazz):
+def Plugin(clazz): # noqa
+    """
+    Register a scanner plugin.
+
+    This decorator is used to register a scanner plugin class. The class must
+    have a ``name`` attribute, which represents the name of the scanner. The
+    registered scanner instances can be accessed through the ``__scanners__``
+    dictionary.
+
+    Usage Example:
+    ~~~~~~~~~~~~~~
+
+    .. code-block:: python
+        :linenos:
+
+        @Plugin
+        class MyScanner(ScannerPlugin):
+            name = "My Scanner"
+            ...
+
+        # Accessing the registered scanners
+        for name, scanner in ScannerPlugin.all():
+            print(name, scanner)
+
+    :param clazz: The scanner plugin class to register.
+    :raises ValueError: If the scanner's name is null.
+    :raises KeyError: If the scanner is already registered.
+    :return: The input scanner plugin class.
+    """
     instance = clazz()
     if not instance.name:
         raise ValueError("The scanner's name can not be null!")
 
-    if instance.name in __scanners__:
+    name = ScannerPlugin.to_internal_name(instance.name)
+    if name in __scanners__:
         raise KeyError("Scanner already registered")
 
-    instance.internal_name = ScannerPlugin.to_internal_name(instance.name)
-    __scanners__[instance.internal_name] = instance
+    instance.internal_name = name
+    __scanners__[name] = instance
     return clazz
 
 
 class Extension(StringEnum):
+    """
+    Enumeration class representing extensions.
+
+    This class defines different extensions as string values using the :class:`StringEnum`
+    base class. Each extension represents a specific category or functionality.
+
+    Available Extensions:
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    - DETAILS: Represents details.
+    - PERMISSIONS: Represents permissions.
+    - HOSTS: Represents hosts.
+    - VULNERABILITIES: Represents vulnerabilities.
+    - FINDINGS: Represents findings.
+    - COMPONENTS: Represents components.
+    - EXPLORER: Represents explorer.
+
+    Example:
+    ~~~~~~~~
+
+    To use an extension, simply access its value using dot notation, e.g.
+    ``Extension.DETAILS``.
+
+    .. code-block:: python
+
+        # Accessing the extension values
+        print(Extension.DETAILS)  # Output: "details"
+        print(Extension.PERMISSIONS)  # Output: "permissions"
+        print(Extension.HOSTS)  # Output: "hosts"
+        # ...and so on
+
+    .. note::
+        The values of the extensions should not be modified as they are used
+        internally by the system.
+    """
     DETAILS = "details"
     PERMISSIONS = "permissions"
     HOSTS = "hosts"
@@ -60,6 +124,13 @@ class Extension(StringEnum):
 
 
 class ScannerPluginTask(metaclass=ABCMeta):
+    """Base class for scanner plugin tasks.
+
+    This class defines the common behavior and attributes of scanner plugin tasks.
+    Subclasses should inherit from this class and override the appropriate methods
+    to implement specific scanning functionality.
+    """
+
     def __init__(self) -> None:
         self._task = None
         self._observer = None
@@ -76,6 +147,17 @@ class ScannerPluginTask(metaclass=ABCMeta):
         self._meta[key] = value
 
     def __call__(self, scan_task: ScanTask, observer: Observer) -> None:
+        """Execute the scanner plugin task.
+
+        This method is called when the ScannerPluginTask is invoked as a callable.
+        It sets up the internal values, prepares the scan, and runs the scan.
+
+        :param scan_task: The current scan task.
+        :type scan_task: :class:`ScanTask`
+        :param observer: The observer object for logging and status updates.
+        :type observer: :class:`Observer`
+        :meta: public
+        """
         # Prepare internal values
         self._task = scan_task
         self._observer = observer
@@ -87,6 +169,16 @@ class ScannerPluginTask(metaclass=ABCMeta):
         self.run_scan()
 
     def get_item(self, key) -> object:
+        """Get an item from the metadata.
+
+        This method retrieves an item from the metadata dictionary based on its
+        type.
+
+        :param key: The type of the item to retrieve.
+        :type key: type | str
+        :return: The value associated with the type, or None if not found.
+        :rtype: object
+        """
         if isinstance(key, type):
             for value in self._meta.values():
                 if isinstance(value, key):
@@ -94,15 +186,28 @@ class ScannerPluginTask(metaclass=ABCMeta):
         return None
 
     def prepare_scan(self) -> None:
+        """Prepare the scan.
+
+        This method is called before running the scan and can be overridden
+        in subclasses to perform any necessary preparation steps.
+        """
         pass
 
     def run_scan(self) -> None:
+        """Run the scan.
+
+        This method runs the scan by iterating over the methods starting with 'do'
+        and executing them as sub-tasks. Each sub-task is logged, and any exceptions
+        that occur are caught and logged as well.
+        """
         for name, func in inspect.getmembers(self):
             if name.startswith("do"):
                 name = "-".join([x.capitalize() for x in name.split("_")[1:]])
                 self.observer.update(
-                    "Started Sub-Task %s", name,
-                    do_log=True, log_level=logging.INFO
+                    "Started Sub-Task %s",
+                    name,
+                    do_log=True,
+                    log_level=logging.INFO
                 )
                 try:
                     func()

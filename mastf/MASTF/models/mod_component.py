@@ -25,7 +25,7 @@ __all__ = ["Component", "IntentFilter"]
 
 class IntentFilter(TimedModel):
     name = models.CharField(max_length=1024, blank=True)
-    action = models.CharField(max_length=1024, blank=True, null=True)
+    action = models.CharField(max_length=1024, blank=True)
 
 class Component(TimedModel):
     cid = models.CharField(max_length=256, primary_key=True)
@@ -38,7 +38,7 @@ class Component(TimedModel):
     is_main = models.BooleanField(default=False)
 
     category = models.CharField(
-        null=True, choices=ComponentCategory.choices, max_length=256
+        blank=True, choices=ComponentCategory.choices, max_length=256
     )
     intent_filters = models.ManyToManyField(IntentFilter, related_name="components")
 

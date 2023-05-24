@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import logging
 
 from django.shortcuts import redirect
@@ -42,11 +57,21 @@ logger = logging.getLogger(__name__)
 
 
 class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying detailed information and overview of a user's project.
+    """
+
     template_name = "project/project-overview.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieve and prepare the context data for rendering the project details view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
@@ -83,16 +108,25 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
 
             context["active_data"] = active_data
 
-
         return context
 
 
 class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying the scan history of a user's project.
+    """
+
     template_name = "project/project-scan-history.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs: dict) -> dict:
+        """
+        Retrieve and prepare the context data for rendering the scan history view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
@@ -104,6 +138,12 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
         return context
 
     def get_scan_history(self, scan: Scan) -> dict:
+        """
+        Retrieve the scan history data for a specific scan.
+
+        :param scan: The scan object.
+        :return: A dictionary containing the scan history data.
+        """
         data = namespace()
         vuln_data = AbstractBaseFinding.stats(Vulnerability, scan=scan)
         finding_data = AbstractBaseFinding.stats(Finding, scan=scan)
@@ -118,16 +158,29 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
 class UserScannersView(
     UserProjectMixin, VulnContextMixin, ContextMixinBase, TemplateAPIView
 ):
+    """
+    A view for displaying information about scanners and their results in a user's project.
+    """
+
     template_name = "project/project-scanners.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def post(self, request, *args, **kwargs):
+        """
+        Handle the POST request for creating a new scan.
+        """
         view = ScanCreationView.as_view()
         view(request)
         return redirect("Project-Overview", **self.kwargs)
 
     def get_context_data(self, **kwargs: dict) -> dict:
+        """
+        Retrieve and prepare the context data for rendering the scanners view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
@@ -142,12 +195,21 @@ class UserScannersView(
             project_scanner = Scanner.objects.filter(
                 scan__project=project, name=name
             ).first()
-            results[scanner.internal_name] = self.get_scan_results(scans, project_scanner)
+            results[scanner.internal_name] = self.get_scan_results(
+                scans, project_scanner
+            )
 
         context["scan_results"] = results
         return context
 
     def get_scan_results(self, scans: QuerySet, scanner: str) -> dict:
+        """
+        Retrieve the scan results for a specific scanner.
+
+        :param scans: The queryset of scans.
+        :param scanner: The name of the scanner.
+        :return: A dictionary containing the scan results.
+        """
         data = namespace()
         data.vuln_count = 0
         data.vuln_data = []
@@ -171,11 +233,21 @@ class UserScannersView(
 
 
 class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying the packages and dependencies of a user's project.
+    """
+
     template_name = "project/project-packages.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs):
+        """
+        Retrieve and prepare the context data for rendering the project packages view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 
@@ -186,11 +258,21 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
 
 
 class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
+    """
+    A view for displaying and configuring the settings of a user's project.
+    """
+
     template_name = "project/project-settings.html"
     permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs: dict) -> dict:
+        """
+        Retrieve and prepare the context data for rendering the project settings view.
+
+        :param kwargs: Additional keyword arguments.
+        :return: A dictionary containing the context data.
+        """
         context = super().get_context_data(**kwargs)
         self.apply_project_context(context)
 

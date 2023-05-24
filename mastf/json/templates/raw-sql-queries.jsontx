@@ -1,0 +1,62 @@
+{
+    "title": "Execution of Raw SQL Queries",
+    "pretitle": "OWASP Mobile Top 10 2016: M7 - Poor Code Quality",
+    "short_summary": "This article highlights the risks associated with executing raw SQL queries in Android apps and provides recommendations for secure database access.",
+    "sources": [
+        {
+            "value": "#",
+            "name": "Android Developers - SQL Injection Prevention"
+        }
+    ],
+    "content": [
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Introduction"
+        },
+        "Executing raw SQL queries in Android apps without proper precautions can introduce SQL injection vulnerabilities. It is important to understand the risks associated with this practice and adopt secure coding practices for database access.",
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "SQL Injection Risks"
+        },
+        "Executing raw SQL queries poses the following risks:",
+        {
+            "type": "ul",
+            "content": [
+                "SQL Injection attacks: Malicious actors can manipulate input data to execute arbitrary SQL statements, potentially compromising the database and accessing unauthorized data.",
+                "Data leakage or loss: SQL injection can result in unauthorized disclosure, modification, or deletion of sensitive data stored in the database.",
+                "Elevation of privileges: Attackers can leverage SQL injection vulnerabilities to escalate their privileges and gain unauthorized access to administrative functions or sensitive resources.",
+                "Denial of Service (DoS): SQL injection attacks can cause database performance degradation or even lead to complete unavailability, resulting in a denial of service for legitimate users."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Mitigation"
+        },
+        "To mitigate the risks associated with executing raw SQL queries, follow these recommendations:",
+        {
+            "type": "ol",
+            "content": [
+                "Parameterized queries or prepared statements: Use parameterized queries or prepared statements with placeholders for user input in SQL queries. This helps separate data from the query structure and prevents SQL injection.",
+                "Input validation: Implement proper input validation to ensure that user-supplied data meets expected criteria before using it in SQL queries.",
+                "Least privilege principle: Restrict database user permissions to minimize the potential impact of successful SQL injection attacks.",
+                "Object-Relational Mapping (ORM) frameworks: Consider using ORM frameworks that provide an abstraction layer for database access and automatically handle input sanitization and query parameterization.",
+                "Regular security testing: Perform regular security testing, including SQL injection testing, to identify and address vulnerabilities in the app's database access code."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "References"
+        },
+        {
+            "type": "ul",
+            "content": [
+                "OWASP Mobile Top 10 2016: M7 - Poor Code Quality",
+                "Android Developers - SQL Injection Prevention"
+            ]
+        }
+    ]
+}

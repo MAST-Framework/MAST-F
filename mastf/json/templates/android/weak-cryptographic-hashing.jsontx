@@ -1,0 +1,57 @@
+{
+    "title": "Weak Cryptographic Hashing Algorithms",
+    "pretitle": "OWASP Mobile Top 10 2016: M2 - Insecure Data Storage",
+    "short_summary": "This article highlights the risks associated with weak cryptographic hashing algorithms in Android apps and provides recommendations for using secure hashing algorithms.",
+    "sources": [
+    ],
+    "content": [
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Introduction"
+        },
+        "Cryptographic hashing algorithms play a crucial role in ensuring data integrity and securely storing passwords. However, the use of weak hashing algorithms in Android apps can lead to serious security vulnerabilities.",
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Security Risks"
+        },
+        "Using weak cryptographic hashing algorithms poses the following risks:",
+        {
+            "type": "ul",
+            "content": [
+                "Brute-force attacks: Weak hashing algorithms can be easily brute-forced, enabling attackers to discover the original data or passwords.",
+                "Rainbow table attacks: Precomputed tables of weak hash values (rainbow tables) can be used to rapidly crack hashed passwords or verify data integrity.",
+                "Data integrity compromise: Weak hashing algorithms may fail to adequately protect data integrity, allowing malicious modification or tampering of stored data.",
+                "Password decryption: Weakly hashed passwords can be subject to successful decryption attempts, potentially exposing user accounts to unauthorized access."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "Mitigation"
+        },
+        "To mitigate the risks associated with weak cryptographic hashing algorithms, follow these recommendations:",
+        {
+            "type": "ol",
+            "content": [
+                "Use strong hashing algorithms: Implement secure hashing algorithms, such as SHA-256 or bcrypt, for data integrity checks and password storage.",
+                "Avoid weak hashing algorithms: Do not use weak hashing algorithms like MD5 or SHA-1, as they are vulnerable to attacks and no longer considered secure.",
+                "Implement salted hashes: Use random salts for hashing to add additional security against rainbow table attacks.",
+                "Apply key stretching: Apply key stretching techniques, such as iterating the hashing process multiple times, to slow down brute-force attacks.",
+                "Regularly update hashing algorithms: Stay informed about the latest recommended hashing algorithms and upgrade existing implementations when necessary."
+            ]
+        },
+        {
+            "type": "html",
+            "tag": "h2",
+            "content": "References"
+        },
+        {
+            "type": "ul",
+            "content": [
+                "OWASP Mobile Top 10 2016: M2 - Insecure Data Storage - [Link](https://owasp.org/www-project-top-ten/)"
+            ]
+        }
+    ]
+}

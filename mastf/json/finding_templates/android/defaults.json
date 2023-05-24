@@ -332,7 +332,55 @@
             "meta_cvss": "3.0",
             "meta_cwe": "CWE-319",
             "meta_masvs": "MASVS:2.0.1-M10: \"Server-side Injection Verification\""
-          }
+        },
+        {
+            "title": "Weak Cryptographic Hashing Algorithms",
+            "description": "The app uses weak cryptographic hashing algorithms for data integrity or password storage.",
+            "risk": "Weak cryptographic hashing algorithms can be susceptible to various attacks, including brute-force attacks and rainbow table attacks. This can compromise data integrity and expose user passwords to potential decryption.",
+            "mitigation": "Ensure that strong cryptographic hashing algorithms, such as SHA-256 or bcrypt, are used for data integrity checks and password storage. Avoid using weak hashing algorithms like MD5 or SHA-1.",
+            "article": "android/weak-cryptographic-hashing",
+            "default_severity": "High",
+            "meta_cvss": "3.0",
+            "meta_cwe": "CWE-327",
+            "meta_masvs": "MASVS:2.0.1-M5: \"Cryptography Verification\" and MASVS:2.0.1-M6: \"Tampering and Reverse Engineering Verification\""
+        },
+        {
+            "title": "Root Detection",
+            "description": "The app includes root detection mechanisms to identify if the device is rooted.",
+            "risk": "Using root detection as a security measure can create a false sense of security. It may not effectively protect the app against determined attackers and can lead to the exclusion of legitimate users.",
+            "mitigation": "Rely on robust security practices, such as secure API usage, secure data storage, and input validation, instead of relying solely on root detection mechanisms. Design the app to handle potential security threats without assuming that a rooted device is always malicious.",
+            "article": "android/root-detection",
+            "default_severity": "Low",
+            "meta_cvss": "3.0",
+            "meta_cwe": "CWE-693",
+            "meta_masvs": "MASVS:2.0.1-M3: \"Tampering and Reverse Engineering Verification\" and MASVS:2.0.1-M6: \"Tampering and Reverse Engineering Verification\""
+        },
+        {
+            "title": "Execution of Raw SQL Queries",
+            "description": "The app directly executes raw SQL queries without using parameterized queries or prepared statements.",
+            "risk": "Executing raw SQL queries without proper input validation and parameterization can lead to SQL injection vulnerabilities. Attackers may manipulate the queries to gain unauthorized access, modify or delete data, or perform other malicious actions.",
+            "mitigation": "Always use parameterized queries or prepared statements to handle user input in SQL queries. Avoid constructing queries by concatenating user input directly into the query string. Implement input validation and consider using an ORM (Object-Relational Mapping) framework to abstract the SQL queries and reduce the risk of SQL injection.",
+            "article": "android/raw-sql-queries",
+            "default_severity": "High",
+            "meta_cvss": "CVSS:3.0/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "meta_cwe": "CWE-89",
+            "meta_masvs": "MASVS:2.0.1-M1: \"System Design Verification\" and MASVS:2.0.1-M3: \"Tampering and Reverse Engineering Verification\""
+        },
+        {
+            "title": "Loading Native Libraries",
+            "description": "The app loads native libraries without proper validation or integrity checks.",
+            "risk": "Loading native libraries without proper validation or integrity checks can lead to security vulnerabilities, such as loading malicious or tampered libraries. Attackers may exploit these vulnerabilities to execute arbitrary code, escalate privileges, or perform other malicious actions.",
+            "mitigation": "Implement robust security measures to ensure the integrity of native libraries, such as verifying library signatures, using secure storage for libraries, and implementing runtime integrity checks. Avoid loading native libraries from untrusted sources.",
+            "article": "android/loading-native-libraries",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSS:3.0/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "meta_cwe": "CWE-114",
+            "meta_masvs": "MASVS:2.0.1-M3: \"Tampering and Reverse Engineering Verification\""
+        }
+
+
+
+
 
 
 

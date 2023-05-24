@@ -29,13 +29,13 @@ class Package(TimedModel):
     package_uuid = models.UUIDField(max_length=36, primary_key=True)
     """The unique id for this package"""
 
-    name = models.CharField(max_length=512, null=True)
+    name = models.CharField(max_length=512, blank=True)
     """The name of the package."""
 
-    artifact_id = models.CharField(max_length=512, null=True, blank=True)
+    artifact_id = models.CharField(max_length=512, blank=True)
     """The artifact ID of the package. (may be null)"""
 
-    group_id = models.CharField(max_length=512, null=True, blank=True)
+    group_id = models.CharField(max_length=512, blank=True)
     """The group ID of the package. (may be null)"""
 
     package_type = models.CharField(
@@ -61,13 +61,13 @@ class PackageVulnerability(TimedModel):
     identifier = models.UUIDField(max_length=36, primary_key=True)
     """The universally unique identifier for the vulnerability."""
 
-    cve_id = models.CharField(max_length=256, null=True)
+    cve_id = models.CharField(max_length=256, blank=True)
     """The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability."""
 
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     """The software package that is vulnerable."""
 
-    version = models.CharField(max_length=512, null=True)
+    version = models.CharField(max_length=512, blank=True)
     """The version of the software package that is vulnerable."""
 
     severity = models.CharField(
@@ -96,13 +96,13 @@ class Dependency(TimedModel):
     scanner = models.ForeignKey(Scanner, models.CASCADE)
     """The scanner which found this dependency."""
 
-    outdated = models.CharField(max_length=512, null=True, blank=True)
+    outdated = models.CharField(max_length=512, blank=True)
     """Indicates whether the package is outdated."""
 
     version = models.CharField(max_length=512, blank=True)
     """The extracted version number. (may be blank)"""
 
-    license = models.CharField(max_length=256, null=True, blank=True)
+    license = models.CharField(max_length=256, blank=True)
     """Stores all extracted license information (comma spearated)"""
 
     @property

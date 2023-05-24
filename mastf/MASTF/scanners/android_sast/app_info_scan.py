@@ -18,6 +18,10 @@ from mastf.MASTF.models import (
 apk.log.setLevel(logging.WARNING)
 
 def get_app_info(inspector: ScannerPluginTask) -> None:
+    """Retrieves and saves information about the scanned app.
+
+    :param inspector: The :class:`ScannerPluginTask` object.
+    """
     apk_file: apk.APK = inspector[apk.APK]
     details = Details.objects.get(scan=inspector.scan)
 
@@ -35,7 +39,7 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
             if apk_file.is_signed_v3():
                 version = "v3"
 
-            cert = Certificate.objects.create(
+            details.certificates.add(Certificate.objects.create(
                 version=version,
                 sha1=certificate.sha1,
                 sha256=certificate.sha256,
@@ -44,13 +48,23 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
                 hash_algorithm=certificate.hash_algo,
                 signature_algorithm=certificate.signature_algo,
                 serial_number=certificate.serial_number,
-            )
-            details.certificates.add(cert)
+            ))
 
     details.save()
 
 
 def get_app_net_info(inspector: ScannerPluginTask) -> None:
+    """
+    Retrieve network security information from XML files.
+
+    This function analyzes network_security_config.xml files present in the given directory and its subdirectories,
+    extracting network security information from them. The extracted information is processed using a visitor pattern
+    implemented by the AXmlVisitor class and a NetworkSecurityHandler.
+
+    :param inspector: An instance of ScannerPluginTask, representing the scanner task.
+    :type inspector: ScannerPluginTask
+    """
+    # # Prepare the directory where the XML files are located
     content_dir = inspector.file_dir / "contents"
     visitor = AXmlVisitor()
     handler = NetworkSecurityHandler(inspector)
@@ -69,6 +83,7 @@ def get_app_net_info(inspector: ScannerPluginTask) -> None:
                 document = parse(nfp)
 
         except Exception as os_err:
+            # Log any errors encountered while parsing
             inspector.observer.update(
                 "[%s] Skipping network security config due to error: %s",
                 type(os_err).__name__,
