@@ -109,13 +109,17 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         :return: the JSON response storing all related data
         :rtype: Response
         """
-        instance = self.get_object()
+        try:
+            instance = self.get_object()
 
-        assert (
-            self.serializer_class is not None
-        ), "The provided serializer class must not be null"
-        data = self.serializer_class(instance)
-        return Response(data.data)
+            assert (
+                self.serializer_class is not None
+            ), "The provided serializer class must not be null"
+            data = self.serializer_class(instance)
+            return Response(data.data)
+
+        except permissions.exceptions.ValidationError as err:
+            return Response({"success": False, "detail": "".join([str(x) for x in err.detail])})
 
     def patch(self, request: Request, *args, **kwargs) -> Response:
         """Updates the selected object.
@@ -125,12 +129,13 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
         :return: whether the data has been updated successfully
         :rtype: Response
         """
-        instance = self.get_object()
+        try:  # move get_object() into try-catch block due to ValidationErrors
+            instance = self.get_object()
 
-        assert (
-            self.serializer_class is not None
-        ), "The provided serializer class must not be null"
-        try:
+            assert (
+                self.serializer_class is not None
+            ), "The provided serializer class must not be null"
+
             data = request.data
             self.prepare_patch(data, instance)
             serializer = self.serializer_class(instance, data=data, partial=True)
@@ -146,10 +151,15 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
                     )
                     return Response(serializer.errors)
 
+        except permissions.exceptions.ValidationError as ve:
+            return Response({"success": False, "detail": "".join([str(x) for x in ve.detail])})
+
         except Exception as err:
             messages.error(self.request, str(err), str(err.__class__.__name__))
-            logger.exception(f"({self.__class__.__name__}): {err.__class__.__name__}")
-            return Response({"err": str(err)}, status.HTTP_400_BAD_REQUEST)
+            logger.exception("%s: %s", self.__class__, str(err))
+            return Response(
+                {"success": False, "detail": str(err)}, status.HTTP_400_BAD_REQUEST
+            )
 
         logger.debug("(%s) Instance-Update: %s", self.__class__.__name__, instance)
         return Response({"success": True})
@@ -163,9 +173,8 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
                  provided id or ``200`` on success
         :rtype: Response
         """
-        instance = self.get_object()
-
         try:
+            instance = self.get_object()
             self.on_delete(request, instance)
             # bound permissions should be removed as well
             for permission in self.get_bound_permissions(request):
@@ -173,10 +182,15 @@ class APIViewBase(GetObjectMixin, BoundPermissionsMixin, APIView):
                 permission.remove_from(request.user, instance)
 
             instance.delete()
+        except permissions.exceptions.ValidationError as ve:
+            return Response({"success": False, "detail": "".join([str(x) for x in ve.detail])})
+
         except Exception as err:
-            logger.exception("(%s) Delete-Instance: ", self.__class__.__name__)
             messages.error(self.request, str(err), str(err.__class__.__name__))
-            return Response({"err": str(err)}, status.HTTP_400_BAD_REQUEST)
+            logger.exception("%s: %s", self.__class__, str(err))
+            return Response(
+                {"success": False, "detail": str(err)}, status.HTTP_400_BAD_REQUEST
+            )
 
         logger.debug("Delete-Instance (success): id=%s", instance)
         return Response({"success": True}, status.HTTP_200_OK)
@@ -283,7 +297,10 @@ class CreationAPIViewBase(BoundPermissionsMixin, APIView):
         except Exception as err:
             logger.exception("(%s) New-Instance", self.__class__.__name__)
             messages.error(self.request, str(err), str(err.__class__.__name__))
-            return Response({"detail": str(err)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"detail": str(err), "success": False},
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         return Response(
             {"success": True, "pk": str(instance_id)}, status.HTTP_201_CREATED

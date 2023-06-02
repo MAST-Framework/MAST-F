@@ -241,14 +241,14 @@ LOGGING = {
         },
         "color": {
             "()": "colorlog.ColoredFormatter",
-            "format": "%(log_color)s[%(levelname)s] %(asctime)-15s - %(message)s",
+            "format": "%(log_color)s[%(levelname)s] (%(asctime)-15s) %(name)s::%(funcName)s[line=%(lineno)d] - %(message)s",
             "datefmt": "%d/%b/%Y %H:%M:%S",
             "log_colors": {
                 "DEBUG": "cyan",
                 "INFO": "green",
                 "WARNING": "yellow",
                 "ERROR": "red",
-                "CRITICAL": "red,bg_white",
+                "CRITICAL": "bold_red",
             },
         },
     },

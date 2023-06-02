@@ -34,21 +34,12 @@ COPY ./compose/local/django/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
 
-# In order to apply this Dockerfile to our Celery worker and Celery beat
-# containers, we have to setup their startup script:
-COPY ./compose/local/django/celery/worker/start /start_celery_worker
-RUN sed -i 's/\r$//g' /start_celery_worker
-RUN chmod +x /start_celery_worker
-
-COPY ./compose/local/django/celery/beat/start /start_celery_beat
-RUN sed -i 's/\r$//g' /start_celery_beat
-RUN chmod +x /start_celery_beat
-
 # TODO: add file exclusion rules
+COPY ./mastf /app/mastf
+COPY ./yara /app/yara
+COPY ./docs /app/docs
+COPY ./manage.py /app
 # COPY . /app
-# RUN rm -r /app/compose
-# RUN rm -r /app/.env
-# RUN rm -r /app
 
 # Specify the working directory where we access our files at runtime
 WORKDIR /app
