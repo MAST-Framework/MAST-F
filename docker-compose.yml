@@ -14,10 +14,6 @@ services:
       - ./.env
 
     volumes:
-      - type: bind
-        source: ./
-        target: /app
-
       - storage_data:/app_storage
     expose:
       - 8000
@@ -63,10 +59,6 @@ services:
     volumes:
       # In order to include additional scanner files and librares, we
       # have to include the whole app directory.
-      - type: bind
-        source: ./
-        target: /app
-
       - storage_data:/app_storage
 
     depends_on:
@@ -92,10 +84,6 @@ services:
 
     volumes:
       # Same as above
-      - type: bind
-        source: ./
-        target: /app
-
       - storage_data:/app_storage
 
     depends_on:
@@ -124,7 +112,6 @@ services:
 
 volumes:
   postgres_data: {}
-  static_volume: {}
   storage_data: {}
 
 networks:

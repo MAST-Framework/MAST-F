@@ -102,6 +102,7 @@ class NetworkSecurityHandler:
         self._snippet = None
 
     def link(self, visitor: AXmlVisitor) -> None:
+        # TODO: ...
         pass
 
     def get_snippet(self) -> Snippet:

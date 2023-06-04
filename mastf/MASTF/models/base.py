@@ -210,7 +210,7 @@ class Project(TimedModel):
         data.risk_medium = len(projects.filter(risk_level=Severity.MEDIUM))
         # The project IDs can be used later on in order to prevent a user to
         # create the previous query again.
-        data.ids = [x.project_uuid for x in projects]
+        data.ids = set([x.project_uuid for x in projects])
         return data
 
     @staticmethod
@@ -306,6 +306,7 @@ class File(TimedModel):
         sub_path = path[idx + len("projects") + 1 :]
         return "/".join(sub_path.split("/")[2:])
 
+
 class Account(TimedModel):
     """
     Represents an account associated with a user in the system.
@@ -374,7 +375,7 @@ class Bundle(TimedModel):
         - ``count``: The total number of bundles owned by the user.
         - ``risk_high``: The number of bundles with a risk level of Severity.HIGH.
         - ``risk_medium``: The number of bundles with a risk level of Severity.MEDIUM.
-        - ``ids``: A list of UUIDs representing the IDs of all the bundles owned by the user.
+        - ``ids``: A set of UUIDs representing the IDs of all the bundles owned by the user.
 
         :param owner: the owner
         :type owner: User
@@ -387,7 +388,7 @@ class Bundle(TimedModel):
         data.count = len(bundles)
         data.risk_high = len(bundles.filter(risk_level=Severity.HIGH))
         data.risk_medium = len(bundles.filter(risk_level=Severity.MEDIUM))
-        data.ids = [x.bundle_id for x in bundles]
+        data.ids = set([x.bundle_id for x in bundles])
         return data
 
     @staticmethod

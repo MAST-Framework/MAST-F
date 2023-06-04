@@ -44,7 +44,8 @@ RUN wget https://github.com/iBotPeaches/Apktool/releases/download/v${APKTOOL_VER
 ENV JADX_VERSION="1.4.7"
 RUN wget -O jadx.zip https://github.com/skylot/jadx/releases/download/v${JADX_VERSION}/jadx-${JADX_VERSION}.zip \
     && unzip jadx.zip -d "/opt/jadx-${JADX_VERSION}" \
-    && chmod +x "/opt/jadx-${JADX_VERSION}/bin/jadx"
+    && chmod +x "/opt/jadx-${JADX_VERSION}/bin/jadx" \
+    && rm jadx.zip
 
 # Set environment variables
 ENV PATH="/opt/dex-tools-${DEX2JAR_VERSION}:/opt/jadx-${JADX_VERSION}/bin:${PATH}"
@@ -70,14 +71,12 @@ RUN chmod +x /start_celery_beat
 
 
 # TODO: add file exclusion rules
-# COPY . /app
-# RUN rm -r /app/compose
-# RUN rm -r /app/.env
-# RUN rm -r /app
+COPY ./mastf /app/mastf
+COPY ./yara /app/yara
+COPY ./docs /app/docs
+COPY ./manage.py /app
 
 # Specify the working directory where we access our files at runtime
 WORKDIR /app
 
 ENTRYPOINT [ "/django_entrypoint" ]
-
-# https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool

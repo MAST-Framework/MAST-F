@@ -2,6 +2,9 @@
 venv/
 .git
 .gitignore
+__pycache__/
+
+docs/build/
 
 # Add your IDE folders below
 .vscode/

@@ -42,7 +42,7 @@ from mastf.MASTF.models import (
 from mastf.MASTF.serializers import CeleryAsyncResultSerializer
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.rest.views import ScanCreationView
-from mastf.MASTF.rest.permissions import CanEditProject
+from mastf.MASTF.rest.permissions import CanEditProject, IsProjectPublic
 from mastf.MASTF.utils.enum import State, Severity, Visibility
 
 __all__ = [
@@ -62,7 +62,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
     """
 
     template_name = "project/project-overview.html"
-    permission_classes = [CanEditProject]
+    permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs):
@@ -117,7 +117,7 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
     """
 
     template_name = "project/project-scan-history.html"
-    permission_classes = [CanEditProject]
+    permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs: dict) -> dict:
@@ -163,7 +163,7 @@ class UserScannersView(
     """
 
     template_name = "project/project-scanners.html"
-    permission_classes = [CanEditProject]
+    permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
 
     def post(self, request, *args, **kwargs):
@@ -238,7 +238,7 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
     """
 
     template_name = "project/project-packages.html"
-    permission_classes = [CanEditProject]
+    permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs):
@@ -282,5 +282,5 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
         context["available"] = list(User.objects.all())
         context["available"].remove(self.get_object(Project, "project_uuid").owner)
 
-        context["available_teams"] = Team.get_by_owner(self.request.user)
+        context["available_teams"] = set(Team.get_by_owner(self.request.user))
         return context

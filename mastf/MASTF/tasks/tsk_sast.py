@@ -1,20 +1,12 @@
-import uuid
 import pathlib
 
-from datetime import datetime
-from typing import Callable
-
-from celery import shared_task, group
-from celery.result import AsyncResult, GroupResult
+from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from mastf.core.files import TaskFileHandler
 from mastf.core.progress import Observer
 
 from mastf.MASTF import settings
-from mastf.MASTF.models import Scan, ScanTask, Scanner, File, Details
-from mastf.MASTF.scanners.plugin import ScannerPlugin
-from mastf.MASTF.scanners import code
+from mastf.MASTF.models import ScanTask
 
 logger = get_task_logger(__name__)
 
@@ -22,6 +14,9 @@ __all__ = ["perform_async_sast"]
 
 @shared_task(bind=True)
 def perform_async_sast(self, scan_task_id: str, file_dir) -> None:
+    # We don't want to run into circular import chains
+    from mastf.MASTF.scanners import code
+
     scan_task = ScanTask.objects.get(task_uuid=scan_task_id)
     scan_task.celery_id = self.request.id
     scan_task.save()

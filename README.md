@@ -3,7 +3,7 @@
 # Mobile Application Security Testing Framework (MAST-F) for iOS and Android
 
 [![python](https://img.shields.io/badge/python-3.8+-blue.svg?logo=python&labelColor=grey)](https://www.python.org/downloads/)
-![Version](https://img.shields.io:/static/v1?label=Version&message=v0.0.2-alpha&color=teal)
+![Version](https://img.shields.io:/static/v1?label=Version&message=2023.1&color=teal)
 ![Status](https://img.shields.io:/static/v1?label=Status&message=Alpha&color=lightgrey)
 ![Platform](https://img.shields.io:/static/v1?label=Docker&message=v23.0.5&color=blue&logo=docker)
 ![Codestyle](https://img.shields.io:/static/v1?label=Codestyle&message=black&color=black)

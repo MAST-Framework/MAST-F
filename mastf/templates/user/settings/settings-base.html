@@ -34,6 +34,7 @@
                                 My Teams</a>
                         </div>
 
+                        {% if is_admin %}
                         <h4 class="subheader mt-4">Admin Configuration</h4>
                         <div class="list-group list-group-transparent">
                             <a href="{% url 'Admin-Users-Config' %}" class="list-group-item list-group-item-action {% if active == 'admin-user-config' %}active{% endif %}">
@@ -47,6 +48,7 @@
                                  Environment
                             </a>
                         </div>
+                        {% endif %}
 
                         <h4 class="subheader mt-4">Experience</h4>
                         <div class="list-group list-group-transparent">

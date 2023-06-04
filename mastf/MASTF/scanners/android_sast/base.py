@@ -20,7 +20,11 @@ from mastf.MASTF.scanners.plugin import (
 
 from mastf.MASTF.tasks import perform_async_sast
 from mastf.MASTF.models import ScanTask
-from mastf.MASTF.scanners.android_sast import get_manifest_info, get_app_info
+from mastf.MASTF.scanners.android_sast import (
+    get_manifest_info,
+    get_app_info,
+    get_app_packages
+)
 
 
 class AndroidTask(ScannerPluginTask):
@@ -84,6 +88,8 @@ class AndroidTask(ScannerPluginTask):
         )
         perform_async_sast.delay(str(task.task_uuid), str(self.file_dir))
 
+    def do_package_scan(self) -> None:
+        get_app_packages(self)
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)
 

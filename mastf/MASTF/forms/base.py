@@ -13,6 +13,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import logging
+
 from django import forms
 from django.contrib.auth.models import User
 
@@ -31,6 +33,8 @@ __all__ = [
     "EditTeamMembersForm",
     "SetupForm",
 ]
+
+logger = logging.getLogger(__name__)
 
 
 class ModelField(forms.CharField):
@@ -65,10 +69,23 @@ class ModelField(forms.CharField):
             return None
 
         raw_value = super().clean(value)
-        value = self.converter(raw_value) if self.converter else raw_value
-        queryset = self.model.objects.filter(**{self.field_name: value})
+        try:
+            value = self.converter(raw_value) if self.converter else raw_value
+        except Exception as err:
+            logger.error(
+                "ModelField::Converter - Error converting value, using raw value instead: %s",
+                str(err),
+            )
+            value = raw_value
 
+        queryset = self.model.objects.filter(**{self.field_name: value})
         if not queryset.exists():
+            logger.error(
+                "RefError: Model=%s, Target-Key=%s, Target=%s",
+                self.model,
+                self.field_name,
+                value,
+            )
             raise forms.ValidationError(
                 "This field must be a reference to an existing model", code="required"
             )
@@ -146,6 +163,13 @@ class ManyToManyField(forms.CharField):
             if query.exists():
                 instance = query.first()
                 elements.append(instance)
+            else:
+                logger.debug(
+                    "ManyToManyField::Query - Model=%s, Target-Key=%s, Target=%s - Could not resolve object",
+                    self.model,
+                    self.field_name,
+                    objid,
+                )
 
         return elements
 

@@ -36,8 +36,12 @@ __all__ = [
     "AdminEnvironmentConfig",
 ]
 
+class SettingsMixin:
+    def is_admin(self, user: User) -> bool:
+        return Account.objects.get(user=user).role == Role.ADMIN or user.is_staff
 
-class UserProfileView(ContextMixinBase, TemplateAPIView):
+
+class UserProfileView(ContextMixinBase, SettingsMixin, TemplateAPIView):
     """
     A view for displaying the user profile settings.
     """
@@ -54,11 +58,12 @@ class UserProfileView(ContextMixinBase, TemplateAPIView):
         context = super().get_context_data(**kwargs)
         context["account"] = Account.objects.get(user=self.request.user)
         context["active"] = "account"
+        context["is_admin"] = self.is_admin(self.request.user)
         context["user"] = self.request.user
         return context
 
 
-class UserTeamsView(ContextMixinBase, TemplateAPIView):
+class UserTeamsView(ContextMixinBase, SettingsMixin, TemplateAPIView):
     """
     A view for displaying the user's teams and team settings.
     """
@@ -75,6 +80,7 @@ class UserTeamsView(ContextMixinBase, TemplateAPIView):
         context = super().get_context_data(**kwargs)
         context["teams"] = self.request.user.teams.all()
         context["active"] = "teams"
+        context["is_admin"] = self.is_admin(self.request.user)
         context["account"] = Account.objects.get(user=self.request.user)
         context["available"] = list(User.objects.all())
         context["available"].remove(self.request.user)
@@ -102,7 +108,7 @@ class UserTeamsView(ContextMixinBase, TemplateAPIView):
         return redirect("Teams")
 
 
-class UserTeamView(ContextMixinBase, TemplateAPIView):
+class UserTeamView(ContextMixinBase, SettingsMixin, TemplateAPIView):
     """
     A view for displaying the details of a specific team.
     """
@@ -120,10 +126,11 @@ class UserTeamView(ContextMixinBase, TemplateAPIView):
         """
         context = super().get_context_data(**kwargs)
         context["team"] = self.get_object(Team, "pk")
+        context["is_admin"] = self.is_admin(self.request.user)
         return context
 
 
-class AdminUserConfig(ContextMixinBase, TemplateAPIView):
+class AdminUserConfig(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/settings/settings-account.html"
     permission_classes = [CanEditUser]
     default_redirect = "Settings"
@@ -132,21 +139,21 @@ class AdminUserConfig(ContextMixinBase, TemplateAPIView):
         context = super().get_context_data(**kwargs)
         user = self.get_object(User, "pk")
         context["user"] = user
+        context["is_admin"] = self.is_admin(self.request.user)
         context["account"] = Account.objects.get(user=user)
         context["active"] = "admin-user-config"
-        context["is_admin"] = True
         context["user_roles"] = list(Role)
         return context
 
 
-class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
+class AdminUsersConfiguration(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/admin/users.html"
     permission_classes = [IsAdminUser | IsAdmin]
     default_redirect = "Settings"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
-
+        context["is_admin"] = self.is_admin(self.request.user)
         context["users"] = Account.objects.all()
         context["active"] = "admin-user-config"
         context["user_roles"] = list(Role)
@@ -167,7 +174,7 @@ class AdminUsersConfiguration(ContextMixinBase, TemplateAPIView):
         return redirect("Admin-Users-Config")
 
 
-class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
+class AdminTeamsConfiguration(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/settings/settings-teams.html"
     default_redirect = "Teams"
 
@@ -178,11 +185,11 @@ class AdminTeamsConfiguration(ContextMixinBase, TemplateAPIView):
         context["account"] = Account.objects.get(user=self.request.user)
         context["available"] = list(User.objects.all())
         context["available"].remove(self.request.user)
-        context["is_admin"] = True
+        context["is_admin"] = self.is_admin(self.request.user)
         return context
 
 
-class AdminEnvironmentConfig(ContextMixinBase, TemplateAPIView):
+class AdminEnvironmentConfig(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/admin/env.html"
     permission_classes = [IsAdminUser | IsAdmin]
     default_redirect = "Settings"
@@ -231,6 +238,7 @@ class AdminEnvironmentConfig(ContextMixinBase, TemplateAPIView):
 
         context["environment"] = [user_cat, auth_cat]
         context["env"] = env
+        context["is_admin"] = self.is_admin(self.request.user)
         return context
 
     def get_element(

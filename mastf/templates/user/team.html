@@ -144,6 +144,7 @@
                 </div>
                 {% endif %}
 
+                {% if request.user in team.users and team.owner != request.user %}
                 <div class="row border-bottom mb-3">
                     <div class="col mb-1">Leave
                         <span class="form-check-description">
@@ -159,8 +160,7 @@
                         </a>
                     </div>
                 </div>
-
-
+                {% endif %}
 
             </div>
         </div>

@@ -87,9 +87,8 @@ class AndroidManifestHandler:
     :param inspector: The ScannerPluginTask object for scanning.
     :param path: The path to the AndroidManifest.xml file.
     """
-    def __init__(
-        self, inspector: ScannerPluginTask, path: pathlib.Path
-    ) -> None:
+
+    def __init__(self, inspector: ScannerPluginTask, path: pathlib.Path) -> None:
         self.inspector = inspector
         self.path = path
         self.observer = inspector.observer
@@ -172,8 +171,22 @@ class AndroidManifestHandler:
         :param element: The application element.
         :param name: The name of the application.
         """
-        # self.handle_component(element, "application", name)
-        pass
+        if element.getAttribute("android:usesCleartextTraffic") == "true":
+            pass
+
+        if element.getAttribute("android:directBootAware") == "true":
+            pass
+
+        if element.getAttribute("android:debuggable") == "true":
+            pass
+
+        if element.getAttribute("android:allowBackup") == "true":
+            pass
+        elif element.getAttribute("android:allowBackup") == "false":
+            pass
+
+        if element.getAttribute("android:testOnly") == "true":
+            pass
 
     def on_service(self, element: Element, name: str) -> None:
         """
@@ -239,11 +252,8 @@ class AndroidManifestHandler:
                     )
                 )
 
-                if action == "android.intent.action.MAIN":
-                    component.is_main = True
-                elif action == "android.intent.category.LAUNCHER":
-                    component.is_launcher = True
-
+                component.is_main = action == "android.intent.action.MAIN"
+                component.is_launcher = action == "android.intent.category.LAUNCHER"
 
         # TODO: add findings
         component.save()

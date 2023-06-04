@@ -16,7 +16,6 @@
 import json
 import os
 
-from django.shortcuts import redirect
 from django.contrib import messages
 
 from mastf.MASTF.settings import DETAILS_DIR, ARTICLES

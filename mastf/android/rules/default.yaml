@@ -8,7 +8,7 @@
       file_ext: java
     severity: high
     template: insecure-implementation-of-ssl-with-allowallhostnameverifier
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-insecure-ssl-trustmanager-accept-all-certificates
   patterns:
@@ -22,7 +22,7 @@
       file_ext: java
     severity: critical
     template: insecure-implementation-of-ssl-with-trustmanager-accepting-all-certificates
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-insecure-ssl-weak-cipher-suites
   patterns:
@@ -44,7 +44,7 @@
       file_ext: java
     severity:
     template: insecure-implementation-of-ssl-with-sslv3-or-tlsv1
-    vulnerability: true
+    vulnerability: false
 
 # Insecure Random
 - rule-id: android-insecure-random-java
@@ -136,7 +136,7 @@
       file_ext: java
     severity: High
     template: external-file-loading-in-webview
-    vulnerability: true
+    vulnerability: false
 
 # temporary Files
 - rule-id: android-temporary-file-(java.io.file)
@@ -199,7 +199,7 @@
       file_ext: java
     severity: Medium
     template: creation-of-temporary-files
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-webview-javascript-execution
   patterns:
@@ -361,7 +361,7 @@
       file_ext: "java, kotlin"
     severity: "Medium"
     template: "root-detection"
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-raw-sql-queries
   patterns:
@@ -375,7 +375,7 @@
       file_ext: "java, kotlin"
     severity: "High"
     template: "raw-sql-queries"
-    vulnerability: true
+    vulnerability: false
 
 - rule-id: android-loading-native-libraries
   patterns:
@@ -387,5 +387,5 @@
       file_ext: "java, kotlin"
     severity: "Medium"
     template: "loading-native-libraries"
-    vulnerability: true
+    vulnerability: false
 
