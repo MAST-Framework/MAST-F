@@ -72,7 +72,9 @@ def get_file_checksum(fp: IOBase) -> tuple:
     return sha256.hexdigest(), sha1.hexdigest(), md5.hexdigest()
 
 
-def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project):
+def handle_scan_file_upload(
+    file: TemporaryUploadedFile, project: Project
+):
     """Handles a generic file upload to the given project.
 
     :param file: the file to be saved
@@ -92,6 +94,12 @@ def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project):
         logger.info("Uploaded file destination already exists! (%s)", str(path))
         return File.objects.get(file_path=str(path))
 
+    return handle_file_upload(file, internal_name, str(path), save=True)
+
+def handle_file_upload(
+    file: TemporaryUploadedFile, internal_name: str, path: str, save: bool = True
+) -> File:
+    # TODO: maybe add input validation
     with open(path, "wb") as dest:
         if file.multiple_chunks():
             for chunk in file.chunks(8192):
@@ -114,5 +122,6 @@ def handle_scan_file_upload(file: TemporaryUploadedFile, project: Project):
         file_path=str(path),
         internal_name=internal_name,
     )
-    db_file.save()
+    if save:
+        db_file.save()
     return db_file

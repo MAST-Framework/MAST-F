@@ -35,6 +35,7 @@ MAST-F Bundle | {{ bundle.name }}
                               {% elif bundle.risk_level|lower == "medium"%}bg-orange-lt
                               {% elif bundle.risk_level|lower == "low" %}bg-yellow-lt
                               {% elif bundle.risk_level|lower == "secure" %}bg-green-lt
+                              {% elif bundle.risk_level|lower == "info" %}bg-azure-lt
                               {% else %}bg-secondary-lt{% endif %}">
                           {{ bundle.risk_level }}
                           </span>
@@ -92,11 +93,9 @@ MAST-F Bundle | {{ bundle.name }}
                             <div class="card-body">
                                 <p class="subheader mb-3">Projects per Risk Level</p>
                                 <div class="progress progress-separated mb-3">
-                                    {% if risk_data %}
-                                        {% for category in vuln_data %}
-                                        <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% for category in vuln_data %}
+                                    <div class="progress-bar {{ category.color }}" role="progressbar" style="width: {{category.percent}}%" aria-label="{{category.name}}"></div>
+                                    {% endfor %}
                                 </div>
                                 <div class="row">
                                     {% for category in vuln_data %}

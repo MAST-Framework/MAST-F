@@ -26,6 +26,7 @@ MAST-F Project | {{ project.name }}
                     {% elif level == "low" %}status-yellow
                     {% elif level == "secure" %}status-green
                     {% elif level == "critical" %}status-pink
+                    {% elif level == "info" %}status-azure
                     {% else %}
                     status-secondary
                     {% endif %}
@@ -54,11 +55,15 @@ MAST-F Project | {{ project.name }}
                           {{ project.project_uuid }}
                       </li>
                       <li class="list-inline-item">
-                          <span class="badge {% if not project.risk_level %}bg-secondary-lt
-                              {% elif project.risk_level|lower == "high" %}bg-red-lt
-                              {% elif project.risk_level|lower == "medium"%}bg-orange-lt
-                              {% elif project.risk_level|lower == "low" %}bg-yellow-lt
-                              {% else %}bg-secondary-lt{% endif %}">
+                          <span class="badge
+                            {% with project.risk_level|lower as level %}
+                                {% if level == "high" %}bg-red-lt
+                                {% elif level == "medium"%}bg-orange-lt
+                                {% elif level == "low" %}bg-yellow-lt
+                                {% elif level == "critical" %}bg-pink-lt
+                                {% elif level == "info" %}bg-azure-lt
+                                {% else %}bg-secondary-lt{% endif %}
+                            {% endwith %}">
                           {{ project.risk_level }}
                           </span>
                       </li>

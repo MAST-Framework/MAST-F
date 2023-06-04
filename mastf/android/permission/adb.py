@@ -59,12 +59,12 @@ output:
     * The ADB output is represented in a hierarchical structure with indentation for readability.
     * Each permission and group entry is preceded by a "+", and the indentation level indicates the hierarchy.
 
-2. Group Entry: (*suffix =* ``group:``)
+2. Group Entry: (*prefix =* ``group:``)
 
     * Groups must be specified before simple permissions are written.
     * They can store labels as defined in permission entries and permissions as well
 
-3. Permission Entry:
+3. Permission Entry: (*prefix =* ``permission:``)
 
     * Each permission entry represents a specific permission and its associated details.
     * It contains the following attributes:

@@ -15,34 +15,20 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import logging
 
-from androguard.core.bytecodes import apk, dvm
+from androguard.core.bytecodes import apk
 
-from mastf.MASTF.models import Package, Dependency, Scanner
-from mastf.MASTF.utils.enum import Platform
+from mastf.MASTF.models import Package, Scanner
 from mastf.MASTF.scanners.plugin import ScannerPluginTask
 
 logger = logging.getLogger(__name__)
 
 def get_app_packages(task: ScannerPluginTask) -> None:
+    # TODO: Use python package mastf-libscout to scan the given
+    # apk file for possible dependencies. The output returns a possible
+    # description, so we can add it if no template was found
     apk_file: apk.APK = task[apk.APK]
 
-    dex_files = list(map(dvm.DalvikVMFormat, apk_file.get_all_dex()))
-    class_names = []
-    for dvm_file in dex_files:
-        class_names.extend(dvm_file.get_classes_names())
-
-    for name in set(class_names):
-        group_id = str(name).lower().replace("/", ".")[1:-1]
-        queryset = Package.objects.filter(platform=Platform.ANDROID, group_id=group_id)
-        if len(queryset) == 1:
-            # only one package, so we can definitely add it
-            add_package(queryset.first(), task.scan_task.scanner)
-        else:
-            # Dumping package id
-            logger.info(group_id)
-
-    # TODO: native dependencies
-
+    # Rather use lief.DEX.parse as we just want all class names
 
 def add_package(package: Package, scanner: Scanner, version: str = None) -> None:
     # TODO: add scraper the check for higher version number

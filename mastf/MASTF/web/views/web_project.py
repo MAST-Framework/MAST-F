@@ -263,7 +263,7 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
     """
 
     template_name = "project/project-settings.html"
-    permission_classes = [CanEditProject | IsProjectPublic]
+    permission_classes = [CanEditProject]
     default_redirect = "Projects"
 
     def get_context_data(self, **kwargs: dict) -> dict:
@@ -282,5 +282,5 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
         context["available"] = list(User.objects.all())
         context["available"].remove(self.get_object(Project, "project_uuid").owner)
 
-        context["available_teams"] = Team.get_by_owner(self.request.user)
+        context["available_teams"] = set(Team.get_by_owner(self.request.user))
         return context

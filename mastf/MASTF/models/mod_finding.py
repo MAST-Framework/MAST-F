@@ -283,6 +283,14 @@ class AbstractBaseFinding(TimedModel):
         return data
 
 
+class DataFlowItem(TimedModel):
+    # proposed for future analysis. Note that there won't be any migrations
+    # related to this model as it is unused.
+    position = models.IntegerField(default=0)
+    source_node = models.TextField()
+    sink_node = models.TextField()
+
+
 # Finding implementation
 class Finding(AbstractBaseFinding):
     """A model that represents a finding.
@@ -327,8 +335,9 @@ class Finding(AbstractBaseFinding):
             severity=severity or template.default_severity,
             template=template,
             is_custom=bool(text),
-            custom_text=text % args
+            custom_text=text % args,
         )
+
 
 class Vulnerability(AbstractBaseFinding):
     """A model that represents a vulnerability.
