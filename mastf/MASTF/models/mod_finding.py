@@ -30,6 +30,7 @@ __all__ = [
     "AbstractBaseFinding",
     "Finding",
     "Vulnerability",
+    "DataFlowItem",
 ]
 
 
@@ -289,7 +290,6 @@ class DataFlowItem(TimedModel):
     position = models.IntegerField(default=0)
     source_node = models.TextField()
     sink_node = models.TextField()
-
 
 # Finding implementation
 class Finding(AbstractBaseFinding):

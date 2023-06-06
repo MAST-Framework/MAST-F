@@ -155,7 +155,7 @@ class AXmlVisitorBase(type):
                 if hasattr(obj, "exclude"):
                     exclude = getattr(obj, "exclude")
                     assert isinstance(
-                        exclude, (list, tuple)
+                        exclude, (list, tuple, str)
                     ), "The 'exclude' attribute must be of type list or tuple"
 
         for element in nodes:
@@ -168,8 +168,11 @@ class AXmlVisitorBase(type):
             # To add elements from super classes we check against
             # previously defined elements and add them accordingly.
             elements = getattr(new_class, "__axml__")
-            for x in exclude:
-                elements.pop(x)
+            if isinstance(exclude, str) and exclude == "*":
+                elements.clear()
+            else:
+                for x in exclude:
+                    elements.pop(x)
 
             axml_elements.update(elements)
 

@@ -1,8 +1,11 @@
 import logging
+import json
 
 from androguard.core.bytecodes import apk
 
 from xml.dom.minidom import Element, parse
+
+from mastf.android.info import get_details
 from mastf.android.axml import AXmlVisitor
 
 from mastf.MASTF.scanners.plugin import ScannerPluginTask
@@ -16,6 +19,7 @@ from mastf.MASTF.models import (
 )
 
 apk.log.setLevel(logging.WARNING)
+
 
 def get_app_info(inspector: ScannerPluginTask) -> None:
     """Retrieves and saves information about the scanned app.
@@ -39,18 +43,33 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
             if apk_file.is_signed_v3():
                 version = "v3"
 
-            details.certificates.add(Certificate.objects.create(
-                version=version,
-                sha1=certificate.sha1,
-                sha256=certificate.sha256,
-                issuer=certificate.issuer.human_friendly,
-                subject=certificate.subject.human_friendly,
-                hash_algorithm=certificate.hash_algo,
-                signature_algorithm=certificate.signature_algo,
-                serial_number=certificate.serial_number,
-            ))
+            details.certificates.add(
+                Certificate.objects.create(
+                    version=version,
+                    sha1=certificate.sha1,
+                    sha256=certificate.sha256,
+                    issuer=certificate.issuer.human_friendly,
+                    subject=certificate.subject.human_friendly,
+                    hash_algorithm=certificate.hash_algo,
+                    signature_algorithm=certificate.signature_algo,
+                    serial_number=certificate.serial_number,
+                )
+            )
 
     details.save()
+    # TODO: Display information on possible vulnerabilities if application
+    # is signed with MD5, SHA1, or v1 signature scheme.
+
+    result = get_details(details.app_id)
+    # Create info.json file
+    target_path = inspector.file_dir / "info.json"
+    if target_path.exists():
+        # TODO: log that
+        pass
+
+    # The stored app-info file will be used within the scan results tab
+    with open(str(target_path), "w") as fp:
+        json.dump(result, fp)
 
 
 def get_app_net_info(inspector: ScannerPluginTask) -> None:
@@ -66,7 +85,7 @@ def get_app_net_info(inspector: ScannerPluginTask) -> None:
     """
     # # Prepare the directory where the XML files are located
     content_dir = inspector.file_dir / "contents"
-    visitor = AXmlVisitor()
+    visitor = NetworkSecurityVisitor()
     handler = NetworkSecurityHandler(inspector)
 
     handler.link(visitor)
@@ -96,14 +115,35 @@ def get_app_net_info(inspector: ScannerPluginTask) -> None:
         visitor.visit_document(document)
 
 
+class NetworkSecurityVisitor(AXmlVisitor):
+    class Meta:
+        exclude = "*"  # excludes all other nodes
+        nodes = [  # Custom nodes
+            "base-config",
+            "domain-config",
+            "pin-set",
+            "debug-overrides",
+        ]
+
+
 class NetworkSecurityHandler:
     def __init__(self, inspector: ScannerPluginTask) -> None:
         self.inspector = inspector
         self._snippet = None
 
     def link(self, visitor: AXmlVisitor) -> None:
-        # TODO: ...
-        pass
+        visitor.base_config.add(
+            "cleartextTrafficPermitted", self.on_base_cfg_cleartext_traffic
+        )
+        visitor.domain_config.add(
+            "cleartextTrafficPermitted", self.on_domain_cfg_cleartext_traffic
+        )
+        visitor.domain_config.add(
+            "cleartextTrafficPermitted", self.on_debug_cfg_cleartext_traffic
+        )
+        visitor.start.add("base-config", self.on_base_cfg)
+        visitor.start.add("domain-config", self.on_domain_cfg)
+        visitor.start.add("debug-overrides", self.on_debug_cfg)
 
     def get_snippet(self) -> Snippet:
         if self._snippet:
@@ -128,11 +168,88 @@ class NetworkSecurityHandler:
         )
 
     def on_base_cfg_cleartext_traffic(self, element: Element, enabled: str) -> None:
+        self._handle_ct(
+            element,
+            enabled,
+            [
+                "base-config-cleartext-traffic-enabled",
+                "base-config-cleartext-traffic-disabled",
+            ],
+        )
+
+    def on_domain_cfg_cleartext_traffic(self, element: Element, enabled: str) -> None:
+        self._handle_ct(
+            element,
+            enabled,
+            [
+                "domain-config-cleartext-traffic-enabled",
+                "domain-config-cleartext-traffic-disabled",
+            ],
+        )
+
+    def on_debug_cfg_cleartext_traffic(self, element: Element, enabled: str) -> None:
+        self._handle_ct(
+            element,
+            enabled,
+            [
+                "debug-config-cleartext-traffic-enabled",
+                "debug-config-cleartext-traffic-disabled",
+            ],
+        )
+
+    def on_base_cfg(self, element: Element) -> None:
+        self._handle_cfg(
+            element,
+            [
+                "base-config-trust-bundles-certs",
+                "base-config-trust-system-certs",
+                "base-config-trust-user-certs",
+            ],
+        )
+
+    def on_domain_cfg(self, element: Element) -> None:
+        self._handle_cfg(
+            element,
+            [
+                "domain-config-trust-bundles-certs",
+                "domain-config-trust-system-certs",
+                "domain-config-trust-user-certs",
+            ],
+        )
+
+    def on_debug_cfg(self, element: Element) -> None:
+        self._handle_cfg(
+            element,
+            [
+                "debug-config-trust-bundles-certs",
+                "debug-config-trust-system-certs",
+                "debug-config-trust-user-certs",
+            ],
+        )
+
+    def _handle_ct(self, element, value, templates) -> None:
         template_id = None
-        if enabled == "true":
-            template_id="base-config-cleartext-traffic-enabled"
-        elif enabled == "false":
-            template_id="base-config-cleartext-traffic-disabled"
+        if value == "true":
+            template_id = templates[0]
+        elif value == "false":
+            template_id = templates[1]
 
         if template_id:
             self.create_finding(FindingTemplate.objects.get(template_id=template_id))
+
+    def _handle_cfg(self, element, templates: list) -> None:
+        trust_anchors = element.getElementsByTagName("trust-anchors")
+        if trust_anchors:
+            template_id = None
+            for cert in trust_anchors[0].getElementsByTagName("certifiates"):
+                if "@raw/" in cert.getAttribute("src"):
+                    template_id = templates[0]
+                elif "system" in cert.getAttribute("src"):
+                    template_id = templates[1]
+                elif "user" in cert.getAttribute("src"):
+                    template_id = templates[2]
+
+                if template_id:
+                    self.create_finding(
+                        FindingTemplate.objects.get(template_id=template_id)
+                    )

@@ -18,7 +18,7 @@ from django.db import models
 
 from mastf.MASTF.utils.enum import ProtectionLevel
 
-from .mod_finding import AbstractBaseFinding
+from .mod_finding import AbstractBaseFinding, DataFlowItem
 from .base import TimedModel
 
 __all__ = ["AppPermission", "PermissionFinding"]

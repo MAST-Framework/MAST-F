@@ -17,6 +17,7 @@ The directory structure of a simple project can be summarized to the following:
         <uuid:project_uuid>/
             uploadedFile.[apk|ipa]
             <md5:file_md5>/
+                info.json # PlayStore, AppStore information
                 src/
                     [ java/ ]
                     [ smali/ ]

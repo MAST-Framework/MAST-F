@@ -18,3 +18,5 @@ pyyaml
 androguard
 pysast>=1.1.3a0
 lief
+google_play_scraper
+mastf-libscout>=0.1.1a0

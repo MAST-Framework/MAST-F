@@ -94,6 +94,7 @@ class AndroidManifestHandler:
         self.observer = inspector.observer
         self.snippet = Snippet(language="xml", file_name=path.name)
         self._saved = False
+        self._application_protected = False
 
     @property
     def scan(self) -> Scan:
@@ -117,7 +118,7 @@ class AndroidManifestHandler:
             if hasattr(visitor, name):
                 getattr(visitor, name).add("android:name", getattr(self, f"on_{name}"))
 
-    def on_permission(self, element: Element, identifier: str) -> None:
+    def on_permission(self, element: Element, identifier: str) -> AppPermission:
         """
         Event handler for permission elements in the AndroidManifest.xml.
 
@@ -155,14 +156,20 @@ class AndroidManifestHandler:
             self.snippet.save()
             self._saved = True
 
-        PermissionFinding.objects.create(
-            pk=str(uuid.uuid4()),
-            scan=self.scan,
-            snippet=self.snippet,
-            severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
-            scanner=self.inspector.scan_task.scanner,
-            permission=permission,
+        finding = PermissionFinding.objects.filter(
+            scan=self.scan, permission=permission
         )
+        if not finding.exists():
+            PermissionFinding.objects.create(
+                pk=str(uuid.uuid4()),
+                scan=self.scan,
+                snippet=self.snippet,
+                severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
+                scanner=self.inspector.scan_task.scanner,
+                permission=permission,
+            )
+
+        return permission
 
     def on_application(self, element: Element, name: str) -> None:
         """
@@ -242,6 +249,10 @@ class AndroidManifestHandler:
         self.observer.logger.debug("Created component instance %s", component)
         component.save()
 
+        identifier = element.getAttribute("android:permission")
+        if identifier:
+            component.permission = self.on_permission(element, identifier)
+
         # TODO: if exported add Finding
         for intent_filter in element.childNodes:
             if intent_filter.nodeName == "intent-filter":
@@ -251,9 +262,17 @@ class AndroidManifestHandler:
                         name=action.split(".")[-1], action=action
                     )
                 )
-
                 component.is_main = action == "android.intent.action.MAIN"
                 component.is_launcher = action == "android.intent.category.LAUNCHER"
 
-        # TODO: add findings
+                if not component.is_main:
+                    # Implicit exported component with or without permission definition
+                    # TODO: add findings
+                    pass
+
+        if not identifier and not self._application_protected:
+            # Exported component without proper permission declaration
+            # TODO: add findings
+            pass
+
         component.save()

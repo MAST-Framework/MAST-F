@@ -54,6 +54,13 @@ class Package(TimedModel):
     of the values from :class:`Platform`.
     """
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["group_id", "artifact_id"], name="unique_package_groupid_artifactid"
+            )
+        ]
+
 
 class PackageVulnerability(TimedModel):
     """A Django model that represents a vulnerability associated with a software package."""
