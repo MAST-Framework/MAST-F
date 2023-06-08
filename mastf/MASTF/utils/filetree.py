@@ -193,6 +193,8 @@ def apply_rules(root: pathlib.Path, root_name: str) -> dict:
         children.append(apply_rules(file, root_name))
 
     tree = data.pop()
+    # Sorted may be better
+    children.sort(key=lambda x: x["text"])
     tree['children'] = children
     return tree
 

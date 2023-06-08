@@ -54,6 +54,8 @@ class Package(TimedModel):
     of the values from :class:`Platform`.
     """
 
+    is_tracker = models.BooleanField(default=False)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

@@ -5,8 +5,6 @@ import os
 
 from uuid import uuid4
 
-from django.http import HttpResponse
-
 from rest_framework import permissions
 from rest_framework.views import APIView
 
@@ -19,7 +17,7 @@ from mastf.MASTF.models import AppPermission
 from mastf.MASTF.forms import AppPermissionForm
 from mastf.MASTF.utils import upload
 
-from mastf.android.permission import adb
+from mastf.core.files import apl
 
 from .base import APIViewBase, ListAPIViewBase, CreationAPIViewBase
 
@@ -74,7 +72,7 @@ class AppPermissionFileUpload(APIView):
 
         try:
             with open(str(target_file), "r") as fp:
-                permissions = adb.AndroidPermissions.all(text=fp)
+                permissions = apl.load(fp)
 
             os.remove(str(target_file))
         except Exception as err:
@@ -85,21 +83,25 @@ class AppPermissionFileUpload(APIView):
             "Importing APL from %s with checksum: %s", str(target_file), fileobj.sha256
         )
         pobjects = []
-        for key, value in permissions.ungrouped:
+        for identifier in permissions.ungrouped:
+            permission = permissions.ungrouped[identifier]
             pobjects.append(
                 AppPermission(
                     permission_uuid=uuid4(),
-                    identifier=key,
-                    name=value.get("label", "<empty permission name>"),
-                    protection_level=value.get("protectionLevel", "").lower(),
-                    dangerous="dangerous" in value.get("protectionLevel", "").lower(),
-                    group="",  # not implemented yet,
-                    short_description=value.get(
+                    identifier=identifier,
+                    name=permission.get("label", "<empty permission name>"),
+                    protection_level=permission.get("protectionLevel", "").lower(),
+                    dangerous="dangerous" in permission.get("protectionLevel", "").lower(),
+                    group="",  # ungrouped permissions don't have a group,
+                    short_description=permission.get(
                         "description",
                         "Dynamic generated description. Please edit the short and long description in the plugins-context of your MAST-F Instance.",
                     ),
                 )
             )
+
+        for group_id in permissions:
+            group = permissions[group_id]
 
         logger.info("Creating %d permission objects", len(pobjects))
         AppPermission.objects.bulk_create(pobjects, update_conflicts=["identifier"])
