@@ -19,6 +19,7 @@ from mastf.MASTF.models import (
 )
 
 apk.log.setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
 
 
 def get_app_info(inspector: ScannerPluginTask) -> None:
@@ -64,8 +65,7 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
     # Create info.json file
     target_path = inspector.file_dir / "info.json"
     if target_path.exists():
-        # TODO: log that
-        pass
+        logger.warning("Info.json already exists for app: %s", details.app_name)
 
     # The stored app-info file will be used within the scan results tab
     with open(str(target_path), "w") as fp:
@@ -201,7 +201,7 @@ class NetworkSecurityHandler:
         self._handle_cfg(
             element,
             [
-                "base-config-trust-bundles-certs",
+                "base-config-trust-bundled-certs",
                 "base-config-trust-system-certs",
                 "base-config-trust-user-certs",
             ],
@@ -211,7 +211,7 @@ class NetworkSecurityHandler:
         self._handle_cfg(
             element,
             [
-                "domain-config-trust-bundles-certs",
+                "domain-config-trust-bundled-certs",
                 "domain-config-trust-system-certs",
                 "domain-config-trust-user-certs",
             ],
@@ -221,7 +221,7 @@ class NetworkSecurityHandler:
         self._handle_cfg(
             element,
             [
-                "debug-config-trust-bundles-certs",
+                "debug-config-trust-bundled-certs",
                 "debug-config-trust-system-certs",
                 "debug-config-trust-user-certs",
             ],

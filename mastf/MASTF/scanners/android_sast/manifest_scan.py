@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import pathlib
 import logging
 import uuid
@@ -179,7 +194,7 @@ class AndroidManifestHandler:
         :param name: The name of the application.
         """
         if element.getAttribute("android:usesCleartextTraffic") == "true":
-            pass
+            pass  # TODO: add findings
 
         if element.getAttribute("android:directBootAware") == "true":
             pass
@@ -265,14 +280,14 @@ class AndroidManifestHandler:
                 component.is_main = action == "android.intent.action.MAIN"
                 component.is_launcher = action == "android.intent.category.LAUNCHER"
 
-                if not component.is_main:
+                if not component.is_main and not component.permission:
                     # Implicit exported component with or without permission definition
                     # TODO: add findings
-                    pass
+                    component.is_protected = False
 
         if not identifier and not self._application_protected:
             # Exported component without proper permission declaration
             # TODO: add findings
-            pass
+            component.is_protected = False
 
         component.save()

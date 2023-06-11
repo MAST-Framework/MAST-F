@@ -92,7 +92,9 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                     # Set the version if not already specified
                     dep.version = version
             else:
-                dependencies[package] = Dependency(pk=uuid.uuid4(), package=package, version=version)
+                dependencies[package] = Dependency(
+                    pk=uuid.uuid4(), package=package, version=version
+                )
 
     # 2: .version files (mostly Android related frameworks)
     for config in base_dir.rglob("*.version"):
@@ -108,7 +110,9 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                 version = fp.readline().strip()
 
             if package not in dependencies:
-                dependencies[package] = Dependency(pk=uuid.uuid4(), package=package, version=version)
+                dependencies[package] = Dependency(
+                    pk=uuid.uuid4(), package=package, version=version
+                )
             else:
                 dep = dependencies[package]
                 if version and not dep.version:
@@ -134,17 +138,21 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                     package = queryset.first()
                     # If the package is already present, check if there is a version mapped to it
                     if package not in dependencies:
-                        dependencies[package] = Dependency(pk=uuid.uuid4(), package=package)
+                        dependencies[package] = Dependency(
+                            pk=uuid.uuid4(), package=package
+                        )
 
     # 4: Cordova dependencies (TODO)
     # ...
 
     # Add all dependencies to the current scan if not already present
-    present_packages = set(map(lambda x: x.package, Dependency.objects.filter(project=task.scan.project)))
+    present_packages = set(
+        map(lambda x: x.package, Dependency.objects.filter(project=task.scan.project))
+    )
     for package in dependencies:
         dependency = dependencies[package]
         if package in present_packages:
-            continue # just ignore duplicates
+            continue  # just ignore duplicates
 
         dependency.project = task.scan.project
         dependency.scanner = task.scan_task.scanner
@@ -152,7 +160,10 @@ def get_app_packages(task: ScannerPluginTask) -> None:
 
     Dependency.objects.bulk_create(dependencies.values())
 
-def run_libscout_scan(task: ScannerPluginTask, profiles_dir: str, android_jar: str) -> None:
+
+def run_libscout_scan(
+    task: ScannerPluginTask, profiles_dir: str, android_jar: str
+) -> None:
     # config:
     #   - android.jar path
     #   - profiles directory

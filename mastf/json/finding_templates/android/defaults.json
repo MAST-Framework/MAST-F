@@ -367,16 +367,54 @@
             "meta_masvs": "MASVS:2.0.1-M1: \"System Design Verification\" and MASVS:2.0.1-M3: \"Tampering and Reverse Engineering Verification\""
         },
         {
-            "title": "Loading Native Libraries",
-            "description": "The app loads native libraries without proper validation or integrity checks.",
-            "risk": "Loading native libraries without proper validation or integrity checks can lead to security vulnerabilities, such as loading malicious or tampered libraries. Attackers may exploit these vulnerabilities to execute arbitrary code, escalate privileges, or perform other malicious actions.",
-            "mitigation": "Implement robust security measures to ensure the integrity of native libraries, such as verifying library signatures, using secure storage for libraries, and implementing runtime integrity checks. Avoid loading native libraries from untrusted sources.",
-            "article": "android/loading-native-libraries",
+            "title": "Base-Config ClearText-Traffic Enabled",
+            "description": "The basic configuration in the `network_security_config.xml` of the Android app allows clear text traffic, which poses a security risk as sensitive data transmitted over the network can be intercepted and compromised.",
+            "risk": "Enabling clear text traffic increases the vulnerability of the app to man-in-the-middle attacks. Attackers can eavesdrop on network communications and potentially access sensitive information such as login credentials, personal data, or other confidential data.",
+            "mitigation": "To mitigate this risk, it is recommended to enforce the use of encrypted communication channels by configuring the `network_security_config.xml` to disallow clear text traffic.",
+            "article": "android/cleartext-traffic",
+            "default_severity": "High",
+            "meta_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "meta_cwe": "CWE-319",
+            "meta_masvs": "MASVS: 9.4"
+        },
+        {
+            "title": "Base-Config ClearText-Traffic Disabled",
+            "description": "The basic configuration in the `network_security_config.xml` of the Android app has disabled clear text traffic, which enhances the security of the app by enforcing the use of encrypted communication channels.",
+            "risk": "Disabling clear text traffic reduces the vulnerability of the app to man-in-the-middle attacks. Encrypted communication helps protect sensitive information transmitted over the network from interception and unauthorized access.",
+            "mitigation": "By configuring the `network_security_config.xml` to disallow clear text traffic, the app ensures that all network communications are encrypted, providing a higher level of security.",
+            "article": "android/cleartext-traffic",
+            "default_severity": "Secure",
+            "meta_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
+            "meta_cwe": "CWE-319",
+            "meta_masvs": "MASVS: 9.4"
+        },
+        {
+            "title": "Domain-Config ClearText-Traffic Disabled",
+            "description": "The `network_security_config` of the Android app has disabled clear text traffic on specific domains, providing a secure communication mechanism for those domains while allowing clear text traffic on other domains.",
+            "risk": "Disabling clear text traffic on specific domains reduces the vulnerability of the app to man-in-the-middle attacks for those domains. Encrypted communication is enforced, protecting sensitive information transmitted over the network on those domains from interception and unauthorized access. However, it's important to ensure that clear text traffic on other domains is properly secured.",
+            "mitigation": "By configuring the `network_security_config` to disable clear text traffic on specific domains, the app ensures that communication with those domains is encrypted. However, it's crucial to ensure that all other domains that require clear text traffic have additional security measures in place to protect sensitive information.",
+            "article": "android/cleartext-traffic",
+            "default_severity": "Secure",
+            "meta_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
+            "meta_cwe": "CWE-319",
+            "meta_masvs": "MASVS: 9.4"
+        },
+        {
+            "title": "Domain-Config ClearText-Traffic Enabled",
+            "description": "The `network_security_config` of the Android app allows clear text traffic only to specific domains, while enforcing encrypted communication for other domains per default.",
+            "risk": "Enabling clear text traffic to specific domains increases the vulnerability of the app to man-in-the-middle attacks for those domains. Attackers can potentially intercept and compromise sensitive information transmitted over the network to those domains. However, encrypted communication is still enforced for other domains, reducing the overall risk.",
+            "mitigation": "To mitigate the risk associated with enabling clear text traffic to specific domains, it is recommended to ensure that those domains are properly secured and additional security measures are implemented. Additionally, it is important to enforce encrypted communication for all other domains.",
+            "article": "android/cleartext-traffic",
             "default_severity": "Medium",
-            "meta_cvss": "CVSS:3.0/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-            "meta_cwe": "CWE-114",
-            "meta_masvs": "MASVS:2.0.1-M3: \"Tampering and Reverse Engineering Verification\""
+            "meta_cvss": "CVSS:5.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+            "meta_cwe": "CWE-319",
+            "meta_masvs": "MASVS: 9.4"
         }
+
+
+
+
+
 
 
 

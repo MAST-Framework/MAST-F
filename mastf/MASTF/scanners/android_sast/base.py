@@ -1,3 +1,18 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import uuid
 
 from androguard.core.bytecodes import apk
@@ -23,7 +38,7 @@ from mastf.MASTF.models import ScanTask
 from mastf.MASTF.scanners.android_sast import (
     get_manifest_info,
     get_app_info,
-    get_app_packages
+    get_app_packages,
 )
 
 
@@ -91,6 +106,7 @@ class AndroidTask(ScannerPluginTask):
     def do_package_scan(self) -> None:
         get_app_packages(self)
 
+
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)
 
 
@@ -113,6 +129,7 @@ class AndroidScannerPlugin(*mixins, ScannerPlugin):
     .. note::
         Make sure to properly configure the scanner plugin before running the scan.
     """
+
     name = "Android Plugin"
     title = "Android SAST Engine"
     help = "Basic security checks for Android apps."

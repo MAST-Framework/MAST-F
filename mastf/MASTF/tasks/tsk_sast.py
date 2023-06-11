@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pathlib
 
 from celery import shared_task
@@ -11,6 +13,7 @@ from mastf.MASTF.models import ScanTask
 logger = get_task_logger(__name__)
 
 __all__ = ["perform_async_sast"]
+
 
 @shared_task(bind=True)
 def perform_async_sast(self, scan_task_id: str, file_dir) -> None:
@@ -29,7 +32,7 @@ def perform_async_sast(self, scan_task_id: str, file_dir) -> None:
             target_dir=pathlib.Path(file_dir) / "src",
             observer=observer,
             excluded=["re:.*/(android[x]?|kotlin[x]?)/.*"],
-            rules_dirs=[settings.BASE_DIR / "android" / "rules"]
+            rules_dirs=[settings.BASE_DIR / "android" / "rules"],
         )
         _, meta = observer.success("Finished pySAST scan!")
         return meta

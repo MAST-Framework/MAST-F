@@ -91,7 +91,8 @@ class AppPermissionFileUpload(APIView):
                     identifier=identifier,
                     name=permission.get("label", "<empty permission name>"),
                     protection_level=permission.get("protectionLevel", "").lower(),
-                    dangerous="dangerous" in permission.get("protectionLevel", "").lower(),
+                    dangerous="dangerous"
+                    in permission.get("protectionLevel", "").lower(),
                     group="",  # ungrouped permissions don't have a group,
                     short_description=permission.get(
                         "description",
@@ -102,6 +103,24 @@ class AppPermissionFileUpload(APIView):
 
         for group_id in permissions:
             group = permissions[group_id]
+            group_permissions = group.get("permissions", {})
+            for permission_id in group_permissions:
+                permission = group[permission_id]
+                pobjects.append(
+                    AppPermission(
+                        permission_uuid=uuid4(),
+                        identifier=permission_id,
+                        name=permission.get("label", "<empty permission name>"),
+                        protection_level=permission.get("protectionLevel", "").lower(),
+                        dangerous="dangerous"
+                        in permission.get("protectionLevel", "").lower(),
+                        group=group_id,
+                        short_description=permission.get(
+                            "description",
+                            "Dynamic generated description. Please edit the short and long description in the plugins-context of your MAST-F Instance.",
+                        ),
+                    )
+                )
 
         logger.info("Creating %d permission objects", len(pobjects))
         AppPermission.objects.bulk_create(pobjects, update_conflicts=["identifier"])
