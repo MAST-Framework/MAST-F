@@ -2,34 +2,7 @@
 {% load static %}
 
 {% block css_extended %}
-<link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
 <link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
-<style>
-pre {
-    white-space: pre-wrap;       /* css-3 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
-}
-
-.enlighter-default{
-    height: 500px;
-    overflow-x: auto;
-}
-.enlighter-btn-raw{
-    display: none !important;
-}
-
-.enlighter-btn-window{
-    display: none !important;
-}
-
-.enlighter-btn-website{
-    display: none !important;
-}
-</style>
-
 {% endblock css_extended %}
 
 {% block content %}
@@ -92,7 +65,7 @@ pre {
                             <div class="card-body">
                                 <div class="tab-content">
                                     <div class="tab-pane active show" id="tabs-language">
-                                        <pre class="finding_code" style="margin-bottom: 0px;" id="finding-code">##</pre>
+                                        <div id="finding_code" style="height:500px"></div>
                                     </div>
                                     <div class="tab-pane" id="tabs-file-details">
                                         <div class="card-body">
@@ -262,9 +235,8 @@ pre {
 
 
 {% block js_extended %}
-<script type="text/javascript" src="{% static 'libs/enlighterjs/enlighterjs.min.js' %}"></script>
-<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 
+<script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
 <script>
     hideFinding = function() {
         $('#finding-card').addClass('visually-hidden');
@@ -280,6 +252,32 @@ pre {
         {% for category in data %}
         $('#table-{{ category.internal_id }}-{{ forloop.counter }}').DataTable();
         {% endfor %}
+    });
+
+</script>
+
+<script type="text/javascript" src="{% static 'libs/monaco/min/vs/loader.js' %}"></script>
+<script>
+    require.config({ paths: { 'vs': '{% static "libs/monaco/min/vs" %}' } });
+
+    require(['vs/editor/editor.main'], function () {
+        var theme_name = 'vs';
+        if (Utils.isDarkLaf()) {
+            theme_name = 'vs-dark';
+        }
+
+        FindingView.editor = monaco.editor.create(document.getElementById('finding_code'), {
+            value: "...",
+            language: "plaintext",
+            theme: theme_name,
+            readOnly: true,
+            automaticLayout: true,
+        });
+        console.log("Created Monaco Editor...")
+
+        window.onresize = function () {
+            FindingView.editor.layout();
+        };
     });
 
 </script>

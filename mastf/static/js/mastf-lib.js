@@ -182,6 +182,8 @@ Utils = {
  * fetched from the REST API
  */
 FindingView = {
+    editor: null,
+
     load: function(element, interface) {
         template_id = Utils.getValue(interface.makeTemplateId(element.getAttribute('counter')));
         finding_id = Utils.getValue(interface.makeFindingId(element.getAttribute('counter')));
@@ -245,24 +247,8 @@ Vulnerability = {
     },
 
     handleCode: function(data) {
-        document.getElementById("vuln-code").textContent = data?.code || "Not Found";
-        let theme_name = 'enlighter';
-        if (Utils.isDarkLaf()) {
-            theme_name = 'dracula';
-        }
-
-        if (data != null) {
-            let element = document.getElementById("vuln-code");
-            EnlighterJS.enlight(element, false);
-            EnlighterJS.enlight(element, {
-                language : data?.snippet.language.toLowerCase() || "text",
-                theme: theme_name,
-                indent: 2,
-                linehover: false,
-                textOverflow: 'scroll',
-                highlight: data?.snippet.lines,
-            });
-        }
+        FindingView.editor.setValue(data?.code);
+        FindingView.editor.getModel().setLanguage(data?.snippet.language.toLowerCase() || "plaintext");
     },
 
     applyVulnerabilityState: function(element) {
@@ -328,22 +314,8 @@ Finding = {
     },
 
     handleCode: function(data) {
-        document.getElementById("finding-code").textContent = data?.code || "Not Found";
-
-        var theme_name = 'enlighter';
-        if (Utils.isDarkLaf()) {
-            theme_name = 'dracula';
-        }
-
-        let element = document.getElementById("finding-code");
-        EnlighterJS.enlight(element, false);
-        EnlighterJS.enlight(element, {
-            language : data?.snippet.language.toLowerCase() || "text",
-            theme: theme_name,
-            indent : 2,
-            textOverflow: 'scroll',
-            highlight: data?.snippet.lines
-        });
+        FindingView.editor.setValue(data?.code);
+        FindingView.editor.getModel().setLanguage(data?.snippet.language.toLowerCase() || "plaintext");
     },
 
     onClose: function() {

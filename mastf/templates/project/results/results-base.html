@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block css_extended %}
+<link href="{% static 'libs/datatables/datatables.min.css' %}" rel="stylesheet"/>
+{% endblock css_extended %}
+
 {% block page_header %}
 <div class="page-header">
 <div class="container-fluid">

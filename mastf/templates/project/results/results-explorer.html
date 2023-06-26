@@ -2,30 +2,35 @@
 {% load static %}
 
 {% block css_extended %}
-<link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
-<style>
-.enlighter-default{
-    overflow-y: scroll;
-    height: 600px;
-    resize: vertical;
-    max-height: 600px;
-}
-.enlighter-btn-window{
-    display: none !important;
-}
-
-.enlighter-btn-website{
-    display: none !important;
-}
-
-</style>
-
 <link rel="stylesheet" href="{% static 'libs/jstree/themes/default/style.min.css' %}" />
-
 {% endblock css_extended %}
 
 {% block js_extended %}
-<script type="text/javascript" src="{% static 'libs/enlighterjs/enlighterjs.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'libs/monaco/min/vs/loader.js' %}"></script>
+<script>
+    require.config({ paths: { 'vs': '{% static "libs/monaco/min/vs" %}' } });
+
+    require(['vs/editor/editor.main'], function () {
+        var theme_name = 'vs';
+        if (Utils.isDarkLaf()) {
+            theme_name = 'vs-dark';
+        }
+
+        FindingView.editor = monaco.editor.create(document.getElementById('file_code'), {
+            value: "...",
+            language: "plaintext",
+            theme: theme_name,
+            readOnly: true,
+            automaticLayout: true,
+        });
+        console.log("Created Monaco Editor...")
+
+        window.onresize = function () {
+            FindingView.editor.layout();
+        };
+    });
+
+</script>
 
 <script src="{% static 'libs/jstree/jstree.min.js' %}"></script>
 <script>
@@ -84,24 +89,8 @@
             var path = node.getAttribute("path");
             var url = "/api/v1/project/{{project.pk}}/files/" + path.split("/")[0] + "/?file=" + path;
             REST.doGet(url, function(data) {
-                let theme_name = 'enlighter';
-                if (Utils.isDarkLaf()) {
-                    theme_name = 'dracula';
-                }
-                // We have to use the textContent property here as
-                // wildcard generics '?' in Java would be displayed
-                // wrong.
-                element = document.getElementById('file-code');
-
-                element.textContent = data.join("").replaceAll("<br>", "\n");
-                console.log(theme_name);
-                EnlighterJS.enlight(element, false);
-                EnlighterJS.enlight(element, {
-                    language : node.getAttribute('language'),
-                    theme: theme_name,
-                    indent : 2,
-                    textOverflow: 'scroll'
-                });
+                FindingView.editor.setValue(data.join(""));
+                FindingView.editor.getModel().setLanguage(node.getAttribute('language') || "plaintext");
                 showCode();
             });
         });
@@ -158,7 +147,7 @@
                 </div>
             </div>
             <div id="file-content" class="visually-hidden">
-                <pre class="file_code" style="margin-bottom: 0px;" id="file-code">##</pre>
+                <div id="file_code" style="height:500px"></div>
             </div>
         </div>
     </div>

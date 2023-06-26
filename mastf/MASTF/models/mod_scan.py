@@ -245,7 +245,7 @@ class Certificate(TimedModel):
     """
 
     version = models.CharField(max_length=12, blank=True)
-    """Indicates whether the Certificate is signed using APK signature scheme version X.
+    """Indicates whether the APK is signed using APK signature scheme version X.
 
     Note that version values are stored in the format ``vX`` where ``X`` represents the
     version number. In addition, a higher version number declares lower signature schemes

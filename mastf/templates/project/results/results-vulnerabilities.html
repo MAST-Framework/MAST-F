@@ -2,31 +2,7 @@
 {% load static %}
 
 {% block css_extended %}
-<link rel="stylesheet" href="{% static 'libs/enlighterjs/enlighterjs.min.css' %}" />
 <link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
-<style>
-.enlighter-default{
-    overflow-y: scroll;
-    {% if active != "tabs-explorer" %}
-    height: 200px;
-    {% else %}
-    height: 500px;
-    {% endif %}
-    resize: vertical;
-}
-.enlighter-btn-raw{
-    display: none !important;
-}
-
-.enlighter-btn-window{
-    display: none !important;
-}
-
-.enlighter-btn-website{
-    display: none !important;
-}
-</style>
-
 {% endblock css_extended %}
 
 {% block content %}
@@ -106,7 +82,7 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                 <div class="tab-pane active show" id="tabs-language">
-                                    <pre class="vuln_code" style="resize: vertical; margin-bottom: 0px;" id="vuln-code">##</pre>
+                                    <div id="vuln_code" style="height:500px"></div>
                                 </div>
                                 <div class="tab-pane" id="tabs-file-details">
                                     <div class="card-body">
@@ -302,6 +278,28 @@
 
 
 {% block js_extended %}
-<script type="text/javascript" src="{% static 'libs/enlighterjs/enlighterjs.min.js' %}"></script>
 <script src="{% static 'libs/datatables/datatables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'libs/monaco/min/vs/loader.js' %}"></script>
+<script>
+    require.config({ paths: { 'vs': '{% static "libs/monaco/min/vs" %}' } });
+
+    require(['vs/editor/editor.main'], function () {
+        var theme_name = 'vs';
+        if (Utils.isDarkLaf()) {
+            theme_name = 'vs-dark';
+        }
+
+        FindingView.editor = monaco.editor.create(document.getElementById('vuln_code'), {
+            value: "Loading source code...",
+            language: "text",
+            theme: theme_name,
+            readOnly: true,
+        });
+
+        window.onresize = function () {
+            FindingView.editor.layout();
+        };
+    });
+
+</script>
 {% endblock js_extended %}
