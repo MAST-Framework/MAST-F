@@ -146,6 +146,7 @@
             if (data.success) {
                 var table = $('#table-teams').DataTable();
                 table.row(`#team-row-${teamid}`).remove().draw();
+                Alerts.show("success", "Success!", "Deleted the selected team successfully - all data will be removed as well!");
             }
         })
     };
@@ -160,6 +161,7 @@
             if (data.success) {
                 var table = $('#table-teams').DataTable();
                 table.row(`#team-row-${teamid}`).remove().draw();
+                Alerts.show("success", "Success!", "Leaved team with ID: " + Utils.escapeHTML(teamid));
             }
         })
     };

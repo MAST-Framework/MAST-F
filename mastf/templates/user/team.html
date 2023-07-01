@@ -93,7 +93,7 @@
                                         <td class="text-end flex-fill align-items-center">
                                             {% if user != team.owner %}
                                             <a class="" href="#" target-id="{{user.pk}}" onclick="verifyAction(this, leaveTeam);"
-                                                modal-title="Delete User?" modal-submit-text="Yes, I want to delete this user!"
+                                                modal-title="Remove User?" modal-submit-text="Yes, I want to remove this user!"
                                                 modal-text="The user won't have access to shared resources afterwards.">
                                                 <span class="text-red">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>
@@ -197,6 +197,7 @@
                 } else {
                     var table = $('#table-users').DataTable();
                     table.row(`#user-row-${userid}`).remove().draw();
+                    Alerts.show("success", "Success!", "Successfully removed the specified user!");
                 }
             }
         });
@@ -209,7 +210,7 @@
                 name: name
             }), function(data) {
                 if (data.success) {
-                    console.log("Changed Team!")
+                    Alerts.show("success", "Success!", "Successfully updated team name!");
                 }
             })
         }

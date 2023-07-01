@@ -37,7 +37,11 @@ class ScanIndexView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
 
     template_name = RESULTS_BASE
     permission_classes = [CanEditProject]
-    default_redirect = "Projects"
+    default_redirect = "Project-Overview"
+    keep_redirect_kwargs = False
+
+    def get_redirect_kwargs(self) -> dict:
+        return {"project_uuid": self.kwargs["project_uuid"]}
 
     def get_context_data(self, **kwargs):
         """
@@ -61,7 +65,11 @@ class ScannerResultsView(UserProjectMixin, ContextMixinBase, TemplateAPIView):
     """
 
     permission_classes = [CanEditProject]
-    default_redirect = "Projects"
+    default_redirect = "Project-Overview"
+    keep_redirect_kwargs = False
+
+    def get_redirect_kwargs(self) -> dict:
+        return {"project_uuid": self.kwargs["project_uuid"]}
 
     def get_context_data(self, **kwargs):
         """

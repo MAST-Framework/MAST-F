@@ -6,6 +6,7 @@
 {% endblock css_extended %}
 
 {% block js_extended %}
+<script type="text/javascript" src="{% static 'libs/jstree/jstree.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'libs/monaco/min/vs/loader.js' %}"></script>
 <script>
     require.config({ paths: { 'vs': '{% static "libs/monaco/min/vs" %}' } });
@@ -32,7 +33,7 @@
 
 </script>
 
-<script src="{% static 'libs/jstree/jstree.min.js' %}"></script>
+
 <script>
     showCode = function() {
         $('#file-content').removeClass('visually-hidden');

@@ -166,6 +166,7 @@
             if (data.success) {
                 var table = $('#table-users').DataTable();
                 table.row(`#user-row-${userid}`).remove().draw();
+                Alerts.show("success", "Success!", "Successfully deleted the specified user!");
             }
         })
     };

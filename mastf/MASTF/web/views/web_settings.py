@@ -116,6 +116,7 @@ class UserTeamView(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/team.html"
     permission_classes = [CanViewTeam]
     default_redirect = "Teams"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         """
@@ -134,6 +135,7 @@ class AdminUserConfig(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/settings/settings-account.html"
     permission_classes = [CanEditUser]
     default_redirect = "Settings"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -150,6 +152,7 @@ class AdminUsersConfiguration(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/admin/users.html"
     permission_classes = [IsAdminUser | IsAdmin]
     default_redirect = "Settings"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)

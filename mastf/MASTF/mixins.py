@@ -32,6 +32,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.permissions import BasePermission, exceptions
 
 from mastf.MASTF import settings
+from mastf.MASTF.utils.error import get_error
 from mastf.MASTF.utils.enum import Severity, Visibility
 from mastf.MASTF.scanners.plugin import ScannerPlugin
 from mastf.MASTF.models import (
@@ -88,18 +89,25 @@ class TemplateAPIView(TemplateView):
     default_redirect = "Dashboard"
     """Redirect view name to render if an error occurs."""
 
+    keep_redirect_kwargs = True
+    """Tell the API view to keep args on redirect."""
+
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         try:
             self.check_permissions(request)
             return super().dispatch(request, *args, **kwargs)
         except exceptions.ValidationError as err:
-            messages.error(request, str(err.detail), err.__class__.__name__)
+            messages.error(request, get_error(err), err.__class__.__name__)
             return self.on_dispatch_error()
 
     def on_dispatch_error(self):
         """Redirects to a default page if an exception was raised"""
         page = self.default_redirect or "Dashboard"
-        return redirect(page, *self.args, **self.kwargs)
+        kwargs = self.kwargs
+        if not self.keep_redirect_kwargs:
+            kwargs = self.get_redirect_kwargs()
+
+        return redirect(page, **kwargs)
 
     def check_object_permissions(self, request, obj) -> bool:
         """Validates if the current user has appropriate permissions to access the given object."""
@@ -141,6 +149,9 @@ class TemplateAPIView(TemplateView):
             raise exceptions.ValidationError("Insufficient permissions", 500)
 
         return instance
+
+    def get_redirect_kwargs(self) -> dict:
+        return {}
 
 
 class ContextMixinBase(LoginRequiredMixin):

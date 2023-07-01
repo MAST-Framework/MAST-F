@@ -64,6 +64,7 @@ class UserProjectDetailsView(UserProjectMixin, ContextMixinBase, TemplateAPIView
     template_name = "project/project-overview.html"
     permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs):
         """
@@ -119,6 +120,7 @@ class UserProjectScanHistoryView(UserProjectMixin, ContextMixinBase, TemplateAPI
     template_name = "project/project-scan-history.html"
     permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         """
@@ -165,6 +167,7 @@ class UserScannersView(
     template_name = "project/project-scanners.html"
     permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
+    keep_redirect_kwargs = False
 
     def post(self, request, *args, **kwargs):
         """
@@ -240,6 +243,7 @@ class UserProjectPackagesView(UserProjectMixin, ContextMixinBase, TemplateAPIVie
     template_name = "project/project-packages.html"
     permission_classes = [CanEditProject | IsProjectPublic]
     default_redirect = "Projects"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs):
         """
@@ -264,7 +268,7 @@ class UserProjectConfigView(UserProjectMixin, ContextMixinBase, TemplateAPIView)
 
     template_name = "project/project-settings.html"
     permission_classes = [CanEditProject]
-    default_redirect = "Projects"
+    default_redirect = "Project-Overview"
 
     def get_context_data(self, **kwargs: dict) -> dict:
         """

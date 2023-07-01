@@ -199,6 +199,7 @@
                     bg = roleColors[role];
                 }
                 target.attr("class", `badge ${bg} dropdown-toggle`);
+                Alerts.show("success", "Success!", "Granted role '"+role+"' to this user!");
             }
         });
     };
