@@ -117,7 +117,7 @@ class AndroidTask(ScannerPluginTask):
             scanner=self.scan_task.scanner,
             name=self.scan_task.name,
         )
-        perform_semgrep_scan(
+        perform_semgrep_scan.delay(
             str(task.task_uuid),
             str(settings.SEMGREP_ANDROID_RULES_DIR),
             str(self.file_dir),

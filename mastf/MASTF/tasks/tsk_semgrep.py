@@ -30,20 +30,22 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
 
     cmd = [ # cd rules_dir && semgrep -c rules_dir --output out_file --json file_dir
         "cd",
-        rules_dir, # Rather change the current working directory as .semgrepignore may be defined there
+        # Rather change the current working directory as .semgrepignore may be defined there
+        # REVISIT: maybe use cwd=... in run()
+        rules_dir,
         "&&",
         "semgrep",
         "scan",
         "-c",
         rules_dir,
+        "--json",
         "--output",
         str(out_file),
-        "--json",
         file_dir
     ]
     try:
         observer.update("Running semgrep...", do_log=True)
-        result = subprocess.run(cmd, capture_output=True)
+        result = subprocess.run(" ".join(cmd), capture_output=True, shell=True)
         result.check_returncode()
 
         observer.update("Finished semgrep, inspecing results...", do_log=True)
@@ -67,19 +69,21 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
 
                 snippet = Snippet.objects.create(
                     sys_path=str(path),
-                    language=path.suffix,
+                    language=path.suffix.removeprefix("."),
                     file_name=path.name,
                     file_size=path.stat().st_size,
-                    lines=",".join([x for x in range(start, end + 1)])
+                    lines=",".join([str(x) for x in range(start, end + 1)])
                 )
                 if not template.is_contextual:
                     Finding.create(template, snippet, scan_task.scanner)
                 else:
                     Finding.create(template, snippet, scan_task.scanner, text=result["message"])
 
+            _, meta = observer.success("Finished semgrep scan!")
+            return meta
     except subprocess.CalledProcessError as err:
         _, meta = observer.exception(err, "Failed to execute semgrep!")
         return meta
     except Exception as oserr:
         _, meta = observer.exception(oserr, "Failed to read from semgrep results!")
-        return meta
+        return meta.get("description")

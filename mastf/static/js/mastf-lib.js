@@ -324,7 +324,7 @@ Finding = {
         var masvs = Utils.escapeHTML(data.meta_masvs || "Not provided");
         if (masvs.startsWith("http")) {
             let path_elements = masvs.split("/");
-            let title = path_elements[path_elements-1].split("#")[0].replace("-", " ")
+            let title = path_elements[path_elements.length-1].split("#")[0].replace("-", " ")
             document.getElementById("finding-details-masvs").innerHTML = `<a href="${masvs}" class="link-secondary" target="_blank">${title}</a>`;
         }
         document.getElementById('finding-details-masvs').textContent = data.meta_masvs || "Not provided";

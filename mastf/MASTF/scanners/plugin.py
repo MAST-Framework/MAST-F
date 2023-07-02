@@ -219,6 +219,8 @@ class ScannerPluginTask(metaclass=ABCMeta):
                         str(err),
                     )
                     self.observer.logger.exception(str(err))
+        # Finishes the job
+        ScanTask.finish_scan(self.scan, self.scan_task)
 
     @property
     def scan_task(self) -> ScanTask:

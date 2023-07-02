@@ -119,7 +119,7 @@
             "risk": "Checking for common root access paths can help identify potential root access. However, relying solely on this method for root detection may not be comprehensive enough, as root access can be obtained without leaving traces in these common paths.",
             "mitigation": "To mitigate this security risk, supplement path-based root detection with other techniques, such as verifying the integrity of system files or using system calls to check for root access. Implement a multi-layered approach to increase the effectiveness of root detection.",
             "article": "android/security",
-            "default_severity": "Medium",
+            "default_severity": "Secure",
             "meta_cvss": "5.5 (Medium)",
             "meta_cwe": "CWE-330",
             "meta_masvs": "V9: Device Security - Implement runtime application self-protection (RASP) mechanisms."

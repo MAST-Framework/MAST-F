@@ -58,6 +58,7 @@ def get_manifest_info(inspector: ScannerPluginTask) -> None:
                 inspector,
                 manifest,
             )
+    inspector.observer.update("Finished manifest analysis!")
 
 
 def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path):
@@ -190,11 +191,13 @@ class AndroidManifestHandler:
 
     def _create_finding(self, title: str) -> None:
         _ = FindingTemplate.make_internal_id
-        Finding.create(
-            FindingTemplate.objects.get(_(title)),
-            self.snippet,
-            self.inspector.scan_task.scanner,
-        )
+        queryset = FindingTemplate.objects.filter(_(title))
+        if len(queryset) == 1:
+            Finding.create(
+                queryset.first(),
+                self.snippet,
+                self.inspector.scan_task.scanner,
+            )
 
     def on_application(self, element: Element, name: str) -> None:
         """
@@ -277,7 +280,6 @@ class AndroidManifestHandler:
         if identifier:
             component.permission = self.on_permission(element, identifier)
 
-        # TODO: if exported add Finding
         for intent_filter in element.childNodes:
             if intent_filter.nodeName == "intent-filter":
                 action = intent_filter.getAttribute("android:name")

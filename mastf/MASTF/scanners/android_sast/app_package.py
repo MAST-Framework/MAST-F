@@ -19,6 +19,7 @@ import logging
 import lief
 import uuid
 import pathlib
+import io
 
 from androguard.core.bytecodes import apk
 
@@ -35,6 +36,14 @@ from mastf.MASTF.scanners.plugin import ScannerPluginTask
 
 logger = logging.getLogger(__name__)
 
+# https://github.com/lief-project/LIEF/issues/832
+class BytesIO(io.BytesIO):
+    @property
+    def raw(self):
+        return self
+
+    def readall(self):
+        return self.read()
 
 def get_app_packages(task: ScannerPluginTask) -> None:
     # TODO: Use python package mastf-libscout to scan the given
@@ -49,7 +58,10 @@ def get_app_packages(task: ScannerPluginTask) -> None:
     # dictionary stores the package, possible version number, type and
     # license (if found)
     for dex_content in apk_file.get_all_dex():
-        dex_file = lief.DEX.parse(dex_content)
+        dex_file = lief.DEX.parse(BytesIO(dex_content))
+        if not dex_file:
+            continue
+
         for class_def in dex_file.classes:
             # filter out any non-existend files
             if not class_def.source_filename:

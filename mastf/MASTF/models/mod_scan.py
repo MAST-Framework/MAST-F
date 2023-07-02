@@ -189,7 +189,7 @@ class ScanTask(TimedModel):
     name = models.CharField(max_length=256, blank=True)
     """The task's name (primarily used in HTML representation)"""
 
-    celery_id = models.CharField(max_length=256, blank=True)
+    celery_id = models.CharField(max_length=256, blank=True, null=True)
     """The assigned celery id (may be null on creation)."""
 
     active = models.BooleanField(default=True)
