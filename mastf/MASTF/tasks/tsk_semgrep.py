@@ -11,7 +11,7 @@ from celery.utils.log import get_task_logger
 from mastf.core.progress import Observer
 
 from mastf.MASTF import settings
-from mastf.MASTF.models import ScanTask, FindingTemplate, Finding, Snippet
+from mastf.MASTF.models import ScanTask, FindingTemplate, Finding, Snippet, File
 
 logger = get_task_logger(__name__)
 
@@ -60,7 +60,7 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
                 result["check_id"].split(".", 2)[-1].lower() # always something like "rules.storage.MSTG-STORAGE-7.2"
             )
 
-            queryset = FindingTemplate.objects.filter(internal_id__startswith=internal_name)
+            queryset = FindingTemplate.objects.filter(internal_id__icontains=internal_name)
             if queryset.exists() and len(queryset) == 1:
                 template = queryset.first()
                 path = pathlib.Path(result["path"])
@@ -79,8 +79,8 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
                 else:
                     Finding.create(template, snippet, scan_task.scanner, text=result["message"])
 
-            _, meta = observer.success("Finished semgrep scan!")
-            return meta
+        _, meta = observer.success("Finished semgrep scan!")
+        return meta
     except subprocess.CalledProcessError as err:
         _, meta = observer.exception(err, "Failed to execute semgrep!")
         return meta

@@ -50,9 +50,9 @@ class CodeView(views.APIView):
         project = finding.scan.project
         self.check_object_permissions(request, project)
 
-        if not src_file.exists():
+        if not src_file.exists() or src_file.is_dir():
             return Response(
-                {"detail": "Project source file directory does not exist"},
+                {"detail": "Project source file does not exist or is a directory"},
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 

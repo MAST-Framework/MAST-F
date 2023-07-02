@@ -46,6 +46,9 @@ his requirements.
     * - (`Sphinx`_)
       - ``6.2.1``
       - Documentation builder
+    * - (`Android Semgrep Rules`_)
+      - ``latest``
+      - Semgrep rules for Android security
 
 
 .. list-table:: Used frameworks and dependencies (frontend)
@@ -64,15 +67,15 @@ his requirements.
     * - `ApexCharts`_
       - ``3.36.2``
       - Generate charts
-    * - `Enlighterjs`_
-      - ``3.7.0``
-      - Highlight source code
     * - `jsVectormap`_
       - ``-``
       - Display maps
     * - `Tabler Theme`_
       - ``v1.0.0-beta17``
       - Global HTML/CSS theme
+    * - `Monaco Editor`_
+      - ``0.39.0``
+      - Display source code
     * - `JetBrains UI Kit`_ (Icons only)
       - ``-``
       - Source tree icons
@@ -99,6 +102,7 @@ his requirements.
 .. _Enlighterjs: https://github.com/EnlighterJS/EnlighterJS
 .. _jsVectormap: https://github.com/themustafaomar/jsvectormap
 .. _celery: https://docs.celeryq.dev/en/stable/getting-started/introduction.html
-.. _Androguard:
-
+.. _Androguard: https://github.com/androguard/androguard
+.. _Monaco Editor: https://github.com/microsoft/monaco-editor
+.. _Android Semgrep Rules: https://github.com/mindedsecurity/semgrep-rules-android-security
 

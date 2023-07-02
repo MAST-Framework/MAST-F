@@ -19,7 +19,7 @@ import uuid
 
 from xml.dom.minidom import Element, parse
 
-from mastf.android.axml import AXmlVisitor
+from mastf.android.axml import AndroidManifestVisitor
 
 from mastf.MASTF.scanners.plugin import ScannerPluginTask
 from mastf.MASTF.models import (
@@ -30,7 +30,8 @@ from mastf.MASTF.models import (
     Snippet,
     Component,
     Finding,
-    FindingTemplate
+    FindingTemplate,
+    File
 )
 from mastf.MASTF.utils.enum import ProtectionLevel, Severity, ComponentCategory
 
@@ -51,14 +52,15 @@ def get_manifest_info(inspector: ScannerPluginTask) -> None:
     # intent filters
     content_dir = inspector.file_dir / "contents"
 
-    inspector.observer.update("Running manifest analysis...", do_log=True)
+    inspector.observer.update("Running manifest analysis on %s..." % File.relative_path(str(content_dir)), do_log=True)
     for manifest in content_dir.iterdir():
         if manifest.name == "AndroidManifest.xml":
+            inspector.observer.update("Reading Manifest...", do_log=True)
             run_manifest_scan(
                 inspector,
                 manifest,
             )
-    inspector.observer.update("Finished manifest analysis!")
+    inspector.observer.update("Finished manifest analysis!", do_log=True)
 
 
 def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path):
@@ -73,7 +75,7 @@ def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path)
     :param manifest_file: Path to the AndroidManifest.xml file.
     :type manifest_file: pathlib.Path
     """
-    visitor = AXmlVisitor()
+    visitor = AndroidManifestVisitor()
     handler = AndroidManifestHandler(inspector, manifest_file)
 
     if manifest_file.exists():
@@ -89,8 +91,6 @@ def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path)
                 "[%s] Skipping manifest due to parsing error: %s",
                 type(err).__name__,
                 str(err),
-                do_log=True,
-                log_level=logging.ERROR,
             )
             return
     else:
@@ -110,7 +110,7 @@ class AndroidManifestHandler:
         self.inspector = inspector
         self.path = path
         self.observer = inspector.observer
-        self.snippet = Snippet(language="xml", file_name=path.name)
+        self.snippet = Snippet(language="xml", file_name=path.name, sys_path=str(path))
         self._saved = False
         self._application_protected = False
 
@@ -123,7 +123,7 @@ class AndroidManifestHandler:
         """
         return self.inspector.scan
 
-    def link(self, visitor: AXmlVisitor) -> None:
+    def link(self, visitor: AndroidManifestVisitor) -> None:
         """
         Links the AndroidManifestHandler with an AXmlVisitor.
 
@@ -190,8 +190,12 @@ class AndroidManifestHandler:
         return permission
 
     def _create_finding(self, title: str) -> None:
+        if not self._saved:
+            self.snippet.save()
+            self._saved = True
+
         _ = FindingTemplate.make_internal_id
-        queryset = FindingTemplate.objects.filter(_(title))
+        queryset = FindingTemplate.objects.filter(internal_id=_(title))
         if len(queryset) == 1:
             Finding.create(
                 queryset.first(),

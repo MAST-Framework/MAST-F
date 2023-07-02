@@ -132,7 +132,6 @@ def get_app_net_info(inspector: ScannerPluginTask) -> None:
 
 class NetworkSecurityVisitor(AXmlVisitor):
     class Meta:
-        exclude = "*"  # excludes all other nodes
         nodes = [  # Custom nodes
             "base-config",
             "domain-config",
