@@ -29,6 +29,8 @@ from mastf.MASTF.models import (
     PermissionFinding,
     Snippet,
     Component,
+    Finding,
+    FindingTemplate
 )
 from mastf.MASTF.utils.enum import ProtectionLevel, Severity, ComponentCategory
 
@@ -186,6 +188,14 @@ class AndroidManifestHandler:
 
         return permission
 
+    def _create_finding(self, title: str) -> None:
+        _ = FindingTemplate.make_internal_id
+        Finding.create(
+            FindingTemplate.objects.get(_(title)),
+            self.snippet,
+            self.inspector.scan_task.scanner,
+        )
+
     def on_application(self, element: Element, name: str) -> None:
         """
         Event handler for application elements in the AndroidManifest.xml.
@@ -193,22 +203,21 @@ class AndroidManifestHandler:
         :param element: The application element.
         :param name: The name of the application.
         """
+
         if element.getAttribute("android:usesCleartextTraffic") == "true":
-            pass  # TODO: add findings
+            self._create_finding("AndroidManifest: Clear Text Traffic Enabled")
 
         if element.getAttribute("android:directBootAware") == "true":
-            pass
+            self._create_finding("AndroidManifest: Direct-Boot Awareness")
 
         if element.getAttribute("android:debuggable") == "true":
-            pass
+            self._create_finding("AndroidManifest: Debug-Mode Enabled")
 
         if element.getAttribute("android:allowBackup") == "true":
-            pass
-        elif element.getAttribute("android:allowBackup") == "false":
-            pass
+            self._create_finding("AndroidManifest: Backup of Application Data allowed")
 
         if element.getAttribute("android:testOnly") == "true":
-            pass
+            self._create_finding("AndroidManifest: Application in Test-Mode")
 
     def on_service(self, element: Element, name: str) -> None:
         """
@@ -280,14 +289,16 @@ class AndroidManifestHandler:
                 component.is_main = action == "android.intent.action.MAIN"
                 component.is_launcher = action == "android.intent.category.LAUNCHER"
 
-                if not component.is_main and not component.permission:
+                if not component.is_main and not component.permission and not component.is_exported:
                     # Implicit exported component with or without permission definition
                     # TODO: add findings
                     component.is_protected = False
+                    self._create_finding("AndroidManifest: Implicitly Exported App Component")
 
-        if not identifier and not self._application_protected:
+        if not identifier and not self._application_protected and component.is_exported:
             # Exported component without proper permission declaration
             # TODO: add findings
             component.is_protected = False
+            self._create_finding("AndroidManifest: Exported Component without Proper Permission Declaration")
 
         component.save()

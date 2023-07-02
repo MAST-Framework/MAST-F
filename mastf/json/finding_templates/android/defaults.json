@@ -268,17 +268,6 @@
             "meta_masvs": "V6: Secure Data Storage"
         },
         {
-            "title": "String Concatenation",
-            "description": "The application utilizes string concatenation, which can introduce security vulnerabilities and impact performance.",
-            "risk": "String concatenation can lead to security vulnerabilities such as SQL injection, command injection, and cross-site scripting (XSS). Additionally, it can impact application performance due to inefficient memory allocation and garbage collection.",
-            "mitigation": "Avoid direct string concatenation when constructing queries or dynamic content. Instead, utilize parameterized queries, prepared statements, or string builders to improve security and performance.",
-            "article": "android/string-concatenation",
-            "default_severity": "Medium",
-            "meta_cvss": "7.5",
-            "meta_cwe": "CWE-89",
-            "meta_masvs": "V7: Client Code Quality"
-        },
-        {
             "title": "Usage of MD5 Hashes",
             "description": "The application utilizes MD5 hashes for cryptographic purposes, which is considered weak and insecure.",
             "risk": "Using MD5 hashes for cryptographic purposes poses security risks due to the vulnerability of MD5 to collision attacks and its weak resistance against pre-image and second pre-image attacks.",

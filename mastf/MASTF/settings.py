@@ -197,6 +197,8 @@ MASTF_FT_DIR = env.get("MASTF_FT_DIR", "") or str(BASE_DIR / "json" / "finding_t
 
 YARA_BASE_DIR = str(env.get("YARA_BASE_DIR", BASE_DIR / "yara"))
 
+SEMGREP_BASE_DIR = Path("/semgrep")
+SEMGREP_ANDROID_RULES_DIR = SEMGREP_BASE_DIR / "android"
 # -!- START USER-CONFIG -!-
 
 PROJECTS_ROOT = Path(MEDIA_ROOT) / 'projects'

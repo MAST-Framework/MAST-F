@@ -47,6 +47,8 @@ services:
   celery_worker:
     build:
       context: ./
+      args:
+        - ANDROID_SEMGREP_COMMIT_SHA=a7e9bfa221790a6bf7290b7c58952652f4315cf5
       dockerfile: ./compose/local/django/celery/Dockerfile
 
     image: mastf_celery_worker

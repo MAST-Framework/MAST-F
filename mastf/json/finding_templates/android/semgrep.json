@@ -1,0 +1,15 @@
+{
+    "templates": [
+        {
+            "title": "Platform Security (MSTG-PLATFORM-5)",
+            "description": "The application provides functionality via custom URL schemes.",
+            "risk": "There is a risk of exposing sensitive data or functionality through custom URL schemes.",
+            "mitigation": "It is recommended to manually check for possible sensitive data or functionality exposures.",
+            "article": "android/mstg-platform",
+            "default_severity": "Medium",
+            "meta_cvss": "",
+            "meta_cwe": "CWE-311",
+            "meta_masvs": "V5: Testing Code Quality and Build Settings - (memory-corruption-bugs-mstg-code-8)"
+        }
+    ]
+}

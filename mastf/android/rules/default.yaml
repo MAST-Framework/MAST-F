@@ -242,19 +242,6 @@
     template: clipboard-copy
     vulnerability: false
 
-- rule-id: android-string-concatenation
-  patterns:
-    - text: "[\"]\\s*[^+\n]+[+].*[\"]"
-      mode: or
-    - text: \+=\s*\".*
-      mode: or
-  meta:
-    filters:
-      file_ext: java
-    severity: Medium
-    template: string-concatenation
-    vulnerability: false
-
 - rule-id: android-md5-hashes
   patterns:
     - text: .*MessageDigest\.getInstance\(\"MD5\"\).*

@@ -33,7 +33,7 @@ from mastf.MASTF.scanners.plugin import (
     ScannerPluginTask,
 )
 
-from mastf.MASTF.tasks import perform_async_sast
+from mastf.MASTF.tasks import perform_async_sast, perform_semgrep_scan
 from mastf.MASTF.models import ScanTask
 from mastf.MASTF.scanners.android_sast import (
     get_manifest_info,
@@ -104,7 +104,24 @@ class AndroidTask(ScannerPluginTask):
         perform_async_sast.delay(str(task.task_uuid), str(self.file_dir))
 
     def do_package_scan(self) -> None:
+        """
+        Perform a heuristic scan on potential used third-party libraries.
+        """
         get_app_packages(self)
+
+    def do_semgrep_scan(self) -> None:
+        """Execute the semgrep OSS-Engine in a separate celery worker."""
+        task = ScanTask.objects.create(
+            task_uuid=uuid.uuid4(),
+            scan=self.scan,
+            scanner=self.scan_task.scanner,
+            name=self.scan_task.name,
+        )
+        perform_semgrep_scan(
+            str(task.task_uuid),
+            str(settings.SEMGREP_ANDROID_RULES_DIR),
+            str(self.file_dir),
+        )
 
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)

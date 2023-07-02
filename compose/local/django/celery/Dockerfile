@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 # Update the container and install all necessary dependencies
 RUN apt-get update \
-    && apt-get install -y file \
+    && apt-get install -y file git \
     # dependencies for building and installing Python packages
     && apt-get install -y build-essential \
     # postgresql dependencies - comment out if you don't use postgresql
@@ -69,6 +69,11 @@ COPY ./compose/local/django/celery/beat/start /start_celery_beat
 RUN sed -i 's/\r$//g' /start_celery_beat
 RUN chmod +x /start_celery_beat
 
+# Setup semgrep rules for iOS and Android
+RUN mkdir /semgrep
+RUN pip install semgrep
+RUN git clone https://github.com/mindedsecurity/semgrep-rules-android-security /semgrep/android \
+    && cd /semgrep/android && git checkout ${ANDROID_SEMGREP_COMMIT_SHA}
 
 # TODO: add file exclusion rules
 COPY ./mastf /app/mastf
