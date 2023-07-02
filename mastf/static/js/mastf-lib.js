@@ -313,8 +313,21 @@ Finding = {
         document.getElementById('finding-risk-text').innerHTML = risk;
 
         document.getElementById('finding-details-cvss').textContent = data.meta_cvss || "Not specified";
-        document.getElementById('finding-details-cwe').textContent = data.meta_cwe || "Not Specified";
-        document.getElementById('finding-details-cvss').textContent = data.meta_masvs || "Not provided";
+        var cwe = Utils.escapeHTML(data.meta_cwe || "Not Specified");
+        if (cwe.startsWith("CWE-")) {
+            let ref_cwe = `https://cwe.mitre.org/data/definitions/${cwe.slice(4)}.html`
+            document.getElementById('finding-details-cwe').innerHTML = `<a href="${ref_cwe}" class="link-secondary" target="_blank">${cwe}</a>`;
+        } else {
+            document.getElementById('finding-details-cwe').textContent = cwe;
+        }
+
+        var masvs = Utils.escapeHTML(data.meta_masvs || "Not provided");
+        if (masvs.startsWith("http")) {
+            let path_elements = masvs.split("/");
+            let title = path_elements[path_elements-1].split("#")[0].replace("-", " ")
+            document.getElementById("finding-details-masvs").innerHTML = `<a href="${masvs}" class="link-secondary" target="_blank">${title}</a>`;
+        }
+        document.getElementById('finding-details-masvs').textContent = data.meta_masvs || "Not provided";
 
         let titleElement = $('#finding-title');
         titleElement.html(title);
@@ -324,6 +337,11 @@ Finding = {
     handleFindingData: function(data) {
         Utils.setSeverity(data?.severity, $('#finding-severity'), $('#finding-severity-badge'));
         let lang = Utils.capitalize(data?.snippet?.language);
+
+        if (data.is_custom) {
+            let description = Utils.escapeHTML(data.custom_text) + " " + document.getElementById('finding-description-text').innerHTML;
+            document.getElementById('finding-description-text').innerHTML = data.template.is_html ? Utils.replaceBackticks(description) : description;
+        }
 
         $('#finding-language').text(lang);
         $('#finding-details-language').text(lang);

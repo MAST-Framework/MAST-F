@@ -48,28 +48,6 @@
             "is_html": true
         },
         {
-            "title": "Insecure Use of Random Number Generator (java.util.Random)",
-            "description": "This rule detects insecure use of the `java.util.Random` class in Android applications' source code. The `java.util.Random` class uses a linear congruential algorithm that produces predictable and easily guessable random numbers.",
-            "risk": "Using the insecure `java.util.Random` class can lead to security vulnerabilities, such as predictable random values. Attackers can exploit these predictable values to bypass security controls or perform cryptographic attacks.",
-            "mitigation": "To mitigate this security risk, use the secure `java.security.SecureRandom` class instead of `java.util.Random` to generate random numbers in Android applications. `java.security.SecureRandom` provides cryptographically strong random values.",
-            "article": "android/crypto",
-            "default_severity": "High",
-            "meta_cvss": "7.5 (High)",
-            "meta_cwe": "CWE-338",
-            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that strong random numbers are used for generating secrets and keys."
-        },
-        {
-            "title": "Insecure Use of Random Number Generator (android.util.Random)",
-            "description": "This rule detects insecure use of the `android.util.Random` class in Android applications' source code. The `android.util.Random` class uses a linear congruential algorithm that produces predictable and easily guessable random numbers.",
-            "risk": "Using the insecure `android.util.Random` class can lead to security vulnerabilities, such as predictable random values. Attackers can exploit these predictable values to bypass security controls or perform cryptographic attacks.",
-            "mitigation": "To mitigate this security risk, use the secure `java.security.SecureRandom` class instead of `android.util.Random` to generate random numbers in Android applications. `java.security.SecureRandom` provides cryptographically strong random values.",
-            "article": "android/crypto",
-            "default_severity": "High",
-            "meta_cvss": "7.5 (High)",
-            "meta_cwe": "CWE-338",
-            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that strong random numbers are used for generating secrets and keys."
-        },
-        {
             "title": "Insecure Logging of Sensitive Information",
             "description": "This rule detects insecure logging practices in Android applications' source code where sensitive information, such as passwords, API keys, or personally identifiable information (PII), is logged in plain text.",
             "risk": "Insecure logging of sensitive information can lead to the exposure of confidential data, making it accessible to potential attackers. This can result in unauthorized access, data breaches, or privacy violations.",

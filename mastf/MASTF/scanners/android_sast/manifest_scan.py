@@ -211,7 +211,7 @@ class AndroidManifestHandler:
             self._create_finding("AndroidManifest: Direct-Boot Awareness")
 
         if element.getAttribute("android:debuggable") == "true":
-            self._create_finding("AndroidManifest: Debug-Mode Enabled")
+            self._create_finding("Code Security (MSTG-CODE-2): Application Built with Debuggable Flag")
 
         if element.getAttribute("android:allowBackup") == "true":
             self._create_finding("AndroidManifest: Backup of Application Data allowed")

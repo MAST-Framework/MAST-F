@@ -46,29 +46,6 @@
     template: insecure-implementation-of-ssl-with-sslv3-or-tlsv1
     vulnerability: false
 
-# Insecure Random
-- rule-id: android-insecure-random-java
-  patterns:
-    - java\.util\.Random
-    - new\s*Random\(
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-use-of-random-number-generator-(java.util.random)
-    vulnerability: false
-
-- rule-id: android-insecure-random-android
-  patterns:
-    - android\.util\.Random
-    - new\s*Random\(
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-use-of-random-number-generator-(android.util.random)
-    vulnerability: false
-
 # Logging
 - rule-id: android-logging-sensitive-information
   pattern: (Log\.([vdiew]|wtf)|System\.out\.println)\s*\(\s*\".*(?:password|api[_ ]key|pii|personally[_ ]identifiable[_ ]information).*\"

@@ -1,18 +1,6 @@
 {
     "templates": [
         {
-            "title": "AndroidManifest: Clear Text Traffic Enabled",
-            "description": "Clear text traffic is enabled for the app - `[android:usesCleartextTraffic=true]`",
-            "risk": "There is a risk of exposing sensitive data transmitted over clear text traffic. Apps that target API level 28 or higher have this feature disabled by default.",
-            "mitigation": "It is recommended to disable clear text traffic and use secure communication protocols.",
-            "article": "android/clear-text-traffic-enabled",
-            "default_severity": "High",
-            "meta_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
-            "meta_cwe": "CWE-319",
-            "meta_masvs": "MASVS: 9.4",
-            "is_html": true
-        },
-        {
             "title": "AndroidManifest: Direct-Boot Awareness",
             "description": "The app is direct-boot aware, which means the app can run before the use unlocks the device.",
             "risk": "There is no specific risk associated with being direct-boot aware. However, the application can only access data in the device's protected storage.",

@@ -55,10 +55,10 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
             internal_name = "%s-%s-(%s)" % (
                 result["extra"]["metadata"]["area"].lower(),
                 result["extra"]["metadata"]["category"].lower(),
-                result["check_id"].lower()
+                result["check_id"].split(".", 2)[-1].lower() # always something like "rules.storage.MSTG-STORAGE-7.2"
             )
 
-            queryset = FindingTemplate.objects.filter(internal_id=internal_name)
+            queryset = FindingTemplate.objects.filter(internal_id__startswith=internal_name)
             if queryset.exists() and len(queryset) == 1:
                 template = queryset.first()
                 path = pathlib.Path(result["path"])
@@ -72,7 +72,10 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
                     file_size=path.stat().st_size,
                     lines=",".join([x for x in range(start, end + 1)])
                 )
-                Finding.create(template, snippet, scan_task.scanner)
+                if not template.is_contextual:
+                    Finding.create(template, snippet, scan_task.scanner)
+                else:
+                    Finding.create(template, snippet, scan_task.scanner, text=result["message"])
 
     except subprocess.CalledProcessError as err:
         _, meta = observer.exception(err, "Failed to execute semgrep!")
