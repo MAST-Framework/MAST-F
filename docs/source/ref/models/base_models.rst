@@ -10,6 +10,11 @@ there is another utility class that comes with some special behaviour:
 .. autoclass:: mastf.MASTF.models.namespace
     :members:
 
+.. figure:: images/base_models.png
+    :alt: Overview of basic core models
+
+    Figure 1: Simple overview of necessary models for a MAST-F instance to work.
+
 .. autoclass:: mastf.MASTF.models.Environment
     :members:
     :exclude-members: MultipleObjectsReturned, DoesNotExist

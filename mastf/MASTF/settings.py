@@ -98,6 +98,10 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = "mastf.MASTF.urls"
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
 
 TEMPLATES = [
     {
