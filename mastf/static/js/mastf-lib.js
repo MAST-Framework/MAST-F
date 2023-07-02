@@ -158,6 +158,10 @@ Utils = {
         }
     },
 
+    capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    },
+
     permissionColors: {
         'SIGNATURE': "green",
         'SIGNATUREORSYSTEM': "green",
@@ -293,14 +297,24 @@ Finding = {
     },
 
     handleTemplateData: function(data) {
-        var description = data.description;
-        var title = data.title;
+        var description = Utils.escapeHTML(data.description);
+        var title = Utils.escapeHTML(data.title);
+        var mitigation = Utils.escapeHTML(data.mitigation);
+        var risk = Utils.escapeHTML(data.risk);
         if (data.is_html) {
             description = Utils.replaceBackticks(description);
             title = Utils.replaceBackticks(title);
+            mitigation = Utils.replaceBackticks(mitigation);
+            risk = Utils.replaceBackticks(risk);
         }
 
-        document.getElementById('finding-info-text').innerHTML = description;
+        document.getElementById('finding-description-text').innerHTML = description;
+        document.getElementById('finding-mitigation-text').innerHTML = mitigation;
+        document.getElementById('finding-risk-text').innerHTML = risk;
+
+        document.getElementById('finding-details-cvss').textContent = data.meta_cvss || "Not specified";
+        document.getElementById('finding-details-cwe').textContent = data.meta_cwe || "Not Specified";
+        document.getElementById('finding-details-cvss').textContent = data.meta_masvs || "Not provided";
 
         let titleElement = $('#finding-title');
         titleElement.html(title);
@@ -309,13 +323,32 @@ Finding = {
 
     handleFindingData: function(data) {
         Utils.setSeverity(data?.severity, $('#finding-severity'), $('#finding-severity-badge'));
-        $('#finding-language').html(data?.snippet?.language);
-        $('#finding-details-file-size').html(data?.snippet?.file_size);
+        let lang = Utils.capitalize(data?.snippet?.language);
+
+        $('#finding-language').text(lang);
+        $('#finding-details-language').text(lang);
+        $('#finding-details-file-name').text(data?.snippet?.file_name);
+        $('#finding-details-file-size').text(data?.snippet?.file_size);
+        $('#finding-details-lines').text(data?.snippet?.lines);
     },
 
     handleCode: function(data) {
         FindingView.editor.setValue(data?.code);
         FindingView.editor.getModel().setLanguage(data?.snippet.language.toLowerCase() || "plaintext");
+
+        var selections = [];
+        data?.snippet?.lines.split(",").forEach(x => {
+            let number = parseInt(x);
+            console.log(number, x);
+            selections.push({
+                range: new monaco.Range(number, 0, number, 0),
+                options: {
+                  isWholeLine: true,
+                  inlineClassName: 'highlight'
+                }
+            });
+        })
+        FindingView.editor.getModel().deltaDecorations([], selections);
     },
 
     onClose: function() {

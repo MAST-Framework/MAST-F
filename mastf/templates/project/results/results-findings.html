@@ -3,6 +3,11 @@
 
 {% block css_extended %}
 <link rel="stylesheet" href="{% static 'libs/datatables/datatables.min.css' %}" />
+<style>
+    .highlight {
+        background: var(--tblr-highlight-bg);
+    }
+</style>
 {% endblock css_extended %}
 
 {% block content %}
@@ -46,20 +51,20 @@
                         <div class="card">
                             <div class="card-header">
                                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" id="finding-lang-list">
-                                <li class="nav-item">
-                                    <a href="#tabs-language" class="nav-link active" data-bs-toggle="tab" id="finding-language">#Language#</a>
-                                </li>
-                                <li class="nav-item" id="list-file-details-tab">
-                                    <a href="#tabs-file-details" class="nav-link ms-auto" data-bs-toggle="tab">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-code" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
-                                            <path d="M10 13l-1 2l1 2"></path>
-                                            <path d="M14 13l1 2l-1 2"></path>
-                                        </svg>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href="#tabs-language" class="nav-link active" data-bs-toggle="tab" id="finding-language">#Language#</a>
+                                    </li>
+                                    <li class="nav-item" id="list-file-details-tab">
+                                        <a href="#tabs-file-details" class="nav-link ms-auto" data-bs-toggle="tab">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-code" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                                <path d="M10 13l-1 2l1 2"></path>
+                                                <path d="M14 13l1 2l-1 2"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="card-body">
@@ -70,14 +75,18 @@
                                     <div class="tab-pane" id="tabs-file-details">
                                         <div class="card-body">
                                             <dl class="row">
-                                                <dt class="col-5">Size:</dt>
-                                                <dd class="col-7" id="finding-details-file-size">##</dd>
-                                                <dt class="col-5">Language:</dt>
-                                                <dd class="col-7" id="finding-details-language">##</dd>
                                                 <dt class="col-5">File Name:</dt>
                                                 <dd class="col-7" id="finding-details-file-name">##</dd>
+                                                <dt class="col-5">Language:</dt>
+                                                <dd class="col-7" id="finding-details-language">##</dd>
                                                 <dt class="col-5">Lines:</dt>
-                                                <dd class="col-7" id="finding-details-lines">46.113.11.3</dd>
+                                                <dd class="col-7" id="finding-details-lines">##</dd>
+                                                <dt class="col-5">CVSS:</dt>
+                                                <dd class="col-7" id="finding-details-cvss">Not specified</dd>
+                                                <dt class="col-5">CWE:</dt>
+                                                <dd class="col-7" id="finding-details-cwe">Not specified</dd>
+                                                <dt class="col-5">MASVS:</dt>
+                                                <dd class="col-7" id="finding-details-masvs">Not provided</dd>
                                             </dl>
                                         </div>
                                     </div>
@@ -88,19 +97,61 @@
 
                     <div class="col col-md-4">
                         <div class="card">
+                            <div class="card-header">
+                                <ul class="nav nav-tabs card-header-tabs" id="finding-lang-list">
+                                    <li class="nav-item" id="finding-description-header">
+                                        <a href="#finding-tabs-description" class="nav-link active" data-bs-toggle="tab">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-hexagon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M19.875 6.27c.7 .398 1.13 1.143 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033z"></path>
+                                                <path d="M12 9h.01"></path>
+                                                <path d="M11 12h1v4h1"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#finding-tabs-risk" class="nav-link ms-auto" data-bs-toggle="tab">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-note" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M13 20l7 -7"></path>
+                                                <path d="M13 20v-6a1 1 0 0 1 1 -1h6v-7a2 2 0 0 0 -2 -2h-12a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" id="finding-mitigation-header">
+                                        <a href="#finding-tabs-mitigation" class="nav-link ms-auto" data-bs-toggle="tab">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sign-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M8 21h4"></path>
+                                                <path d="M10 21v-10"></path>
+                                                <path d="M10 6v-3"></path>
+                                                <path d="M6 6h10l2 2.5l-2 2.5h-10z"></path>
+                                             </svg>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             <div class="card-body">
-                                <h2 class="card-title">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-hexagon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M19.875 6.27c.7 .398 1.13 1.143 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033z"></path>
-                                        <path d="M12 9h.01"></path>
-                                        <path d="M11 12h1v4h1"></path>
-                                    </svg>
-                                    Details
-                                </h2>
-                                <p id="finding-info-text">
-                                    ##
-                                </p>
+                                <div class="tab-content">
+                                    <div class="tab-pane active show" id="finding-tabs-description">
+                                        <h2>Description</h2>
+                                        <p id="finding-description-text">
+                                            Fetching description...
+                                        </p>
+                                    </div>
+                                    <div class="tab-pane" id="finding-tabs-risk">
+                                        <h2>Associated Risks</h2>
+                                        <p id="finding-risk-text">
+                                            Fetching risks...
+                                        </p>
+                                    </div>
+                                    <div class="tab-pane" id="finding-tabs-mitigation">
+                                        <h2>Possible Mitigation</h2>
+                                        <p id="finding-mitigation-text">
+                                            Fetching risks...
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

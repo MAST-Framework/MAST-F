@@ -9,7 +9,8 @@
             "default_severity": "High",
             "meta_cvss": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
             "meta_cwe": "CWE-319",
-            "meta_masvs": "MASVS: 9.4"
+            "meta_masvs": "MASVS: 9.4",
+            "is_html": true
         },
         {
             "title": "AndroidManifest: Direct-Boot Awareness",
@@ -31,7 +32,8 @@
             "default_severity": "High",
             "meta_cvss": "",
             "meta_cwe": "CWE-778",
-            "meta_masvs": "V11: Client Code Quality"
+            "meta_masvs": "V11: Client Code Quality",
+            "is_html": true
         },
         {
             "title": "AndroidManifest: Backup of Application Data allowed",
@@ -42,7 +44,8 @@
             "default_severity": "Medium",
             "meta_cvss": "",
             "meta_cwe": "CWE-345",
-            "meta_masvs": "V8: Code Tampering and Reverse Engineering"
+            "meta_masvs": "V8: Code Tampering and Reverse Engineering",
+            "is_html": true
         },
         {
             "title": "AndroidManifest: Application in Test-Mode",
@@ -75,7 +78,8 @@
             "default_severity": "Medium",
             "meta_cvss": "",
             "meta_cwe": "CWE-285",
-            "meta_masvs": "V9: Device Security"
+            "meta_masvs": "V9: Device Security",
+            "is_html": true
         }
 
 
