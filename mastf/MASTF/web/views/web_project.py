@@ -197,7 +197,7 @@ class UserScannersView(
         for name, scanner in scanners.items():
             project_scanner = Scanner.objects.filter(
                 scan__project=project, name=name
-            ).first()
+            ).first() # we may have multiple scanners here
             results[scanner.internal_name] = self.get_scan_results(
                 scans, project_scanner
             )

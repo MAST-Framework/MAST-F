@@ -265,7 +265,7 @@ class ScannerPlugin(metaclass=ABCMeta):
         :return: the final context
         :rtype: dict
         """
-        scanner = Scanner.objects.filter(scan=scan, name=self.internal_name).first()
+        scanner = Scanner.objects.get(scan=scan, name=self.internal_name)
 
         func_name = f"ctx_{extension}"
         if hasattr(self, func_name):
@@ -274,7 +274,7 @@ class ScannerPlugin(metaclass=ABCMeta):
         return {}
 
     def results(self, extension: str, scan: Scan) -> dict:
-        scanner = Scanner.objects.filter(scan=scan, name=self.internal_name).first()
+        scanner = Scanner.objects.get(scan=scan, name=self.internal_name)
 
         func_name = f"res_{extension}"
         if hasattr(self, func_name):

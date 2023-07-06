@@ -27,7 +27,6 @@ from mastf.MASTF.serializers import (
 )
 from mastf.MASTF.models import (
     Scan,
-    Project,
     ScanTask,
     Scanner,
 )

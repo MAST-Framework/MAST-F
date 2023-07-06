@@ -143,8 +143,6 @@ class AndroidManifestHandler:
         :param element: The permission element.
         :param identifier: The identifier of the permission.
         """
-        queryset = AppPermission.objects.filter(identifier=identifier)
-
         protection_level = str(
             element.getAttribute("android:protectionLevel") or ""
         ).capitalize()
@@ -159,7 +157,9 @@ class AndroidManifestHandler:
                 )
                 protection_level = ProtectionLevel.NORMAL
 
-        if not queryset.exists():
+        try:
+            permission = AppPermission.objects.get(identifier=identifier)
+        except AppPermission.DoesNotExist: # no MultipleObjectsReturned as this field is unique
             self.observer.update(
                 "Creating new Permission: %s [pLevel=%s]",
                 identifier,
@@ -167,17 +167,14 @@ class AndroidManifestHandler:
                 do_log=True,
             )
             permission = AppPermission.create_unknown(identifier, protection_level)
-        else:
-            permission = queryset.first()
 
         if not self._saved:
             self.snippet.save()
             self._saved = True
 
-        finding = PermissionFinding.objects.filter(
-            scan=self.scan, permission=permission
-        )
-        if not finding.exists():
+        try:
+            PermissionFinding.objects.get(scan=self.scan, permission=permission)
+        except PermissionFinding.DoesNotExist:
             PermissionFinding.objects.create(
                 pk=str(uuid.uuid4()),
                 scan=self.scan,
@@ -194,14 +191,18 @@ class AndroidManifestHandler:
             self.snippet.save()
             self._saved = True
 
-        _ = FindingTemplate.make_internal_id
-        queryset = FindingTemplate.objects.filter(internal_id=_(title))
-        if len(queryset) == 1:
+        internal_id = FindingTemplate.make_internal_id(title)
+        try:
+            template = FindingTemplate.objects.get(internal_id=internal_id)
             Finding.create(
-                queryset.first(),
+                template,
                 self.snippet,
                 self.inspector.scan_task.scanner,
             )
+        except FindingTemplate.DoesNotExist:
+            logger.warning("Could not find FindingTemplate for ID: %s", internal_id)
+        except FindingTemplate.MultipleObjectsReturned:
+            logger.warning("Multiple FindingTemplate objects with ID: %s", internal_id)
 
     def on_application(self, element: Element, name: str) -> None:
         """

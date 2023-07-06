@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
 import logging
+import json
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -23,7 +24,7 @@ from mastf.MASTF.utils.enum import Severity
 
 from .base import Project, File, Team, TimedModel
 
-__all__ = ["Scan", "Scanner", "ScanTask", "Details", "Certificate"]
+__all__ = ["Scan", "Scanner", "ScanTask", "Details", "Certificate", "DeveloperInfo", "StoreInfo"]
 
 logger = logging.getLogger(__name__)
 
@@ -229,6 +230,7 @@ class ScanTask(TimedModel):
         tasks = ScanTask.active_tasks(scan)
         if len(tasks) == 0 or (len(tasks) == 1 and tasks[0] == task):
             scan.is_active = False
+            scan.status = "Done" # TODO: change to enum value
             scan.save()
 
 
@@ -274,6 +276,26 @@ class Certificate(TimedModel):
     """If present, the serial number will be stored in a ``TextField``."""
 
 
+class DeveloperInfo(TimedModel):
+    developer_id = models.CharField(primary_key=True, max_length=512)
+    name = models.CharField(max_length=512, blank=True)
+    email = models.EmailField(blank=True)
+    website = models.URLField(blank=True)
+    address = models.CharField(max_length=512, blank=True)
+
+
+class StoreInfo(TimedModel):
+    store_name = models.CharField(max_length=32, blank=True)
+    app_id = models.CharField(max_length=512, blank=True)
+
+    title = models.CharField(max_length=256, blank=True)
+    score = models.FloatField(default=0.0)
+    installs = models.CharField(max_length=128, blank=True, default="0")
+    price = models.CharField(max_length=256, blank=True)
+    url = models.URLField(blank=True)
+    release_date = models.CharField(max_length=256, blank=True)
+    developer = models.ForeignKey(DeveloperInfo, on_delete=models.SET_NULL, null=True)
+    description = models.TextField(blank=True)
 
 
 class Details(TimedModel):  # TODO
@@ -288,6 +310,7 @@ class Details(TimedModel):  # TODO
     app_version = models.CharField(max_length=512, blank=True)
 
     target_sdk = models.CharField(max_length=32, blank=True)
+    store_info = models.ForeignKey(StoreInfo, on_delete=models.SET_NULL, null=True)
 
     # Many-To-Many relationships here
     certificates = models.ManyToManyField(Certificate, related_name="details")

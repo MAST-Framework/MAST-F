@@ -70,7 +70,7 @@ class DetailsMixin:
         :rtype: dict
         """
         context = namespace()
-        context.details = Details.objects.filter(scan=scan, file=file).first()
+        context.details = Details.objects.get(scan=scan, file=file)
         context.charts = self.charts
         return context
 
@@ -143,6 +143,7 @@ class VulnerabilitiesMixin:
                 cat["vuln_data"] = VulnerabilitySerializer(vuln_data, many=True).data
                 categories.append(cat)
 
+            categories.sort(key=lambda x: x["name"])
             lang["categories"] = categories
             data.append(lang)
         return data
@@ -267,6 +268,7 @@ class ComponentsMixin:
         ctx_components_data = mixin.ctx_components(scan, file, scanner)
         res_components_data = mixin.res_components(scan, scanner)
     """
+
     def ctx_components(self, scan: Scan, file: File, scanner: Scanner):
         """
         Get components statistics and elements for a scan.

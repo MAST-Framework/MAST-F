@@ -68,13 +68,14 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                 continue
 
             name = to_path(*to_packages(class_def.pretty_name))
-            queryset = Package.objects.filter(group_id=name)
-            # If we have an exact match, we should add it to the matched
-            # packages as we don't know the artifact id
-            if queryset.exists() and len(queryset) == 1:
-                package = queryset.first()
+            try:
+                # If we have an exact match, we should add it to the matched
+                # packages as we don't know the artifact id
+                package = Package.objects.get(group_id=name)
                 if package not in dependencies:
                     dependencies[package] = Dependency(pk=uuid.uuid4(), package=package)
+            except (Package.DoesNotExist, Package.MultipleObjectsReturned):
+                pass
 
     # Before we are going to add the packages, we try to look at other
     # places to collect version numbers:
@@ -94,9 +95,8 @@ def get_app_packages(task: ScannerPluginTask) -> None:
             if "artifactId" in properties:
                 query["artifact_id"] = properties["artifactId"]
 
-        queryset = Package.objects.filter(**query)
-        if queryset.exists() and len(queryset) == 1:
-            package = queryset.first()
+        try:
+            package = Package.objects.get(**query)
             # If the package is already present, check if there is a version mapped to it
             if package in dependencies:
                 dep = dependencies[package]
@@ -107,15 +107,16 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                 dependencies[package] = Dependency(
                     pk=uuid.uuid4(), package=package, version=version
                 )
+        except (Package.DoesNotExist, Package.MultipleObjectsReturned):
+            pass
 
     # 2: .version files (mostly Android related frameworks)
     for config in base_dir.rglob("*.version"):
         group_id, artifact_id = config.stem.split("_", 1)
 
-        # Limit the amount of read operations to existing packages
-        queryset = Package.objects.filter(group_id=group_id, artifact_id=artifact_id)
-        if queryset.exists() and len(queryset) == 1:
-            package = queryset.first()
+        try:
+            # Limit the amount of read operations to existing packages
+            package = Package.objects.get(group_id=group_id, artifact_id=artifact_id)
             # Read version
             with open(str(config), "r", encoding="utf-8") as fp:
                 # These files only contain one line, so we can call .readline()
@@ -129,6 +130,8 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                 dep = dependencies[package]
                 if version and not dep.version:
                     dep.version = version
+        except (Package.DoesNotExist, Package.MultipleObjectsReturned):
+            pass
 
     # 3: TPL metadata files (huge files with license metadata - may contain
     # group and artifact ids)
@@ -144,15 +147,15 @@ def get_app_packages(task: ScannerPluginTask) -> None:
                 if artifact_id:
                     query["artifact_id"] = artifact_id
 
-                queryset = Package.objects.filter(**query)
-                # These checks are pointless as there will be only one or no match
-                if queryset.exists() and len(queryset) == 1:
-                    package = queryset.first()
+                try:
+                    package = Package.objects.get(**query)
                     # If the package is already present, check if there is a version mapped to it
                     if package not in dependencies:
                         dependencies[package] = Dependency(
                             pk=uuid.uuid4(), package=package
                         )
+                except (Package.MultipleObjectsReturned, Package.DoesNotExist):
+                    pass
 
     # 4: Cordova dependencies (TODO)
     # ...
@@ -170,7 +173,7 @@ def get_app_packages(task: ScannerPluginTask) -> None:
         dependency.scanner = task.scan_task.scanner
         # TODO: dependency.outdated = ...
 
-    Dependency.objects.bulk_create(dependencies.values())
+    Dependency.objects.bulk_create(list(dependencies.values()))
 
 
 def run_libscout_scan(

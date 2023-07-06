@@ -71,7 +71,7 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
 def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
     logger.info("Scan Peparation: Setting up directories of scan %s", scan_uuid)
 
-    task = ScanTask.objects.filter(celery_id=self.request.id).first()
+    task = ScanTask.objects.get(celery_id=self.request.id)
     observer = Observer(self, scan_task=task)
     scan = Scan.objects.get(scan_uuid=scan_uuid)
 

@@ -38,6 +38,9 @@
                               {% elif project.risk_level|lower == "high" %}bg-red-lt \
                               {% elif project.risk_level|lower == "medium"%}bg-orange-lt\
                               {% elif project.risk_level|lower == "low" %}bg-yellow-lt
+                              {% elif project.risk_level|lower == "secure" %}bg-green-lt
+                              {% elif project.risk_level|lower == "info" %}bg-azure-lt
+                              {% elif project.risk_level|lower == "critical" %}bg-pink-lt
                               {% else %}bg-secondary-lt{% endif %}">
                           {{ project.risk_level }}
                           </span>

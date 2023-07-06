@@ -114,7 +114,6 @@ class Dependency(TimedModel):
     license = models.CharField(max_length=256, blank=True)
     """Stores all extracted license information (comma spearated)"""
 
-    @property
     def vulnerabilities(self):
         """Returns a generator that yields all vulnerabilities associated with the
         package of this dependency and its version.

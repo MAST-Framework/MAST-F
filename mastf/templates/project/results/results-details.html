@@ -18,13 +18,7 @@
                                 <div class="datagrid-content">
                                     <div class="row">
                                         <div class="col-auto">
-                                            <span class="avatar avatar-lg rounded">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-question-mark" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"></path>
-                                                    <path d="M12 19l0 .01"></path>
-                                                    </svg>
-                                            </span>
+                                            <span class="avatar avatar-lg rounded" style="background-image: url({% url 'ScanIcon' details.scan.pk %})"></span>
                                         </div>
                                         <div class="col text-truncate align-left text-left">
                                             <span class="text-muted h4">
@@ -37,10 +31,11 @@
                                                 </b>
                                             </span>
                                             <div class="text-muted text-truncate mt-n1">
+                                                {{details.app_version}}
                                                 {% if scan.scan_type %}
                                                 {{ scan.scan_type }}
                                                 {% else %}
-                                                No Scan Type defined
+                                                (No Scan Type)
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -207,40 +202,77 @@
                     </div>
                 </div>
             </div>
+            {% comment %}
+            The Store will be structured like this:
 
-            {% if details.store %}
-            <div class="hr-text">{{ details.store.name }} information</div>
-            <div class="row">
-            <div class="datagrid">
-                {% with details.store as store %}
-                {% for info in store.fields %}
-                <div class="datagrid-item">
-                    <div class="datagrid-title">{{ info.name }}</div>
-
-                    <div class="datagrid-content">
-                        {% if info.type == "str" %}
-                        {{ info.value }}
-
-                        {% elif info.type == "link" %}
-                        <a target="_blank" href="{{ info.link }}" rel="noopener noreferer"
-                            class="link-secondary">
-                            <i>{{ info.value }}</i>
-                        </a>
-                        {% elif info.type == "badge" %}
-                        <span class="badge {{ info.color }} mb-1">
-                            {{ info.value }}
-                        </span>
-                        {% endif %}
+            Store(
+                error: bool = True | False
+                name: str
+                fields: list[dict]
+            )
+            {% endcomment %}
+            {% with data.details.store_info as store %}
+            {% if store %}
+                <div class="hr-text">{{ store.store_name }} information</div>
+                <div class="row">
+                    <div class="datagrid">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Title</div>
+                            <div class="datagrid-content">{{store.title}}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Score</div>
+                            <div class="datagrid-content">
+                                <span class="badge bg-azure-lt mb-1">
+                                    {{ store.score }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Installs</div>
+                            <div class="datagrid-content">{{store.installs}}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Price</div>
+                            <div class="datagrid-content">{{store.price}}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">URL</div>
+                            <div class="datagrid-content">
+                                <a target="_blank" href="{{ store.url }}" rel="noopener noreferer"
+                                    class="link-secondary">
+                                    <i>Visit Platform App-Store for more details</i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Release Date</div>
+                            <div class="datagrid-content">{{store.release_date}}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">Developer</div>
+                            <div class="datagrid-content">
+                                {% if store.developer %}
+                                <a target="_blank" href="{{ store.developer.website|default_if_none:"#" }}" rel="noopener noreferer">
+                                    <i>{{store.developer.name}}</i>
+                                </a>
+                                {% else %}
+                                <span class="badge bg-danger-lt mb-1">Not specified</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-                {% endfor %}
-                {% endwith %}
-            </div>
-            </div>
+                <div class="row markdown">
+                    <pre>
+                        {{store.description}}
+                    </pre>
+                </div>
 
-
-        {% endif %}
+            {% else %}
+            <div class="hr-text">No Store information</div>
+            {% endif %}
+            {% endwith %}
 
         {% else %}
         <div class="row flex-column justify-content-center">

@@ -223,6 +223,7 @@
                                                             {% elif finding.severity|lower == 'low' %}text-yellow
                                                             {% elif finding.severity|lower == 'info' %}text-secondary
                                                             {% elif finding.severity|lower == 'secure' %}text-green
+                                                            {% elif finding.severity|lower == 'critical' %}text-pink
                                                             {% endif %}">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shield-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

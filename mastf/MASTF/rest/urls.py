@@ -78,6 +78,7 @@ urlpatterns = [
             path(r"hosts", views.HostListView.as_view()),
             path(r"components", views.ComponentListView.as_view()),
             path(r"tasks", views.ScanTaskListView.as_view()),
+            path(r"icon", views.AppIconView.as_view(), name="ScanIcon"),
 
             path(r"<str:name>/<str:extension>", views.ScannerView.as_view()),
         ])),

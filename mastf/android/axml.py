@@ -25,9 +25,9 @@ to print out the application's name and all activities:
 .. code-block:: python
     :linenos:
 
-    from mastf.android import manifest
+    from mastf.android import axml
 
-    visitor = manifest.AXmlVisitor()
+    visitor = axml.AndroidManifestVisitor()
 
     @visitor.manifest("android:name")
     def visit_name(element, name: str):
@@ -43,7 +43,7 @@ to print out the application's name and all activities:
 from xml.dom import minidom
 from inspect import isclass
 
-__all__ = ["AXmlVisitorBase", "AXmlVisitor"]
+__all__ = ["AXmlVisitorBase", "AXmlVisitor", "AndroidManifestVisitor"]
 
 
 class _AXmlElement:
@@ -120,7 +120,7 @@ class AXmlVisitorBase(type):
     This class can be used on any declaring class that should store
     handler elements.
 
-    >>> class MyVisitorClass(metaclass=AXmlVisitorBase):
+    >>> class MyVisitorClass(AXmlVisitor):
     ...     class Meta:
     ...         nodes = [ 'manifest', 'uses-permission' ]
 
@@ -185,47 +185,7 @@ DOCUMENT = "doc"
 
 
 class AXmlVisitor(metaclass=AXmlVisitorBase):
-    """Implementation of a visitor-based XML reader.
-
-    This class uses the features of the :class:`AXmlVisitorBase` to define
-    nodes of the Android manifest.  The following code illustrates how
-    to register handlers for attributes of specific XML nodes:
-
-    >>> visitor = AXmlVisitor()
-    >>> @visitor.uses_permission("android:name")
-    ... def visit_permission_name(element, name: str):
-    ...     pass
-
-    Here, the function would be called when the attribute "android:name" on
-    a ``uses-permission`` node has been detected.
-
-    To register a handler for a specific XML node, use the ``start`` or
-    ``end`` attribute. The callback method will be called wither before
-    or after the element's attributes have been visted.
-
-    >>> @visitor.start("uses-permission")
-    >>> def visit_permission_node(element):
-    ...     pass
-
-    The call above is equivalent to the following (assume ``visit_permission_node``
-    has been defined before):
-
-    >>> visitor.uses_permission["android:name"] = visit_permission_node
-    >>> # equivalent to
-    >>> visitor.uses_permission.add("android:name", visit_permission_node)
-
-    Note that the called function won't have any other positional arguments
-    than the visited element. In addition, this class supports optional
-    arguments that can be used within each handler:
-
-    >>> visitor = AXmlVisitor(foo='bar')
-    >>> @visitor.manifest('android:name')
-    >>> def visit_name(element, value: str, foo: str):
-    ...     pass
-
-    .. important::
-        Additional arguments must be present in all declared methods.
-    """
+    """Implementation of a visitor-based XML reader."""
 
     start = _AXmlElement(None)
     """Stores handlers than would be called `before` the attributes of an element
@@ -289,6 +249,46 @@ class AXmlVisitor(metaclass=AXmlVisitorBase):
                     handler(element, attr_value, *self.args, **self.kwargs)
 
 class AndroidManifestVisitor(AXmlVisitor):
+    """This class uses the features of the :class:`AXmlVisitorBase` to define
+    nodes of the Android manifest.  The following code illustrates how
+    to register handlers for attributes of specific XML nodes:
+
+    >>> visitor = AXmlVisitor()
+    >>> @visitor.uses_permission("android:name")
+    ... def visit_permission_name(element, name: str):
+    ...     pass
+
+    Here, the function would be called when the attribute "android:name" on
+    a ``uses-permission`` node has been detected.
+
+    To register a handler for a specific XML node, use the ``start`` or
+    ``end`` attribute. The callback method will be called wither before
+    or after the element's attributes have been visted.
+
+    >>> @visitor.start("uses-permission")
+    >>> def visit_permission_node(element):
+    ...     pass
+
+    The call above is equivalent to the following (assume ``visit_permission_node``
+    has been defined before):
+
+    >>> visitor.uses_permission["android:name"] = visit_permission_node
+    >>> # equivalent to
+    >>> visitor.uses_permission.add("android:name", visit_permission_node)
+
+    Note that the called function won't have any other positional arguments
+    than the visited element. In addition, this class supports optional
+    arguments that can be used within each handler:
+
+    >>> visitor = AXmlVisitor(foo='bar')
+    >>> @visitor.manifest('android:name')
+    >>> def visit_name(element, value: str, foo: str):
+    ...     pass
+
+    .. important::
+        Additional arguments must be present in all declared methods.
+    """
+
     class Meta:
         nodes = [
             # Adds an action to an intent filter.

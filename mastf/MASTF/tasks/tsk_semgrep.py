@@ -24,7 +24,8 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
     scan_task.save()
     observer = Observer(self, scan_task=scan_task)
 
-    out_file = pathlib.Path(file_dir) / "semgrep.json"
+    scan = scan_task.scan
+    out_file = scan.project.directory / f"semgrep-{scan.file.internal_name}.json"
     if out_file.exists():
         os.remove(str(out_file))
 
@@ -60,9 +61,8 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
                 result["check_id"].split(".", 2)[-1].lower() # always something like "rules.storage.MSTG-STORAGE-7.2"
             )
 
-            queryset = FindingTemplate.objects.filter(internal_id__icontains=internal_name)
-            if queryset.exists() and len(queryset) == 1:
-                template = queryset.first()
+            try:
+                template = FindingTemplate.objects.get(internal_id__icontains=internal_name)
                 path = pathlib.Path(result["path"])
                 start = result["start"]["line"]
                 end = result["end"]["line"]
@@ -78,6 +78,11 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
                     Finding.create(template, snippet, scan_task.scanner)
                 else:
                     Finding.create(template, snippet, scan_task.scanner, text=result["message"])
+
+            except FindingTemplate.DoesNotExist:
+                logger.warning("Could not find FindingTemplate for ID: %s", internal_name)
+            except FindingTemplate.MultipleObjectsReturned:
+                logger.warning("Multiple FindingTemplate objects with ID: %s", internal_name)
 
         _, meta = observer.success("Finished semgrep scan!")
         return meta

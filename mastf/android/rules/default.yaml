@@ -1,29 +1,4 @@
 # Insecure SSL
-- rule-id: android-insecure-ssl-allowallhostnameverifier
-  patterns:
-    - javax\.net\.ssl
-    - AllTrustSSLSocketFactory\|NonValidatingSSLSocketFactory\|ALLOW_ALL_HOSTNAME_VERIFIER|\.setDefaultHostnameVerifier\(|NullHostnameVerifier\(
-  meta:
-    filters:
-      file_ext: java
-    severity: high
-    template: insecure-implementation-of-ssl-with-allowallhostnameverifier
-    vulnerability: false
-
-- rule-id: android-insecure-ssl-trustmanager-accept-all-certificates
-  patterns:
-    - javax\.net\.ssl
-    - mode: or
-      text: (SSLSocketFactory|HttpsURLConnection)\s*\.\s*setHostnameVerifier\s*\(\s*AllowAllHostnameVerifier\s*\.\s*INSTANCE\s*\)\s*\.\s*setTrustAllCerts\s*\(\s*true\s*\)
-    - mode: or
-      text: \.\s*setTrustAllCerts\s*\(\s*true\s*\)
-  meta:
-    filters:
-      file_ext: java
-    severity: critical
-    template: insecure-implementation-of-ssl-with-trustmanager-accepting-all-certificates
-    vulnerability: false
-
 - rule-id: android-insecure-ssl-weak-cipher-suites
   patterns:
     - javax\.net\.ssl
@@ -47,24 +22,6 @@
     vulnerability: false
 
 # Logging
-- rule-id: android-logging-sensitive-information
-  pattern: (Log\.([vdiew]|wtf)|System\.out\.println)\s*\(\s*\".*(?:password|api[_ ]key|pii|personally[_ ]identifiable[_ ]information).*\"
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-logging-of-sensitive-information
-    vulnerability: false
-
-- rule-id: android-logging-debug-messages-in-release-build
-  pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*\".*\"\s*,\s*.*\bBuildConfig\.DEBUG\b
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-logging-of-debug-messages-in-release-build
-    vulnerability: false
-
 - rule-id: android-logging
   patterns:
     - text: .*android\.util\.Log.*
@@ -76,7 +33,7 @@
   meta:
     filters:
       file_ext: java
-    severity: Medium
+    severity: Info
     template: android-logging-detected
     vulnerability: false
 
@@ -323,7 +280,7 @@
   meta:
     filter:
       file_ext: "java, kotlin"
-    severity: "Medium"
+    severity: "Secure"
     template: "root-detection"
     vulnerability: false
 

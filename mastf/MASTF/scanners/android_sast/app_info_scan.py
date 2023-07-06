@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import logging
-import json
+import pathlib
 
 from androguard.core.bytecodes import apk
 
@@ -31,6 +31,8 @@ from mastf.MASTF.models import (
     Finding,
     FindingTemplate,
     Snippet,
+    StoreInfo,
+    DeveloperInfo,
 )
 
 apk.log.setLevel(logging.WARNING)
@@ -46,7 +48,15 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
     details = Details.objects.get(scan=inspector.scan)
 
     details.app_name = apk_file.get_app_name()
-    details.icon = inspector.file_dir / "contents" / apk_file.get_app_icon()
+    icon_path = inspector.file_dir / "contents" / apk_file.get_app_icon()
+    if not icon_path.exists():
+        # Small fix: get first icon
+        res_path = inspector.file_dir / "contents" / "res"
+        for icon_file in res_path.rglob("*launcher.png"):
+            icon_path = icon_file # take only the last image
+
+
+    details.icon = str(icon_path)
     details.app_id = apk_file.get_package()
     details.app_version = apk_file.get_androidversion_name()
     details.target_sdk = apk_file.get_target_sdk_version()
@@ -72,19 +82,34 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
                 )
             )
 
-    details.save()
+
     # TODO: Display information on possible vulnerabilities if application
     # is signed with MD5, SHA1, or v1 signature scheme.
+    result, name = get_details(details.app_id)
+    store_info = StoreInfo.objects.create(store_name=name, app_id=details.app_id)
+    store_info.title = result.get("title")
+    store_info.score = result.get("score", 0.0)
+    store_info.installs = result.get("installs", 0)
+    store_info.price = result.get("price", 0)
+    store_info.url = result.get("url")
+    store_info.release_date = result.get("released")
+    store_info.description = result.get("description")
 
-    result = get_details(details.app_id)
-    # Create info.json file
-    target_path = inspector.file_dir / "info.json"
-    if target_path.exists():
-        logger.warning("Info.json already exists for app: %s", details.app_name)
+    try:
+        store_info.developer = DeveloperInfo.objects.get(
+            developer_id=result.get("developerId")
+        )
+    except (DeveloperInfo.DoesNotExist, DeveloperInfo.MultipleObjectsReturned):
+        store_info.developer = DeveloperInfo.objects.create(
+            pk=result.get("developerId"),
+            name=result.get("developer"),
+            email=result.get("developerEmail"),
+            website=result.get("developerWebsite"),
+            address=result.get("developerAddress"),
+        )
 
-    # The stored app-info file will be used within the scan results tab
-    with open(str(target_path), "w") as fp:
-        json.dump(result, fp)
+    store_info.save()
+    details.save()
 
 
 def get_app_net_info(inspector: ScannerPluginTask) -> None:

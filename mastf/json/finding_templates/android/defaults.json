@@ -1,29 +1,6 @@
 {
     "templates": [
         {
-            "title": "Insecure Implementation of SSL with AllowAllHostnameVerifier",
-            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the setDefaultHostnameVerifier method is called with the AllowAllHostnameVerifier.INSTANCE parameter. This insecure implementation bypasses hostname verification, potentially exposing the application to man-in-the-middle attacks.",
-            "risk": "The insecure implementation of SSL allows attackers to intercept the communication between the Android application and the server, compromising the confidentiality and integrity of sensitive data transmitted.",
-            "mitigation": "To mitigate this issue, use a secure implementation of SSL in Android applications by ensuring proper hostname verification. Instead of using AllowAllHostnameVerifier.INSTANCE, utilize a HostnameVerifier implementation that performs proper hostname validation, such as DefaultHostnameVerifier.INSTANCE or a custom implementation.",
-            "article": "android/insecure-ssl",
-            "default_severity": "Medium",
-            "meta_cvss": "6.5 (Medium)",
-            "meta_cwe": "CWE-295",
-            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used, and that proper certificate validation is performed."
-        },
-        {
-            "title": "Insecure Implementation of SSL with TrustManager Accepting All Certificates",
-            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the setHostnameVerifier method is called with the AllowAllHostnameVerifier.INSTANCE parameter, and then the setTrustAllCerts method is called with a true parameter, indicating acceptance of all certificates.",
-            "risk": "By accepting all certificates, this insecure implementation of SSL allows attackers to intercept and manipulate the application's communication without any certificate validation, leading to the compromise of sensitive data.",
-            "mitigation": "To mitigate this security risk, ensure proper certificate validation by using a secure HostnameVerifier implementation and avoid accepting all certificates.",
-            "article": "android/insecure-ssl",
-            "default_severity": "Critical",
-            "meta_cvss": "9.8 (Critical)",
-            "meta_cwe": "CWE-295",
-            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used, and that proper certificate validation is performed.",
-            "is_html": true
-        },
-        {
             "title": "Insecure Implementation of SSL with Weak Cipher Suites",
             "description": "This rule detects insecure implementations of SSL in Android applications' source code where the setEnabledCipherSuites method is called with an array of cipher suites that include weak encryption algorithms such as DES or RC4. These weak cipher suites are vulnerable to cryptographic attacks and should be avoided.",
             "risk": "Using weak cipher suites in SSL implementations can lead to the compromise of sensitive data due to vulnerabilities in the encryption algorithms. Attackers can exploit these weaknesses to decrypt the transmitted data.",

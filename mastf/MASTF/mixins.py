@@ -19,6 +19,7 @@ the web-frontend. All views that should only be accessible after a user
 login should extend the :class:`ContextMixinBase` class to apply default
 context data automatically.
 """
+import logging
 
 from datetime import datetime
 
@@ -44,6 +45,8 @@ from mastf.MASTF.models import (
     AbstractBaseFinding,
     Finding,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class TemplateAPIView(TemplateView):
@@ -210,9 +213,14 @@ class ContextMixinBase(LoginRequiredMixin):
         context["debug"] = settings.DEBUG
         context["today"] = datetime.now()
 
-        account = Account.objects.filter(user=request.user).first()
-        if account and account.role:
-            context["user_role"] = account.role
+        try:
+            account = Account.objects.get(user=request.user)
+            if account and account.role:
+                context["user_role"] = account.role
+        except Account.MultipleObjectsReturned:
+            logger.warning("Multiple Account instances for user: %s", request.user)
+        except Account.DoesNotExist:
+            logger.error("Could not find Account linked to: %s", request.user)
 
         return context
 
