@@ -195,7 +195,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # -!- START MASTF-CONFIG -!-
 MASTF_PASSWD_MIN_LEN = 12
-MASTF_USERNAME_MIN_LEN = 5
+MASTF_USERNAME_MIN_LEN = 3
 MASTF_FT_DIR = env.get("MASTF_FT_DIR", "") or str(BASE_DIR / "json" / "finding_templates")
 # -!- END MASTF-CONFIG -!-
 

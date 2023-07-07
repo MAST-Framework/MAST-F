@@ -19,6 +19,7 @@ from django.shortcuts import redirect
 
 from rest_framework.permissions import IsAdminUser, exceptions
 
+from mastf.MASTF import settings
 from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
 from mastf.MASTF.permissions import CanViewTeam, CanEditUser
 from mastf.MASTF.models import Account, Team, Environment, namespace
@@ -160,6 +161,7 @@ class AdminUsersConfiguration(ContextMixinBase, SettingsMixin, TemplateAPIView):
         context["users"] = Account.objects.all()
         context["active"] = "admin-user-config"
         context["user_roles"] = list(Role)
+        context["MASTF_PASSWD_MIN_LEN"] = settings.MASTF_PASSWD_MIN_LEN
         return context
 
     def post(self, *args, **kwargs):

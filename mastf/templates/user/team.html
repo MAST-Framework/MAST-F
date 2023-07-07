@@ -120,7 +120,7 @@
                 <span class="fw-bold">Danger Zone</span>
             </div>
             <div class="card-body">
-                {% if team.owner == request.user or account.role|lower == 'admin' %}
+                {% if team.owner == request.user or is_admin %}
                 <div class="row border-bottom mb-3">
 
                     <div class="col mb-1">Delete Team

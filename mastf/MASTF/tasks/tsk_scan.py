@@ -62,18 +62,18 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
         global_task.save()
         logger.info("Started global scan task on %s", scan.pk)
 
-        result: AsyncResult = prepare_scan.delay(str(scan.pk), names)
+        result: AsyncResult = prepare_scan.delay(str(task_uuid), names)
         global_task.celery_id = result.id
         global_task.save()
 
 
 @shared_task(bind=True)
-def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
-    logger.info("Scan Peparation: Setting up directories of scan %s", scan_uuid)
+def prepare_scan(self, scan_task_id: str, selected_scanners: list) -> AsyncResult:
+    task = ScanTask.objects.get(pk=scan_task_id)
+    logger.info("Scan Peparation: Setting up directories of scan %s", task.scan.scan_uuid)
 
-    task = ScanTask.objects.get(celery_id=self.request.id)
     observer = Observer(self, scan_task=task)
-    scan = Scan.objects.get(scan_uuid=scan_uuid)
+    scan = task.scan
 
     observer.update("Directory setup...", current=10)
     # Setup of special directories in our project directory:

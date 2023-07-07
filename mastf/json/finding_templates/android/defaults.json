@@ -13,51 +13,6 @@
             "is_html": true
         },
         {
-            "title": "Insecure Implementation of SSL with SSLv3 or TLSv1",
-            "description": "This rule detects insecure implementations of SSL in Android applications' source code where the `setEnabledProtocols` method is called with an array of protocols that include SSLv3 or TLSv1. These older SSL/TLS versions have known vulnerabilities and should be avoided.",
-            "risk": "Using outdated and insecure SSL/TLS protocols like SSLv3 or TLSv1 can expose the Android application to various attacks, including POODLE and BEAST. Attackers can exploit these vulnerabilities to decrypt or manipulate the encrypted communication.",
-            "mitigation": "To mitigate this security risk, ensure that only secure SSL/TLS protocols are enabled in the SSL configuration. Disable SSLv3 and TLSv1 and prefer newer, more secure protocols such as TLSv1.2 or TLSv1.3.",
-            "article": "android/insecure-ssl",
-            "default_severity": "High",
-            "meta_cvss": "7.5 (High)",
-            "meta_cwe": "CWE-326",
-            "meta_masvs": "V6: Cryptography and Code Tampering - Verify that secure protocols and cipher suites are used.",
-            "is_html": true
-        },
-        {
-            "title": "Insecure Logging of Sensitive Information",
-            "description": "This rule detects insecure logging practices in Android applications' source code where sensitive information, such as passwords, API keys, or personally identifiable information (PII), is logged in plain text.",
-            "risk": "Insecure logging of sensitive information can lead to the exposure of confidential data, making it accessible to potential attackers. This can result in unauthorized access, data breaches, or privacy violations.",
-            "mitigation": "To mitigate this security risk, avoid logging sensitive information directly. Use secure logging mechanisms, such as obfuscation or encryption, to prevent the exposure of sensitive data in logs.",
-            "article": "android/logging",
-            "default_severity": "High",
-            "meta_cvss": "7.5 (High)",
-            "meta_cwe": "CWE-532",
-            "meta_masvs": "V3: Data Protection - Securely protect sensitive information and ensure data minimization."
-        },
-        {
-            "title": "Insecure Logging of Exceptions",
-            "description": "This rule detects insecure logging practices in Android applications' source code where exceptions or stack traces are logged without appropriate handling or sanitization.",
-            "risk": "Insecure logging of exceptions can expose sensitive information, including code snippets, system details, or sensitive business logic, which can aid attackers in identifying vulnerabilities and exploiting them.",
-            "mitigation": "To mitigate this security risk, avoid logging detailed exception messages or stack traces directly. Instead, log only relevant information while ensuring that the logs do not disclose sensitive details.",
-            "article": "android/logging",
-            "default_severity": "Medium",
-            "meta_cvss": "5.5 (Medium)",
-            "meta_cwe": "CWE-209",
-            "meta_masvs": "V3: Data Protection - Securely protect sensitive information and ensure data minimization."
-        },
-        {
-            "title": "Insecure Logging of Debug Messages in Release Build",
-            "description": "This rule detects insecure logging practices in Android applications' source code where debug log statements are present in release builds. Debug logs may contain sensitive information that can aid attackers in understanding the application's internals.",
-            "risk": "Insecure logging of debug messages in release builds can disclose sensitive information, including API endpoints, internal logic, or security mechanisms, making it easier for attackers to target and exploit the application.",
-            "mitigation": "To mitigate this security risk, ensure that debug log statements are not present in release builds. Use proper logging frameworks and configurations to prevent the logging of debug messages in production environments.",
-            "article": "android/logging",
-            "default_severity": "Medium",
-            "meta_cvss": "5.5 (Medium)",
-            "meta_cwe": "CWE-532",
-            "meta_masvs": "V3: Data Protection - Securely protect sensitive information and ensure data minimization."
-        },
-        {
             "title": "Creation of Temporary File (java.io.File)",
             "description": "This rule detects insecure practices in Android applications' source code where temporary files are created using the `java.io.File` class without appropriate security measures.",
             "risk": "Insecure creation of temporary files can lead to security vulnerabilities, such as unauthorized access or leakage of sensitive data. Attackers can exploit these insecure files for malicious purposes.",

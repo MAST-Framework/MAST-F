@@ -59,6 +59,9 @@ class ScanView(APIViewBase):
     lookup_field = "scan_uuid"
 
     def on_delete(self, request: Request, obj: Scan) -> None:
+        if not obj.file: # happens on certain error cases
+            return
+
         path = obj.project.dir(obj.file.internal_name, create=False)
         try:
             file_path = obj.file.file_path

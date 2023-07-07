@@ -13,7 +13,7 @@
            <div class="col">
                 <input type="text" class="form-control form-control-flush fw-bold h1" name="username" placeholder="Username"
                     value="{{user.username}}" id="user-name">
-                <input type="text" class="form-control form-control-flush my-2" name="description" placeholder="Job description" value="">
+                <input type="text" class="form-control form-control-flush my-2" name="description" placeholder="Job description" value="" id="user-description">
                <div class="list-inline list-inline-dots text-muted">
                    <div class="list-inline-item">
                        <!-- Download SVG icon from http://tabler-icons.io/i/map -->
@@ -147,10 +147,11 @@
         if (email != null) {
             data['email'] = email;
         }
-        if (username != null && username.length > 5) {
+        if (username != null && username.length > 3) { // TODO: change to constant
             data['username'] = username;
         }
 
+        data["description"] = $('#user-description').val();
         REST.patch("{% url 'User-View' user.pk %}", JSON.stringify(data), function(data) {
             if (data.success) {
                 REST.patch("{% url 'Account-View' account.pk %}", JSON.stringify({
@@ -238,7 +239,7 @@
                 <div class="row">
                     <div class="col mb-2">
                         <label class="form-label">
-                            Password
+                            New Password
                         </label>
                         <input class="form-control" type="password" name="name" id="pwd-input-1" autocomplete="off">
                     </div>
@@ -246,7 +247,7 @@
                 <div class="row">
                     <div class="col">
                         <label class="form-label">
-                            Repeat Password
+                            Repeat New Password
                         </label>
                         <input class="form-control" type="password" name="name" id="pwd-input-2" autocomplete="off">
                     </div>

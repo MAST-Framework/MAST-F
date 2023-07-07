@@ -92,7 +92,10 @@ def handle_scan_file_upload(
     ) / f"{internal_name}{suffix}"
     if path.exists():
         logger.info("Uploaded file destination already exists! (%s)", str(path))
-        return File.objects.get(file_path=str(path))
+        try:
+            return File.objects.get(file_path=str(path))
+        except (File.MultipleObjectsReturned, File.DoesNotExist):
+            pass # just override it (internal error)
 
     return handle_file_upload(file, internal_name, str(path), save=True)
 

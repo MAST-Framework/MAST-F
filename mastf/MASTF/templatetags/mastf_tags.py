@@ -38,7 +38,7 @@ def vuln_stats(value):
     data = {}
 
     mixin.apply_vuln_context(
-        data, AbstractBaseFinding.stats(PackageVulnerability, base=value)
+        data, AbstractBaseFinding.stats(PackageVulnerability, base=list(value))
     )
     return data
 

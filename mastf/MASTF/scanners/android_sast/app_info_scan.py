@@ -86,14 +86,14 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
     # TODO: Display information on possible vulnerabilities if application
     # is signed with MD5, SHA1, or v1 signature scheme.
     result, name = get_details(details.app_id)
-    store_info = StoreInfo.objects.create(store_name=name, app_id=details.app_id)
-    store_info.title = result.get("title")
+    store_info = StoreInfo.objects.create(store_name=str(name), app_id=details.app_id)
+    store_info.title = result.get("title", "")
     store_info.score = result.get("score", 0.0)
     store_info.installs = result.get("installs", 0)
     store_info.price = result.get("price", 0)
-    store_info.url = result.get("url")
-    store_info.release_date = result.get("released")
-    store_info.description = result.get("description")
+    store_info.url = result.get("url", "")
+    store_info.release_date = result.get("released", "")
+    store_info.description = result.get("description", "")
 
     try:
         store_info.developer = DeveloperInfo.objects.get(

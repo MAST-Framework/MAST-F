@@ -55,9 +55,7 @@
                                 {% if dependency.version %}
                                 {{ dependency.version }}
                                 {% else %}
-                                <span class="text-teal-fg">
-                                    Undefined
-                                </span>
+                                &lt; Undefined &gt;
                                 {% endif %}
                             </td>
 
@@ -178,7 +176,7 @@
                 document.getElementById("dep-outdated").removeAttribute("disabled");
             }
 
-            $('#package-group').text(`${data.package.artifact_id}::${data.package.group_id}`);
+            $('#package-group').text(`${data.package.group_id}::${data.package.artifact_id}`);
             $('#package-name').val(data.package.name);
             $('#package-type').text(data.package.type);
             $('#dep-version').val(data.version);
