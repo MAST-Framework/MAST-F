@@ -53,6 +53,9 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
         # Small fix: get first icon
         res_path = inspector.file_dir / "contents" / "res"
         for icon_file in res_path.rglob("*launcher.png"):
+            if icon_path.is_dir():
+                continue
+
             icon_path = icon_file # take only the last image
 
 

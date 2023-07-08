@@ -80,6 +80,8 @@ COPY ./mastf /app/mastf
 COPY ./yara /app/yara
 COPY ./docs /app/docs
 COPY ./manage.py /app
+COPY ./profiles /app/profiles
+COPY ./plugins /app/plugins
 
 # Specify the working directory where we access our files at runtime
 WORKDIR /app

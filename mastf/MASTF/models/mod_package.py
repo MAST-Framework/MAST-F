@@ -55,6 +55,7 @@ class Package(TimedModel):
     """
 
     is_tracker = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
 
     class Meta:
         constraints = [

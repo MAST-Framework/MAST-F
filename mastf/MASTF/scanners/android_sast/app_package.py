@@ -23,10 +23,7 @@ import io
 
 from androguard.core.bytecodes import apk
 
-from LibScout.config import FILE_EXT_LIB_PROFILE
-from LibScout.pkg import to_packages, to_path, get_framework_pt
-from LibScout.profile.caches import LazyPickleCache
-from LibScout.core.matcher import LibMatcher
+from LibScout.pkg import to_packages, to_path
 
 from mastf.core.files.properties import Properties
 from mastf.core.files.tpl import TPL
@@ -71,7 +68,7 @@ def get_app_packages(task: ScannerPluginTask) -> None:
             try:
                 # If we have an exact match, we should add it to the matched
                 # packages as we don't know the artifact id
-                package = Package.objects.get(group_id=name)
+                package = Package.objects.get(group_id=name, artifact_id=None)
                 if package not in dependencies:
                     dependencies[package] = Dependency(pk=uuid.uuid4(), package=package)
             except (Package.DoesNotExist, Package.MultipleObjectsReturned):
@@ -167,6 +164,7 @@ def get_app_packages(task: ScannerPluginTask) -> None:
     for package in dependencies:
         dependency = dependencies[package]
         if package in present_packages:
+            dependencies.pop(package)
             continue  # just ignore duplicates
 
         dependency.project = task.scan.project
@@ -174,31 +172,4 @@ def get_app_packages(task: ScannerPluginTask) -> None:
         # TODO: dependency.outdated = ...
 
     Dependency.objects.bulk_create(list(dependencies.values()))
-
-
-def run_libscout_scan(
-    task: ScannerPluginTask, profiles_dir: str, android_jar: str
-) -> None:
-    # config:
-    #   - android.jar path
-    #   - profiles directory
-
-    # NOTE: We use a LazyPickleCache as importing a huge amount
-    # of profiles into memory wouldn't be efficient if we have
-    # multiple libscout scans at a time.
-    cache = LazyPickleCache()
-    tree = get_framework_pt(android_jar)
-
-    # 1. Load compiled profile paths
-    for file_path in pathlib.Path(profiles_dir).rglob(f"*.{FILE_EXT_LIB_PROFILE}"):
-        cache.import_profile(str(file_path))
-
-    # 2. Create matcher instance
-    matcher = LibMatcher(cache=cache, fwpt=tree)
-
-    # 3. run scan
-    stats = matcher.identify_libs(task.scan.file.file_path)
-
-    # TODO: artifact+groupid in package-only-matches
-    # TODO: verify partial+full_matches
 

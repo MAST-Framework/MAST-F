@@ -33,7 +33,11 @@ from mastf.MASTF.scanners.plugin import (
     ScannerPluginTask,
 )
 
-from mastf.MASTF.tasks import perform_async_sast, perform_semgrep_scan
+from mastf.MASTF.tasks import (
+    perform_async_sast,
+    perform_semgrep_scan,
+    perform_libscout_scan
+)
 from mastf.MASTF.models import ScanTask
 from mastf.MASTF.scanners.android_sast import (
     get_manifest_info,
@@ -122,6 +126,15 @@ class AndroidTask(ScannerPluginTask):
             str(settings.SEMGREP_ANDROID_RULES_DIR),
             str(self.file_dir),
         )
+
+    def do_libscout_scan(self) -> None:
+        task = ScanTask.objects.create(
+            task_uuid=uuid.uuid4(),
+            scan=self.scan,
+            scanner=self.scan_task.scanner,
+            name=self.scan_task.name,
+        )
+
 
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)

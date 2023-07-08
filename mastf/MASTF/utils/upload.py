@@ -20,6 +20,7 @@ as well as string extraction of a file.
 import os
 import hashlib
 import logging
+import datetime
 
 from io import IOBase
 
@@ -84,7 +85,8 @@ def handle_scan_file_upload(
     :return: a :class:`File` object on success, ``None`` otherwise
     :rtype: :class:`File` | ``NoneType``
     """
-    internal_name = hashlib.md5(file.name.encode()).hexdigest()
+    time_str = str(datetime.datetime.now())
+    internal_name = hashlib.md5(f"{file.name}_{time_str}".encode(errors="ignore")).hexdigest()
 
     suffix = f".{file.name.split('.')[-1]}" if "." in file.name else ""
     path = (

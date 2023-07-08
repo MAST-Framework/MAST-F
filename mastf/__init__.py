@@ -13,7 +13,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-__version__ = "0.0.2-alpha"
+__version__ = (0, 0, 1)
+__tag__ = "a0"
+__release__ = (2023, 1)
 
-def version_string() -> str:
-    return __version__
+
+def get_full_version() -> str:
+    release = ".".join([str(x) for x in __release__])
+    version = ".".join([str(x) for x in __version__])
+    if __tag__:
+        version = f"{version}-{__tag__}"
+
+    return f"v{version} ({release})"

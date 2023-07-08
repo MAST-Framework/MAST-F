@@ -19,3 +19,4 @@
 from .tsk_scan import *
 from .tsk_sast import *
 from .tsk_semgrep import *
+from .tsk_libscout import *

@@ -326,8 +326,9 @@ Finding = {
             let path_elements = masvs.split("/");
             let title = path_elements[path_elements.length-1].split("#")[0].replace("-", " ")
             document.getElementById("finding-details-masvs").innerHTML = `<a href="${masvs}" class="link-secondary" target="_blank">${title}</a>`;
+        } else {
+            document.getElementById('finding-details-masvs').textContent = data.meta_masvs || "Not provided";
         }
-        document.getElementById('finding-details-masvs').textContent = data.meta_masvs || "Not provided";
 
         let titleElement = $('#finding-title');
         titleElement.html(title);
@@ -357,7 +358,6 @@ Finding = {
         var selections = [];
         data?.snippet?.lines.split(",").forEach(x => {
             let number = parseInt(x);
-            console.log(number, x);
             selections.push({
                 range: new monaco.Range(number, 0, number, 0),
                 options: {

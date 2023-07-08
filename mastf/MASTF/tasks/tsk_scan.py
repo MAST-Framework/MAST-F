@@ -1,4 +1,4 @@
-# This file is part of MAST-F's Frontend API
+# This file is part of MAST-F's Backend API
 # Copyright (C) 2023  MatrixEditor
 #
 # This program is free software: you can redistribute it and/or modify

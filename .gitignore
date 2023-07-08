@@ -18,6 +18,7 @@ test_env.*
 *.key
 # force users to generate their own certificate
 *.pem
+*.jar
 
 # C extensions
 *.so

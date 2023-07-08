@@ -32,6 +32,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from rest_framework.permissions import BasePermission, exceptions
 
+from mastf import get_full_version
 from mastf.MASTF import settings
 from mastf.MASTF.utils.error import get_error
 from mastf.MASTF.utils.enum import Severity, Visibility
@@ -212,6 +213,7 @@ class ContextMixinBase(LoginRequiredMixin):
         context = dict(kwargs)
         context["debug"] = settings.DEBUG
         context["today"] = datetime.now()
+        context["full_version"] = get_full_version()
 
         try:
             account = Account.objects.get(user=request.user)
