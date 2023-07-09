@@ -72,7 +72,7 @@ class AppPermissionFileUpload(APIView):
 
         try:
             with open(str(target_file), "r") as fp:
-                permissions = apl.load(fp)
+                aplist = apl.load(fp)
 
             os.remove(str(target_file))
         except Exception as err:
@@ -83,41 +83,40 @@ class AppPermissionFileUpload(APIView):
             "Importing APL from %s with checksum: %s", str(target_file), fileobj.sha256
         )
         pobjects = []
-        for identifier in permissions.ungrouped:
-            permission = permissions.ungrouped[identifier]
+        for permission in aplist.permissions:
             pobjects.append(
                 AppPermission(
                     permission_uuid=uuid4(),
-                    identifier=identifier,
-                    name=permission.get("label", "<empty permission name>"),
-                    protection_level=permission.get("protectionLevel", "").lower(),
-                    dangerous="dangerous"
-                    in permission.get("protectionLevel", "").lower(),
+                    identifier=permission.identifier,
+                    name=permission.label or "<empty permission name>",
+                    protection_level=AppPermission.PROTECTION_LEVEL_SEPARATOR.join(
+                        permission.protectionLevel
+                    ).lower(),
+                    dangerous="dangerous" in permission.protectionLevel,
                     group="",  # ungrouped permissions don't have a group,
-                    short_description=permission.get(
-                        "description",
-                        "Dynamic generated description. Please edit the short and long description in the plugins-context of your MAST-F Instance.",
+                    short_description=(
+                        permission.description
+                        or "Dynamic generated description. Please edit the short and long description in the plugins-context of your MAST-F Instance.",
                     ),
                 )
             )
 
-        for group_id in permissions:
-            group = permissions[group_id]
-            group_permissions = group.get("permissions", {})
-            for permission_id in group_permissions:
-                permission = group[permission_id]
+        for group in aplist.groups:
+            group_permissions = group.permissions
+            for permission in group_permissions:
                 pobjects.append(
                     AppPermission(
                         permission_uuid=uuid4(),
-                        identifier=permission_id,
-                        name=permission.get("label", "<empty permission name>"),
-                        protection_level=permission.get("protectionLevel", "").lower(),
-                        dangerous="dangerous"
-                        in permission.get("protectionLevel", "").lower(),
-                        group=group_id,
-                        short_description=permission.get(
-                            "description",
-                            "Dynamic generated description. Please edit the short and long description in the plugins-context of your MAST-F Instance.",
+                        identifier=permission.identifier,
+                        name=permission.label or "<empty permission name>",
+                        protection_level=AppPermission.PROTECTION_LEVEL_SEPARATOR.join(
+                            permission.protectionLevel
+                        ).lower(),
+                        dangerous="dangerous" in permission.protectionLevel,
+                        group=group.identifier,
+                        short_description=(
+                            permission.description
+                            or "Dynamic generated description. Please edit the short and long description in the plugins-context of your MAST-F Instance.",
                         ),
                     )
                 )
