@@ -54,6 +54,19 @@ class Package(TimedModel):
     of the values from :class:`Platform`.
     """
 
+    is_tracker = models.BooleanField(default=False)
+    """Identifies this software package to be linked to tracking services."""
+
+    description = models.TextField(blank=True)
+    """A brief description for report generation."""
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["group_id", "artifact_id"], name="unique_package_groupid_artifactid"
+            )
+        ]
+
 
 class PackageVulnerability(TimedModel):
     """A Django model that represents a vulnerability associated with a software package."""
@@ -105,7 +118,6 @@ class Dependency(TimedModel):
     license = models.CharField(max_length=256, blank=True)
     """Stores all extracted license information (comma spearated)"""
 
-    @property
     def vulnerabilities(self):
         """Returns a generator that yields all vulnerabilities associated with the
         package of this dependency and its version.

@@ -1,0 +1,470 @@
+{
+    "templates": [
+        {
+            "title": "Platform Security (MSTG-PLATFORM-1): Excessive Permissions Request",
+            "description": "The mobile application requests a larger set of permissions than necessary, potentially exposing user data and increasing the attack surface of the application.",
+            "risk": "This vulnerability increases the risk of unauthorized access to sensitive user data and potential misuse of permissions. It can lead to privacy breaches, data leakage, and exploitation of sensitive functionality or resources.",
+            "mitigation": "To mitigate this vulnerability, developers should review the application's permission requests and ensure they only request the minimum set of necessary permissions required for the application's intended functionality. Unnecessary permissions should be removed to minimize the attack surface and protect user privacy. Additionally, a thorough permission justification process should be implemented to validate the need for each permission.",
+            "article": "android/app-permissions",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L)",
+            "meta_cwe": "CWE-270",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-for-app-permissions-mstg-platform-1"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-3): Custom URL Scheme Exposures",
+            "description": "The mobile application utilizes custom URL schemes to provide specific functionality. However, this introduces potential security risks, as it may expose sensitive data or functionality to unauthorized entities.",
+            "risk": "This vulnerability can allow attackers to exploit the custom URL scheme and gain unauthorized access to sensitive data or perform actions reserved for privileged users. It may lead to information disclosure, account takeover, or other malicious activities.",
+            "mitigation": "To mitigate this vulnerability, developers should thoroughly review and manually check the implementation of custom URL schemes. They should ensure that sensitive data or privileged functionality is not exposed via these schemes. Additionally, input validation and access controls should be implemented to prevent unauthorized access and misuse of the custom URL schemes.",
+            "article": "android/custom-url-schemes",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.8 (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N)",
+            "meta_cwe": "CWE-601",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-deep-links-mstg-platform-3"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-4.1): Improper Declaration of Pending Intents",
+            "description": "The mobile application does not declare Pending Intents as immutable and fails to specify the exact package, action, and component that will receive the base intent. This can lead to potential security issues and expose sensitive functionality through inter-process communication (IPC).",
+            "risk": "This vulnerability allows attackers to intercept and modify Pending Intents, potentially redirecting them to unintended components or actions. It can lead to unauthorized access to sensitive functionality, information leakage, or malicious actions performed on behalf of the application.",
+            "mitigation": "To mitigate this vulnerability, developers should ensure that Pending Intents are declared as immutable and explicitly specify the package, action, and component that will receive the base intent. This prevents tampering and ensures that only intended components can handle the Pending Intent. Additionally, proper input validation and access controls should be implemented to prevent unauthorized access to sensitive functionality exposed through IPC.",
+            "article": "android/inter-process-communication",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-119",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-for-sensitive-functionality-exposure-through-ipc-mstg-platform-4"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-4.2): Missing `FLAG_ONE_SHOT` for Pending Intents",
+            "description": "The mobile application does not utilize the `FLAG_ONE_SHOT` flag for Pending Intents that are not intended to be fired multiple times. This can expose the application to replay attacks, where intercepted Pending Intents can be maliciously reused.",
+            "risk": "This vulnerability allows attackers to intercept Pending Intents and replay them, potentially causing unintended actions or accessing sensitive functionality multiple times. It can lead to unauthorized access, data corruption, or abuse of privileged functionality.",
+            "mitigation": "To mitigate this vulnerability, developers should use the `FLAG_ONE_SHOT` flag for Pending Intents that are intended to be fired only once. This ensures that the Pending Intent can be executed only a single time and prevents replay attacks. Additionally, developers should implement proper input validation and access controls to detect and prevent unauthorized access or abuse of sensitive functionality.",
+            "article": "android/inter-process-communication",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.3 (AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N)",
+            "meta_cwe": "CWE-294",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-for-sensitive-functionality-exposure-through-ipc-mstg-platform-4",
+            "is_html": true
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-4.3): Unprotected Sensitive Functionality Exposure through IPC",
+            "description": "The mobile application exposes sensitive functionality through inter-process communication (IPC) without defining specific permissions, potentially allowing unauthorized access to privileged operations.",
+            "risk": "This vulnerability exposes sensitive functionality to potential abuse by attackers. It can lead to unauthorized access, misuse of privileged operations, and compromise of sensitive user data.",
+            "mitigation": "To mitigate this vulnerability, developers should ensure that sensitive functionality exposed through IPC is protected by defining specific permissions. Only components with the appropriate permission should be allowed to access and invoke the exposed functionality. Additionally, developers should implement proper input validation and access controls to prevent unauthorized access or misuse of sensitive functionality.",
+            "article": "android/inter-process-communication",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-284",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-for-sensitive-functionality-exposure-through-ipc-mstg-platform-4"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-5): Unsecured JavaScript Execution in WebView",
+            "description": "The mobile application allows for JavaScript execution within a WebView instance without implementing proper security measures, potentially exposing the application to various web-based attacks.",
+            "risk": "This vulnerability exposes the application to potential web-based attacks, including cross-site scripting (XSS) attacks, remote code execution, and unauthorized access to user data. It can lead to data leakage, account hijacking, and compromise of user privacy.",
+            "mitigation": "To mitigate this vulnerability, developers should implement appropriate security measures when using WebView instances that allow JavaScript execution. This includes enabling the necessary security settings, such as setting the WebView's `javascriptEnabled` property to `false` or implementing proper input sanitization and output encoding to prevent XSS attacks. Additionally, developers should stay updated with WebView security best practices and regularly patch WebView vulnerabilities by keeping the WebView component up to date.",
+            "article": "android/webview-security",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-79",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-javascript-execution-in-webviews-mstg-platform-5"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-6): Unsafe Loading of Remote Content in WebView",
+            "description": "The mobile application loads remote content from an endpoint or local file system in an unsafe manner within a WebView, potentially exposing the application to various security risks.",
+            "risk": "This vulnerability exposes the application to potential security risks, including remote code execution, cross-site scripting (XSS) attacks, and unauthorized access to user data. It can lead to compromised user privacy, data leakage, and exploitation of application vulnerabilities.",
+            "mitigation": "To mitigate this vulnerability, developers should implement secure loading practices for remote content in WebView instances. This includes validating and sanitizing input URLs, enforcing a strict Content Security Policy (CSP), and considering the use of WebView's `shouldInterceptRequest` method to intercept and filter content requests. Additionally, developers should adhere to best practices for file system access and avoid loading content from untrusted or unknown sources.",
+            "article": "android/webview-security",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.8 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-20",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-webview-protocol-handlers-mstg-platform-6"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-7.1): Unsafe Access to Method from WebView",
+            "description": "The mobile application allows access to a sensitive or potentially dangerous method from a WebView, which can lead to security vulnerabilities and misuse of application functionality.",
+            "risk": "This vulnerability exposes the application to potential security risks, including unauthorized access to sensitive methods, execution of malicious actions, and potential compromise of user data or device functionality. It can lead to various forms of attacks, including remote code execution and privilege escalation.",
+            "mitigation": "To mitigate this vulnerability, developers should carefully review and restrict access to sensitive methods from WebView instances. They should ensure that only safe and necessary methods are accessible, and implement proper input validation and access controls to prevent unauthorized or malicious use. It is also recommended to use a Content Security Policy (CSP) to restrict the capabilities of the WebView and enforce a strict security posture.",
+            "article": "android/webview-security",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.8 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-284",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#determining-whether-java-objects-are-exposed-through-webviews-mstg-platform-7",
+            "is_contextual": true
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-7.2): Unsafe Access to Class from WebView",
+            "description": "The mobile application allows access to a sensitive or potentially dangerous class from a WebView, which can lead to security vulnerabilities and misuse of application functionality.",
+            "risk": "This vulnerability exposes the application to potential security risks, including unauthorized access to sensitive classes, execution of malicious actions, and potential compromise of user data or device functionality. It can lead to various forms of attacks, including remote code execution and privilege escalation.",
+            "mitigation": "To mitigate this vulnerability, developers should carefully review and restrict access to sensitive classes from WebView instances. They should ensure that only safe and necessary classes are accessible, and implement proper input validation and access controls to prevent unauthorized or malicious use. It is also recommended to use a Content Security Policy (CSP) to restrict the capabilities of the WebView and enforce a strict security posture.",
+            "article": "android/webview-security",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.8 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-284",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#determining-whether-java-objects-are-exposed-through-webviews-mstg-platform-7"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-9.1): Lack of Security Policy to Prevent Overlay Attacks",
+            "description": "The mobile application does not enforce any security policy to prevent overlay attacks, leaving it vulnerable to potential malicious overlays that can compromise user interactions and sensitive data.",
+            "risk": "This vulnerability exposes the application to overlay attacks, where malicious overlays can deceive users into performing unintended actions or disclosing sensitive information. It can lead to unauthorized access, fraud, data theft, and compromise of user privacy.",
+            "mitigation": "To mitigate this vulnerability, developers should implement security measures to prevent overlay attacks. This includes enforcing strict foreground focus for critical activities, validating and verifying the integrity of overlay views, implementing strong user authentication mechanisms, and raising user awareness about the risks of interacting with unknown overlays. Additionally, it is recommended to use secure UI frameworks and follow best practices for UI design to minimize the risk of overlay attacks.",
+            "article": "android/overlay-attacks",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 7.5 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-284",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-for-overlay-attacks-mstg-platform-9"
+        },
+        {
+            "title": "Platform Security (MSTG-PLATFORM-9.2): Lack of Security Policy to Prevent Overlay Attacks in AndroidManifest",
+            "description": "The AndroidManifest file of the application does not enforce any security policy to prevent overlay attacks, leaving it vulnerable to potential malicious overlays that can compromise user interactions and sensitive data.",
+            "risk": "This vulnerability exposes the application to overlay attacks, where malicious overlays can deceive users into performing unintended actions or disclosing sensitive information. It can lead to unauthorized access, fraud, data theft, and compromise of user privacy.",
+            "mitigation": "To mitigate this vulnerability, developers should enforce security measures in the AndroidManifest file to prevent overlay attacks. This includes setting the appropriate attributes, such as android:windowIsFloating and android:windowIsTranslucent, for activities and windows to prevent overlays. Additionally, developers should implement strict foreground focus for critical activities and follow best practices for UI design to minimize the risk of overlay attacks.",
+            "article": "android/overlay-attacks",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.5 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-284",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-for-overlay-attacks-mstg-platform-9"
+        },
+
+        {
+            "title": "Arch Security (MSTG-ARCH-9): Missing Update Enforcement Mechanism",
+            "description": "The main activity of the application does not implement a mechanism for enforcing updates, leaving it vulnerable to outdated versions with known security issues and missing critical bug fixes.",
+            "risk": "This vulnerability exposes the application to security risks and stability issues due to the absence of an update enforcement mechanism in the main activity. Outdated versions can contain known vulnerabilities that malicious actors can exploit, leading to unauthorized access, data breaches, and compromise of user privacy. Additionally, the lack of critical bug fixes can result in stability issues and hinder the application's performance.",
+            "mitigation": "To mitigate this vulnerability, developers should implement an update enforcement mechanism in the main activity. This can include integrating an update check and notification system that alerts users about available updates and encourages or enforces their installation. Additionally, developers should regularly release updates with security patches and bug fixes to address vulnerabilities and improve the application's stability. It is important to ensure a seamless and user-friendly update process to encourage users to keep their applications up to date.",
+            "article": "android/update-enforcement",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.0 (AV:L/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N)",
+            "meta_cwe": "CWE-248",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05h-Testing-Platform-Interaction.md#testing-enforced-updating-mstg-arch-9"
+        },
+
+        {
+            "title": "Authentication Security (MSTG-AUTH-8): Improper Implementation of Biometric Authentication",
+            "description": "The application does not seem to properly implement biometric authentication, potentially leading to vulnerabilities and inadequate protection of sensitive user data.",
+            "risk": "This vulnerability exposes the application to security risks and compromises the effectiveness of biometric authentication. Improper implementation may allow unauthorized access to sensitive user data, bypassing the intended biometric security measures. This can lead to data breaches, identity theft, and unauthorized transactions, compromising user privacy and security.",
+            "mitigation": "To mitigate this vulnerability, developers should ensure proper implementation of biometric authentication. This includes using secure APIs and libraries provided by the platform, verifying the biometric data integrity, implementing appropriate error handling, and enforcing the use of biometric authentication for sensitive operations. Additionally, developers should conduct thorough testing and follow best practices for biometric authentication implementation to ensure the reliability and security of the authentication mechanism.",
+            "article": "android/biometric-authentication",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.3 (AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-347",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05f-Testing-Local-Authentication.md#testing-biometric-authentication-mstg-auth-8"
+        },
+
+        {
+            "title": "Code Security (MSTG-CODE-2): Application Built with Debuggable Flag",
+            "description": "The application is built with the `android:debuggable` flag set to true, potentially exposing sensitive information and facilitating reverse engineering attacks.",
+            "risk": "This vulnerability exposes the application to security risks by allowing unauthorized access to sensitive information and facilitating reverse engineering attacks. When the 'android:debuggable' flag is set to true, it enables debugging and exposes debugging-related functionality, such as logging and the ability to attach a debugger, even in production releases. This can lead to the disclosure of sensitive information, including API keys, credentials, and internal implementation details. Additionally, it increases the risk of malicious actors tampering with the application's behavior and bypassing security measures.",
+            "mitigation": "To mitigate this vulnerability, developers should ensure that the `android:debuggable` flag is set to false in the application manifest for production releases. This disables debugging and removes debugging-related functionality from the application. It is essential to follow secure coding practices and remove any sensitive information that might be exposed when debugging is enabled. Additionally, developers should conduct thorough testing to verify that the application functions correctly in a non-debuggable state.",
+            "article": "android/debuggable-flag",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.5 (AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-759",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#testing-whether-the-app-is-debuggable-mstg-code-2",
+            "is_html": true
+        },
+        {
+            "title": "Code Security (MSTG-CODE-3): Unstripped Debug Symbols in Android NDK Build System",
+            "description": "The application uses the Android NDK build system without stripping out debug symbols, potentially exposing sensitive information and aiding reverse engineering efforts.",
+            "risk": "This vulnerability exposes the application to security risks and increases the likelihood of successful reverse engineering attacks. Debug symbols contain sensitive information, including function names, variable names, and source code paths, which can aid malicious actors in understanding the inner workings of the application, identifying vulnerabilities, and potentially bypassing security measures. Additionally, unstripped debug symbols can increase the application's size and affect performance.",
+            "mitigation": "To mitigate this vulnerability, developers should ensure that debug symbols are properly stripped from the application built with the Android NDK. This can be achieved by configuring the build system to remove debug information during the compilation and linking process. Additionally, developers should follow best practices for obfuscation and code hardening to make reverse engineering more difficult. It is essential to conduct thorough testing to verify that debug symbols are effectively removed and the application functions correctly without them.",
+            "article": "android/ndk-debug-symbols",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-259",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#testing-for-debugging-symbols-mstg-code-3"
+        },
+        {
+            "title": "Code Security (MSTG-CODE-4): StrictMode Enabled in Production Build",
+            "description": "The application uses StrictMode in the production build, which can impact performance and user experience.",
+            "risk": "Enabling StrictMode in the production build can have negative consequences on the application's performance and user experience. StrictMode is primarily used as a debugging tool to identify potential issues such as disk reads/writes on the main thread, network operations on the main thread, or excessive garbage collection. However, when enabled in the production build, it can introduce unnecessary overhead and impact the responsiveness and smoothness of the application. This can lead to poor user experience, increased battery consumption, and even ANR (Application Not Responding) errors.",
+            "mitigation": "To mitigate this issue, it is recommended to disable StrictMode in the production build. StrictMode should only be enabled during development and testing phases to identify and resolve potential issues. Developers should ensure that StrictMode is not enabled when building and releasing the application to users. It is important to perform thorough testing and profiling to identify and address any performance bottlenecks and potential issues without relying on StrictMode.",
+            "article": "android/strictmode-production",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)",
+            "meta_cwe": "CWE-393",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#testing-for-debugging-code-and-verbose-error-logging-mstg-code-4"
+        },
+        {
+            "title": "Code Security (MSTG-CODE-8.1): Broadcast Receiver Not Unregistered in `onStop()` Method",
+            "description": "The application does not unregister the broadcast receiver in the `onStop()` method of the activity, leading to potential memory leaks and unexpected behavior.",
+            "risk": "Failing to unregister a broadcast receiver in the `onStop()` method of the activity can result in memory leaks and unexpected behavior. When a broadcast receiver is registered but not unregistered, it continues to hold a reference to the activity even after it is no longer visible to the user. This can lead to the activity being retained in memory, consuming system resources unnecessarily. Additionally, if the broadcast receiver receives a broadcast event while the activity is not in the foreground, it may trigger unintended actions or cause the application to crash.",
+            "mitigation": "To mitigate this issue, developers should ensure that they unregister the broadcast receiver in the `onStop()` method of the activity. This ensures that the receiver is properly unregistered when the activity is no longer visible to the user. It is important to follow the Android activity lifecycle and register/unregister the receiver in the appropriate lifecycle methods to prevent memory leaks. Additionally, developers should thoroughly test the application to verify that the receiver is functioning correctly and does not cause any unexpected behavior.",
+            "article": "android/unregister-broadcast-receiver",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)",
+            "meta_cwe": "CWE-675",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#memory-corruption-bugs-mstg-code-8",
+            "is_html":true,
+            "is_contextual": true
+        },
+        {
+            "title": "Code Security (MSTG-CODE-8.2): Static Attribute Prevents Garbage Collection",
+            "description": "",
+            "risk": "Defining an attribute statically in the application, preventing the garbage collector from cleaning the memory, can lead to memory leaks and increased memory consumption. When an attribute is declared as static, it remains in memory for the entire lifetime of the application, even if it is no longer needed. This can result in the accumulation of unused objects, leading to excessive memory usage and potentially causing OutOfMemoryError. Additionally, static attributes can hold references to other objects, preventing them from being garbage collected, further exacerbating the memory consumption issue.",
+            "mitigation": "To mitigate this issue, developers should avoid defining attributes statically unless necessary. Static attributes should only be used when there is a legitimate need for the attribute to have a global scope throughout the application. It is important to carefully manage the lifecycle of static attributes and ensure that they are released when no longer needed. If possible, consider using weak references or alternative design patterns to prevent excessive memory consumption. Thorough testing and profiling should be performed to identify and address any memory leaks or excessive memory usage caused by static attributes.",
+            "article": "android/static-attribute-garbage-collection",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)",
+            "meta_cwe": "CWE-401",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#memory-corruption-bugs-mstg-code-8",
+            "is_contextual": true
+        },
+        {
+            "title": "Code Security (MSTG-CODE-8.3): Usage of Dangerously Inner Classes",
+            "description": "The application uses dangerously inner classes that are prone to memory leaks, potentially leading to increased memory consumption and performance issues.",
+            "risk": "Using dangerously inner classes in the application can result in memory leaks and impact performance. Inner classes hold an implicit reference to their containing outer class, which can prevent the garbage collector from releasing the memory associated with the outer class. This can lead to increased memory consumption over time, potentially causing OutOfMemoryError or performance degradation. The presence of circular references between inner and outer classes can exacerbate the memory leak issue, as the objects held by these references will not be eligible for garbage collection.",
+            "mitigation": "To mitigate this issue, developers should carefully review the usage of inner classes and evaluate if they are necessary. If inner classes are used, special attention should be given to avoid circular references and ensure proper management of the object lifecycle. Consider making inner classes static or using weak references to prevent implicit references to the outer class and facilitate garbage collection. Thorough testing and profiling should be performed to identify any memory leaks caused by inner classes and validate the effectiveness of the mitigation measures.",
+            "article": "android/dangerous-inner-classes-memory-leaks",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)",
+            "meta_cwe": "CWE-400",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#memory-corruption-bugs-mstg-code-8"
+        },
+        {
+            "title": "Code Security (MSTG-CODE-8.4): Usage of Activity Context for Toasts",
+            "description": "The application uses the activity context to display toasts, which can potentially cause memory leaks and impact performance.",
+            "risk": "Using the activity context to display toasts can lead to memory leaks and negatively impact the performance of the application. When a toast is displayed using the activity context, it holds a reference to the activity, preventing it from being garbage collected until the toast is dismissed or times out. This can result in the accumulation of leaked activity instances, leading to increased memory consumption and potential performance degradation. Over time, this can contribute to OutOfMemoryError or other memory-related issues.",
+            "mitigation": "To mitigate this issue, developers should avoid using the activity context to display toasts. Instead, application context should be used, as it does not hold references to any specific activity. Application context can be obtained by calling `getApplicationContext()` or `getApplication()` methods. Additionally, developers should ensure that toasts are properly dismissed or have appropriate timeouts to avoid prolonged references to the activity context. Thorough testing and profiling should be performed to identify any potential memory leaks caused by toast usage and validate the effectiveness of the mitigation measures.",
+            "article": "android/activity-context-toasts-memory-leaks",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)",
+            "meta_cwe": "CWE-400",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#memory-corruption-bugs-mstg-code-8"
+        },
+        {
+            "title": "Code Security (MSTG-CODE-8.5): Usage of Non-Static Anonymous Class",
+            "description": "",
+            "risk": "Using non-static anonymous classes in the application can lead to memory leaks and negatively impact performance. Non-static anonymous classes hold an implicit reference to their containing outer class, preventing the outer class from being garbage collected until the anonymous class is explicitly released. This can result in the accumulation of leaked instances of the outer class, leading to increased memory consumption and potential performance degradation. Over time, this can contribute to OutOfMemoryError or other memory-related issues.",
+            "mitigation": "To mitigate this issue, developers should avoid using non-static anonymous classes or ensure that they are properly released when no longer needed. Consider making the anonymous class static if possible, which removes the implicit reference to the outer class and allows for its garbage collection. Alternatively, if a non-static anonymous class is necessary, carefully manage its lifecycle by explicitly releasing any resources and ensuring that it does not keep references to the outer class longer than necessary. Thorough testing and profiling should be performed to identify any memory leaks caused by non-static anonymous classes and validate the effectiveness of the mitigation measures.",
+            "article": "android/non-static-anonymous-classes-memory-leaks",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:L)",
+            "meta_cwe": "CWE-400",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#memory-corruption-bugs-mstg-code-8",
+            "is_contextual": true
+        },
+
+        {
+            "title": "Crypto Security (MSTG-CRYPTO-1): Reliance on Hardcoded Keys for Symmetric Cryptography",
+            "description": "The application relies on symmetric cryptography with hardcoded keys as the sole method of encryption.",
+            "risk": "Relying on hardcoded keys for symmetric cryptography poses significant security risks. Hardcoded keys are easily discoverable through reverse engineering or code analysis, making it trivial for an attacker to obtain the keys. This compromises the confidentiality and integrity of encrypted data, as an attacker can decrypt and manipulate the data without any difficulty. Additionally, hardcoded keys cannot be easily rotated or changed, which means that if the keys are compromised, all encrypted data becomes vulnerable. Therefore, the application's reliance on hardcoded keys as the only method of encryption undermines the security of sensitive information.",
+            "mitigation": "To mitigate this issue, it is recommended to implement a more robust encryption scheme that does not rely solely on hardcoded keys. Ideally, a combination of symmetric and asymmetric encryption should be used, where symmetric encryption is used for data encryption and decryption, and asymmetric encryption is used for securely exchanging and storing the symmetric key. The symmetric keys should be securely generated, stored, and managed in a dedicated key management system. Additionally, the encryption implementation should follow industry-standard encryption algorithms and best practices. It is important to regularly review and update the encryption mechanisms to stay aligned with the latest security standards and recommendations.",
+            "article": "android/hardcoded-keys-symmetric-cryptography",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-321",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05e-Testing-Cryptography.md#testing-symmetric-cryptography-mstg-crypto-1"
+        },
+        {
+            "title": "Crypto Security (MSTG-CRYPTO-2): Usage of Custom Implementations of Cryptographic Primitives",
+            "description": "The application uses custom implementations of cryptographic primitives.",
+            "risk": "Using custom implementations of cryptographic primitives can introduce significant security risks. Cryptography is a complex field, and developing custom cryptographic algorithms or implementations without expertise can lead to vulnerabilities and weaknesses that can be exploited by attackers. Custom cryptographic primitives may lack the rigorous analysis and scrutiny that established and widely-used cryptographic libraries and algorithms have undergone. This increases the likelihood of implementation flaws, side-channel attacks, and other cryptographic weaknesses. These vulnerabilities can be exploited to compromise the confidentiality, integrity, and authenticity of sensitive data, undermining the overall security of the application.",
+            "mitigation": "To mitigate this issue, it is recommended to rely on well-vetted and widely-used cryptographic libraries and algorithms that have undergone thorough analysis and scrutiny. Leverage established cryptographic standards and protocols implemented by reputable libraries to ensure the security of sensitive data. Avoid custom cryptographic implementations unless there is a compelling reason and the necessary expertise to design and evaluate them. Regularly update the cryptographic libraries and algorithms used in the application to incorporate any security patches or improvements. It is crucial to follow industry best practices and stay informed about the latest advancements in cryptographic techniques to ensure the security of the application's cryptographic operations.",
+            "article": "android/custom-cryptographic-implementations",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-327",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05e-Testing-Cryptography.md#testing-the-configuration-of-cryptographic-standard-algorithms-mstg-crypto-2-mstg-crypto-3-and-mstg-crypto-4"
+        },
+        {
+            "title": "Crypto Security (MSTG-CRYPTO-4): Usage of Deprecated Cryptographic Algorithms",
+            "description": "The application uses deprecated cryptographic algorithms.",
+            "risk": "Using deprecated cryptographic algorithms introduces significant security risks. Deprecated algorithms are known to have vulnerabilities and weaknesses that have been discovered over time. Attackers actively exploit these vulnerabilities, and the use of deprecated algorithms undermines the security of the cryptographic operations performed by the application. Such algorithms may lack resistance against modern cryptographic attacks, increasing the likelihood of data breaches, unauthorized access, and compromised confidentiality, integrity, and authenticity of sensitive information. Therefore, the application's usage of deprecated cryptographic algorithms poses a considerable risk to the overall security of the system.",
+            "mitigation": "To mitigate this issue, it is recommended to transition away from deprecated cryptographic algorithms and adopt the use of modern, secure alternatives. Identify the specific deprecated algorithms used in the application and replace them with recommended cryptographic algorithms that provide robust security. Stay informed about the latest cryptographic standards and best practices to ensure the selection of appropriate algorithms. Regularly update the application's cryptographic libraries and components to incorporate security patches and improvements. Conduct thorough testing and validation of the updated cryptographic implementations to ensure their correctness and effectiveness. Following industry-recognized cryptographic guidelines and frameworks can help in making informed decisions regarding the selection and use of cryptographic algorithms.",
+            "article": "android/deprecated-cryptographic-algorithms",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-327",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x04g-Testing-Cryptography.md#identifying-insecure-andor-deprecated-cryptographic-algorithms-mstg-crypto-4"
+        },
+        {
+            "title": "Crypto Security (MSTG-CRYPTO-6): Insecure Random Number Generator Usage",
+            "description": "The application makes use of an insecure random number generator.",
+            "risk": "Using an insecure random number generator poses significant security risks. Random number generation is a crucial component of cryptographic operations and security mechanisms. Insecure random number generators can produce predictable or biased random values, which can undermine the confidentiality, integrity, and authenticity of sensitive information. Attackers can exploit the predictability or bias in random values to launch cryptographic attacks, guess encryption keys, bypass security controls, or gain unauthorized access to the application's resources. Therefore, the usage of an insecure random number generator puts the application and its data at considerable risk.",
+            "mitigation": "To mitigate this issue, it is crucial to use cryptographically secure random number generators (CSPRNGs) that provide a high degree of randomness and unpredictability. Utilize platform-provided APIs and libraries that offer secure random number generation functionalities. Avoid using insecure or non-cryptographic random number generation mechanisms, such as pseudorandom number generators (PRNGs) or functions with predictable outputs. Regularly update the cryptographic libraries and components used by the application to incorporate any security patches or improvements related to random number generation. Additionally, follow cryptographic best practices and industry standards to ensure the integrity and security of cryptographic operations performed by the application.",
+            "article": "android/insecure-random-number-generator",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-338",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05e-Testing-Cryptography.md#testing-random-number-generation-mstg-crypto-6"
+        },
+
+        {
+            "title": "Network Security (MSTG-NETWORK-2.1): Weak Transport Protocol Version Usage",
+            "description": "",
+            "risk": "Using a weak transport protocol version introduces significant security risks. Weak protocol versions may lack essential security features, have known vulnerabilities, or be susceptible to cryptographic attacks. Attackers can exploit these weaknesses to eavesdrop on network communications, tamper with data, perform man-in-the-middle attacks, or gain unauthorized access to sensitive information. Additionally, compliance requirements and industry standards often mandate the use of specific secure transport protocols. Failing to use the recommended transport protocol versions may result in non-compliance and expose the application to legal and regulatory consequences. Therefore, the usage of weak transport protocol versions poses a considerable risk to the confidentiality, integrity, and availability of network communications and the overall security of the application.",
+            "mitigation": "To mitigate this issue, it is crucial to use secure transport protocol versions that offer strong encryption, integrity, and authentication mechanisms. Identify the specific weak protocol version ($PROTO) used by the application and upgrade it to a more secure version, preferably one that aligns with industry best practices and security guidelines. Follow the recommendations and requirements of relevant security standards, such as the Transport Layer Security (TLS) protocol for secure communication over the internet. Regularly update the application and its underlying libraries to incorporate security patches and improvements related to transport protocols. Additionally, conduct thorough testing and validation of the updated protocol implementations to ensure their security and interoperability. By using strong transport protocol versions, the application can significantly enhance the security and privacy of network communications.",
+            "article": "android/weak-transport-protocol-usage",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-326",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/tree/v1.5.0/Document/0x04f-Testing-Network-Communication.md",
+            "is_contextual": true
+        },
+        {
+            "title": "Network Security (MSTG-NETWORK-2.2): Usage of Unrecommended Cipher Suite",
+            "description": "",
+            "risk": "Using an unrecommended cipher suite introduces significant security risks. Unrecommended cipher suites may lack strong encryption, integrity, or authentication mechanisms, making network communications vulnerable to various attacks. Attackers can exploit weaknesses in the cipher suite to intercept, decrypt, or modify sensitive data exchanged between the application and the server. Additionally, compliance requirements and industry standards often mandate the use of specific secure cipher suites. Failing to use the recommended cipher suites may result in non-compliance and expose the application to legal and regulatory consequences. Therefore, the usage of unrecommended cipher suites poses a considerable risk to the confidentiality, integrity, and availability of network communications and the overall security of the application.",
+            "mitigation": "To mitigate this issue, it is crucial to use recommended and secure cipher suites for network communications. Identify the specific unrecommended cipher suite ($BADCIPHER) used by the application and replace it with a strong and industry-recommended cipher suite. Follow the recommendations and requirements of relevant security standards, such as the Transport Layer Security (TLS) protocol, to ensure the use of secure cipher suites. Regularly update the application and its underlying libraries to incorporate security patches and improvements related to cipher suites. Additionally, conduct thorough testing and validation of the updated cipher suite implementations to ensure their security and compatibility. By using recommended cipher suites, the application can significantly enhance the security and privacy of network communications.",
+            "article": "android/unrecommended-cipher-suite-usage",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-326",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/tree/v1.5.0/Document/0x04f-Testing-Network-Communication.md"
+        },
+        {
+            "title": "Network Secrurity (MSTG-NETWORK-4.1): SSL Pinning Implementation",
+            "description": "The application may not correctly implement SSL pinning, potentially weakening the security of network communications.",
+            "risk": "SSL pinning is a crucial security mechanism that ensures the authenticity and integrity of server certificates during SSL/TLS connections. When SSL pinning is not implemented correctly, it exposes the application to various security risks. Attackers can intercept, manipulate, or replace SSL/TLS certificates, enabling them to perform man-in-the-middle attacks, eavesdrop on sensitive data, or inject malicious content. Without proper SSL pinning, the application becomes susceptible to certificate spoofing, certificate chain tampering, and other SSL-related vulnerabilities. This compromises the confidentiality, integrity, and authenticity of network communications, putting user data and sensitive information at risk.",
+            "mitigation": "To mitigate this issue, it is crucial to implement SSL pinning correctly in the application. SSL pinning involves associating specific server certificates or their public keys with the application and validating the server's identity during SSL/TLS handshakes. Follow the recommended practices and guidelines provided by security experts and frameworks to implement SSL pinning effectively. Use a secure and reliable certificate validation mechanism, either by comparing the server certificate with a pre-defined trusted certificate or by checking the public key against an expected value. Regularly update the list of trusted certificates or public keys to account for certificate renewals or rotations. Conduct rigorous testing to ensure the proper functioning of SSL pinning and verify that the application rejects invalid or unauthorized certificates. By correctly implementing SSL pinning, the application can enhance the security and trustworthiness of network communications.",
+            "article": "android/ssl-pinning-implementation",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.8 (AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-295",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#testing-for-debugging-code-and-verbose-error-logging-mstg-code-4"
+        },
+        {
+            "title": "Network Secrurity (MSTG-NETWORK-4.2): SSL Pinning Implementation",
+            "description": "The application may not correctly implement SSL pinning, potentially weakening the security of network communications.",
+            "risk": "SSL pinning is a crucial security mechanism that ensures the authenticity and integrity of server certificates during SSL/TLS connections. When SSL pinning is not implemented correctly, it exposes the application to various security risks. Attackers can intercept, manipulate, or replace SSL/TLS certificates, enabling them to perform man-in-the-middle attacks, eavesdrop on sensitive data, or inject malicious content. Without proper SSL pinning, the application becomes susceptible to certificate spoofing, certificate chain tampering, and other SSL-related vulnerabilities. This compromises the confidentiality, integrity, and authenticity of network communications, putting user data and sensitive information at risk.",
+            "mitigation": "To mitigate this issue, it is crucial to implement SSL pinning correctly in the application. SSL pinning involves associating specific server certificates or their public keys with the application and validating the server's identity during SSL/TLS handshakes. Follow the recommended practices and guidelines provided by security experts and frameworks to implement SSL pinning effectively. Use a secure and reliable certificate validation mechanism, either by comparing the server certificate with a pre-defined trusted certificate or by checking the public key against an expected value. Regularly update the list of trusted certificates or public keys to account for certificate renewals or rotations. Conduct rigorous testing to ensure the proper functioning of SSL pinning and verify that the application rejects invalid or unauthorized certificates. By correctly implementing SSL pinning, the application can enhance the security and trustworthiness of network communications.",
+            "article": "android/ssl-pinning-implementation",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.8 (AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-295",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05i-Testing-Code-Quality-and-Build-Settings.md#testing-for-debugging-code-and-verbose-error-logging-mstg-code-4"
+        },
+
+        {
+            "title": "Storage Security (MSTG-STORAGE-1): Storage of Credentials",
+            "description": "The application stores credentials outside the Android Keystore, potentially compromising their security.",
+            "risk": "Storing credentials outside the Android Keystore poses a significant security risk. When credentials are stored in insecure locations, such as plain text files or shared preferences, they become vulnerable to unauthorized access. Attackers can exploit these vulnerabilities to extract sensitive information, including usernames, passwords, API keys, and other authentication tokens. By compromising credentials, attackers can gain unauthorized access to user accounts, impersonate legitimate users, and potentially perform malicious activities. Storing credentials outside the Android Keystore undermines the confidentiality and integrity of sensitive information, jeopardizing user privacy and the security of the application.",
+            "mitigation": "To mitigate this issue, it is crucial to store credentials securely within the Android Keystore. The Android Keystore provides a secure container for cryptographic keys, protecting them from unauthorized access and tampering. Use the appropriate APIs and functions provided by the Android Keystore system to generate and store cryptographic keys for credentials. Avoid storing credentials in plain text or insecure storage locations, such as shared preferences or external files. Implement proper encryption and hashing mechanisms to safeguard credentials before storing them in the Android Keystore. Ensure that sensitive data, such as passwords, are not displayed or logged in clear text. Additionally, follow secure coding practices and guidelines to minimize the exposure of credentials during runtime. By securely storing credentials in the Android Keystore, the application can significantly enhance the security of sensitive information.",
+            "article": "android/secure-credential-storage",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 8.3 (AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N)",
+            "meta_cwe": "CWE-312",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#testing-local-storage-for-sensitive-data-mstg-storage-1-and-mstg-storage-2"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-11): Support for older Android Versions",
+            "description": "The application allows the use of Android versions earlier than 23, which may pose security risks.",
+            "risk": "Allowing the use of Android versions earlier than 23 can introduce security risks to the application. Older Android versions may lack important security patches, leaving devices vulnerable to known exploits and vulnerabilities. Attackers can target these vulnerabilities to gain unauthorized access, compromise user data, and perform malicious activities on devices running older Android versions. By not enforcing a minimum supported Android version, the application increases the risk of security breaches and compromises the overall security posture of the app.",
+            "mitigation": "To mitigate this issue, it is recommended to enforce a minimum supported Android version of 23 or later. By setting a minimum supported version, the application can ensure that users are running a more secure Android version with necessary security patches and updates. Update the app's manifest file to specify the minimum SDK version required. Additionally, regularly monitor Android security bulletins and apply necessary updates and patches to address any newly discovered vulnerabilities. By enforcing a minimum supported Android version, the application can enhance its security and protect users from known security risks.",
+            "article": "android/enforce-minimum-android-version",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 6.5 (AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L)",
+            "meta_cwe": "CWE-323",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#testing-the-device-access-security-policy-mstg-storage-11"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-2): Unsecure Storage of Sensitive Data",
+            "description": "The application may store sensitive data outside of the application container or system credential storage facilities, posing security risks.",
+            "risk": "Storing sensitive data outside of the application container or system credential storage facilities can introduce security risks. When sensitive data is stored in insecure locations, such as external storage or shared preferences, it becomes susceptible to unauthorized access. Attackers can potentially gain access to sensitive information, leading to data breaches, identity theft, and other malicious activities. By not properly securing sensitive data, the application puts user privacy and confidential information at risk.",
+            "mitigation": "To mitigate this issue, it is recommended to follow secure storage practices for sensitive data. Avoid storing sensitive information in insecure locations, such as external storage, shared preferences, or SQLite databases without encryption. Instead, use secure storage mechanisms provided by the Android platform, such as the Android Keystore system or encrypted databases. Encrypt sensitive data before storing it, and ensure that encryption keys are properly managed and protected. Implement appropriate access controls and permissions to restrict access to sensitive data. Regularly review the application's data storage practices and conduct security assessments to identify and address any vulnerabilities or weaknesses in the storage of sensitive data.",
+            "article": "android/secure-storage-of-sensitive-data",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.5 (AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N)",
+            "meta_cwe": "CWE-311",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#testing-local-storage-for-sensitive-data-mstg-storage-1-and-mstg-storage-2"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-3): Logging of Sensitive Data",
+            "description": "The application writes sensitive data in application logs, posing security risks.",
+            "risk": "Writing sensitive data in application logs can introduce security risks. Logs often contain valuable information about the application's behavior, including sensitive data such as user credentials, personally identifiable information (PII), or sensitive business data. If these logs are not properly protected or monitored, they can be accessed by unauthorized individuals or attackers. This can lead to data breaches, privacy violations, and other malicious activities. By logging sensitive data, the application increases the exposure of confidential information and puts user privacy at risk.",
+            "mitigation": "To mitigate this issue, it is recommended to follow secure logging practices. Avoid logging sensitive information, such as user credentials, PII, or sensitive business data. Implement proper log filtering to exclude sensitive data from being logged. Ensure that logs are stored securely and encrypted, both locally and during transmission. Implement strong access controls and authentication mechanisms for accessing logs. Regularly monitor and review logs for any unauthorized access or abnormal activities. Additionally, adhere to privacy regulations and guidelines to ensure compliance with data protection standards.",
+            "article": "android/prevent-logging-sensitive-data",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.5 (AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N)",
+            "meta_cwe": "CWE-532",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#testing-logs-for-sensitive-data-mstg-storage-3"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-5.1): Keyboard Cache not disabled",
+            "description": "The application does not disable the keyboard cache on text inputs that process sensitive data, posing a security risk.",
+            "risk": "When the keyboard cache is not disabled on text inputs that process sensitive data, there is a risk of exposing sensitive information to unauthorized users. Keyboard caches may store the entered text, including sensitive data such as passwords, credit card numbers, or other confidential information. If an attacker gains access to the device or if the device is lost or stolen, they may be able to extract the sensitive data from the keyboard cache. This can lead to unauthorized access, identity theft, or other malicious activities. By disabling the keyboard cache for sensitive data inputs, the application reduces the risk of exposing confidential information.",
+            "mitigation": "To mitigate this issue, it is recommended to disable the keyboard cache for text inputs that process sensitive data. Use appropriate input types (e.g., password input type) that automatically disable the keyboard cache. If custom text input fields are used, disable the keyboard cache programmatically by setting the input field's inputType attribute to include the 'textNoSuggestions' flag. Additionally, educate users about the importance of using secure input fields for sensitive information and encourage them to enable device-level security measures, such as PIN, pattern, or biometric authentication.",
+            "article": "android/disable-keyboard-cache",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 5.3 (AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)",
+            "meta_cwe": "CWE-314",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#determining-whether-the-keyboard-cache-is-disabled-for-text-input-fields-mstg-storage-5"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-5.2): Keyboard Cache not disabled",
+            "description": "The application does not disable the keyboard cache on text inputs that process sensitive data, posing a security risk.",
+            "risk": "When the keyboard cache is not disabled on text inputs that process sensitive data, there is a risk of exposing sensitive information to unauthorized users. Keyboard caches may store the entered text, including sensitive data such as passwords, credit card numbers, or other confidential information. If an attacker gains access to the device or if the device is lost or stolen, they may be able to extract the sensitive data from the keyboard cache. This can lead to unauthorized access, identity theft, or other malicious activities. By disabling the keyboard cache for sensitive data inputs, the application reduces the risk of exposing confidential information.",
+            "mitigation": "To mitigate this issue, it is recommended to disable the keyboard cache for text inputs that process sensitive data. Use appropriate input types (e.g., password input type) that automatically disable the keyboard cache. If custom text input fields are used, disable the keyboard cache programmatically by setting the input field's inputType attribute to include the 'textNoSuggestions' flag. Additionally, educate users about the importance of using secure input fields for sensitive information and encourage them to enable device-level security measures, such as PIN, pattern, or biometric authentication.",
+            "article": "android/disable-keyboard-cache",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 5.3 (AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)",
+            "meta_cwe": "CWE-314",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#determining-whether-the-keyboard-cache-is-disabled-for-text-input-fields-mstg-storage-5"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-6.1): Exposure of Sensitive Data via IPC Mechanisms",
+            "description": "The application may expose sensitive data via IPC mechanisms, posing a security risk.",
+            "risk": "When sensitive data is exposed via Inter-Process Communication (IPC) mechanisms, there is a risk of unauthorized access and potential leakage of confidential information. IPC mechanisms, such as shared memory, intents, or content providers, are used for communication between different components or applications. If sensitive data is not properly secured and protected during IPC, malicious actors or unauthorized applications may intercept or manipulate the data, leading to information disclosure, data tampering, or privilege escalation. To mitigate this risk, it is essential to implement secure IPC mechanisms and ensure that sensitive data is properly encrypted, authenticated, and validated before transmission.",
+            "mitigation": "To mitigate this issue, it is recommended to follow secure coding practices when implementing IPC mechanisms. Use secure protocols, such as encryption and authentication, to protect sensitive data during transmission. Apply appropriate access controls and permissions to restrict IPC communication to authorized components or applications. Avoid sending sensitive data directly through intents or content providers. Instead, consider using secure channels like encrypted file storage or encrypted shared preferences to store and retrieve sensitive data locally. Regularly review and assess the security of IPC mechanisms in the application to identify and address any vulnerabilities or exposures.",
+            "article": "android/secure-ipc-mechanisms",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.8 (AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-200",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#determining-whether-sensitive-stored-data-has-been-exposed-via-ipc-mechanisms-mstg-storage-6"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-6.2): Exposure of Sensitive Data via Clipboard Manager",
+            "description": "The application may expose sensitive data via the Clipboard Manager, posing a security risk.",
+            "risk": "When sensitive data is copied to the Clipboard Manager, there is a risk of unauthorized access and potential leakage of confidential information. The Clipboard Manager is a shared resource that allows data to be copied and accessed by other applications. If sensitive data is copied to the Clipboard without proper protection, other applications or malicious actors may access and read the data, leading to information disclosure. To mitigate this risk, it is essential to handle sensitive data with caution and ensure that it is properly encrypted or cleared from the Clipboard after use.",
+            "mitigation": "To mitigate this issue, it is recommended to follow secure coding practices when handling sensitive data with the Clipboard Manager. Avoid copying sensitive data to the Clipboard unless necessary. If sensitive data needs to be copied, ensure that it is properly encrypted before being placed on the Clipboard. Implement mechanisms to clear sensitive data from the Clipboard after use, either automatically or by providing a clear function for the user. Be mindful of sensitive data that may be inadvertently copied to the Clipboard, such as passwords or authentication tokens. Regularly review and assess the handling of sensitive data with the Clipboard Manager to identify and address any vulnerabilities or exposures.",
+            "article": "android/secure-clipboard-data-handling",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 5.3 (AV:L/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N)",
+            "meta_cwe": "CWE-200",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#determining-whether-sensitive-stored-data-has-been-exposed-via-ipc-mechanisms-mstg-storage-6"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-7.1): Exposure of Sensitive Data via User Interface",
+            "description": "The application may expose sensitive data via the user interface, potentially leading to unauthorized access or information disclosure.",
+            "risk": "When sensitive data is displayed or rendered in the user interface without proper protection, there is a risk of unauthorized access and potential leakage of confidential information. The user interface may include text fields, labels, notifications, or other UI components that display sensitive data such as passwords, personally identifiable information (PII), or financial information. If this data is not properly protected, it may be visible to unauthorized users or captured by malicious actors, leading to information disclosure or misuse of sensitive data. To mitigate this risk, it is crucial to handle and display sensitive data securely in the user interface, implementing proper input validation, data masking, and access controls.",
+            "mitigation": "To mitigate this issue, follow secure coding practices when handling sensitive data in the user interface. Implement proper input validation to ensure that sensitive data is entered correctly and securely. Use data masking techniques, such as obscuring passwords or displaying only partial sensitive information, to limit the exposure of sensitive data on the screen. Apply access controls to restrict the visibility of sensitive data based on user roles or permissions. Regularly review the user interface for potential vulnerabilities or exposures of sensitive data and address any identified issues promptly. Test the application thoroughly to ensure that sensitive data is properly handled and protected throughout the user interface.",
+            "article": "android/secure-data-display-ui",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.5 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-200",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#checking-for-sensitive-data-disclosure-through-the-user-interface-mstg-storage-7"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-7.2): Exposure of Sensitive Data via User Interface (Declared in Layout Files)",
+            "description": "The application may expose sensitive data via the user interface, declared in layout files, potentially leading to unauthorized access or information disclosure.",
+            "risk": "When sensitive data is directly declared in layout files without proper protection, there is a risk of unauthorized access and potential leakage of confidential information. Layout files define the visual structure and content of the user interface, including text fields, labels, or other UI components that display sensitive data such as passwords, personally identifiable information (PII), or financial information. If this data is not properly protected, it may be visible to unauthorized users or captured by malicious actors, leading to information disclosure or misuse of sensitive data. To mitigate this risk, it is crucial to handle and display sensitive data securely in layout files, implementing proper data binding, encryption, or obfuscation techniques.",
+            "mitigation": "To mitigate this issue, follow secure coding practices when declaring sensitive data in layout files. Avoid hardcoding sensitive data directly in the layout files and instead use proper data binding techniques to dynamically populate the sensitive data. If sensitive data needs to be stored in layout files, consider encrypting or obfuscating the data to prevent easy extraction. Apply access controls to restrict the visibility of sensitive data based on user roles or permissions. Regularly review the layout files for potential vulnerabilities or exposures of sensitive data and address any identified issues promptly. Test the application thoroughly to ensure that sensitive data is properly handled and protected within the layout files.",
+            "article": "android/secure-data-display-ui-layout",
+            "default_severity": "High",
+            "meta_cvss": "CVSSv3: 7.5 (AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H)",
+            "meta_cwe": "CWE-200",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#checking-for-sensitive-data-disclosure-through-the-user-interface-mstg-storage-7"
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-8): Automatic Backup",
+            "description": "The application allows automatic backup, as defined in the AndroidManifest, potentially exposing sensitive data to unauthorized access during backup and restore operations.",
+            "risk": "Enabling automatic backup allows the application's data, including sensitive information, to be automatically backed up to remote servers or cloud storage. While this feature can be convenient for users, it also introduces security risks. If sensitive data is included in the backup, it may be exposed to unauthorized access during backup and restore operations. This can occur if the backup data is intercepted or if unauthorized individuals gain access to the backup storage. To mitigate this risk, it is important to disable automatic backup for sensitive data or implement additional encryption and security measures to protect the backup data.",
+            "mitigation": "To mitigate this issue, disable automatic backup for sensitive data in the AndroidManifest.xml file by removing the `android:allowBackup` attribute or setting it to `false`. Additionally, consider implementing additional encryption and security measures to protect the backup data if automatic backup is necessary for non-sensitive data. It is also recommended to educate users about the importance of regularly backing up their data manually and storing backups securely. Perform thorough testing to ensure that sensitive data is not included in the automatic backup and that the application behaves as expected during backup and restore operations.",
+            "article": "android/disable-automatic-backup",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 5.3 (AV:L/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)",
+            "meta_cwe": "CWE-312",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#testing-backups-for-sensitive-data-mstg-storage-8",
+            "is_html": true
+        },
+        {
+            "title": "Storage Security (MSTG-STORAGE-9): Sensitive Data stored in Views when in Background",
+            "description": "The application does not remove sensitive data from views when moved to the background, potentially exposing it to unauthorized access.",
+            "risk": "When the application is moved to the background, sensitive data may remain visible in the views. This poses a risk of unauthorized access to the sensitive information, especially if the device is shared or if screenshots are taken. Attackers or unauthorized users with physical access to the device can potentially view or capture sensitive data from the visible views. To mitigate this risk, it is crucial to clear sensitive data from views or use appropriate mechanisms to mask or hide the data when the application moves to the background.",
+            "mitigation": "To mitigate this issue, ensure that sensitive data is cleared from views or replaced with placeholder values when the application is moved to the background. This can be achieved by intercepting the appropriate lifecycle callbacks, such as `onPause()` or `onStop()`, and implementing logic to clear or hide sensitive data in the visible views. Additionally, consider using secure input fields or encryption techniques to protect sensitive data while it is being displayed. It is essential to perform thorough testing to ensure that sensitive data is properly cleared from views and that the application behaves as expected when transitioning between foreground and background states.",
+            "article": "android/clear-sensitive-data-views",
+            "default_severity": "Medium",
+            "meta_cvss": "CVSSv3: 4.3 (AV:L/AC:L/PR:N/UI:R/S:C/C:L/I:N/A:N)",
+            "meta_cwe": "CWE-200",
+            "meta_masvs": "https://github.com/OWASP/owasp-mastg/blob/v1.5.0/Document/0x05d-Testing-Data-Storage.md#finding-sensitive-information-in-auto-generated-screenshots-mstg-storage-9"
+        }
+    ]
+}

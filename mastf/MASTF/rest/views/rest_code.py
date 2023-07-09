@@ -1,6 +1,6 @@
 import logging
 
-from os.path import commonprefix
+from os.path import commonprefix, realpath, normpath
 from pathlib import Path
 
 from django.shortcuts import get_object_or_404
@@ -50,9 +50,9 @@ class CodeView(views.APIView):
         project = finding.scan.project
         self.check_object_permissions(request, project)
 
-        if not src_file.exists():
+        if not src_file.exists() or src_file.is_dir():
             return Response(
-                {"detail": "Project source file directory does not exist"},
+                {"detail": "Project source file does not exist or is a directory"},
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -124,8 +124,8 @@ class FileCodeView(GetObjectMixin, views.APIView):
             )
 
         path = request.query_params.get("file", None)
-        safe_dir = f"{scan_file.internal_name}/"
-        if not path or commonprefix((safe_dir, path)) != safe_dir:
+        safe_dir = realpath(normpath(f"{scan_file.internal_name}/"))
+        if not path or commonprefix((realpath(normpath(path)), safe_dir)) != safe_dir:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         target = scan.project.directory / path

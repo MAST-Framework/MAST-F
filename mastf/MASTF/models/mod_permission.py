@@ -18,7 +18,7 @@ from django.db import models
 
 from mastf.MASTF.utils.enum import ProtectionLevel
 
-from .mod_finding import AbstractBaseFinding
+from .mod_finding import AbstractBaseFinding, DataFlowItem
 from .base import TimedModel
 
 __all__ = ["AppPermission", "PermissionFinding"]
@@ -26,6 +26,8 @@ __all__ = ["AppPermission", "PermissionFinding"]
 
 class AppPermission(TimedModel):
     """Represents an application permission with its related attributes."""
+
+    PROTECTION_LEVEL_SEPARATOR = ","
 
     permission_uuid = models.UUIDField(primary_key=True)
     """The unique ID of the permission."""
@@ -72,7 +74,7 @@ class AppPermission(TimedModel):
         """
         plevel = {}
         colors = ProtectionLevel.colors()
-        for level in self.protection_level.split(","):
+        for level in self.protection_level.split(AppPermission.PROTECTION_LEVEL_SEPARATOR):
             found = False
             level = str(level).capitalize()
             for color, values in colors.items():

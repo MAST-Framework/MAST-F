@@ -16,7 +16,7 @@
 import logging
 
 from django.contrib.auth.models import User, Permission
-from django.db.models import Manager
+from django.db.models import Manager, Model
 
 from rest_framework import serializers
 from rest_framework.fields import empty
@@ -113,10 +113,9 @@ class ManyToManyField(serializers.Field):
                 append = False
 
             element_id = objid if not self.converter else self.converter(objid)
-            query = self.model.objects.filter(**{self.pk_name: element_id})
-            if query.exists():
-                elements.append(query.first())
-            else:
+            try:
+                elements.append(self.model.objects.get(**{self.pk_name: element_id}))
+            except (Model.DoesNotExist, Model.MultipleObjectsReturned):
                 logger.debug(
                     f'Could not resolve objID: "{objid}" and name: "{self.field_name}"'
                 )

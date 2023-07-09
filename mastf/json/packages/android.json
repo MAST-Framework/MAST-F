@@ -1,0 +1,716 @@
+{
+	"packages": [
+		{
+			"group_id": "com.google.android",
+			"artifact_id": "play-services",
+			"name": "Google Play Services",
+			"description": "Google Play Services is a set of APIs and services provided by Google that enables developers to build Android apps with powerful functionalities. It offers features like Google Maps, Firebase, Google Sign-In, Google Cloud Messaging, and much more.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.retrofit2",
+			"artifact_id": "retrofit",
+			"name": "Retrofit",
+			"description": "Retrofit is a type-safe HTTP client for Android and Java. It simplifies the process of making network requests and provides a powerful way to interact with RESTful APIs. With Retrofit, you can define the API endpoints, request parameters, and response types using simple annotations.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.facebook.android",
+			"artifact_id": "facebook-android-sdk",
+			"name": "Facebook Android SDK",
+			"description": "Facebook Android SDK provides developers with the necessary tools and components to integrate Facebook functionality into their Android apps. It allows users to authenticate with Facebook, share content, access user profiles, and interact with various Facebook APIs.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.airbnb.android",
+			"artifact_id": "lottie",
+			"name": "Lottie",
+			"description": "Lottie is a library for Android, iOS, Web, and React Native that renders Adobe After Effects animations in real-time. It allows developers to create visually appealing animations and integrate them seamlessly into their mobile applications.",
+			"platform": "ANDROID|IOS",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.picasso",
+			"artifact_id": "picasso",
+			"name": "Picasso",
+			"description": "Picasso is a powerful image loading and caching library for Android. It simplifies the process of loading images from various sources such as network URLs, local files, and resources. Picasso also provides features like image transformations, memory and disk caching, and automatic memory management.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.dagger",
+			"artifact_id": "dagger",
+			"name": "Dagger",
+			"description": "Dagger is a fast dependency injection framework for Android and Java. It helps manage object dependencies and simplifies the process of building modular and testable applications. Dagger generates optimized code at compile time, reducing the boilerplate code and enhancing performance.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "io.reactivex.rxjava2",
+			"artifact_id": "rxjava",
+			"name": "RxJava",
+			"description": "RxJava is a reactive programming library for composing asynchronous and event-based programs in Android and Java. It provides powerful abstractions like Observables, Observers, and Operators to handle asynchronous operations, event streams, and data transformations in a declarative manner.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material",
+			"name": "Material Components for Android",
+			"description": "Material Components for Android is a comprehensive set of UI components based on Google's Material Design guidelines. It provides ready-to-use components like buttons, cards, dialogs, navigation drawers, and more, to create visually appealing and consistent user interfaces in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-analytics",
+			"name": "Firebase Analytics",
+			"description": "Firebase Analytics is a powerful tool provided by Google for tracking user engagement and app usage in Android applications. It allows developers to gain insights into user behavior, measure ad performance, and optimize app experiences. Firebase Analytics integrates seamlessly with other Firebase services.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "glide",
+			"name": "Glide",
+			"description": "Glide is an image loading and caching library for Android that focuses on smooth scrolling and memory efficiency. It supports various image formats, provides advanced features like animated GIF support, image resizing, and caching strategies, making it a popular choice for handling images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp",
+			"name": "OkHttp",
+			"description": "OkHttp is a powerful HTTP client library for Android and Java applications. It offers features like HTTP/2 support, connection pooling, transparent GZIP compression, and request/response interceptors. OkHttp simplifies the process of making network requests and provides a flexible API for customization.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.leakcanary",
+			"artifact_id": "leakcanary-android",
+			"name": "LeakCanary",
+			"description": "LeakCanary is a memory leak detection library for Android. It helps developers identify and fix memory leaks in their applications by monitoring object references and detecting leaks when objects are no longer needed. LeakCanary provides a user-friendly UI and detailed reports to assist in the debugging process.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.jakewharton.timber",
+			"artifact_id": "timber",
+			"name": "Timber",
+			"description": "Timber is a logging library for Android that enhances the default logging capabilities provided by the Android platform. It offers a simple API for logging messages with different log levels, tag management, and easy integration with other logging tools. Timber helps developers debug and troubleshoot their apps effectively.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "androidx.recyclerview",
+			"artifact_id": "recyclerview",
+			"name": "RecyclerView",
+			"description": "RecyclerView is a flexible and efficient UI component for displaying large datasets in Android apps. It replaces the traditional ListView and GridView with a more versatile and extensible approach to handling lists and grids. RecyclerView provides better performance through its recycling and animation capabilities.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-maps",
+			"name": "Google Maps SDK for Android",
+			"description": "Google Maps SDK for Android provides powerful mapping and location-based services for Android apps. It allows developers to integrate interactive maps, add markers, draw polylines, and implement geolocation features. The SDK also offers features like directions, street view, and place search.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.PhilJay",
+			"artifact_id": "MPAndroidChart",
+			"name": "MPAndroidChart",
+			"description": "MPAndroidChart is a charting library for Android that enables developers to create visually appealing and interactive charts, graphs, and diagrams. It supports various chart types, customization options, and animation effects, making it suitable for data visualization and reporting in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-dialogs",
+			"name": "Material Dialogs",
+			"description": "Material Dialogs is a library for creating beautiful and customizable dialogs in Android apps. It provides a wide range of pre-designed dialog styles and customization options for buttons, titles, content, and animations. Material Dialogs simplifies the process of creating dialogs with consistent Material Design aesthetics.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.code.gson",
+			"artifact_id": "gson",
+			"name": "Gson",
+			"description": "Gson is a Java library that provides a simple and flexible API for serializing and deserializing JSON data. It allows developers to convert Java objects to JSON and vice versa, making it easy to work with JSON in Android apps. Gson supports customization and handles complex data structures efficiently.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "logging-interceptor",
+			"name": "OkHttp Logging Interceptor",
+			"description": "OkHttp Logging Interceptor is an interceptor for OkHttp that logs HTTP requests and responses for debugging and troubleshooting purposes. It provides detailed information about headers, bodies, and network timings, helping developers understand and analyze network interactions in their Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.facebook.shimmer",
+			"artifact_id": "shimmer",
+			"name": "Shimmer",
+			"description": "Shimmer is a library for adding shimmering effects to Android apps. It allows developers to create animated placeholder views that simulate a shimmering effect, typically used to indicate loading or content loading in a more visually appealing way. Shimmer is highly customizable and easy to integrate.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "mockwebserver",
+			"name": "OkHttp MockWebServer",
+			"description": "OkHttp MockWebServer is a library for testing HTTP interactions in Android apps. It provides a simulated web server that allows developers to mock network responses and verify the behavior of their network code. MockWebServer is useful for creating reliable and repeatable tests for network-dependent functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.PhilJay",
+			"artifact_id": "MPAndroidChart",
+			"name": "MPAndroidChart",
+			"description": "MPAndroidChart is a charting library for Android that enables developers to create visually appealing and interactive charts, graphs, and diagrams. It supports various chart types, customization options, and animation effects, making it suitable for data visualization and reporting in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "glide",
+			"name": "Glide",
+			"description": "Glide is an image loading and caching library for Android that focuses on smooth scrolling and memory efficiency. It supports various image formats, provides advanced features like animated GIF support, image resizing, and caching strategies, making it a popular choice for handling images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-auth",
+			"name": "Firebase Authentication",
+			"description": "Firebase Authentication is a secure and easy-to-use authentication service provided by Google. It allows developers to authenticate users in their Android apps using various authentication methods like email/password, phone number, Google Sign-In, and more. Firebase Authentication handles user management and provides a seamless login experience.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-urlconnection",
+			"name": "OkHttp URLConnection",
+			"description": "OkHttp URLConnection is a module that allows developers to use OkHttp as the underlying HTTP implementation for the standard Java URLConnection API. It provides the benefits of OkHttp's performance and features, including connection pooling, request/response interceptors, and transparent GZIP compression.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "glide-transformations",
+			"name": "Glide Transformations",
+			"description": "Glide Transformations is an extension library for Glide that provides a collection of image transformation utilities. It allows developers to apply various transformations to images loaded with Glide, such as resizing, cropping, blurring, and color filters. Glide Transformations enhances the visual appearance of images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-ws",
+			"name": "OkHttp WebSocket",
+			"description": "OkHttp WebSocket is a module that adds WebSocket support to OkHttp, allowing developers to establish real-time bidirectional communication with WebSocket servers. It provides a simple API for creating WebSocket connections, sending and receiving messages, and handling WebSocket events in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.exoplayer",
+			"artifact_id": "exoplayer",
+			"name": "ExoPlayer",
+			"description": "ExoPlayer is an open-source media player library for Android. It provides a flexible and customizable media playback solution that supports various media formats, adaptive streaming, and advanced features like DRM. ExoPlayer is widely used for building media-rich applications, such as video players and music streaming apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-datepicker",
+			"name": "Material Date Picker",
+			"description": "Material Date Picker is a library for selecting dates in Android apps, following the Material Design guidelines. It provides a user-friendly interface with customizable styling options and supports features like date range selection, date validation, and localization. Material Date Picker simplifies the implementation of date picker functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gifdecoder",
+			"name": "Glide GIF Decoder",
+			"description": "Glide GIF Decoder is a module for Glide that adds GIF image support. It enables developers to load and display animated GIF images using the Glide image loading library. Glide GIF Decoder handles efficient decoding, caching, and animation playback for GIFs in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-ads",
+			"name": "Google Mobile Ads SDK",
+			"description": "Google Mobile Ads SDK provides a framework for integrating advertisements into Android apps. It allows developers to monetize their apps by displaying various ad formats, such as banner ads, interstitial ads, and rewarded video ads. The SDK supports multiple ad networks and provides tools for ad targeting and performance analysis.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gifencoder",
+			"name": "Glide GIF Encoder",
+			"description": "Glide GIF Encoder is a module for Glide that enables developers to encode GIF images. It allows the conversion of bitmap images or video frames to the GIF format using the Glide image loading library. Glide GIF Encoder provides options for configuring the GIF encoding process in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gildesvg",
+			"name": "Glide SVG",
+			"description": "Glide SVG is an extension library for Glide that adds support for Scalable Vector Graphics (SVG) images. It allows developers to load, display, and manipulate SVG images using the Glide image loading library. Glide SVG supports various SVG features and provides efficient rendering for SVGs in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-messaging",
+			"name": "Firebase Cloud Messaging",
+			"description": "Firebase Cloud Messaging (FCM) is a cross-platform messaging solution provided by Google. It allows developers to send push notifications and messages to Android devices, iOS devices, and web browsers. FCM handles message delivery, device registration, and provides powerful targeting and customization options for notifications.",
+			"platform": "ANDROID|IOS",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.picasso",
+			"artifact_id": "picasso",
+			"name": "Picasso",
+			"description": "Picasso is an image loading and caching library for Android that simplifies the process of working with images. It provides a simple API for loading images from various sources, applying transformations, and caching them efficiently. Picasso is lightweight, easy to integrate, and widely used in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-location",
+			"name": "Google Play Services Location",
+			"description": "Google Play Services Location is a library that provides powerful location-based services for Android apps. It allows developers to access the device's location, implement geofencing, geocoding, and reverse geocoding, and obtain location updates. Google Play Services Location provides accurate and reliable location information across various Android devices.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-timepicker",
+			"name": "Material Time Picker",
+			"description": "Material Time Picker is a library for selecting times in Android apps, following the Material Design guidelines. It provides a user-friendly interface with customizable styling options and supports features like 12-hour and 24-hour formats, minute and hour interval selection, and time validation. Material Time Picker simplifies the implementation of time picker functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-places",
+			"name": "Google Places API for Android",
+			"description": "Google Places API for Android allows developers to integrate location-based search and information retrieval functionalities into their apps. It provides access to a rich database of places, including businesses, landmarks, and points of interest. The API offers features like place autocomplete, place details, photos, and reviews.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.retrofit2",
+			"artifact_id": "retrofit",
+			"name": "Retrofit",
+			"description": "Retrofit is a popular HTTP client library for Android and Java applications. It simplifies the process of making network requests by converting API endpoints into Java interfaces and handles the serialization and deserialization of request and response data. Retrofit supports various HTTP methods, URL manipulation, and customization options.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-analytics",
+			"name": "Google Analytics for Android",
+			"description": "Google Analytics for Android is a powerful analytics solution provided by Google. It allows developers to track user interactions, app usage, and conversion events in their Android apps. The SDK provides insights into user behavior, audience demographics, and helps optimize app performance and marketing strategies.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-ads-identifier",
+			"name": "Google Play Services Ads Identifier",
+			"description": "Google Play Services Ads Identifier is a library that provides a unique identifier for advertising purposes on Android devices. It allows developers to retrieve the Advertising ID, which is used by ad networks and advertisers to personalize and measure ad performance. Google Play Services Ads Identifier respects user privacy settings and offers APIs for ad tracking control.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.picasso",
+			"artifact_id": "picasso-transformations",
+			"name": "Picasso Transformations",
+			"description": "Picasso Transformations is an extension library for Picasso that provides additional image transformation options. It allows developers to apply various transformations to images loaded with Picasso, such as cropping, rotation, color adjustments, and more. Picasso Transformations enhances the visual appearance and versatility of images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp",
+			"name": "OkHttp",
+			"description": "OkHttp is a powerful and efficient HTTP client library for Android and Java applications. It supports HTTP/1.1 and HTTP/2 protocols, provides connection pooling, request/response interceptors, and supports features like caching, compression, and authentication. OkHttp is widely used for making network requests in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.airbnb.android",
+			"artifact_id": "lottie",
+			"name": "Lottie",
+			"description": "Lottie is a library that allows developers to render and animate vector-based animations in Android apps. It supports animations created with Adobe After Effects and exported as JSON files. Lottie simplifies the process of adding rich and engaging animations to user interfaces without the need for complex animation frameworks.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-games",
+			"name": "Google Play Games Services",
+			"description": "Google Play Games Services provides a suite of features and APIs for building games on Android. It offers services for achievements, leaderboards, real-time multiplayer, cloud save, and more. Google Play Games Services simplifies the implementation of gaming features and provides tools for player engagement and monetization.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-mockwebserver",
+			"name": "OkHttp MockWebServer",
+			"description": "OkHttp MockWebServer is a library for testing HTTP interactions in Android apps. It provides a simulated web server that allows developers to mock network responses and verify the behavior of their network code. MockWebServer is useful for creating reliable and repeatable tests for network-dependent functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-analytics",
+			"name": "Firebase Analytics",
+			"description": "Firebase Analytics is a comprehensive analytics solution provided by Google. It allows developers to measure user interactions, app usage, and conversion events in their Android apps. Firebase Analytics provides insights into user behavior, audience segmentation, and helps optimize app performance and marketing strategies.",
+			"platform": "ANDROID|IOS",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-urlconnection",
+			"name": "OkHttp URLConnection",
+			"description": "OkHttp URLConnection is a module that allows developers to use OkHttp as the underlying HTTP implementation for the standard Java URLConnection API. It provides the benefits of OkHttp's performance and features, including connection pooling, request/response interceptors, and transparent GZIP compression.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "glide",
+			"name": "Glide",
+			"description": "Glide is an image loading and caching library for Android that focuses on smooth scrolling and memory efficiency. It supports various image formats, provides advanced features like animated GIF support, image resizing, and caching strategies, making it a popular choice for handling images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-auth",
+			"name": "Firebase Authentication",
+			"description": "Firebase Authentication is a secure and easy-to-use authentication service provided by Google. It allows developers to authenticate users in their Android apps using various authentication methods like email/password, phone number, Google Sign-In, and more. Firebase Authentication handles user management and provides a seamless login experience.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.PhilJay",
+			"artifact_id": "MPAndroidChart",
+			"name": "MPAndroidChart",
+			"description": "MPAndroidChart is a charting library for Android that enables developers to create visually appealing and interactive charts, graphs, and diagrams. It supports various chart types, customization options, and animation effects, making it suitable for data visualization and reporting in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-ws",
+			"name": "OkHttp WebSocket",
+			"description": "OkHttp WebSocket is a module that adds WebSocket support to OkHttp, allowing developers to establish real-time bidirectional communication with WebSocket servers. It provides a simple API for creating WebSocket connections, sending and receiving messages, and handling WebSocket events in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.exoplayer",
+			"artifact_id": "exoplayer",
+			"name": "ExoPlayer",
+			"description": "ExoPlayer is an open-source media player library for Android that provides a flexible and customizable media playback solution. It supports various media formats, adaptive streaming, and advanced features like DRM. ExoPlayer is widely used for building media-rich applications, such as video players and music streaming apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-datepicker",
+			"name": "Material Date Picker",
+			"description": "Material Date Picker is a library for selecting dates in Android apps, following the Material Design guidelines. It provides a user-friendly interface with customizable styling options and supports features like date range selection, date validation, and localization. Material Date Picker simplifies the implementation of date picker functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gifdecoder",
+			"name": "Glide GIF Decoder",
+			"description": "Glide GIF Decoder is a module for Glide that adds GIF image support. It enables developers to load and display animated GIF images using the Glide image loading library. Glide GIF Decoder handles efficient decoding, caching, and animation playback for GIFs in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-ads",
+			"name": "Google Mobile Ads SDK",
+			"description": "Google Mobile Ads SDK provides a framework for integrating advertisements into Android apps. It allows developers to monetize their apps by displaying various ad formats, such as banner ads, interstitial ads, and rewarded video ads. The SDK supports multiple ad networks and provides tools for ad targeting and performance analysis.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gifencoder",
+			"name": "Glide GIF Encoder",
+			"description": "Glide GIF Encoder is a module for Glide that enables developers to encode GIF images. It allows the conversion of bitmap images or video frames to the GIF format using the Glide image loading library. Glide GIF Encoder provides options for configuring the GIF encoding process in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+				"artifact_id": "gildesvg",
+				"name": "Glide SVG",
+				"description": "Glide SVG is an extension library for Glide that adds support for Scalable Vector Graphics (SVG) images. It allows developers to load, display, and manipulate SVG images using the Glide image loading library. Glide SVG supports various SVG features and provides efficient rendering for SVGs in Android apps.",
+				"platform": "ANDROID",
+				"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-messaging",
+			"name": "Firebase Cloud Messaging",
+			"description": "Firebase Cloud Messaging (FCM) is a cross-platform messaging solution provided by Google. It allows developers to send push notifications and messages to Android devices, iOS devices, and web browsers. FCM handles message delivery, device registration, and provides powerful targeting and customization options for notifications.",
+			"platform": "ANDROID|IOS",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.picasso",
+			"artifact_id": "picasso",
+			"name": "Picasso",
+			"description": "Picasso is an image loading and caching library for Android that simplifies the process of working with images. It provides a simple API for loading images from various sources, applying transformations, and caching them efficiently. Picasso is lightweight, easy to integrate, and widely used in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-location",
+			"name": "Google Play Services Location",
+			"description": "Google Play Services Location is a library that provides powerful location-based services for Android apps. It allows developers to access the device's location, implement geofencing, geocoding, and reverse geocoding, and obtain location updates. Google Play Services Location provides accurate and reliable location information across various Android devices.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-timepicker",
+			"name": "Material Time Picker",
+			"description": "Material Time Picker is a library for selecting times in Android apps, following the Material Design guidelines. It provides a user-friendly interface with customizable styling options and supports features like 12-hour and 24-hour formats, minute and hour interval selection, and time validation. Material Time Picker simplifies the implementation of time picker functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-places",
+			"name": "Google Places API for Android",
+			"description": "Google Places API for Android allows developers to integrate location-based search and information retrieval functionalities into their apps. It provides access to a rich database of places, including businesses, landmarks, and points of interest. The API offers features like place autocomplete, place details, photos, and reviews.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.retrofit2",
+			"artifact_id": "retrofit",
+			"name": "Retrofit",
+			"description": "Retrofit is a popular HTTP client library for Android and Java applications. It simplifies the process of making network requests by converting API endpoints into Java interfaces and handles the serialization and deserialization of request and response data. Retrofit supports various HTTP methods, URL manipulation, and customization options.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-analytics",
+			"name": "Google Analytics for Android",
+			"description": "Google Analytics for Android is a powerful analytics solution provided by Google. It allows developers to track user interactions, app usage, and conversion events in their Android apps. The SDK provides insights into user behavior, audience demographics, and helps optimize app performance and marketing strategies.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-ads-identifier",
+			"name": "Google Play Services Ads Identifier",
+			"description": "Google Play Services Ads Identifier is a library that provides a unique identifier for advertising purposes on Android devices. It allows developers to retrieve the Advertising ID, which is used by ad networks and advertisers to personalize and measure ad performance. Google Play Services Ads Identifier respects user privacy settings and offers APIs for ad tracking control.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.picasso",
+			"artifact_id": "picasso-transformations",
+			"name": "Picasso Transformations",
+			"description": "Picasso Transformations is an extension library for Picasso that provides additional image transformation options. It allows developers to apply various transformations to images loaded with Picasso, such as cropping, rotation, color adjustments, and more. Picasso Transformations enhances the visual appearance and versatility of images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp",
+			"name": "OkHttp",
+			"description": "OkHttp is a powerful and efficient HTTP client library for Android and Java applications. It supports HTTP/1.1 and HTTP/2 protocols, provides connection pooling, request/response interceptors, and supports features like caching, compression, and authentication. OkHttp is widely used for making network requests in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.airbnb.android",
+			"artifact_id": "lottie",
+			"name": "Lottie",
+			"description": "Lottie is a library that allows developers to render and animate vector-based animations in Android apps. It supports animations created with Adobe After Effects and exported as JSON files. Lottie simplifies the process of adding rich and engaging animations to user interfaces without the need for complex animation frameworks.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-games",
+			"name": "Google Play Games Services",
+			"description": "Google Play Games Services provides a suite of features and APIs for building games on Android. It offers services for achievements, leaderboards, real-time multiplayer, cloud save, and more. Google Play Games Services simplifies the implementation of gaming features and provides tools for player engagement and monetization.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-mockwebserver",
+			"name": "OkHttp MockWebServer",
+			"description": "OkHttp MockWebServer is a library for testing HTTP interactions in Android apps. It provides a simulated web server that allows developers to mock network responses and verify the behavior of their network code. MockWebServer is useful for creating reliable and repeatable tests for network-dependent functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-analytics",
+			"name": "Firebase Analytics",
+			"description": "Firebase Analytics is a comprehensive analytics solution provided by Google. It allows developers to measure user interactions, app usage, and conversion events in their Android apps. Firebase Analytics provides insights into user behavior, audience segmentation, and helps optimize app performance and marketing strategies.",
+			"platform": "ANDROID|IOS",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-urlconnection",
+			"name": "OkHttp URLConnection",
+			"description": "OkHttp URLConnection is a module that allows developers to use OkHttp as the underlying HTTP implementation for the standard Java URLConnection API. It provides the benefits of OkHttp's performance and features, including connection pooling, request/response interceptors, and transparent GZIP compression.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "glide",
+			"name": "Glide",
+			"description": "Glide is an image loading and caching library for Android that focuses on smooth scrolling and memory efficiency. It supports various image formats, provides advanced features like animated GIF support, image resizing, and caching strategies, making it a popular choice for handling images in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-auth",
+			"name": "Firebase Authentication",
+			"description": "Firebase Authentication is a secure and easy-to-use authentication service provided by Google. It allows developers to authenticate users in their Android apps using various authentication methods like email/password, phone number, Google Sign-In, and more. Firebase Authentication handles user management and provides a seamless login experience.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.PhilJay",
+			"artifact_id": "MPAndroidChart",
+			"name": "MPAndroidChart",
+			"description": "MPAndroidChart is a charting library for Android that enables developers to create visually appealing and interactive charts, graphs, and diagrams. It supports various chart types, customization options, and animation effects, making it suitable for data visualization and reporting in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.okhttp3",
+			"artifact_id": "okhttp-ws",
+			"name": "OkHttp WebSocket",
+			"description": "OkHttp WebSocket is a module that adds WebSocket support to OkHttp, allowing developers to establish real-time bidirectional communication with WebSocket servers. It provides a simple API for creating WebSocket connections, sending and receiving messages, and handling WebSocket events in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.exoplayer",
+			"artifact_id": "exoplayer",
+			"name": "ExoPlayer",
+			"description": "ExoPlayer is an open-source media player library for Android that provides a flexible and customizable media playback solution. It supports various media formats, adaptive streaming, and advanced features like DRM. ExoPlayer is widely used for building media-rich applications, such as video players and music streaming apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-datepicker",
+			"name": "Material Date Picker",
+			"description": "Material Date Picker is a library for selecting dates in Android apps, following the Material Design guidelines. It provides a user-friendly interface with customizable styling options and supports features like date range selection, date validation, and localization. Material Date Picker simplifies the implementation of date picker functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gifdecoder",
+			"name": "Glide GIF Decoder",
+			"description": "Glide GIF Decoder is a module for Glide that adds GIF image support. It enables developers to load and display animated GIF images using the Glide image loading library. Glide GIF Decoder handles efficient decoding, caching, and animation playback for GIFs in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-ads",
+			"name": "Google Mobile Ads SDK",
+			"description": "Google Mobile Ads SDK provides a framework for integrating advertisements into Android apps. It allows developers to monetize their apps by displaying various ad formats, such as banner ads, interstitial ads, and rewarded video ads. The SDK supports multiple ad networks and provides tools for ad targeting and performance analysis.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+			"artifact_id": "gifencoder",
+			"name": "Glide GIF Encoder",
+			"description": "Glide GIF Encoder is a module for Glide that enables developers to encode GIF images. It allows the conversion of bitmap images or video frames to the GIF format using the Glide image loading library. Glide GIF Encoder provides options for configuring the GIF encoding process in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.github.bumptech.glide",
+				"artifact_id": "gildesvg",
+				"name": "Glide SVG",
+				"description": "Glide SVG is an extension library for Glide that adds support for Scalable Vector Graphics (SVG) images. It allows developers to load, display, and manipulate SVG images using the Glide image loading library. Glide SVG supports various SVG features and provides efficient rendering for SVGs in Android apps.",
+				"platform": "ANDROID",
+				"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.firebase",
+			"artifact_id": "firebase-messaging",
+			"name": "Firebase Cloud Messaging",
+			"description": "Firebase Cloud Messaging (FCM) is a cross-platform messaging solution provided by Google. It allows developers to send push notifications and messages to Android devices, iOS devices, and web browsers. FCM handles message delivery, device registration, and provides powerful targeting and customization options for notifications.",
+			"platform": "ANDROID|IOS",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.picasso",
+			"artifact_id": "picasso",
+			"name": "Picasso",
+			"description": "Picasso is an image loading and caching library for Android that simplifies the process of working with images. It provides a simple API for loading images from various sources, applying transformations, and caching them efficiently. Picasso is lightweight, easy to integrate, and widely used in Android apps.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-location",
+			"name": "Google Play Services Location",
+			"description": "Google Play Services Location is a library that provides powerful location-based services for Android apps. It allows developers to access the device's location, implement geofencing, geocoding, and reverse geocoding, and obtain location updates. Google Play Services Location provides accurate and reliable location information across various Android devices.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.material",
+			"artifact_id": "material-timepicker",
+			"name": "Material Time Picker",
+			"description": "Material Time Picker is a library for selecting times in Android apps, following the Material Design guidelines. It provides a user-friendly interface with customizable styling options and supports features like 12-hour and 24-hour formats, minute and hour interval selection, and time validation. Material Time Picker simplifies the implementation of time picker functionality.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.google.android.gms",
+			"artifact_id": "play-services-places",
+			"name": "Google Places API for Android",
+			"description": "Google Places API for Android allows developers to integrate location-based search and information retrieval functionalities into their apps. It provides access to a rich database of places, including businesses, landmarks, and points of interest. The API offers features like place autocomplete, place details, photos, and reviews.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		},
+		{
+			"group_id": "com.squareup.retrofit2",
+			"artifact_id": "retrofit",
+			"name": "Retrofit",
+			"description": "Retrofit is a popular HTTP client library for Android and Java applications. It simplifies the process of making network requests by converting API endpoints into Java interfaces and handles the serialization and deserialization of request and response data. Retrofit supports various HTTP methods, URL manipulation, and customization options.",
+			"platform": "ANDROID",
+			"package_type": "MAVEN"
+		}
+    ]
+}

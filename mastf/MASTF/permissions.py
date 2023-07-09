@@ -226,10 +226,10 @@ class BoundPermission(OperationHolderMixin, BasePermission):
         if not self._ensure_table():
             return None
 
-        permission = Permission.objects.filter(codename=codename)
-        if permission.exists():
-            self._permission = permission.first()
-        else:
+        try:
+            # Using .get() uses only one database query
+            self._permission = Permission.objects.get(codename=codename)
+        except (Permission.MultipleObjectsReturned, Permission.DoesNotExist):
             content_type = ContentType.objects.get_for_model(self.model)
             self._permission = Permission.objects.create(
                 codename=codename, name=name, content_type=content_type
@@ -286,12 +286,11 @@ class BoundPermission(OperationHolderMixin, BasePermission):
             # runtime permissions may be created multiple times so we have
             # to search for the desired permission
             value = self._mapper(self, instance) if self._mapper else self.codename
-
-            permission = Permission.objects.filter(codename=value)
-            if not permission.exists():
+            try:
+                permission = Permission.objects.get(codename=value)
+            except (Permission.DoesNotExist, Permission.MultipleObjectsReturned):
                 logger.warning(f"Could not resolve permission: codename='{value}'")
                 return None
-            permission = permission.first()
 
         return permission
 

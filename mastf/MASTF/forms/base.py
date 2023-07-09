@@ -16,6 +16,7 @@
 import logging
 
 from django import forms
+from django.db.models import Model
 from django.contrib.auth.models import User
 
 from mastf.MASTF.models import Project
@@ -78,8 +79,9 @@ class ModelField(forms.CharField):
             )
             value = raw_value
 
-        queryset = self.model.objects.filter(**{self.field_name: value})
-        if not queryset.exists():
+        try:
+            queryset = self.model.objects.get(**{self.field_name: value})
+        except (Model.DoesNotExist, Model.MultipleObjectsReturned):
             logger.error(
                 "RefError: Model=%s, Target-Key=%s, Target=%s",
                 self.model,
@@ -90,7 +92,7 @@ class ModelField(forms.CharField):
                 "This field must be a reference to an existing model", code="required"
             )
 
-        return queryset.first()
+        return queryset
 
 
 class ManyToManyField(forms.CharField):
@@ -159,11 +161,9 @@ class ManyToManyField(forms.CharField):
         elements = []
         for raw_id in values:
             objid = self.convert_id(raw_id)
-            query = self.model.objects.filter(**{self.field_name: objid})
-            if query.exists():
-                instance = query.first()
-                elements.append(instance)
-            else:
+            try:
+                elements.append(self.model.objects.get(**{self.field_name: objid}))
+            except (Model.DoesNotExist, Model.MultipleObjectsReturned):
                 logger.debug(
                     "ManyToManyField::Query - Model=%s, Target-Key=%s, Target=%s - Could not resolve object",
                     self.model,

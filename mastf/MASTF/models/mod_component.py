@@ -19,6 +19,7 @@ from uuid import uuid4
 from mastf.MASTF.utils.enum import ComponentCategory
 
 from .mod_scan import Scanner, Scan
+from .mod_permission import AppPermission
 from .base import namespace, TimedModel
 
 __all__ = ["Component", "IntentFilter"]
@@ -36,6 +37,7 @@ class Component(TimedModel):
     is_protected = models.BooleanField(default=True)
     is_launcher = models.BooleanField(default=False)
     is_main = models.BooleanField(default=False)
+    permission = models.ForeignKey(AppPermission, null=True, on_delete=models.SET_NULL)
 
     category = models.CharField(
         blank=True, choices=ComponentCategory.choices, max_length=256

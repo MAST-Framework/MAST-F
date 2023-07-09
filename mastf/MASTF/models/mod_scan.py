@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import datetime
 import logging
+import json
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -23,7 +24,7 @@ from mastf.MASTF.utils.enum import Severity
 
 from .base import Project, File, Team, TimedModel
 
-__all__ = ["Scan", "Scanner", "ScanTask", "Details", "Certificate"]
+__all__ = ["Scan", "Scanner", "ScanTask", "Details", "Certificate", "DeveloperInfo", "StoreInfo"]
 
 logger = logging.getLogger(__name__)
 
@@ -189,7 +190,7 @@ class ScanTask(TimedModel):
     name = models.CharField(max_length=256, blank=True)
     """The task's name (primarily used in HTML representation)"""
 
-    celery_id = models.CharField(max_length=256, blank=True)
+    celery_id = models.CharField(max_length=256, blank=True, null=True)
     """The assigned celery id (may be null on creation)."""
 
     active = models.BooleanField(default=True)
@@ -229,6 +230,7 @@ class ScanTask(TimedModel):
         tasks = ScanTask.active_tasks(scan)
         if len(tasks) == 0 or (len(tasks) == 1 and tasks[0] == task):
             scan.is_active = False
+            scan.status = "Done" # TODO: change to enum value
             scan.save()
 
 
@@ -245,7 +247,7 @@ class Certificate(TimedModel):
     """
 
     version = models.CharField(max_length=12, blank=True)
-    """Indicates whether the Certificate is signed using APK signature scheme version X.
+    """Indicates whether the APK is signed using APK signature scheme version X.
 
     Note that version values are stored in the format ``vX`` where ``X`` represents the
     version number. In addition, a higher version number declares lower signature schemes
@@ -274,6 +276,39 @@ class Certificate(TimedModel):
     """If present, the serial number will be stored in a ``TextField``."""
 
 
+class DeveloperInfo(TimedModel):
+    """Model representing developer information."""
+
+    developer_id = models.CharField(primary_key=True, max_length=512)
+    """Unique ID for each developer."""
+
+    name = models.CharField(max_length=512, blank=True)
+    """Name of the devloper (mostly the company's name)"""
+
+    email = models.EmailField(blank=True)
+    """Email address of the developer"""
+
+    website = models.URLField(blank=True)
+    """Website URL of the developer"""
+
+    address = models.CharField(max_length=512, blank=True)
+    """Email address of the developer"""
+
+
+class StoreInfo(TimedModel):
+    """Model storing information about the app available at the platform's app-store."""
+
+    store_name = models.CharField(max_length=32, blank=True)
+    app_id = models.CharField(max_length=512, blank=True)
+
+    title = models.CharField(max_length=256, blank=True)
+    score = models.FloatField(default=0.0)
+    installs = models.CharField(max_length=128, blank=True, default="0")
+    price = models.CharField(max_length=256, blank=True)
+    url = models.URLField(blank=True)
+    release_date = models.CharField(max_length=256, blank=True)
+    developer = models.ForeignKey(DeveloperInfo, on_delete=models.SET_NULL, null=True)
+    description = models.TextField(blank=True)
 
 
 class Details(TimedModel):  # TODO
@@ -288,6 +323,7 @@ class Details(TimedModel):  # TODO
     app_version = models.CharField(max_length=512, blank=True)
 
     target_sdk = models.CharField(max_length=32, blank=True)
+    store_info = models.ForeignKey(StoreInfo, on_delete=models.SET_NULL, null=True)
 
     # Many-To-Many relationships here
     certificates = models.ManyToManyField(Certificate, related_name="details")

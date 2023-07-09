@@ -19,6 +19,7 @@ from django.shortcuts import redirect
 
 from rest_framework.permissions import IsAdminUser, exceptions
 
+from mastf.MASTF import settings
 from mastf.MASTF.mixins import TemplateAPIView, ContextMixinBase
 from mastf.MASTF.permissions import CanViewTeam, CanEditUser
 from mastf.MASTF.models import Account, Team, Environment, namespace
@@ -116,6 +117,7 @@ class UserTeamView(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/team.html"
     permission_classes = [CanViewTeam]
     default_redirect = "Teams"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         """
@@ -134,6 +136,7 @@ class AdminUserConfig(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/settings/settings-account.html"
     permission_classes = [CanEditUser]
     default_redirect = "Settings"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -150,6 +153,7 @@ class AdminUsersConfiguration(ContextMixinBase, SettingsMixin, TemplateAPIView):
     template_name = "user/admin/users.html"
     permission_classes = [IsAdminUser | IsAdmin]
     default_redirect = "Settings"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         context = super().get_context_data(**kwargs)
@@ -157,6 +161,7 @@ class AdminUsersConfiguration(ContextMixinBase, SettingsMixin, TemplateAPIView):
         context["users"] = Account.objects.all()
         context["active"] = "admin-user-config"
         context["user_roles"] = list(Role)
+        context["MASTF_PASSWD_MIN_LEN"] = settings.MASTF_PASSWD_MIN_LEN
         return context
 
     def post(self, *args, **kwargs):

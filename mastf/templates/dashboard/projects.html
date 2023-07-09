@@ -6,10 +6,10 @@
 <!-- Modal for creating new projects -->
 <div class="modal modal-blur fade" id="modal-new-project" tabindex="-1"
     role="dialog" aria-hidden="true">
-    <!--
+    {% comment %}
         The project dialog will consume a lot of screen space, so
         it should be placed in the center of it.
-    -->
+    {% endcomment %}
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -28,7 +28,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
-        <!-- Project Dialog:
+        {% comment %}
+        Project Dialog:
 
             Once the name for the new Project is given, the report type has to be specified.
             that can be 'simple' or 'advanced', which will produce different reports at the
@@ -43,7 +44,7 @@
             - 'public': All other users can see the project
             - 'private': Only you can see and manage your project
             - 'internal': Only you and users in your organisation can see and manage the project
-        -->
+        {% endcomment %}
         <form id="new-project-form" method="POST" action="."
                     enctype="multipart/form-data" >
             <div class="modal-body">

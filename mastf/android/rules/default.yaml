@@ -1,29 +1,4 @@
 # Insecure SSL
-- rule-id: android-insecure-ssl-allowallhostnameverifier
-  patterns:
-    - javax\.net\.ssl
-    - AllTrustSSLSocketFactory\|NonValidatingSSLSocketFactory\|ALLOW_ALL_HOSTNAME_VERIFIER|\.setDefaultHostnameVerifier\(|NullHostnameVerifier\(
-  meta:
-    filters:
-      file_ext: java
-    severity: high
-    template: insecure-implementation-of-ssl-with-allowallhostnameverifier
-    vulnerability: false
-
-- rule-id: android-insecure-ssl-trustmanager-accept-all-certificates
-  patterns:
-    - javax\.net\.ssl
-    - mode: or
-      text: (SSLSocketFactory|HttpsURLConnection)\s*\.\s*setHostnameVerifier\s*\(\s*AllowAllHostnameVerifier\s*\.\s*INSTANCE\s*\)\s*\.\s*setTrustAllCerts\s*\(\s*true\s*\)
-    - mode: or
-      text: \.\s*setTrustAllCerts\s*\(\s*true\s*\)
-  meta:
-    filters:
-      file_ext: java
-    severity: critical
-    template: insecure-implementation-of-ssl-with-trustmanager-accepting-all-certificates
-    vulnerability: false
-
 - rule-id: android-insecure-ssl-weak-cipher-suites
   patterns:
     - javax\.net\.ssl
@@ -44,63 +19,6 @@
       file_ext: java
     severity:
     template: insecure-implementation-of-ssl-with-sslv3-or-tlsv1
-    vulnerability: false
-
-# Insecure Random
-- rule-id: android-insecure-random-java
-  patterns:
-    - java\.util\.Random
-    - new\s*Random\(
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-use-of-random-number-generator-(java.util.random)
-    vulnerability: false
-
-- rule-id: android-insecure-random-android
-  patterns:
-    - android\.util\.Random
-    - new\s*Random\(
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-use-of-random-number-generator-(android.util.random)
-    vulnerability: false
-
-# Logging
-- rule-id: android-logging-sensitive-information
-  pattern: (Log\.([vdiew]|wtf)|System\.out\.println)\s*\(\s*\".*(?:password|api[_ ]key|pii|personally[_ ]identifiable[_ ]information).*\"
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-logging-of-sensitive-information
-    vulnerability: false
-
-- rule-id: android-logging-debug-messages-in-release-build
-  pattern: \b(Log\.[vdiew]|System\.out\.println)\s*\(\s*\".*\"\s*,\s*.*\bBuildConfig\.DEBUG\b
-  meta:
-    filters:
-      file_ext: java, kt
-    severity: high
-    template: insecure-logging-of-debug-messages-in-release-build
-    vulnerability: false
-
-- rule-id: android-logging
-  patterns:
-    - text: .*android\.util\.Log.*
-      mode: or
-    - text: android\.util\.Logcat.*
-      mode: or
-    - text: \b(Log\.[vdiew]|System\.out\.println)\s*\(
-      mode: or
-  meta:
-    filters:
-      file_ext: java
-    severity: Medium
-    template: android-logging-detected
     vulnerability: false
 
 - rule-id: android-hardcoded-ipv4
@@ -242,19 +160,6 @@
     template: clipboard-copy
     vulnerability: false
 
-- rule-id: android-string-concatenation
-  patterns:
-    - text: "[\"]\\s*[^+\n]+[+].*[\"]"
-      mode: or
-    - text: \+=\s*\".*
-      mode: or
-  meta:
-    filters:
-      file_ext: java
-    severity: Medium
-    template: string-concatenation
-    vulnerability: false
-
 - rule-id: android-md5-hashes
   patterns:
     - text: .*MessageDigest\.getInstance\(\"MD5\"\).*
@@ -359,7 +264,7 @@
   meta:
     filter:
       file_ext: "java, kotlin"
-    severity: "Medium"
+    severity: "Secure"
     template: "root-detection"
     vulnerability: false
 

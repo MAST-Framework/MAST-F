@@ -158,6 +158,10 @@ Utils = {
         }
     },
 
+    capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    },
+
     permissionColors: {
         'SIGNATURE': "green",
         'SIGNATUREORSYSTEM': "green",
@@ -172,7 +176,47 @@ Utils = {
         'COMPANION': "azure",
         'CONFIGURATOR': "azure",
         'PRE23': "azure",
-    }
+    },
+
+    applyTemplateData(prefix, data) {
+        var description = Utils.escapeHTML(data.description);
+        var title = Utils.escapeHTML(data.title);
+        var mitigation = Utils.escapeHTML(data.mitigation);
+        var risk = Utils.escapeHTML(data.risk);
+        if (data.is_html) {
+            description = Utils.replaceBackticks(description);
+            title = Utils.replaceBackticks(title);
+            mitigation = Utils.replaceBackticks(mitigation);
+            risk = Utils.replaceBackticks(risk);
+        }
+
+        document.getElementById(`${prefix}-description-text`).innerHTML = description;
+        document.getElementById(`${prefix}-mitigation-text`).innerHTML = mitigation;
+        document.getElementById(`${prefix}-risk-text`).innerHTML = risk;
+
+        document.getElementById('${prefix}-details-cvss').textContent = data.meta_cvss || "Not specified";
+        var cwe = Utils.escapeHTML(data.meta_cwe || "Not Specified");
+        if (cwe.startsWith("CWE-")) {
+            let ref_cwe = `https://cwe.mitre.org/data/definitions/${cwe.slice(4)}.html`
+            document.getElementById(`${prefix}-details-cwe`).innerHTML = `<a href="${ref_cwe}" class="link-secondary" target="_blank">${cwe}</a>`;
+        } else {
+            document.getElementById(`${prefix}-details-cwe`).textContent = cwe;
+        }
+
+        var masvs = Utils.escapeHTML(data.meta_masvs || "Not provided");
+        if (masvs.startsWith("https")) {
+            let path_elements = masvs.split("/");
+            let title = path_elements[path_elements.length-1].split("#")[0].replace("-", " ")
+            document.getElementById(`${prefix}-details-masvs`).innerHTML = `<a href="${masvs}" class="link-secondary" target="_blank">${title}</a>`;
+        } else {
+            document.getElementById(`${prefix}-details-masvs`).textContent = data.meta_masvs || "Not provided";
+        }
+
+        let titleElement = $(`#${prefix}-title`);
+        titleElement.html(title);
+        titleElement.attr('href', "/web/details/" + data.article);
+    },
+
 }
 
 /**
@@ -182,6 +226,8 @@ Utils = {
  * fetched from the REST API
  */
 FindingView = {
+    editor: null,
+
     load: function(element, interface) {
         template_id = Utils.getValue(interface.makeTemplateId(element.getAttribute('counter')));
         finding_id = Utils.getValue(interface.makeFindingId(element.getAttribute('counter')));
@@ -190,7 +236,36 @@ FindingView = {
 
         REST.doGet("/api/v1/finding/template/" + template_id, interface.handleTemplateData);
         REST.doGet(interface.makeFindingURL(finding_id), interface.handleFindingData);
-        REST.doGet("/api/v1/code/" + finding_id, interface.handleCode);
+        REST.doGet("/api/v1/code/" + finding_id, function(data) {
+            FindingView.editor.setValue(data?.code);
+            FindingView.editor.getModel().setLanguage(data?.snippet.language.toLowerCase() || "plaintext");
+
+            var selections = [];
+            data?.snippet?.lines.split(",").forEach(x => {
+                if (x.includes("-")) {
+                    let values = x.split("-");
+                    selections.push({
+                        range: new monaco.Range(parseInt(values[0]), 0, parseInt(values[1]), 0),
+                        options: {
+                        isWholeLine: true,
+                        inlineClassName: 'highlight'
+                        }
+                    });
+                }
+                else {
+                    let number = parseInt(x);
+                    selections.push({
+                        range: new monaco.Range(number, 0, number, 0),
+                        options: {
+                        isWholeLine: true,
+                        inlineClassName: 'highlight'
+                        }
+                    });
+                }
+
+            })
+            FindingView.editor.getModel().deltaDecorations([], selections);
+        });
 
         interface.rootElement.fadeIn("slow");
     },
@@ -199,13 +274,15 @@ FindingView = {
         interface.rootElement.attr("style", "display: none;");
         interface?.onClose();
     },
+
+
 };
 
 Vulnerability = {
-
     scanner_id: "scanner-name",
     scan_id: "scan-id",
     rootElement: $('#vuln-card'),
+    prefix: 'vuln',
 
     makeTemplateId: function(counter) {
         return 'vuln-template-id-row-' + counter;
@@ -220,49 +297,25 @@ Vulnerability = {
     },
 
     handleTemplateData: function(data) {
-        var description = data.description;
-        var title = data.title;
-        if (data.is_html) {
-            description = Utils.replaceBackticks(description);
-            title = Utils.replaceBackticks(title);
-        }
-
-        document.getElementById('finding-info-text').innerHTML = description;
-
-        let titleElement = $('#finding-title');
-        titleElement.html(title);
-        titleElement.attr('href', "/web/details/" + data.article);
+        Utils.applyTemplateData(Vulnerability.prefix, data);
     },
 
     handleFindingData: function(data) {
         Utils.setSeverity(data?.severity, $('#vuln-severity'), $('#vuln-severity-badge'));
         $('#vuln-details-dropdown').html(data?.state);
-        $('#vuln-language').html(data?.snippet?.language);
-        $('#vuln-details-file-size').html(data?.snippet?.file_size);
-        $('#vuln-details-language').html(data?.snippet?.language);
-        $('#vuln-details-lines').html(data?.snippet?.lines);
+        let lang = Utils.capitalize(data?.snippet?.language);
+
+        if (data.is_custom) {
+            let description = Utils.escapeHTML(data.custom_text) + " " + document.getElementById('finding-description-text').innerHTML;
+            document.getElementById('finding-description-text').innerHTML = data.template.is_html ? Utils.replaceBackticks(description) : description;
+        }
+
+        $('#vuln-language').text(lang);
+        $('#vuln-details-language').text(lang);
+        $('#vuln-details-file-name').text(data?.snippet?.file_name);
+        $('#vuln-details-file-size').text(data?.snippet?.file_size);
+        $('#vuln-details-lines').text(data?.snippet?.lines);
         $('#vuln-id').attr('value', data.finding_id);
-    },
-
-    handleCode: function(data) {
-        document.getElementById("vuln-code").textContent = data?.code || "Not Found";
-        let theme_name = 'enlighter';
-        if (Utils.isDarkLaf()) {
-            theme_name = 'dracula';
-        }
-
-        if (data != null) {
-            let element = document.getElementById("vuln-code");
-            EnlighterJS.enlight(element, false);
-            EnlighterJS.enlight(element, {
-                language : data?.snippet.language.toLowerCase() || "text",
-                theme: theme_name,
-                indent: 2,
-                linehover: false,
-                textOverflow: 'scroll',
-                highlight: data?.snippet.lines,
-            });
-        }
     },
 
     applyVulnerabilityState: function(element) {
@@ -293,6 +346,7 @@ Finding = {
     scanner_id: "scanner-name",
     scan_id: "scan-id",
     rootElement: $('#finding-card'),
+    prefix: 'finding',
 
     makeTemplateId: function(counter) {
         return 'finding-template-id-row-' + counter;
@@ -307,43 +361,23 @@ Finding = {
     },
 
     handleTemplateData: function(data) {
-        var description = data.description;
-        var title = data.title;
-        if (data.is_html) {
-            description = Utils.replaceBackticks(description);
-            title = Utils.replaceBackticks(title);
-        }
-
-        document.getElementById('finding-info-text').innerHTML = description;
-
-        let titleElement = $('#finding-title');
-        titleElement.html(title);
-        titleElement.attr('href', "/web/details/" + data.article);
+        Utils.applyTemplateData(Finding.prefix, data);
     },
 
     handleFindingData: function(data) {
         Utils.setSeverity(data?.severity, $('#finding-severity'), $('#finding-severity-badge'));
-        $('#finding-language').html(data?.snippet?.language);
-        $('#finding-details-file-size').html(data?.snippet?.file_size);
-    },
+        let lang = Utils.capitalize(data?.snippet?.language);
 
-    handleCode: function(data) {
-        document.getElementById("finding-code").textContent = data?.code || "Not Found";
-
-        var theme_name = 'enlighter';
-        if (Utils.isDarkLaf()) {
-            theme_name = 'dracula';
+        if (data.is_custom) {
+            let description = Utils.escapeHTML(data.custom_text) + " " + document.getElementById('finding-description-text').innerHTML;
+            document.getElementById('finding-description-text').innerHTML = data.template.is_html ? Utils.replaceBackticks(description) : description;
         }
 
-        let element = document.getElementById("finding-code");
-        EnlighterJS.enlight(element, false);
-        EnlighterJS.enlight(element, {
-            language : data?.snippet.language.toLowerCase() || "text",
-            theme: theme_name,
-            indent : 2,
-            textOverflow: 'scroll',
-            highlight: data?.snippet.lines
-        });
+        $('#finding-language').text(lang);
+        $('#finding-details-language').text(lang);
+        $('#finding-details-file-name').text(data?.snippet?.file_name);
+        $('#finding-details-file-size').text(data?.snippet?.file_size);
+        $('#finding-details-lines').text(data?.snippet?.lines);
     },
 
     onClose: function() {

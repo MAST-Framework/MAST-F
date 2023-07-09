@@ -131,6 +131,7 @@ class Team(TimedModel):
         query = models.Q(owner=owner, name=name) | models.Q(
             visibility=Visibility.PUBLIC, name=name
         )
+
         return Team.objects.filter(query).first()
 
     @staticmethod

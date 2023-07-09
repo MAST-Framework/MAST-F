@@ -51,7 +51,7 @@ class HostTemplate(TimedModel):
 
 class Host(TimedModel):
     host_id = models.CharField(max_length=256, primary_key=True)
-    # REVISIT: When we know the scanner we don't need the scan instance,
+    # REVISIT: If we know the scanner we don't need the scan instance,
     # because the scanner is already mapped to the scan.
     scan = models.ForeignKey(Scan, on_delete=models.CASCADE, null=True)
     scanner = models.ForeignKey(Scanner, on_delete=models.CASCADE, null=True)

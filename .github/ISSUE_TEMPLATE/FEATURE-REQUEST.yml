@@ -16,14 +16,6 @@ body:
     validations:
       required: false
   - type: textarea
-    id: reference_issues
-    attributes:
-      label: "Reference Issues"
-      description: Common issues
-      placeholder: "#Issues IDs"
-    validations:
-      required: false
-  - type: textarea
     id: summary
     attributes:
       label: "Summary"
@@ -46,12 +38,20 @@ body:
       description: What are the drawbacks/impacts of your feature request ?
       placeholder: Identify the drawbacks and impacts while being neutral on your feature request
     validations:
-      required: true
+      required: false
   - type: textarea
     id: unresolved_question
     attributes:
       label: "Unresolved questions"
       description: What questions still remain unresolved ?
       placeholder: Identify any unresolved issues.
+    validations:
+      required: false
+  - type: textarea
+    id: reference_issues
+    attributes:
+      label: "Referenced Issues"
+      description: Common issues
+      placeholder: "#Issues IDs"
     validations:
       required: false

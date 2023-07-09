@@ -1,4 +1,4 @@
-# This file is part of MAST-F's Frontend API
+# This file is part of MAST-F's Backend API
 # Copyright (C) 2023  MatrixEditor
 #
 # This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     Details.objects.create(scan=scan, file=uploaded_file)
     scan.file = uploaded_file
     for name in names:
-        Scanner(name=name, scan=scan).save()
+        Scanner.objects.create(name=name, scan=scan)
 
     if not scan.start_date:
         scan.start_date = datetime.now()
@@ -62,18 +62,18 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
         global_task.save()
         logger.info("Started global scan task on %s", scan.pk)
 
-        result: AsyncResult = prepare_scan.delay(str(scan.pk), names)
+        result: AsyncResult = prepare_scan.delay(str(task_uuid), names)
         global_task.celery_id = result.id
         global_task.save()
 
 
 @shared_task(bind=True)
-def prepare_scan(self, scan_uuid: str, selected_scanners: list) -> AsyncResult:
-    logger.info("Scan Peparation: Setting up directories of scan %s", scan_uuid)
+def prepare_scan(self, scan_task_id: str, selected_scanners: list) -> AsyncResult:
+    task = ScanTask.objects.get(pk=scan_task_id)
+    logger.info("Scan Peparation: Setting up directories of scan %s", task.scan.scan_uuid)
 
-    task = ScanTask.objects.filter(celery_id=self.request.id).first()
     observer = Observer(self, scan_task=task)
-    scan = Scan.objects.get(scan_uuid=scan_uuid)
+    scan = task.scan
 
     observer.update("Directory setup...", current=10)
     # Setup of special directories in our project directory:

@@ -42,6 +42,7 @@ class BundleDetailsView(ContextMixinBase, VulnContextMixin,
     template_name = "bundle/bundle-overview.html"
     permission_classes = [CanViewBundle]
     default_redirect = "Bundles"
+    keep_redirect_kwargs = False
 
     def get_context_data(self, **kwargs: dict) -> dict:
         """

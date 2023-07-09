@@ -152,7 +152,7 @@ def _do_visit(file: pathlib.Path, children: list, root_name: str) -> None:
             visitor.clb(file, children, root_name)
             return
 
-        if matches or common and (not file.is_dir() and not visitor.is_dir):
+        if (not file.is_dir() and not visitor.is_dir) and matches or common:
             # If the visitor object watches on directories and the file object is also a
             # directory, then execute the visitor's callback function on the file object
             # and add it to the children list.
@@ -193,6 +193,8 @@ def apply_rules(root: pathlib.Path, root_name: str) -> dict:
         children.append(apply_rules(file, root_name))
 
     tree = data.pop()
+    # Sorted may be better
+    children.sort(key=lambda x: x["text"])
     tree['children'] = children
     return tree
 

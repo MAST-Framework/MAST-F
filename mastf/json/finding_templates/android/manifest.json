@@ -1,0 +1,81 @@
+{
+    "templates": [
+        {
+            "title": "AndroidManifest: Direct-Boot Awareness",
+            "description": "The app is direct-boot aware, which means the app can run before the use unlocks the device.",
+            "risk": "There is no specific risk associated with being direct-boot aware. However, the application can only access data in the device's protected storage.",
+            "mitigation": "No specific mitigation steps are required for being direct-boot aware.",
+            "article": "android/direct-boot-awareness",
+            "default_severity": "Info",
+            "meta_cvss": "",
+            "meta_cwe": "",
+            "meta_masvs": ""
+        },
+        {
+            "title": "AndroidManifest: Debug-Mode Enabled",
+            "description": "Debug mode is enabled for the app `[android:debuggable=true]`, which makes it easier to attach an external debugger to it. This mode allows developers to dump stack traces and debug specific helper classes.",
+            "risk": "There is a risk of exposing sensitive information and vulnerabilities when debug mode is enabled.",
+            "mitigation": "It is recommended to disable debug mode for production builds to reduce the risk of exposing sensitive information and vulnerabilities.",
+            "article": "android/debug-mode-enabled",
+            "default_severity": "High",
+            "meta_cvss": "",
+            "meta_cwe": "CWE-778",
+            "meta_masvs": "V11: Client Code Quality",
+            "is_html": true
+        },
+        {
+            "title": "AndroidManifest: Backup of Application Data allowed",
+            "description": "The application allows backup of its data. By using `[android:allowBackup=true]` any user who has enabled USB debugging on their phones will be able to copy the application's data off the device.",
+            "risk": "There is a risk of unauthorized access to sensitive data if application data backups are not properly secured.",
+            "mitigation": "It is recommended to disable backup of sensitive data or implement appropriate security measures for application data backups.",
+            "article": "android/application-data-backup",
+            "default_severity": "Medium",
+            "meta_cvss": "",
+            "meta_cwe": "CWE-345",
+            "meta_masvs": "V8: Code Tampering and Reverse Engineering",
+            "is_html": true
+        },
+        {
+            "title": "AndroidManifest: Application in Test-Mode",
+            "description": "The application is running in test mode, which may cause exposing functionality or data outside itself.",
+            "risk": "There is a risk of unauthorized access, security vulnerabilities, and potential misuse of the application if it is running in test mode.",
+            "mitigation": "It is recommended to ensure that the application is not deployed in test mode for production environments. Test mode should be used exclusively for development and testing purposes.",
+            "article": "android/application-test-mode",
+            "default_severity": "Medium",
+            "meta_cvss": "",
+            "meta_cwe": "CWE-565",
+            "meta_masvs": "V1: System Design and Architecture"
+        },
+        {
+            "title": "AndroidManifest: Implicitly Exported App Component",
+            "description": "The Android app component is implicitly exported by defining an Intent-Filter. It is therefore shared with other apps on the device leaving it accessible to any other application on that device.",
+            "risk": "There is a risk of potential unauthorized access or misuse of the app component due to its implicit export and use of an Intent-Filter.",
+            "mitigation": "It is recommended to explicitly export app components and carefully define intent filters to minimize the risk of unauthorized access. Components should be protected based on their intended usage and access requirements.",
+            "article": "android/implicit-exported-app-component",
+            "default_severity": "High",
+            "meta_cvss": "",
+            "meta_cwe": "CWE-924",
+            "meta_masvs": "V9: Device Security"
+        },
+        {
+            "title": "AndroidManifest: Exported Component without Proper Permission Declaration",
+            "description": "The app contains an exported component `[android:exported=true]` that lacks proper permission declaration.",
+            "risk": "There is a risk of unauthorized access or misuse of the exported component due to the absence of proper permission declaration.",
+            "mitigation": "It is recommended to declare the appropriate permissions for exported components to ensure they are accessed only by authorized entities.",
+            "article": "android/exported-component-permission-declaration",
+            "default_severity": "Medium",
+            "meta_cvss": "",
+            "meta_cwe": "CWE-285",
+            "meta_masvs": "V9: Device Security",
+            "is_html": true
+        }
+
+
+
+
+
+
+
+
+    ]
+}

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   # Web instance will run in a separate container and should establish
-  # connections to Celery, Redis and the backend DB while running.
+  # connections to Redis and the backend DB while running.
   web-django:
     build:
       context: ./
@@ -44,11 +44,11 @@ services:
     networks:
       - backend
 
-  # Task scheduler and queueing system will run in a separate container
-  # that includes special files.
   celery_worker:
     build:
       context: ./
+      args:
+        - ANDROID_SEMGREP_COMMIT_SHA=a7e9bfa221790a6bf7290b7c58952652f4315cf5
       dockerfile: ./compose/local/django/celery/Dockerfile
 
     image: mastf_celery_worker
@@ -57,8 +57,6 @@ services:
       - ./.env
 
     volumes:
-      # In order to include additional scanner files and librares, we
-      # have to include the whole app directory.
       - storage_data:/app_storage
 
     depends_on:
@@ -69,7 +67,6 @@ services:
       - backend
 
 
-  # TODO: register possible tasks
   # This container is optional and can be used to register scheduled tasks
   # that execute whithin a specific timeframe.
   celery_beat:
@@ -83,7 +80,6 @@ services:
       - ./.env
 
     volumes:
-      # Same as above
       - storage_data:/app_storage
 
     depends_on:
@@ -93,7 +89,7 @@ services:
     networks:
       - backend
 
-  # Our reverse proxy for handling requests and serving static files
+  # Our reverse proxy for handling requests (and serving static files)
   nginx:
     build: ./compose/local/nginx/
     ports:
@@ -103,8 +99,6 @@ services:
       - ./.env
     environment:
       NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
-    # volumes:
-    #   - static_volume:/app/mastf/static/
     depends_on:
       - web-django
     networks:

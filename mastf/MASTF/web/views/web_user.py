@@ -46,6 +46,7 @@ class LoginView(TemplateView):
         callback = request.POST.get('fallback_url', None)
         if callback and result.status_code == 200:
             try:
+                callback = callback.removeprefix("http")
                 return redirect(callback)
             except NoReverseMatch:
                 pass # maybe log that

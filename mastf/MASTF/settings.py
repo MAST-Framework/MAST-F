@@ -98,6 +98,10 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = "mastf.MASTF.urls"
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
 
 TEMPLATES = [
     {
@@ -191,12 +195,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # -!- START MASTF-CONFIG -!-
 MASTF_PASSWD_MIN_LEN = 12
-MASTF_USERNAME_MIN_LEN = 5
+MASTF_USERNAME_MIN_LEN = 3
 MASTF_FT_DIR = env.get("MASTF_FT_DIR", "") or str(BASE_DIR / "json" / "finding_templates")
 # -!- END MASTF-CONFIG -!-
 
 YARA_BASE_DIR = str(env.get("YARA_BASE_DIR", BASE_DIR / "yara"))
 
+SEMGREP_BASE_DIR = Path("/semgrep")
+SEMGREP_ANDROID_RULES_DIR = SEMGREP_BASE_DIR / "android"
+
+LIBSOUT_PROFILES_DIR: str = env.get("LIBSCOUT_PROFILES_DIR", str(BASE_DIR / "profiles"))
+LIBSOUT_ANDROID_JAR: str = env.get("LIBSCOUT_ANDROID_JAR", str(BASE_DIR / "android.jar"))
 # -!- START USER-CONFIG -!-
 
 PROJECTS_ROOT = Path(MEDIA_ROOT) / 'projects'
@@ -281,6 +290,10 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
+        "celery": {
+            "handlers": ["console", "logfile"],
+            "level": "DEBUG"
+        }
     },
 }
 

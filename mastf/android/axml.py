@@ -25,9 +25,9 @@ to print out the application's name and all activities:
 .. code-block:: python
     :linenos:
 
-    from mastf.android import manifest
+    from mastf.android import axml
 
-    visitor = manifest.AXmlVisitor()
+    visitor = axml.AndroidManifestVisitor()
 
     @visitor.manifest("android:name")
     def visit_name(element, name: str):
@@ -43,7 +43,7 @@ to print out the application's name and all activities:
 from xml.dom import minidom
 from inspect import isclass
 
-__all__ = ["AXmlVisitorBase", "AXmlVisitor"]
+__all__ = ["AXmlVisitorBase", "AXmlVisitor", "AndroidManifestVisitor"]
 
 
 class _AXmlElement:
@@ -120,7 +120,7 @@ class AXmlVisitorBase(type):
     This class can be used on any declaring class that should store
     handler elements.
 
-    >>> class MyVisitorClass(metaclass=AXmlVisitorBase):
+    >>> class MyVisitorClass(AXmlVisitor):
     ...     class Meta:
     ...         nodes = [ 'manifest', 'uses-permission' ]
 
@@ -155,7 +155,7 @@ class AXmlVisitorBase(type):
                 if hasattr(obj, "exclude"):
                     exclude = getattr(obj, "exclude")
                     assert isinstance(
-                        exclude, (list, tuple)
+                        exclude, (list, tuple, str)
                     ), "The 'exclude' attribute must be of type list or tuple"
 
         for element in nodes:
@@ -168,8 +168,11 @@ class AXmlVisitorBase(type):
             # To add elements from super classes we check against
             # previously defined elements and add them accordingly.
             elements = getattr(new_class, "__axml__")
-            for x in exclude:
-                elements.pop(x)
+            if isinstance(exclude, str) and exclude == "*":
+                elements.clear()
+            else:
+                for x in exclude:
+                    elements.pop(x)
 
             axml_elements.update(elements)
 
@@ -182,9 +185,71 @@ DOCUMENT = "doc"
 
 
 class AXmlVisitor(metaclass=AXmlVisitorBase):
-    """Implementation of a visitor-based XML reader.
+    """Implementation of a visitor-based XML reader."""
 
-    This class uses the features of the :class:`AXmlVisitorBase` to define
+    start = _AXmlElement(None)
+    """Stores handlers than would be called `before` the attributes of an element
+    should be visited."""
+
+    end = _AXmlElement(None)
+    """Stores handlers than would be called `after` the attributes of an element
+    should be visited."""
+
+    def __init__(self) -> None:
+        self.args = ()
+        self.kwargs = {}
+
+    def visit_document(self, document: minidom.Document, *args, **kwargs):
+        """Reads the incoming document or parses a given buffer/string.
+
+        :param document: the document to read
+        :type document: minidom.Document | str | bytes
+        """
+        if isinstance(document, (str, bytes)):
+            document = minidom.parseString(document)
+
+        self.args = args or self.args
+        self.kwargs = kwargs or self.kwargs
+
+        self._visit_xml(self.start, document, DOCUMENT)
+        self._visit_attributes(document, document.attributes, self.doc)
+        for name in self.__axml__:
+            for element in document.getElementsByTagName(name):
+                self.visit_element(element)
+
+        self._visit_xml(self.end, document, DOCUMENT)
+
+    def visit_element(self, element: minidom.Element):
+        """Visits a single XML element.
+
+        :param element: the element to read
+        :type element: minidom.Element
+        """
+        node_name = element.nodeName
+        if node_name not in self.__axml__:
+            return
+
+        axml_element = self.__axml__[node_name]
+        self._visit_xml(self.start, element, node_name)
+        self._visit_attributes(element, element.attributes, axml_element)
+        self._visit_xml(self.end, element, node_name)
+
+    def _visit_xml(self, axml, element, node_name):
+        if node_name in axml:
+            for handler in axml[node_name]:
+                handler(element, *self.args, **self.kwargs)
+
+    def _visit_attributes(self, element, attrs: dict, axml_element: _AXmlElement):
+        if not attrs:
+            return
+
+        for attr_name, attr_value in attrs.items():
+            if attr_name in axml_element:
+                for handler in axml_element[attr_name]:
+                    handler(element, attr_value, *self.args, **self.kwargs)
+
+class AndroidManifestVisitor(AXmlVisitor):
+    """This class uses the features of the :class:`AXmlVisitorBase` to define
     nodes of the Android manifest.  The following code illustrates how
     to register handlers for attributes of specific XML nodes:
 
@@ -300,64 +365,3 @@ class AXmlVisitor(metaclass=AXmlVisitorBase):
             # Global document attributes
             "doc",
         ]
-
-    start = _AXmlElement(None)
-    """Stores handlers than would be called `before` the attributes of an element
-    should be visited."""
-
-    end = _AXmlElement(None)
-    """Stores handlers than would be called `after` the attributes of an element
-    should be visited."""
-
-    def __init__(self) -> None:
-        self.args = ()
-        self.kwargs = {}
-
-    def visit_document(self, document: minidom.Document, *args, **kwargs):
-        """Reads the incoming document or parses a given buffer/string.
-
-        :param document: the document to read
-        :type document: minidom.Document | str | bytes
-        """
-        if isinstance(document, (str, bytes)):
-            document = minidom.parseString(document)
-
-        self.args = args or self.args
-        self.kwargs = kwargs or self.kwargs
-
-        self._visit_xml(self.start, document, DOCUMENT)
-        self._visit_attributes(document, document.attributes, self.doc)
-        for name in self.__axml__:
-            for element in document.getElementsByTagName(name):
-                self.visit_element(element)
-
-        self._visit_xml(self.end, document, DOCUMENT)
-
-    def visit_element(self, element: minidom.Element):
-        """Visits a single XML element.
-
-        :param element: the element to read
-        :type element: minidom.Element
-        """
-        node_name = element.nodeName
-        if node_name not in self.__axml__:
-            return
-
-        axml_element = self.__axml__[node_name]
-        self._visit_xml(self.start, element, node_name)
-        self._visit_attributes(element, element.attributes, axml_element)
-        self._visit_xml(self.end, element, node_name)
-
-    def _visit_xml(self, axml, element, node_name):
-        if node_name in axml:
-            for handler in axml[node_name]:
-                handler(element, *self.args, **self.kwargs)
-
-    def _visit_attributes(self, element, attrs: dict, axml_element: _AXmlElement):
-        if not attrs:
-            return
-
-        for attr_name, attr_value in attrs.items():
-            if attr_name in axml_element:
-                for handler in axml_element[attr_name]:
-                    handler(element, attr_value, *self.args, **self.kwargs)

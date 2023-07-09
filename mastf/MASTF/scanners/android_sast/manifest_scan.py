@@ -1,10 +1,25 @@
+# This file is part of MAST-F's Frontend API
+# Copyright (C) 2023  MatrixEditor
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import pathlib
 import logging
 import uuid
 
 from xml.dom.minidom import Element, parse
 
-from mastf.android.axml import AXmlVisitor
+from mastf.android.axml import AndroidManifestVisitor
 
 from mastf.MASTF.scanners.plugin import ScannerPluginTask
 from mastf.MASTF.models import (
@@ -14,6 +29,9 @@ from mastf.MASTF.models import (
     PermissionFinding,
     Snippet,
     Component,
+    Finding,
+    FindingTemplate,
+    File,
 )
 from mastf.MASTF.utils.enum import ProtectionLevel, Severity, ComponentCategory
 
@@ -34,13 +52,18 @@ def get_manifest_info(inspector: ScannerPluginTask) -> None:
     # intent filters
     content_dir = inspector.file_dir / "contents"
 
-    inspector.observer.update("Running manifest analysis...", do_log=True)
+    inspector.observer.update(
+        "Running manifest analysis on %s..." % File.relative_path(str(content_dir)),
+        do_log=True,
+    )
     for manifest in content_dir.iterdir():
         if manifest.name == "AndroidManifest.xml":
+            inspector.observer.update("Reading Manifest...", do_log=True)
             run_manifest_scan(
                 inspector,
                 manifest,
             )
+    inspector.observer.update("Finished manifest analysis!", do_log=True)
 
 
 def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path):
@@ -55,7 +78,7 @@ def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path)
     :param manifest_file: Path to the AndroidManifest.xml file.
     :type manifest_file: pathlib.Path
     """
-    visitor = AXmlVisitor()
+    visitor = AndroidManifestVisitor()
     handler = AndroidManifestHandler(inspector, manifest_file)
 
     if manifest_file.exists():
@@ -69,10 +92,8 @@ def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path)
             logger.exception(str(err))
             inspector.observer.fail(
                 "[%s] Skipping manifest due to parsing error: %s",
-                type(err).__name__,
+                type(err),
                 str(err),
-                do_log=True,
-                log_level=logging.ERROR,
             )
             return
     else:
@@ -92,8 +113,9 @@ class AndroidManifestHandler:
         self.inspector = inspector
         self.path = path
         self.observer = inspector.observer
-        self.snippet = Snippet(language="xml", file_name=path.name)
+        self.snippet = Snippet(language="xml", file_name=path.name, sys_path=str(path))
         self._saved = False
+        self._application_protected = False
 
     @property
     def scan(self) -> Scan:
@@ -104,7 +126,7 @@ class AndroidManifestHandler:
         """
         return self.inspector.scan
 
-    def link(self, visitor: AXmlVisitor) -> None:
+    def link(self, visitor: AndroidManifestVisitor) -> None:
         """
         Links the AndroidManifestHandler with an AXmlVisitor.
 
@@ -117,15 +139,13 @@ class AndroidManifestHandler:
             if hasattr(visitor, name):
                 getattr(visitor, name).add("android:name", getattr(self, f"on_{name}"))
 
-    def on_permission(self, element: Element, identifier: str) -> None:
+    def on_permission(self, element: Element, identifier: str) -> AppPermission:
         """
         Event handler for permission elements in the AndroidManifest.xml.
 
         :param element: The permission element.
         :param identifier: The identifier of the permission.
         """
-        queryset = AppPermission.objects.filter(identifier=identifier)
-
         protection_level = str(
             element.getAttribute("android:protectionLevel") or ""
         ).capitalize()
@@ -140,7 +160,11 @@ class AndroidManifestHandler:
                 )
                 protection_level = ProtectionLevel.NORMAL
 
-        if not queryset.exists():
+        try:
+            permission = AppPermission.objects.get(identifier=identifier)
+        except (
+            AppPermission.DoesNotExist
+        ):  # no MultipleObjectsReturned as this field is unique
             self.observer.update(
                 "Creating new Permission: %s [pLevel=%s]",
                 identifier,
@@ -148,21 +172,42 @@ class AndroidManifestHandler:
                 do_log=True,
             )
             permission = AppPermission.create_unknown(identifier, protection_level)
-        else:
-            permission = queryset.first()
 
         if not self._saved:
             self.snippet.save()
             self._saved = True
 
-        PermissionFinding.objects.create(
-            pk=str(uuid.uuid4()),
-            scan=self.scan,
-            snippet=self.snippet,
-            severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
-            scanner=self.inspector.scan_task.scanner,
-            permission=permission,
-        )
+        try:
+            PermissionFinding.objects.get(scan=self.scan, permission=permission)
+        except PermissionFinding.DoesNotExist:
+            PermissionFinding.objects.create(
+                pk=str(uuid.uuid4()),
+                scan=self.scan,
+                snippet=self.snippet,
+                severity=Severity.MEDIUM if permission.dangerous else Severity.NONE,
+                scanner=self.inspector.scan_task.scanner,
+                permission=permission,
+            )
+
+        return permission
+
+    def _create_finding(self, title: str) -> None:
+        if not self._saved:
+            self.snippet.save()
+            self._saved = True
+
+        internal_id = FindingTemplate.make_internal_id(title)
+        try:
+            template = FindingTemplate.objects.get(internal_id=internal_id)
+            Finding.create(
+                template,
+                self.snippet,
+                self.inspector.scan_task.scanner,
+            )
+        except FindingTemplate.DoesNotExist:
+            logger.warning("Could not find FindingTemplate for ID: %s", internal_id)
+        except FindingTemplate.MultipleObjectsReturned:
+            logger.warning("Multiple FindingTemplate objects with ID: %s", internal_id)
 
     def on_application(self, element: Element, name: str) -> None:
         """
@@ -171,22 +216,23 @@ class AndroidManifestHandler:
         :param element: The application element.
         :param name: The name of the application.
         """
+
         if element.getAttribute("android:usesCleartextTraffic") == "true":
-            pass
+            self._create_finding("AndroidManifest: Clear Text Traffic Enabled")
 
         if element.getAttribute("android:directBootAware") == "true":
-            pass
+            self._create_finding("AndroidManifest: Direct-Boot Awareness")
 
         if element.getAttribute("android:debuggable") == "true":
-            pass
+            self._create_finding(
+                "Code Security (MSTG-CODE-2): Application Built with Debuggable Flag"
+            )
 
         if element.getAttribute("android:allowBackup") == "true":
-            pass
-        elif element.getAttribute("android:allowBackup") == "false":
-            pass
+            self._create_finding("AndroidManifest: Backup of Application Data allowed")
 
         if element.getAttribute("android:testOnly") == "true":
-            pass
+            self._create_finding("AndroidManifest: Application in Test-Mode")
 
     def on_service(self, element: Element, name: str) -> None:
         """
@@ -242,7 +288,10 @@ class AndroidManifestHandler:
         self.observer.logger.debug("Created component instance %s", component)
         component.save()
 
-        # TODO: if exported add Finding
+        identifier = element.getAttribute("android:permission")
+        if identifier:
+            component.permission = self.on_permission(element, identifier)
+
         for intent_filter in element.childNodes:
             if intent_filter.nodeName == "intent-filter":
                 action = intent_filter.getAttribute("android:name")
@@ -251,9 +300,27 @@ class AndroidManifestHandler:
                         name=action.split(".")[-1], action=action
                     )
                 )
-
                 component.is_main = action == "android.intent.action.MAIN"
                 component.is_launcher = action == "android.intent.category.LAUNCHER"
 
-        # TODO: add findings
+                if (
+                    not component.is_main
+                    and not component.permission
+                    and not component.is_exported
+                ):
+                    # Implicit exported component with or without permission definition
+                    # TODO: add findings
+                    component.is_protected = False
+                    self._create_finding(
+                        "AndroidManifest: Implicitly Exported App Component"
+                    )
+
+        if not identifier and not self._application_protected and component.is_exported:
+            # Exported component without proper permission declaration
+            # TODO: add findings
+            component.is_protected = False
+            self._create_finding(
+                "AndroidManifest: Exported Component without Proper Permission Declaration"
+            )
+
         component.save()

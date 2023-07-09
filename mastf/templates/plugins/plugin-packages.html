@@ -163,6 +163,8 @@
             $('#edit-package-type').val(data.type || "None");
             $('#edit-package-platform').val(data.platform || "Undefined");
             $('#edit-package-package_uuid').val(data.package_uuid);
+            $('#edit-package-description').val(data.description);
+            document.getElementById("edit-package-is_tracker").checked = data.is_tracker;
 
             $('#modal-edit-package').modal("toggle");
         });
@@ -176,6 +178,8 @@
             artifact_id: $('#edit-package-artifact_id').val(),
             package_type: $('#edit-package-type').val(),
             platform: $('#edit-package-platform').val(),
+            description: $('#edit-package-description').val(),
+            is_tracker: document.getElementById("edit-package-is_tracker").checked,
         }), function(data) {
             if (data.success) {
                 Alerts.show("success", "Success!", `Successfully updated package: ${packageId}.<p>Refresh this site to apply changes to the table.</p>`);
@@ -217,19 +221,19 @@
                         </div>
                         <div class="col-md-6 mb-4">
                             <label class="form-label required">Name</label>
-                            <input id="edit-package-name" class="form-control" placeholder="Name" required minlength="3" maxlength="256"
+                            <input id="edit-package-name" class="form-control" placeholder="Name" maxlength="256"
                                 type="text">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Group ID</label>
-                            <input id="edit-package-group_id" class="form-control" placeholder="Group Id" required minlength="3"
+                            <input id="edit-package-group_id" class="form-control" placeholder="Group Id" required
                             maxlength="256" type="text">
                         </div>
                         <div class="col-md-6 mb-4">
                             <label class="form-label">Artifact ID</label>
-                            <input id="edit-package-artifact_id" class="form-control" placeholder="Artifact Id" required minlength="3"
+                            <input id="edit-package-artifact_id" class="form-control" placeholder="Artifact Id" required
                             maxlength="256" type="text">
                         </div>
                     </div>
@@ -242,13 +246,27 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-3 mb-4">
                             <label class="form-label required">Platform</label>
                             <select class="form-select" id="edit-package-platform">
                                 {% for p in platforms %}
                                 <option value="{{ p }}">{{ p }}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+                        <div class="col-md-5 mb-4">
+                            <label class="form-label required">Options</label>
+                            <div>
+                                <input type="checkbox" name="is_tracker" id="edit-package-is_tracker" class="form-check-input">
+                                <span class="form-check-label">Tracker</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" placeholder="Description..."
+                            id="edit-package-description"></textarea>
                         </div>
                     </div>
                 </div>
@@ -265,7 +283,7 @@
     </div>
 </div>
 
-<!--Modal to edit package-->
+<!--Modal to add package-->
 <div class="modal modal-blur fade" id="modal-add-package" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -310,7 +328,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 mb-4">
+                        <div class="col-md-4 mb-4">
                             <label class="form-label required">Type/Source</label>
                             <select class="form-select" id="add-package-type">
                                 {% for t in type %}
@@ -329,6 +347,24 @@
                                 {% endfor %}
                             </select>
                             <span class="form-hint">Additional label to distinguish platform related packages.</span>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label class="form-label required">Options</label>
+                            <div>
+                                <input type="checkbox" name="is_tracker" id="edit-package-is_tracker" class="form-check-input">
+                                <span class="form-check-label">Tracker</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" placeholder="Description..."
+                            id="edit-package-description"></textarea>
+                            <span class="form-hint">Description that can be referenced with
+                                <code class="highlight highlight-inline"><span class="mi">${</span>package.description<span class="mi">}</span></code>
+                                in report templates.
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -27,7 +27,6 @@ from mastf.MASTF.serializers import (
 )
 from mastf.MASTF.models import (
     Scan,
-    Project,
     ScanTask,
     Scanner,
 )
@@ -60,6 +59,9 @@ class ScanView(APIViewBase):
     lookup_field = "scan_uuid"
 
     def on_delete(self, request: Request, obj: Scan) -> None:
+        if not obj.file: # happens on certain error cases
+            return
+
         path = obj.project.dir(obj.file.internal_name, create=False)
         try:
             file_path = obj.file.file_path
@@ -92,16 +94,17 @@ class ScanCreationMixin:
         plugins = ScannerPlugin.all()
         selected = []
         for i in range(len(plugins)):
-            # Remove each scanner so that it won't be used
-            # to create the Scan object
+            # Remove each scanner so that it won't be used to create
+            # the Scan object
             name = self.request.POST.get(f"selected_scanners_{i}", None).lower()
-            if not name or name not in plugins:
-                logger.warning("Invalid scanner name (unknown): %s", name)
+            internal_name = ScannerPlugin.to_internal_name(str(name))
+            if not name or internal_name not in plugins:
+                logger.warning("Invalid scanner name (unknown): %s", internal_name)
                 break
 
             # Even if the scanner is present, we have to add it
             # to the list of scanners to start
-            selected.append(name)
+            selected.append(internal_name)
 
         if len(selected) == 0:
             logger.warning("No scanner selected - aborting scan generation")

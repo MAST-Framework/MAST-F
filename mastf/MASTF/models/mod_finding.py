@@ -30,6 +30,7 @@ __all__ = [
     "AbstractBaseFinding",
     "Finding",
     "Vulnerability",
+    "DataFlowItem",
 ]
 
 
@@ -87,6 +88,9 @@ class FindingTemplate(TimedModel):
 
     is_html = models.BooleanField(default=False)
     """Indicates whether the text of this finding has html format."""
+
+    is_contextual = models.BooleanField(default=False)
+    """Tells analyzer tasks to use custom generated text when creating new Finding objects."""
 
     default_severity = models.CharField(
         default=Severity.NONE, choices=Severity.choices, max_length=256
@@ -283,13 +287,12 @@ class AbstractBaseFinding(TimedModel):
         return data
 
 
-class DataFlowItem(TimedModel):
+class DataFlowItem():
     # proposed for future analysis. Note that there won't be any migrations
     # related to this model as it is unused.
     position = models.IntegerField(default=0)
     source_node = models.TextField()
     sink_node = models.TextField()
-
 
 # Finding implementation
 class Finding(AbstractBaseFinding):

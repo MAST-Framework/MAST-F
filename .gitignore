@@ -16,6 +16,9 @@ mastf/projects/
 test_env.*
 *.crt
 *.key
+# force users to generate their own certificate
+*.pem
+*.jar
 
 # C extensions
 *.so

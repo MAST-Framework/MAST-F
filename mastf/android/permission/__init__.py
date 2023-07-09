@@ -1,2 +1,0 @@
-
-from .adb import AndroidPermissions

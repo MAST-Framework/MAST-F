@@ -46,22 +46,12 @@
                         <div class="row align-items-center">
                             <div class="col">
                                 <h3 class="page-title">
-                                    {{ scanner_name }}
+                                    {{ scanner_name|capfirst }}
                                     <span class="page-pretitle ms-2"> ({{ data.start_date }})</span>
                                 </h3>
                             </div>
                             <div class="col-auto ms-auto">
                                 <div class="btn-list">
-                                    <!-- Use if statement to check whether a progress is active -->
-                                    <a href="#" class="btn btn-secondary-lt">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock-hour-4 align-center" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
-                                            <path d="M12 12l3 2"></path>
-                                            <path d="M12 7v5"></path>
-                                            </svg>
-                                        Show Progress
-                                    </a>
                                     <a href="{% url 'Scan-Index' project_uuid=project.project_uuid name=scanner_name|lower %}"
                                         class="btn btn-primary d-none d-sm-inline-block">
                                         View Results
@@ -88,7 +78,7 @@
                             <!-- Card with vulnerability count -->
                             <div class="card">
                                 <div class="card-body">
-                                    <p class="mb-3">Total Vulnerabilities <strong> {% if data.vuln_count %}{{data.vuln_count}}{% else %}0{% endif %} </strong></p>
+                                    <p class="mb-3">Total Findings <strong> {% if data.vuln_count %}{{data.vuln_count}}{% else %}0{% endif %} </strong></p>
                                     <div class="progress progress-separated mb-3">
                                         {% if data.vuln_data %}
                                             {% for category in data.vuln_data %}

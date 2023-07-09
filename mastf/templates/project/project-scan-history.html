@@ -148,7 +148,7 @@
                                 {{ data.low_risks }}
                             </td>
                             <td>
-                                <span class="badge {% if data.scan.status|lower == "active" %}bg-green-lt
+                                <span class="badge {% if data.scan.status|lower == "active" and data.scan.active %}bg-green-lt
                                     {% elif data.scan.status|lower == "scheduled" %}bg-azure-lt{% else %}
                                     bg-secondary-lt{% endif %}"
                                 >
