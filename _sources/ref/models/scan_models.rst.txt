@@ -11,6 +11,13 @@ a single scan, and the :class:`ScanTask` model represents a task within that
 scan. We will provide an overview of the models and explain their fields and
 methods in detail.
 
+.. figure:: images/scan_models.png
+    :alt: Overview of scan-related models
+
+    Figure 1: Overview of models that are related to :class:`Scan` objects and
+    will be covered on this page.
+
+
 .. autoclass:: mastf.MASTF.models.Scan
     :members:
     :exclude-members: MultipleObjectsReturned, DoesNotExist

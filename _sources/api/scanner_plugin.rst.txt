@@ -7,7 +7,7 @@ Scanner Plugin
 Basics
 ======
 
-.. audofunction:: mastf.MASTF.scanners.plugin.Plugin
+.. autofunction:: mastf.MASTF.scanners.plugin.Plugin
 
 .. autoclass:: mastf.MASTF.scanners.plugin.Extension
     :members:
@@ -52,16 +52,16 @@ Android Plugin
 Android Scan Tasks
 ------------------
 
-.. audofunction:: mastf.MASTF.scanners.android_sast.app_info_scan.get_app_info
+.. autofunction:: mastf.MASTF.scanners.android_sast.app_info_scan.get_app_info
 
-.. audofunction:: mastf.MASTF.scanners.android_sast.app_info_scan.get_app_net_info
+.. autofunction:: mastf.MASTF.scanners.android_sast.app_info_scan.get_app_net_info
 
 .. autoclass:: mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler
     :members:
 
-.. audofunction:: mastf.MASTF.scanners.android_sast.manifest_scan.get_manifest_info
+.. autofunction:: mastf.MASTF.scanners.android_sast.manifest_scan.get_manifest_info
 
-.. audofunction:: mastf.MASTF.scanners.android_sast.manifest_scan.run_manifest_scan
+.. autofunction:: mastf.MASTF.scanners.android_sast.manifest_scan.run_manifest_scan
 
 .. autoclass:: mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler
     :members:

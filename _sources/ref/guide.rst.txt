@@ -6,25 +6,42 @@ Visual Guide
 
 *Work in progress*
 
-Project-Directory Structure
----------------------------
+Projects
+--------
 
-The directory structure of a simple project can be summarized to the following:
+The MAST-Framework offers users to create projects in order to organize scans of a specific
+app. Each project may contain multiple scans for multiple files and it stores the detected
+software packages for all uploaded app files. The directory structure of a simple project
+can be summarized to the following:
 
 .. code-block:: text
 
     projects/
         <uuid:project_uuid>/
-            uploadedFile.[apk|ipa]
-            <md5:file_md5>/
+            <str:internal_name>.[apk|ipa]
+            semgrep-<internal_name>.json
+            libscout-<internal_name>.json
+            <internal_name>/
+                info.json # PlayStore, AppStore information
                 src/
                     [ java/ ]
                     [ smali/ ]
-                    [ swift/ ]
-                    [ assembler/ ]
                 contents/
                     # initial ZIP-File data
 
+.. note::
+    The internal name will be generated based on the MD5 hash value of the uploaded file's name
+    and the current datetime:
+
+    .. code-block:: bnf
+
+        internal_name := MD5(uploaded_file.name) "_" DATETIME.now
+
+
+Bundles
+-------
+
+*TODO*
 
 ScanTask design
 ---------------

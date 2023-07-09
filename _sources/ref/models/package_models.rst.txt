@@ -10,6 +10,11 @@ of software package management and vulnerability detection. The :class:`Package`
 software package, while :class:`PackageVulnerability` represents a vulnerability associated with a
 package. The :class:`Dependency` class represents a dependency between an app and a package.
 
+.. figure:: images/dependency_models.png
+    :alt: Overview of package-related models
+
+    Figure 1: Overview of models related to software packages and project dependencies
+
 .. autoclass:: mastf.MASTF.models.Package
     :members:
     :exclude-members: MultipleObjectsReturned, DoesNotExist

@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ADB Permissions" href="permission.html" />
-    <link rel="prev" title="Task File Handlers" href="../core_api/file_handler.html" /> 
+    <link rel="next" title="Android Tools" href="tools.html" />
+    <link rel="prev" title="App Permissions" href="../core_api/permission.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,7 +86,8 @@
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../ref/guide.html">Visual Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#project-directory-structure">Project-Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#projects">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#bundles">Bundles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#scantask-design">ScanTask design</a></li>
 </ul>
 </li>
@@ -210,6 +211,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.default_severity"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.default_severity</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.description"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.description</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.internal_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.is_contextual"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.is_contextual</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.is_html"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.is_html</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_internal_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_uuid"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_uuid()</span></code></a></li>
@@ -292,7 +294,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../ref/models/package_models.html">Dependency Models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package"><code class="docutils literal notranslate"><span class="pre">Package</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.artifact_id"><code class="docutils literal notranslate"><span class="pre">Package.artifact_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.description"><code class="docutils literal notranslate"><span class="pre">Package.description</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.group_id"><code class="docutils literal notranslate"><span class="pre">Package.group_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.is_tracker"><code class="docutils literal notranslate"><span class="pre">Package.is_tracker</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.name"><code class="docutils literal notranslate"><span class="pre">Package.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_type"><code class="docutils literal notranslate"><span class="pre">Package.package_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_uuid"><code class="docutils literal notranslate"><span class="pre">Package.package_uuid</span></code></a></li>
@@ -316,7 +320,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.relation"><code class="docutils literal notranslate"><span class="pre">Dependency.relation</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.scanner"><code class="docutils literal notranslate"><span class="pre">Dependency.scanner</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.version"><code class="docutils literal notranslate"><span class="pre">Dependency.version</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.vulnerabilities"><code class="docutils literal notranslate"><span class="pre">Dependency.vulnerabilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.vulnerabilities"><code class="docutils literal notranslate"><span class="pre">Dependency.vulnerabilities()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -401,6 +405,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.check_permissions"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.check_permissions()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.default_redirect"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.default_redirect</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.get_object"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.get_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.keep_redirect_kwargs"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.keep_redirect_kwargs</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.on_dispatch_error"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.on_dispatch_error()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/mixins.html#mastf.MASTF.mixins.TemplateAPIView.permission_classes"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.permission_classes</span></code></a></li>
 </ul>
@@ -433,6 +438,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scanner_plugin.html">Scanner Plugin</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/scanner_plugin.html#basics">Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.plugin.Plugin"><code class="docutils literal notranslate"><span class="pre">Plugin()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.plugin.Extension"><code class="docutils literal notranslate"><span class="pre">Extension</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.plugin.ScannerPlugin"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.plugin.ScannerPlugin.context"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.context()</span></code></a></li>
@@ -485,7 +491,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask"><code class="docutils literal notranslate"><span class="pre">AndroidTask</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_app_info_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_app_info_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_code_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_code_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_libscout_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_libscout_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_manifest_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_package_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_package_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_semgrep_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_semgrep_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.do_yara_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_yara_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.AndroidTask.prepare_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.prepare_scan()</span></code></a></li>
 </ul>
@@ -499,7 +508,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../api/scanner_plugin.html#android-scan-tasks">Android Scan Tasks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.app_info_scan.get_app_info"><code class="docutils literal notranslate"><span class="pre">get_app_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.app_info_scan.get_app_net_info"><code class="docutils literal notranslate"><span class="pre">get_app_net_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler"><code class="docutils literal notranslate"><span class="pre">NetworkSecurityHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.manifest_scan.get_manifest_info"><code class="docutils literal notranslate"><span class="pre">get_manifest_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.manifest_scan.run_manifest_scan"><code class="docutils literal notranslate"><span class="pre">run_manifest_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../api/scanner_plugin.html#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler"><code class="docutils literal notranslate"><span class="pre">AndroidManifestHandler</span></code></a></li>
 </ul>
 </li>
@@ -612,6 +625,17 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../core_api/permission.html">App Permissions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.PermissionDefItem"><code class="docutils literal notranslate"><span class="pre">PermissionDefItem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.GroupDefItem"><code class="docutils literal notranslate"><span class="pre">GroupDefItem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.AppPermissionList"><code class="docutils literal notranslate"><span class="pre">AppPermissionList</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#example-usage">Example Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Android API</span></p>
 <ul class="current">
@@ -626,20 +650,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#mastf.android.axml.AXmlVisitor.start"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.start</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mastf.android.axml.AXmlVisitor.visit_document"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.visit_document()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mastf.android.axml.AXmlVisitor.visit_element"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.visit_element()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="permission.html">ADB Permissions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="permission.html#key-features">Key Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="permission.html#import-format">Import Format</a></li>
-<li class="toctree-l2"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions.all"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.all()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions.kwargs"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.kwargs</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions.load"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.load()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions.make_cmd"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.make_cmd()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions.re_package"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.re_package</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="permission.html#mastf.android.permission.adb.AndroidPermissions.ungrouped"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.ungrouped</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -691,9 +701,9 @@ attributes. Besides the default Android XML nodes, user-defined nodes
 can be visited as well.</p>
 <p>The following example illustrates how to use a single <a class="reference internal" href="#mastf.android.axml.AXmlVisitor" title="mastf.android.axml.AXmlVisitor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AXmlVisitor</span></code></a>
 to print out the application’s name and all activities:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">mastf.android</span> <span class="kn">import</span> <span class="n">manifest</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">mastf.android</span> <span class="kn">import</span> <span class="n">axml</span>
 <span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="n">visitor</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">AXmlVisitor</span><span class="p">()</span>
+<span class="linenos"> 3</span><span class="n">visitor</span> <span class="o">=</span> <span class="n">axml</span><span class="o">.</span><span class="n">AndroidManifestVisitor</span><span class="p">()</span>
 <span class="linenos"> 4</span>
 <span class="linenos"> 5</span><span class="nd">@visitor</span><span class="o">.</span><span class="n">manifest</span><span class="p">(</span><span class="s2">&quot;android:name&quot;</span><span class="p">)</span>
 <span class="linenos"> 6</span><span class="k">def</span> <span class="nf">visit_name</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -753,7 +763,7 @@ arguments:</p>
 <dd><p>Base class for XMLVisitor classes.</p>
 <p>This class can be used on any declaring class that should store
 handler elements.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyVisitorClass</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">AXmlVisitorBase</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyVisitorClass</span><span class="p">(</span><span class="n">AXmlVisitor</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;manifest&#39;</span><span class="p">,</span> <span class="s1">&#39;uses-permission&#39;</span> <span class="p">]</span>
 </pre></div>
@@ -771,45 +781,6 @@ handler elements.</p>
 <dt class="sig sig-object py" id="mastf.android.axml.AXmlVisitor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.android.axml.</span></span><span class="sig-name descname"><span class="pre">AXmlVisitor</span></span><a class="headerlink" href="#mastf.android.axml.AXmlVisitor" title="Permalink to this definition"></a></dt>
 <dd><p>Implementation of a visitor-based XML reader.</p>
-<p>This class uses the features of the <a class="reference internal" href="#mastf.android.axml.AXmlVisitorBase" title="mastf.android.axml.AXmlVisitorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AXmlVisitorBase</span></code></a> to define
-nodes of the Android manifest.  The following code illustrates how
-to register handlers for attributes of specific XML nodes:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">visitor</span> <span class="o">=</span> <span class="n">AXmlVisitor</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@visitor</span><span class="o">.</span><span class="n">uses_permission</span><span class="p">(</span><span class="s2">&quot;android:name&quot;</span><span class="p">)</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">visit_permission_name</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">pass</span>
-</pre></div>
-</div>
-<p>Here, the function would be called when the attribute “android:name” on
-a <code class="docutils literal notranslate"><span class="pre">uses-permission</span></code> node has been detected.</p>
-<p>To register a handler for a specific XML node, use the <code class="docutils literal notranslate"><span class="pre">start</span></code> or
-<code class="docutils literal notranslate"><span class="pre">end</span></code> attribute. The callback method will be called wither before
-or after the element’s attributes have been visted.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@visitor</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;uses-permission&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">visit_permission_node</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">pass</span>
-</pre></div>
-</div>
-<p>The call above is equivalent to the following (assume <code class="docutils literal notranslate"><span class="pre">visit_permission_node</span></code>
-has been defined before):</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">visitor</span><span class="o">.</span><span class="n">uses_permission</span><span class="p">[</span><span class="s2">&quot;android:name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">visit_permission_node</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># equivalent to</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">visitor</span><span class="o">.</span><span class="n">uses_permission</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;android:name&quot;</span><span class="p">,</span> <span class="n">visit_permission_node</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Note that the called function won’t have any other positional arguments
-than the visited element. In addition, this class supports optional
-arguments that can be used within each handler:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">visitor</span> <span class="o">=</span> <span class="n">AXmlVisitor</span><span class="p">(</span><span class="n">foo</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@visitor</span><span class="o">.</span><span class="n">manifest</span><span class="p">(</span><span class="s1">&#39;android:name&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">visit_name</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">foo</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">pass</span>
-</pre></div>
-</div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Additional arguments must be present in all declared methods.</p>
-</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mastf.android.axml.AXmlVisitor.end">
 <span class="sig-name descname"><span class="pre">end</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;AXmlElement</span> <span class="pre">name=[None]&gt;</span></em><a class="headerlink" href="#mastf.android.axml.AXmlVisitor.end" title="Permalink to this definition"></a></dt>
@@ -854,8 +825,8 @@ should be visited.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../core_api/file_handler.html" class="btn btn-neutral float-left" title="Task File Handlers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="permission.html" class="btn btn-neutral float-right" title="ADB Permissions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../core_api/permission.html" class="btn btn-neutral float-left" title="App Permissions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tools.html" class="btn btn-neutral float-right" title="Android Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

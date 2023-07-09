@@ -86,7 +86,8 @@
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../ref/guide.html">Visual Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#project-directory-structure">Project-Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#projects">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#bundles">Bundles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ref/guide.html#scantask-design">ScanTask design</a></li>
 </ul>
 </li>
@@ -210,6 +211,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.default_severity"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.default_severity</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.description"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.description</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.internal_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.is_contextual"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.is_contextual</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.is_html"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.is_html</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_internal_id"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_internal_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/finding_models.html#mastf.MASTF.models.FindingTemplate.make_uuid"><code class="docutils literal notranslate"><span class="pre">FindingTemplate.make_uuid()</span></code></a></li>
@@ -292,7 +294,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../ref/models/package_models.html">Dependency Models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package"><code class="docutils literal notranslate"><span class="pre">Package</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.artifact_id"><code class="docutils literal notranslate"><span class="pre">Package.artifact_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.description"><code class="docutils literal notranslate"><span class="pre">Package.description</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.group_id"><code class="docutils literal notranslate"><span class="pre">Package.group_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.is_tracker"><code class="docutils literal notranslate"><span class="pre">Package.is_tracker</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.name"><code class="docutils literal notranslate"><span class="pre">Package.name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_type"><code class="docutils literal notranslate"><span class="pre">Package.package_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Package.package_uuid"><code class="docutils literal notranslate"><span class="pre">Package.package_uuid</span></code></a></li>
@@ -316,7 +320,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.relation"><code class="docutils literal notranslate"><span class="pre">Dependency.relation</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.scanner"><code class="docutils literal notranslate"><span class="pre">Dependency.scanner</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.version"><code class="docutils literal notranslate"><span class="pre">Dependency.version</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.vulnerabilities"><code class="docutils literal notranslate"><span class="pre">Dependency.vulnerabilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../ref/models/package_models.html#mastf.MASTF.models.Dependency.vulnerabilities"><code class="docutils literal notranslate"><span class="pre">Dependency.vulnerabilities()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -401,6 +405,7 @@
 <li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.check_permissions"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.check_permissions()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.default_redirect"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.default_redirect</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.get_object"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.get_object()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.keep_redirect_kwargs"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.keep_redirect_kwargs</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.on_dispatch_error"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.on_dispatch_error()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="mixins.html#mastf.MASTF.mixins.TemplateAPIView.permission_classes"><code class="docutils literal notranslate"><span class="pre">TemplateAPIView.permission_classes</span></code></a></li>
 </ul>
@@ -433,6 +438,7 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Scanner Plugin</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.Plugin"><code class="docutils literal notranslate"><span class="pre">Plugin()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.Extension"><code class="docutils literal notranslate"><span class="pre">Extension</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPlugin.context"><code class="docutils literal notranslate"><span class="pre">ScannerPlugin.context()</span></code></a></li>
@@ -485,7 +491,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask"><code class="docutils literal notranslate"><span class="pre">AndroidTask</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_app_info_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_app_info_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_code_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_code_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_libscout_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_libscout_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_manifest_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_package_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_package_scan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_semgrep_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_semgrep_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_yara_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.do_yara_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.AndroidTask.prepare_scan"><code class="docutils literal notranslate"><span class="pre">AndroidTask.prepare_scan()</span></code></a></li>
 </ul>
@@ -499,7 +508,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#android-scan-tasks">Android Scan Tasks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.app_info_scan.get_app_info"><code class="docutils literal notranslate"><span class="pre">get_app_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.app_info_scan.get_app_net_info"><code class="docutils literal notranslate"><span class="pre">get_app_net_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler"><code class="docutils literal notranslate"><span class="pre">NetworkSecurityHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.manifest_scan.get_manifest_info"><code class="docutils literal notranslate"><span class="pre">get_manifest_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.manifest_scan.run_manifest_scan"><code class="docutils literal notranslate"><span class="pre">run_manifest_scan()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler"><code class="docutils literal notranslate"><span class="pre">AndroidManifestHandler</span></code></a></li>
 </ul>
 </li>
@@ -612,6 +625,17 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../core_api/permission.html">App Permissions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.PermissionDefItem"><code class="docutils literal notranslate"><span class="pre">PermissionDefItem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.GroupDefItem"><code class="docutils literal notranslate"><span class="pre">GroupDefItem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.AppPermissionList"><code class="docutils literal notranslate"><span class="pre">AppPermissionList</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core_api/permission.html#example-usage">Example Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../core_api/permission.html#mastf.core.files.apl.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Android API</span></p>
 <ul>
@@ -626,20 +650,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.start"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.start</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.visit_document"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.visit_document()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor.visit_element"><code class="docutils literal notranslate"><span class="pre">AXmlVisitor.visit_element()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../android_api/permission.html">ADB Permissions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#key-features">Key Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#import-format">Import Format</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.all"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.all()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.kwargs"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.kwargs</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.load"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.load()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.make_cmd"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.make_cmd()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.re_package"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.re_package</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="../android_api/permission.html#mastf.android.permission.adb.AndroidPermissions.ungrouped"><code class="docutils literal notranslate"><span class="pre">AndroidPermissions.ungrouped</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -687,6 +697,43 @@
 <h1>Scanner Plugin<a class="headerlink" href="#scanner-plugin" title="Permalink to this heading"></a></h1>
 <section id="basics">
 <h2>Basics<a class="headerlink" href="#basics" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.Plugin">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.plugin.</span></span><span class="sig-name descname"><span class="pre">Plugin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clazz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.Plugin" title="Permalink to this definition"></a></dt>
+<dd><p>Register a scanner plugin.</p>
+<p>This decorator is used to register a scanner plugin class. The class must
+have a <code class="docutils literal notranslate"><span class="pre">name</span></code> attribute, which represents the name of the scanner. The
+registered scanner instances can be accessed through the <code class="docutils literal notranslate"><span class="pre">__scanners__</span></code>
+dictionary.</p>
+<section id="usage-example">
+<h3>Usage Example:<a class="headerlink" href="#usage-example" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nd">@Plugin</span>
+<span class="linenos">2</span><span class="k">class</span> <span class="nc">MyScanner</span><span class="p">(</span><span class="n">ScannerPlugin</span><span class="p">):</span>
+<span class="linenos">3</span>    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;My Scanner&quot;</span>
+<span class="linenos">4</span>    <span class="o">...</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="c1"># Accessing the registered scanners</span>
+<span class="linenos">7</span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">scanner</span> <span class="ow">in</span> <span class="n">ScannerPlugin</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+<span class="linenos">8</span>    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">scanner</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">param clazz<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The scanner plugin class to register.</p>
+</dd>
+<dt class="field-even">raises ValueError<span class="colon">:</span></dt>
+<dd class="field-even"><p>If the scanner’s name is null.</p>
+</dd>
+<dt class="field-odd">raises KeyError<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If the scanner is already registered.</p>
+</dd>
+<dt class="field-even">return<span class="colon">:</span></dt>
+<dd class="field-even"><p>The input scanner plugin class.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="mastf.MASTF.scanners.plugin.Extension">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.plugin.</span></span><span class="sig-name descname"><span class="pre">Extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.plugin.Extension" title="Permalink to this definition"></a></dt>
@@ -1077,10 +1124,28 @@ such as YARA scan, manifest scan, app info scan, and code scan.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_libscout_scan">
+<span class="sig-name descname"><span class="pre">do_libscout_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_libscout_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a LibScout scan.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan">
 <span class="sig-name descname"><span class="pre">do_manifest_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_manifest_scan" title="Permalink to this definition"></a></dt>
 <dd><p>Perform a manifest scan on the Android application.</p>
 <p>This method retrieves the manifest information of the Android application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_package_scan">
+<span class="sig-name descname"><span class="pre">do_package_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_package_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Perform a heuristic scan on potential used third-party libraries.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.AndroidTask.do_semgrep_scan">
+<span class="sig-name descname"><span class="pre">do_semgrep_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.AndroidTask.do_semgrep_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the semgrep OSS-Engine in a separate celery worker.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1152,10 +1217,64 @@ findings, and components.</p>
 
 <section id="android-scan-tasks">
 <h3>Android Scan Tasks<a class="headerlink" href="#android-scan-tasks" title="Permalink to this heading"></a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.app_info_scan.get_app_info">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.app_info_scan.</span></span><span class="sig-name descname"><span class="pre">get_app_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.app_info_scan.get_app_info" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves and saves information about the scanned app.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inspector</strong> – The <code class="xref py py-class docutils literal notranslate"><span class="pre">ScannerPluginTask</span></code> object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.app_info_scan.get_app_net_info">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.app_info_scan.</span></span><span class="sig-name descname"><span class="pre">get_app_net_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.app_info_scan.get_app_net_info" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve network security information from XML files.</p>
+<p>This function analyzes network_security_config.xml files present in the given directory and its subdirectories,
+extracting network security information from them. The extracted information is processed using a visitor pattern
+implemented by the AXmlVisitor class and a NetworkSecurityHandler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inspector</strong> (<a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><em>ScannerPluginTask</em></a>) – An instance of ScannerPluginTask, representing the scanner task.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.app_info_scan.</span></span><span class="sig-name descname"><span class="pre">NetworkSecurityHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.app_info_scan.NetworkSecurityHandler" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.get_manifest_info">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.manifest_scan.</span></span><span class="sig-name descname"><span class="pre">get_manifest_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.get_manifest_info" title="Permalink to this definition"></a></dt>
+<dd><p>Get manifest information from the Android app.</p>
+<p>This function collects detailed information about permissions, components, and intent filters
+from the AndroidManifest.xml file of the app.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inspector</strong> (<a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><em>ScannerPluginTask</em></a>) – The scanner plugin task inspector.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.run_manifest_scan">
+<span class="sig-prename descclassname"><span class="pre">mastf.MASTF.scanners.android_sast.manifest_scan.</span></span><span class="sig-name descname"><span class="pre">run_manifest_scan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><span class="pre">ScannerPluginTask</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">manifest_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.run_manifest_scan" title="Permalink to this definition"></a></dt>
+<dd><p>Run manifest scan on the AndroidManifest.xml file.</p>
+<p>This function parses the AndroidManifest.xml file and performs a scan using the specified
+handler and visitor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inspector</strong> (<a class="reference internal" href="#mastf.MASTF.scanners.plugin.ScannerPluginTask" title="mastf.MASTF.scanners.plugin.ScannerPluginTask"><em>ScannerPluginTask</em></a>) – The scanner plugin task inspector.</p></li>
+<li><p><strong>manifest_file</strong> (<em>pathlib.Path</em>) – Path to the AndroidManifest.xml file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler">
@@ -1186,7 +1305,7 @@ findings, and components.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.link">
-<span class="sig-name descname"><span class="pre">link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visitor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../android_api/manifest.html#mastf.android.axml.AXmlVisitor" title="mastf.android.axml.AXmlVisitor"><span class="pre">AXmlVisitor</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.link" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">visitor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AndroidManifestVisitor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.link" title="Permalink to this definition"></a></dt>
 <dd><p>Links the AndroidManifestHandler with an AXmlVisitor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1225,7 +1344,7 @@ findings, and components.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_permission">
-<span class="sig-name descname"><span class="pre">on_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_permission" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../ref/models/permission_models.html#mastf.MASTF.models.AppPermission" title="mastf.MASTF.models.mod_permission.AppPermission"><span class="pre">AppPermission</span></a></span></span><a class="headerlink" href="#mastf.MASTF.scanners.android_sast.manifest_scan.AndroidManifestHandler.on_permission" title="Permalink to this definition"></a></dt>
 <dd><p>Event handler for permission elements in the AndroidManifest.xml.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
