@@ -55,7 +55,10 @@ class Package(TimedModel):
     """
 
     is_tracker = models.BooleanField(default=False)
+    """Identifies this software package to be linked to tracking services."""
+
     description = models.TextField(blank=True)
+    """A brief description for report generation."""
 
     class Meta:
         constraints = [

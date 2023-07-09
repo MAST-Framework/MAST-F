@@ -56,8 +56,7 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
             if icon_path.is_dir():
                 continue
 
-            icon_path = icon_file # take only the last image
-
+            icon_path = icon_file  # take only the last image
 
     details.icon = str(icon_path)
     details.app_id = apk_file.get_package()
@@ -85,7 +84,6 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
                 )
             )
 
-
     # TODO: Display information on possible vulnerabilities if application
     # is signed with MD5, SHA1, or v1 signature scheme.
     result, name = get_details(details.app_id)
@@ -98,21 +96,23 @@ def get_app_info(inspector: ScannerPluginTask) -> None:
     store_info.release_date = result.get("released", "")
     store_info.description = result.get("description", "")
 
-    try:
-        store_info.developer = DeveloperInfo.objects.get(
-            developer_id=result.get("developerId")
-        )
-    except (DeveloperInfo.DoesNotExist, DeveloperInfo.MultipleObjectsReturned):
-        store_info.developer = DeveloperInfo.objects.create(
-            pk=result.get("developerId"),
-            name=result.get("developer"),
-            email=result.get("developerEmail"),
-            website=result.get("developerWebsite"),
-            address=result.get("developerAddress"),
-        )
-
     store_info.save()
     details.save()
+
+    dev_id = result.get("developerId")
+    if dev_id:
+        try:
+            store_info.developer = DeveloperInfo.objects.get(developer_id=dev_id)
+        except (DeveloperInfo.DoesNotExist, DeveloperInfo.MultipleObjectsReturned):
+            store_info.developer = DeveloperInfo.objects.create(
+                pk=dev_id,
+                name=result.get("developer", ""),
+                email=result.get("developerEmail", ""),
+                website=result.get("developerWebsite", ""),
+                address=result.get("developerAddress", ""),
+            )
+
+    store_info.save()
 
 
 def get_app_net_info(inspector: ScannerPluginTask) -> None:

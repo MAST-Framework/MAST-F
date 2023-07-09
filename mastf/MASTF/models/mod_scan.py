@@ -277,14 +277,27 @@ class Certificate(TimedModel):
 
 
 class DeveloperInfo(TimedModel):
+    """Model representing developer information."""
+
     developer_id = models.CharField(primary_key=True, max_length=512)
+    """Unique ID for each developer."""
+
     name = models.CharField(max_length=512, blank=True)
+    """Name of the devloper (mostly the company's name)"""
+
     email = models.EmailField(blank=True)
+    """Email address of the developer"""
+
     website = models.URLField(blank=True)
+    """Website URL of the developer"""
+
     address = models.CharField(max_length=512, blank=True)
+    """Email address of the developer"""
 
 
 class StoreInfo(TimedModel):
+    """Model storing information about the app available at the platform's app-store."""
+
     store_name = models.CharField(max_length=32, blank=True)
     app_id = models.CharField(max_length=512, blank=True)
 

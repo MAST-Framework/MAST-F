@@ -15,14 +15,136 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
-from io import IOBase, StringIO, BytesIO
+from io import IOBase, BytesIO, StringIO
+from typing import List, Union, Optional
+from dataclasses import dataclass, field
 
 GROUP_TYPE = "group:"
 UNGROUPED_TYPE = "ungrouped"
 PERMISSION_TYPE = "permission:"
 
 
-def parse(text: str | bytes | IOBase = None) -> _APL:
+@dataclass
+class PermissionDefItem:
+    """
+    Represents a permission definition item.
+
+    :param identifier: Identifier of the permission.
+    :param package: Package associated with the permission (optional).
+    :param label: Label of the permission (optional).
+    :param description: Description of the permission (optional).
+    :param protectionLevel: List of protection levels for the permission (default: empty list).
+    """
+
+    identifier: str
+    package: Optional[str] = None
+    label: Optional[str] = None
+    description: Optional[str] = None
+    protectionLevel: List[str] = field(default_factory=list)
+
+
+@dataclass
+class GroupDefItem:
+    """
+    Represents a group definition item.
+
+    :param identifier: Identifier of the group.
+    :param package: Package associated with the group (optional).
+    :param label: Label of the group (optional).
+    :param description: Description of the group (optional).
+    :param permissions: List of permissions in the group (default: empty list).
+    """
+
+    identifier: str
+    package: Optional[str] = None
+    label: Optional[str] = None
+    description: Optional[str] = None
+    permissions: List[PermissionDefItem] = field(default_factory=list)
+
+
+@dataclass
+class AppPermissionList:
+    """
+    Represents a list of app permissions.
+
+    :param groups: List of group definitions (default: empty list).
+    :param permissions: List of ungrouped permissions (default: empty list).
+    """
+
+    groups: List[GroupDefItem] = field(default_factory=list)
+    permissions: List[PermissionDefItem] = field(default_factory=list)
+
+
+def load(fp: IOBase) -> AppPermissionList:
+    """
+    Load app permission data from a file-like object.
+
+    :param fp: File-like object containing the permission data.
+    :return: AppPermissionList object representing the loaded data.
+    """
+
+    groups = []
+    permissions = []
+    current_group = None
+    current = None
+
+    for line in iter(lambda: fp.readline(), b""):
+        if not line:
+            break
+
+        if isinstance(line, (bytes, bytearray)):
+            line = line.decode()
+
+        cleaned = line.strip()
+        if len(cleaned) == 0:
+            continue
+
+        if cleaned[0] == "+":
+            identifier = cleaned[1:].strip()
+
+            # Check the identifier type
+            if identifier.startswith(GROUP_TYPE):
+                current_group = GroupDefItem(identifier.lstrip(GROUP_TYPE))
+                current = None
+                groups.append(current_group)
+            elif identifier.startswith(UNGROUPED_TYPE):
+                current = None
+                current_group = UNGROUPED_TYPE
+            elif identifier.startswith(PERMISSION_TYPE):
+                current = PermissionDefItem(identifier.lstrip(PERMISSION_TYPE))
+
+                # Check if the permission belongs to a group or is ungrouped
+                if current_group is None or current_group == UNGROUPED_TYPE:
+                    permissions.append(current)
+                else:
+                    current_group.permissions.append(current)
+
+        elif (
+            current_group is not None and current_group != UNGROUPED_TYPE
+        ) or current is not None:
+            target = current_group if current is None else current
+            name, value = line.strip().split(":", 1)
+
+            # Set attribute values on the current object
+            if hasattr(target, name):
+                if name.lower() == "protectionlevel":
+                    setattr(target, name, value.split("|") if value != "null" else None)
+                else:
+                    setattr(target, name, value if value != "null" else None)
+
+    return AppPermissionList(groups, permissions)
+
+
+def parse(text: Union[str, bytes, IOBase] = None) -> AppPermissionList:
+    """
+    Parse app permission data from text or a file-like object.
+
+    :param text: Input text or file-like object containing the permission data.
+    :return: AppPermissionList object representing the parsed data.
+    :raises TypeError: If the input text is None.
+    :raises TypeError: If an invalid source type is provided.
+    """
+
     if text is not None:
         if isinstance(text, (bytearray, bytes)):
             source = BytesIO(text)
@@ -36,66 +158,3 @@ def parse(text: str | bytes | IOBase = None) -> _APL:
         return load(source)
 
     raise TypeError("Got None as input text!")
-
-
-def load(fp: IOBase) -> _APL:
-    instance = _APL()
-    current_group = instance.ungrouped
-    current = None
-
-    for line in iter(lambda: fp.readline(), 0):
-        if isinstance(line, (bytes, bytearray)):
-            line = line.decode()
-
-        cleaned = line.strip()
-        if len(cleaned) == 0:
-            continue
-
-        if cleaned[0] == "+":
-            identifier = cleaned[1:].strip()
-            if identifier.startswith(GROUP_TYPE):
-                current_group = {}
-                current = None
-                instance[identifier.lstrip(GROUP_TYPE)] = current_group
-
-            elif identifier == UNGROUPED_TYPE:
-                current = None
-                current_group = instance.ungrouped
-
-            elif identifier.startswith(PERMISSION_TYPE):
-                current = {}
-                if current_group == instance.ungrouped:
-                    current_group[identifier.lstrip(PERMISSION_TYPE)] = current
-                else:
-                    if "permissions" not in current_group:
-                        current_group["permissions"] = {}
-
-        elif current_group and current_group != instance.ungrouped or current:
-            target = current_group if not current else current
-            name, value = line.split(":", 1)
-            if name.lower() == "protectionlevel":
-                target[name] = value.split("|") if value != "null" else None
-            else:
-                target[name] = value if value != "null" else None
-
-
-class _APL:
-    def __init__(self) -> None:
-        self.__groups = {}
-        self.__permissions = {}
-
-    @property
-    def ungrouped(self) -> dict:
-        return self.__permissions
-
-    def __contains__(self, key: str) -> bool:
-        return key in self.__groups
-
-    def __getitem__(self, key: str) -> dict:
-        return self.__groups[key]
-
-    def __setitem__(self, key: str, value: str) -> None:
-        self.__groups[key] = value
-
-    def __iter__(self):
-        return iter(self.__groups)

@@ -31,7 +31,7 @@ from mastf.MASTF.models import (
     Component,
     Finding,
     FindingTemplate,
-    File
+    File,
 )
 from mastf.MASTF.utils.enum import ProtectionLevel, Severity, ComponentCategory
 
@@ -52,7 +52,10 @@ def get_manifest_info(inspector: ScannerPluginTask) -> None:
     # intent filters
     content_dir = inspector.file_dir / "contents"
 
-    inspector.observer.update("Running manifest analysis on %s..." % File.relative_path(str(content_dir)), do_log=True)
+    inspector.observer.update(
+        "Running manifest analysis on %s..." % File.relative_path(str(content_dir)),
+        do_log=True,
+    )
     for manifest in content_dir.iterdir():
         if manifest.name == "AndroidManifest.xml":
             inspector.observer.update("Reading Manifest...", do_log=True)
@@ -89,7 +92,7 @@ def run_manifest_scan(inspector: ScannerPluginTask, manifest_file: pathlib.Path)
             logger.exception(str(err))
             inspector.observer.fail(
                 "[%s] Skipping manifest due to parsing error: %s",
-                type(err).__name__,
+                type(err),
                 str(err),
             )
             return
@@ -159,7 +162,9 @@ class AndroidManifestHandler:
 
         try:
             permission = AppPermission.objects.get(identifier=identifier)
-        except AppPermission.DoesNotExist: # no MultipleObjectsReturned as this field is unique
+        except (
+            AppPermission.DoesNotExist
+        ):  # no MultipleObjectsReturned as this field is unique
             self.observer.update(
                 "Creating new Permission: %s [pLevel=%s]",
                 identifier,
@@ -219,7 +224,9 @@ class AndroidManifestHandler:
             self._create_finding("AndroidManifest: Direct-Boot Awareness")
 
         if element.getAttribute("android:debuggable") == "true":
-            self._create_finding("Code Security (MSTG-CODE-2): Application Built with Debuggable Flag")
+            self._create_finding(
+                "Code Security (MSTG-CODE-2): Application Built with Debuggable Flag"
+            )
 
         if element.getAttribute("android:allowBackup") == "true":
             self._create_finding("AndroidManifest: Backup of Application Data allowed")
@@ -296,16 +303,24 @@ class AndroidManifestHandler:
                 component.is_main = action == "android.intent.action.MAIN"
                 component.is_launcher = action == "android.intent.category.LAUNCHER"
 
-                if not component.is_main and not component.permission and not component.is_exported:
+                if (
+                    not component.is_main
+                    and not component.permission
+                    and not component.is_exported
+                ):
                     # Implicit exported component with or without permission definition
                     # TODO: add findings
                     component.is_protected = False
-                    self._create_finding("AndroidManifest: Implicitly Exported App Component")
+                    self._create_finding(
+                        "AndroidManifest: Implicitly Exported App Component"
+                    )
 
         if not identifier and not self._application_protected and component.is_exported:
             # Exported component without proper permission declaration
             # TODO: add findings
             component.is_protected = False
-            self._create_finding("AndroidManifest: Exported Component without Proper Permission Declaration")
+            self._create_finding(
+                "AndroidManifest: Exported Component without Proper Permission Declaration"
+            )
 
         component.save()

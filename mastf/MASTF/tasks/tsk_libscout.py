@@ -126,7 +126,7 @@ def perform_libscout_scan(
             except (Package.DoesNotExist, Package.MultipleObjectsReturned):
                 pass
 
-    # 6. # Add all dependencies to the current scan if not already present
+    # 6. Add all dependencies to the current scan if not already present
     present_packages = set(
         map(lambda x: x.package, Dependency.objects.filter(project=scan.project))
     )

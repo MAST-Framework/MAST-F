@@ -32,8 +32,11 @@ logger = get_task_logger(__name__)
 
 __all__ = ["perform_semgrep_scan"]
 
+
 @shared_task(bind=True)
-def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str) -> dict:
+def perform_semgrep_scan(
+    self, scan_task_id: str, rules_dir: str, file_dir: str
+) -> dict:
     scan_task = ScanTask.objects.get(task_uuid=scan_task_id)
     scan_task.celery_id = self.request.id
     scan_task.save()
@@ -44,7 +47,7 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
     if out_file.exists():
         os.remove(str(out_file))
 
-    cmd = [ # cd rules_dir && semgrep -c rules_dir --output out_file --json file_dir
+    cmd = [  # cd rules_dir && semgrep -c rules_dir --output out_file --json file_dir
         "cd",
         # Rather change the current working directory as .semgrepignore may be defined there
         # REVISIT: maybe use cwd=... in run()
@@ -57,7 +60,7 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
         "--json",
         "--output",
         str(out_file),
-        file_dir
+        file_dir,
     ]
     try:
         observer.update("Running semgrep...", do_log=True)
@@ -73,31 +76,48 @@ def perform_semgrep_scan(self, scan_task_id: str, rules_dir: str, file_dir: str)
             internal_name = "%s-%s-(%s)" % (
                 result["extra"]["metadata"]["area"].lower(),
                 result["extra"]["metadata"]["category"].lower(),
-                result["check_id"].split(".", 2)[-1].lower() # always something like "rules.storage.MSTG-STORAGE-7.2"
+                result["check_id"]
+                .split(".", 2)[-1]
+                .lower(),  # always something like "rules.storage.MSTG-STORAGE-7.2"
             )
 
             try:
-                template = FindingTemplate.objects.get(internal_id__icontains=internal_name)
+                template = FindingTemplate.objects.get(
+                    internal_id__icontains=internal_name
+                )
                 path = pathlib.Path(result["path"])
                 start = result["start"]["line"]
                 end = result["end"]["line"]
+                # Structure:
+                #   - either the current line number
+                #   - or a range separated by '-'
+                if (end - start) > 1:
+                    lines = f"{start}-{end}"
+                else:
+                    lines = ",".join([str(x) for x in range(start, end + 1)])
 
                 snippet = Snippet.objects.create(
                     sys_path=str(path),
                     language=path.suffix.removeprefix("."),
                     file_name=path.name,
                     file_size=path.stat().st_size,
-                    lines=",".join([str(x) for x in range(start, end + 1)])
+                    lines=lines,
                 )
                 if not template.is_contextual:
                     Finding.create(template, snippet, scan_task.scanner)
                 else:
-                    Finding.create(template, snippet, scan_task.scanner, text=result["message"])
+                    Finding.create(
+                        template, snippet, scan_task.scanner, text=result["message"]
+                    )
 
             except FindingTemplate.DoesNotExist:
-                logger.warning("Could not find FindingTemplate for ID: %s", internal_name)
+                logger.warning(
+                    "Could not find FindingTemplate for ID: %s", internal_name
+                )
             except FindingTemplate.MultipleObjectsReturned:
-                logger.warning("Multiple FindingTemplate objects with ID: %s", internal_name)
+                logger.warning(
+                    "Multiple FindingTemplate objects with ID: %s", internal_name
+                )
 
         _, meta = observer.success("Finished semgrep scan!")
         return meta

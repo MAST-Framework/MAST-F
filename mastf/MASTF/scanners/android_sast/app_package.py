@@ -33,6 +33,7 @@ from mastf.MASTF.scanners.plugin import ScannerPluginTask
 
 logger = logging.getLogger(__name__)
 
+
 # https://github.com/lief-project/LIEF/issues/832
 class BytesIO(io.BytesIO):
     @property
@@ -41,6 +42,7 @@ class BytesIO(io.BytesIO):
 
     def readall(self):
         return self.read()
+
 
 def get_app_packages(task: ScannerPluginTask) -> None:
     # TODO: Use python package mastf-libscout to scan the given
@@ -172,4 +174,3 @@ def get_app_packages(task: ScannerPluginTask) -> None:
         # TODO: dependency.outdated = ...
 
     Dependency.objects.bulk_create(list(dependencies.values()))
-

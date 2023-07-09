@@ -128,13 +128,18 @@ class AndroidTask(ScannerPluginTask):
         )
 
     def do_libscout_scan(self) -> None:
+        """Perform a LibScout scan."""
         task = ScanTask.objects.create(
             task_uuid=uuid.uuid4(),
             scan=self.scan,
             scanner=self.scan_task.scanner,
             name=self.scan_task.name,
         )
-
+        perform_libscout_scan.delay(
+            str(task.task_uuid),
+            str(settings.LIBSOUT_PROFILES_DIR),
+            str(settings.LIBSOUT_ANDROID_JAR)
+        )
 
 
 mixins = (DetailsMixin, PermissionsMixin, HostsMixin, FindingsMixins, ComponentsMixin)

@@ -45,7 +45,7 @@ def schedule_scan(scan: Scan, uploaded_file: File, names: list) -> None:
     Details.objects.create(scan=scan, file=uploaded_file)
     scan.file = uploaded_file
     for name in names:
-        Scanner(name=name, scan=scan).save()
+        Scanner.objects.create(name=name, scan=scan)
 
     if not scan.start_date:
         scan.start_date = datetime.now()
